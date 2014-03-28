@@ -1,0 +1,16 @@
+<resources>
+    <bool name="config_tablet">true</bool>
+    <!--<bool name="config_landscape">false</bool>-->
+
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+    <dimen name="padding_huge">32dp</dimen>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
+    <dimen name="min_notify_dialog_width">300dp</dimen>
+
+</resources>

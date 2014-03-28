@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- show leader board on layout -->
+    <bool name="def_include_lead_board">true</bool>
+
+</resources>

@@ -1,0 +1,84 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="dolphin.android.apps.CpblCalendar">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.screen.portrait"
+        android:required="false"/>
+
+    <supports-screens
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true"/>
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Holo_green">
+        <activity
+            android:screenOrientation="locked"
+            android:name="dolphin.android.apps.CpblCalendar.SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Sherlock.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CalendarForPhoneActivity"
+            android:screenOrientation="locked"/>
+        <activity
+            android:name=".CalendarForTabletActivity"
+            android:screenOrientation="locked"/>
+        <activity
+            android:name=".preference.PreferenceActivity"
+            android:screenOrientation="locked"/>
+        <activity
+            android:name=".preference.GBPreferenceActivity"
+            android:screenOrientation="locked"/>
+
+        <!--
+                <activity
+                    android:name="com.google.android.gms.ads.AdActivity"
+                    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+        -->
+
+        <receiver
+            android:name=".NotifyReceiver"
+            android:process=":remote"
+            android:enabled="@bool/feature_notify">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="dolphin.android.apps.CpblCalendar.ALARM"/>
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".NotifyDialog"
+            android:enabled="@bool/feature_notify"
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.Holo_green.Dialog"
+            android:excludeFromRecents="true"/>
+        <!--
+                <meta-data
+                    android:name="com.google.android.gms.version"
+                    android:value="@integer/google_play_services_version"/>
+        -->
+    </application>
+
+</manifest>

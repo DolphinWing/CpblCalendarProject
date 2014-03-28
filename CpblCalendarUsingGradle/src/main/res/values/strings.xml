@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CPBL賽程表</string>
+    <string name="action_settings">設定</string>
+    <string name="action_refresh">更新</string>
+    <string name="action_more">更多</string>
+    <string name="action_leader_board">戰績</string>
+
+    <string name="title_game_field">比賽球場</string>
+    <string name="title_game_kind">比賽類別</string>
+    <string name="title_game_year">年份</string>
+    <string name="title_game_month">月份</string>
+    <string name="title_query">查詢</string>
+    <string name="tab_title_upcoming">即將到來</string>
+    <string name="tab_title_previous">歷史賽事</string>
+    <string name="title_cpbl_year">職棒 %d 年</string>
+    <string name="no_games_this_month">本月份沒有比賽，或網路出現問題</string>
+    <string name="query_error">查詢出現問題</string>
+    <string name="no_favorite_teams">沒有球隊比賽可顯示</string>
+    <string name="no_available_network">沒有網路連線</string>
+
+    <!-- preference -->
+    <!-- GeneralFragment -->
+    <string name="title_general_settings">一般設定</string>
+    <string name="app_version">版本</string>
+    <string name="app_build_info">版本資訊</string>
+    <string name="app_change_log">更新紀錄</string>
+    <string name="title_data_source">資料來源</string>
+    <string name="title_copyright">版權</string>
+    <string name="title_about_app">關於程式</string>
+    <string name="title_open_source">Open source</string>
+
+    <!-- DisplayFragment -->
+    <string name="title_display_settings">顯示設定</string>
+    <string name="title_select_upcoming">即將到來的比賽</string>
+    <string name="title_select_upcoming_on">直接跳至即將到來的比賽</string>
+    <string name="title_select_upcoming_off">直接顯示所有比賽</string>
+    <string name="title_show_team_logo">隊徽</string>
+    <string name="title_show_team_logo_on">在對戰組合中顯示隊伍隊徽</string>
+    <string name="title_show_team_logo_off">在對戰組合顯示中不顯示隊伍隊徽</string>
+    <string name="title_highlight_win">標記獲勝隊伍</string>
+    <string name="title_highlight_win_on">將獲勝隊伍以粗體及顏色標註</string>
+    <string name="title_highlight_win_off">不標註獲勝隊伍</string>
+    <string name="title_display_favorite">顯示最愛</string>
+    <string name="title_favorite_teams">最愛球隊</string>
+    <string name="title_favorite_teams_all">所有球隊</string>
+    <string name="title_highlight_today">標示今日賽程</string>
+    <string name="title_highlight_today_on">以不同底色標記出今天的比賽</string>
+    <string name="title_highlight_today_off">不特別標記今天的比賽</string>
+    <string name="title_include_lead_board">戰績表</string>
+    <string name="title_include_lead_board_on">將戰績表顯示於主畫面中</string>
+    <string name="title_include_lead_board_off">將戰績表顯示於對話框中</string>
+    <string name="title_include_lead_board_no_support">僅支援對話框模式</string>
+    <string name="title_orientation">自動旋轉螢幕</string>
+    <!-- ShowcaseView -->
+    <string name="phone_activity_showcase_title">歡迎使用</string>
+    <string name="phone_activity_showcase_detail">點擊這裡可以叫出切換賽程的查詢窗格，亦可使用手勢從螢幕左側滑入。\n\n請按右上角的設定來修改顯示設定。</string>
+    <string name="tablet_activity_showcase_title">歡迎使用 CPBL賽程表</string>
+    <string name="tablet_activity_showcase_detail">\n點擊查詢按鈕即可進行查詢。\n\n如果要更改顯示設定，請按右上角的設定進入設定頁面。</string>
+    <!-- NotificationFragment -->
+    <string name="title_notification_settings">通知設定</string>
+    <string name="title_enable_notification_on">啟用通知</string>
+    <string name="title_enable_notification_off">停用通知</string>
+    <string name="title_notify_teams">接收通知的球隊</string>
+    <string name="title_notify_alarm">接收通知的時間</string>
+    <string name="title_manual_game_notify">手動選擇比賽</string>
+    <string name="title_manual_game_notify_on">點擊鬧鐘圖示可加入通知排程</string>
+    <string name="title_manual_game_notify_off">只接收球隊的通知</string>
+    <string name="title_notify_pending_action">點擊通知時的動作</string>
+    <string name="title_show_dialog">除通知外，以對話框提醒</string>
+    <string name="title_show_dialog_on">時間到時會輔以對話框提醒</string>
+    <string name="title_show_dialog_off">時間到時不會跳出對話框</string>
+    <string name="title_vibrate">震動通知</string>
+    <string name="title_vibrate_on">時間到時會輔以震動提醒</string>
+    <string name="title_vibrate_off">時間到時不以震動提醒</string>
+    <!-- Notificaitons -->
+    <string name="title_notification">比賽要開打囉!</string>
+    <string name="msg_content_text">%1$s 對 %2$s</string>
+    <string name="msg_content_text2"> &amp; %1$s 對 %2$s</string>
+    <string name="msg_big_text_content">%1$s 對 %2$s\n%3$s 在%4$s直播</string>
+    <string name="msg_big_text_content_no_broadcast">%1$s 對 %2$s %3$s</string>
+    <!-- ListView Empty view -->
+    <string name="action_go_to_website">前往中華職棒網站</string>
+
+</resources>

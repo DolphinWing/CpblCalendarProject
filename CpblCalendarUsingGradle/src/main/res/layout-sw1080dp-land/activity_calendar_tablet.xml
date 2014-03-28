@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".SplashActivity">
+
+    <!-- The navigation drawer -->
+    <LinearLayout
+        android:id="@+id/left_drawer_sw720dp"
+        android:orientation="vertical"
+        android:layout_width="320dp"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/left_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="start"
+            layout="@layout/layout_query_pane"/>
+
+        <include
+            android:id="@+id/team_board"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/min_lead_team_board_height"
+            layout="@layout/leader_board"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
+            android:id="@+id/adLayout"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/padding_medium">
+        </LinearLayout>
+    </LinearLayout>
+
+    <fragment
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+        android:id="@+id/content_frame"
+        tools:layout="@layout/listview_item_matchup"/>
+
+</LinearLayout>

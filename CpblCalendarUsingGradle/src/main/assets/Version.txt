@@ -1,0 +1,476 @@
+CPBL中華職棒賽程表
+https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
+
+快速取得CPBL中華職棒例行賽賽程表 <del>也可以很快的查詢過去的歷史對戰資料喔!</del>
+
+資料來源：CPBL中華職棒官網賽程 http://www.cpbl.com.tw/
+　　　　　中華職棒觀眾人數分析 http://zxc22.idv.tw (感謝站長carhow)
+圖片來源：台灣棒球維基館 http://twbsball.dils.tku.edu.tw
+開源函式庫：ActionBarSherlock, ShowcaseView, NineOldAndroids
+
+本程式純粹是為了朋友而幫忙~ 非官方APP
+如果有任何版權問題或使用上的問題，請來信告知!
+
+我的網誌連結 http://wp.me/p179cd-H
+
+--
+[82] @ 2014-03-29
+    fix live Url hack
+    add ProgressBar as Fragment loading indicator
+    many small tweaks
+
+[81] @ 2014-03-28
+    remove debug flag will trigger 30s alarm
+        use new demo_notification flag to control
+    add long click listener to GameListFragment
+         Make long click to do action?
+
+check support-v4 version
+    @work: extras/android/m2repository/com/android/support/support-v4
+    @home: update again, and now OK!
+
+TODO live URL
+    http://www.cpbltv.com/channel/1.html
+    http://www.cpbltv.com/channel/2.html
+    Make Url as live channel url, check time to decide click event
+
+
+[80] @ 2014-03-27
+    Use custom TypeAdapter for Gson object
+
+    Use brand new Gradle build system
+
+    java.lang.OutOfMemoryError: GC overhead limit exceeded
+        http://stackoverflow.com/a/18491480/2673859
+        http://docs.oseems.com/general/application/eclipse/fix-gc-overhead-limit-exceeded
+        http://www.wallcopper.com/os/319.html
+
+    NotificationCompat.BigTextStyle can't find
+        http://goo.gl/LnQDYg
+    ==> still unknown why, but comment it now
+
+        also another strange error: not NotificationCompat.Builder.build()
+            use getNotification() instead
+
+[79] @ 2014-03-26
+    remove AdView, need to update to Google Play Services
+        https://developers.google.com/mobile-ads-sdk/download
+    add auto load next month data
+    start testing notification
+    Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+
+TODO FIX something wrong
+    Gson 2.2.2 causing a stackoverflow
+        http://stackoverflow.com/a/14567472/2673859
+    Need to make a notification tutorial
+
+[78] @ 2014-03-25
+    add spinner variable initial values
+    Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+    add read/write cache interface
+
+    修改是否可以點擊的判斷式==>未開賽前，顯示為先發投手；已經比完的，顯示戰績。
+
+[77] @ 2014-03-23
+    add score to zxc22 and CPBL
+    fix zxc22 can't open CPBL url
+
+[76] @ 2014-03-20
+    fix year and month incorrect
+
+[75] @ 2014-03-20
+    update matchup layout (swap field and channel)
+    add EasyTracker on actions
+
+[74] @ 2014-03-16
+    add some flags for demo screenshot
+[73] @ 2014-03-16
+    use proguard to reduce apk size
+[72] @ 2014-03-15
+    add another schedule source
+        http://zxc22.idv.tw/ (already get permission!)
+    update ListView.setEmptyView
+    Change build SDK to 19
+		implement new KK method PreferenceActivity.isValidFragment
+		See http://ibm.co/1bAA8kF or http://ibm.co/IDm2Es
+
+[71] @ 2014-03-10
+    reduce some png file size
+[70] @ 2014-03-09
+    網頁改版~ 正在想辦法補救
+
+1.0.1 @ 2014-03-09
+因為中華職棒官方網站在3/7上線新的版本，正在努力嘗試將原先的功能恢復
+先上傳目前可以用的版本，若造成不變敬請見諒!
+
+今天修改的部分包括:
+    新增新的資料解析函式，將取資料的部分全部改掉
+    修改了新的呈現，把Navigation Drawer和Query Pane隱藏
+    不再支援Android 2.2
+
+[69] @ 2014-03-05
+    add 中信兄弟 support
+    測試通知訊息
+
+[68] @ 2014-02-21
+    update auto select game kind policy
+
+[67] @ 2014-01-14
+	fix layout for long team name
+
+[66] @ 2013-12-05
+    auto choose different kind @ different month
+    add a unknown team logo png
+    fix match team icon center vertical
+
+[65] @ 2013-10-28
+	增加一軍總冠軍戰
+
+[64] @ 2013-10-12
+    add Google Analytics Tracking ID UA-4163873-6
+
+[63] @ 2013-09-24
+	add feature_notify to control if enable this feature
+		also add enable flag in AndroidManifest.xml
+	change some alarm icons
+	adjust the notification codes
+
+[62] @ 2013-09-19
+    add notification vibrate
+    add left/right padding for alarm button
+
+[61] @ 2013-09-17
+    layout adjustment
+
+[60] @ 2013-09-14
+[59] @ 2013-09-14
+    change alarm icon layout
+[58] @ 2013-09-12
+    change layout_query_pane_port button layout
+
+[57] @ 2013-09-10
+    add clear all alarms
+    add disable notification to clear alarms
+    add intent-filter
+        <action android:name="dolphin.android.apps.CpblCalendar.ALARM"/>
+    cancel receiver action if notification was disabled
+
+[56] @ 2013-09-04
+    use DateUtils.isToday to fix incorrect highlight today
+    enable everything in engineer mode
+    refresh the alarm when open the activity
+
+[55] @ 2013-09-03 @ home
+    add TimeZone in CpblCalendarHelper
+
+[54] @ 2013-09-03 @ work
+	Time arrived but not shown
+		http://www.cnblogs.com/tara/archive/2011/06/09/2076043.html
+		http://aswang.iteye.com/blog/875863
+	fix change NotifyTime set summary will ArrayOutOfBound
+	
+TO DO: fixed TimeZone for Taiwan time
+http://developer.android.com/reference/java/util/Calendar.html#setTimeZone(java.util.TimeZone)
+	
+[53] @ 2013-09-02
+    only tablets get day offset string
+    DAY_OF_WEEK now applies to all devices
+
+[52] @ 2013-09-01
+    add NotificationFragment ListPreference summary
+
+[51] @ 2013-09-01
+    add Notification PendingIntent
+    fix Game.Channel is null in some games
+    add NotifyDialog for popup dialog for NotifyReceiver(dialog-themed Activity)
+    fix Game.StartTime milliseconds floating
+    add android.permission.RECEIVE_BOOT_COMPLETED
+
+[50] @ 2013-08-31
+    put boolean defaults to xml (prefs_display)
+        change def_upcoming_game to true
+    add proguard for Gson
+    add alarm icon for notification
+    AlarmHelper to store the alarm list
+        notification implement ok!
+
+[49] @ 2013-08-29 @ work
+	fix xlarge screen show leader board default value
+
+[48] @ 2013-08-28 @ home
+[47] @ 2013-08-28 @ work
+	change tablet layout
+	    totally different layout for sw600dp-port
+		add left/right paddings
+		add sw1080dp layout parameters
+	use Locale.TAIWAN only, add tablet DAY_OF_WEEK
+	fix no network callback
+
+[46] @ 2013-08-12
+    fix last release has tablet sensor property
+    add ListView enable/disable on query
+
+[45] @ 2013-08-09
+    fix game field caused layout overflow (add ScrollView)
+    update the layout for tablets (also change the AdMobs height and margin)
+    use Locale.TAIWAN for Month
+
+[44] @ 2013-08-05
+    enable android:installLocation="auto"
+    add game field selection
+
+[43] @ 2013-07-26
+    use new SDK 18
+    change android:screenOrientation="locked" (SDK=18)
+
+[42] @ 2013-07-24
+	android.view.WindowManager$BadTokenException: 
+	Unable to add window -- token null is not valid; is your activity running?
+		http://stackoverflow.com/a/16911709
+		http://www.cnblogs.com/kaima/archive/2011/08/04/2127813.html
+
+[41] @ 2013-07-22
+    proguard as release version
+
+[40] @ 2013-07-19
+    prepare for public release of 0.7.0
+	fix java.lang.NullPointerException
+		at CpblCalendarHelper.getScoreBoardHtml(CpblCalendarHelper.java:258)
+		
+[39] @ 2013-07-19
+    add onSaveInstanceState in CalendarActivity
+        restore the selection when rotation
+    modify isTutorialDone method, add check eng mode
+
+[38] @ 2013-07-18
+    move trans.commitAllowingStateLoss(); to inside if (frag1 != null)
+
+[37] @ 2013-07-17
+    add AdMob to tablet layout
+
+[36]
+[35] @ 2013-07-16 @ home
+    modify FixedMultiSelectListPreference to have a get checked value method
+        for onPreferenceChange check before sending out the update
+    remove 二軍總冠軍賽 from list
+    add AdMob lib and AndroidManifest declaration
+    unlock the sensor rotation
+    check network status before query
+
+    use new Android Studio 0.2.x
+
+[34] @ 2013-07-16 @ work
+    add onPreferenceChange to preference.DisplayFragment
+
+[33] @ 2013-07-15
+    android.support.v4.app.FragmentManagerImpl.enqueueAction
+        http://stackoverflow.com/a/12681526
+        https://code.google.com/p/android/issues/detail?id=23096#c5
+
+[32] @ 2013-07-10
+    slightly change the icon with a little darker background(#fff->#eee)
+
+[31] @ 2013-07-04
+    add warning message to onQueryError
+    add warning message to no favorite teams set
+
+[30] @ 2013-07-03
+    add loading when query start
+
+    IllegalStateException: Can not perform this action after onSaveInstanceState
+        http://blog.csdn.net/ranxiedao/article/details/8214936
+
+[29] @ 2013-06-23
+    add preference for controlling xlarge layout
+        enable/disable show leader board
+    remove team leading board support on GB/Froyo
+	fix Eclipse ProGuard setup to proguard-project.txt
+
+[28] @ 2013-06-23
+    fix delete/restore wrong files yesterday
+
+NOTE: update to Android Studio 0.1.6 and have a major issue.
+      CAN'T regenerate the release APK due to Issue: 56843
+      https://code.google.com/p/android/issues/detail?id=56843
+
+[27] @ 2013-06-21/22
+    add leader_board layout to pretend Holo Dialog
+    add tablet leader board action
+    fix TabletActivity tutorial not hide after first use
+	modify CalendarActivity.OnQueryCallback interface, add passing helper
+		public void onQuerySuccess(CpblCalendarHelper helper,
+                                   ArrayList<Game> gameArrayList);
+
+[26] @ 2013-06-21
+    add parsing out leader board html
+    add ActionBar leader board button (use text only)
+    add Leader Team board dialog (use HTML directly)
+        Html.fromHtml cannot parse <table>
+        use WebView.loadData
+
+TO DO:
+    check tablet/portrait ActionBar layout & AlertDialog
+    change AlertDialog style to holo green if possible
+
+[25] @ 2013-06-20
+    use more option for ActionBar item in PhoneActivity portrait mode
+
+[24] @ 2013-06-20
+    fix double highlight when enable highlightToday
+
+[23] @ 2013-06-18/19
+    modify ic_drawer as a new ic_drawer_light
+    change the layout, and only change title background for today's highlight
+
+[22] @ 2013-06-17
+    add favorite team selection (only supports Honeycomb and above)
+    add highlight today option
+
+[21] @ 2013-06-14
+    not to hide the tutorial when clicking android.R.id.home
+
+[20] @ 2013-06-14
+    add tablet tutorial
+    fix ShowcaseView library use fixed "OK" string, use Android native OK
+    fix layout-sw600dp-land game id not in fix size width
+
+[19] @ 2013-06-13
+    add PreferenceUtils.isEngineerMode(context) to check eng build
+        allow showing ShowcaseView in eng build
+    add custom ShowcaseView theme
+    add StrictMode.permitDiskWrites() & StrictMode.permitDiskReads()
+        http://stackoverflow.com/a/13323445
+    still no shown ShowcaseView in GB & Froyo
+        use fixed location instead of findViewById
+
+    add comments to my implementation
+
+[18] @ 2013-06-13
+    add ShowcaseView library and NineOldAndroid library
+    add PhoneActivity ShowcaseView
+
+Known issue:
+    Froyo/Gingerbread seems not showing ShowcaseView(even with ABS?)
+
+[17] @ 2013-06-12
+    change the layout of matchup, remove the white bg
+    slightly modify some team logos (make them square)
+    use android.text.format.DateFormat to get system time format
+
+[16] @ 2013-06-12
+    use Android Asset Studio/ActionBar icon for settings/refresh button
+
+[15] @ 2013-06-12
+    modify icon based on Amanda Hsu's suggestion
+    add matchup background as white to hide team logo white bg
+    change the theme as Light with Dark ActionBar
+
+TO DO: Showcase study
+
+[14] @ 2013-06-12
+    change to nosensor activity
+[13] @ 2013-06-11
+    add highlight winning team
+        android TextView bold and italic and underline
+            http://stackoverflow.com/a/5169604
+        Chinese text bold //http://goo.gl/sK7cN
+        use cab_background_top_holo_green as winner background
+    change the matchup extend icon drawable
+    add refresh menu item
+        (use Iconic style http://somerandomdude.com/work/iconic/)
+        32x32 = 24 + 4*2; 48x48 = 36 + 6*2; 64x64 = 48 + 8x2;
+    update open source list
+
+[12] @ 2013-06-10
+    set pref_engineer_mode as false
+    add support all screens
+    maybe consider to change the logo and theme png
+
+[11] @ 2013-06-09
+    remove android.hardware.touchscreen feature
+
+[10] @ 2013-06-09
+    ProGuard ok!
+    ListFragment.setEmptyText ok
+    screenshots ok
+
+[9] @ 2013-06-08/09
+    complete the tablet layout
+    complete the froyo layout
+    fix some live day but no live in the game
+        example: 2012/06/16, game 57 that cause FC
+
+TO DO:
+    need ListView.setEmptyView
+    need ProGuard
+
+[8] @ 2013-06-08
+    change Game AwayTeam and HomeTeam definition as class Team
+    implement class Team as an object
+    add team logo to GameListFragment matchup
+    add DisplayFragment of setting 2 different display style
+        can auto scroll to  upcoming game
+        can show team logo in matchup
+
+[7] @ 2013-06-07/08
+    move some implementation to CalendarActivity
+        Query Pane and its initial methods
+    add PreferenceActivity for build info and license
+    add Team class and team logo drawables
+    fix TV Live data only available after 2006
+
+[6] @ 2013-06-06/07 @ home
+    finish implementation of TO-DO list in r5
+
+    fix parsing ignore the '0' in score and id pattern
+    fix parsing no live games
+    hide game field spinner
+    change game match up layout, add live channel
+    hide some game kinds and fields in spinner
+
+    add new style created from Android Asset Studio
+        http://jgilfelt.github.io/android-actionbarstylegenerator/
+        http://android-holo-colors.com/
+
+    choose holo green light as main theme
+
+TO DO:
+    move implementation to CalendarActivity
+    (no need of ForTablet version? or keep it?)
+
+[5] @ 2013-06-06 @ home
+    link the GameListFragment with real layout and PhoneActivity
+    re-design the PhoneActivity layout, since no need to use TAB
+    add debug offline data creator
+
+TO DO:
+    1. over one week, no need to use DateUtils.getRelativeTimeSpanString
+    2. don't show time:second
+    3. show title/summary when Query action
+    4. auto query when first load
+
+[4] @ 2013-06-04 @ home
+	implement the item layout
+	add adapter for ListFragment (home network down, cannot test)
+
+[3] @ 2013-06-03 @ home
+    parsing game data from CPBL website success
+    starting implementation on Activity
+    Query panel UI is ready, next step is to show the list in Fragments
+
+[2] @ 2013-06-03 @work
+	add ActionBarDrawerToggle and ActionBarSherlock support (need confirm)
+		https://gist.github.com/npombourcq/5636121
+
+	Navigation Drawer design guide and implementation
+		http://developer.android.com/design/patterns/navigation-drawer.html
+		http://developer.android.com/training/implementing-navigation/nav-drawer.html
+
+	Add parsing rule for games
+
+	Add Phone & Tablet layout
+
+[1] @ 2013-06-03 @home
+	initial create the project with Eclipse, and import to Android Studio
+		seems some small unknown issues that I always failed creation in AS
+	add connection to CPBL website, and port the HttpHelper ready

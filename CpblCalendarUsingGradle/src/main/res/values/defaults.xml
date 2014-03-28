@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- for debug -->
+    <bool name="pref_engineer_mode">false</bool>
+	<bool name="feature_notify">true</bool>
+    <bool name="feature_notify_teams">false</bool>
+    <bool name="demo_notification">false</bool>
+    <bool name="demo_no_data">false</bool>
+    <bool name="demo_zxc22">false</bool>
+    <bool name="feature_auto_load_next">true</bool>
+    <bool name="feature_cache">true</bool>
+    <bool name="demo_cache">false</bool>
+
+    <!-- show leader board on layout -->
+    <bool name="def_include_lead_board">false</bool>
+
+    <bool name="def_upcoming_game">true</bool>
+    <bool name="def_team_logo">true</bool>
+    <bool name="def_highlight_win">false</bool>
+    <bool name="def_highlight_today">false</bool>
+
+    <!-- enable notification -->
+    <bool name="def_enable_notification">false</bool>
+    <bool name="def_manual_game_notify">true</bool>
+    <string name="def_notify_alarm">0</string>
+    <string name="def_notify_pending_action">0</string>
+    <bool name="def_enable_notify_dialog">false</bool>
+    <bool name="def_notify_vibrate">false</bool>
+
+</resources>

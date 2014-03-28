@@ -1,0 +1,78 @@
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.0.3'
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 19
+        versionCode 82
+        versionName "1.2.0"
+    }
+
+    //http://stackoverflow.com/a/19210105/2673859
+    final Console console = System.console();
+    if (console != null) {
+        signingConfigs {
+            release {
+                storeFile file('dolphin-release-key.keystore')
+                storePassword new String(console.readPassword("\n\$ Enter keystore password: "))
+                keyAlias "dolphin_key"
+                keyPassword new String(console.readPassword("\$ Enter key password: "))
+
+//                // These two lines make gradle believe that the signingConfigs
+//                // section is complete. Without them, tasks like installRelease
+//                // will not be available!
+//                storePassword "notYourRealPassword"
+//                keyPassword "notYourRealPassword"
+            }
+        }
+    } else {
+        // Building from IDE's "Run" button
+        signingConfigs {
+            release {
+
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            zipAlign true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.google.android.gms:play-services:+'
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:19.0.+'
+    compile 'com.google.code.gson:gson:2.2.+'
+    //compile project(':libraries:libShowcaseView')
+    compile project(':libraries:MyUtilsLibrary')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+//http://stackoverflow.com/a/19350401/2673859
+//task askForPasswords << {
+//    final Console console = System.console();
+//    if (console != null) {
+//        // Must create String because System.readPassword() returns char[]
+//        // (and assigning that below fails silently)
+//        def storePw = new String(console.readPassword("Keystore password: "))
+//        def keyPw = new String(console.readPassword("Key password: "))
+//
+//        android.signingConfigs.release.storePassword = storePw
+//        android.signingConfigs.release.keyPassword = keyPw
+//    }
+//}
+//
+//tasks.whenTaskAdded { theTask ->
+//    if (theTask.name.equals("packageRelease")) {
+//        theTask.dependsOn "askForPasswords"
+//    }
+//}

@@ -1,0 +1,17 @@
+<resources>
+    <bool name="config_tablet">true</bool>
+    <bool name="config_landscape">true</bool>
+
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+    <dimen name="padding_huge">32dp</dimen>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
+    -->
+    <dimen name="activity_horizontal_margin">128dp</dimen>
+    <dimen name="min_notify_dialog_width">360dp</dimen>
+
+</resources>

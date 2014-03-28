@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="cpbl_team_name">
+        <item>兄弟象</item>
+        <item>統一7-ELEVEn獅</item>
+        <item>義大犀牛</item>
+        <item>Lamigo桃猿</item>
+    </string-array>
+
+    <string-array name="cpbl_team_id">
+        <item>1</item>
+        <item>2</item>
+        <item>7</item>
+        <item>14</item>
+    </string-array>
+
+    <string-array name="cpbl_game_field_id">
+        <item>F00</item>
+		<item>F01</item>
+        <item>F02</item>
+        <item>F03</item>
+        <item>F04</item>
+		<item>F05</item>
+        <item>F06</item>
+        <item>F07</item>
+        <item>F08</item>
+        <item>F09</item>
+        <item>F10</item>
+		<item>F11</item>
+        <item>F12</item>
+        <item>F13</item>
+		<item>F14</item>
+		<item>F15</item>
+		<item>F17</item>
+        <item>F19</item>
+        <item>F23</item>
+    </string-array>
+
+    <string-array name="cpbl_game_field_name">
+        <item>所有球場</item>
+		<item>羅東</item>
+        <item>新竹</item>
+        <item>台中</item>
+        <item>台南</item>
+		<item>立德</item>
+        <item>屏東</item>
+        <item>嘉義市</item>
+        <item>新莊</item>
+        <item>澄清湖</item>
+        <item>天母</item>
+		<item>龍潭</item>
+        <item>花蓮</item>
+        <item>斗六</item>
+		<item>嘉義縣</item>
+		<item>台北市</item>
+		<item>台東</item>
+        <item>洲際</item>
+        <item>桃園</item>
+    </string-array>
+
+    <string-array name="cpbl_game_kind_id">
+        <item>07</item>
+        <item>01</item>
+        <!--<item>02</item>
+        <item>05</item>-->
+        <item>03</item>
+        <item>04</item>
+        <!--<item>06</item>
+        <item>14</item>-->
+        <item>09</item>
+        <!--<item>15</item>-->
+        <item>16</item>
+    </string-array>
+
+    <string-array name="cpbl_game_kind_name">
+        <item>一軍熱身賽</item>
+        <item>一軍例行賽</item>
+        <!--<item>一軍明星賽</item>
+        <item>一軍季後賽</item>-->
+        <item>一軍總冠軍賽</item>
+        <item>二軍例行賽</item>
+        <!--<item>二軍總冠軍賽</item>
+        <item>WBC熱身賽</item>-->
+        <item>亞洲職棒大賽</item>
+        <!--<item>2012中職古巴對抗賽</item>-->
+        <item>亞洲冬季棒球聯盟</item>
+    </string-array>
+
+    <!-- Teams -->
+    <string name="team_elephants">兄弟象</string>
+    <string name="team_elephants_short">象</string>
+    <string name="team_ct_elephants">中信兄弟象</string>
+    <string name="team_ct_elephants_short">象</string>
+    <string name="team_lions">統一獅</string>
+    <string name="team_lions_short">獅</string>
+    <string name="team_711_lions">統一7-ELEVEn獅</string>
+    <string name="team_711_lions_short">獅</string>
+    <string name="team_eda_rhinos">義大犀牛</string>
+    <string name="team_eda_rhinos_short">犀牛</string>
+    <string name="team_lamigo_monkeys">Lamigo桃猿</string>
+    <string name="team_lamigo_monkeys_short">桃猿</string>
+    <string name="team_lamigo_monkeys_short2">猿</string>
+    <string name="team_sinon_bulls">興農牛</string>
+    <string name="team_sinon_bulls_short">牛</string>
+    <string name="team_lanew_bears">La New熊</string>
+    <string name="team_lanew_bears_short">熊</string>
+    <string name="team_first_kinkon">第一金剛</string>
+    <string name="team_first_kinkon_short">金剛</string>
+    <string name="team_first_kinkon_short2">金</string>
+    <string name="team_jungo_bears">俊國熊</string>
+    <string name="team_jungo_bears_short">熊</string>
+    <string name="team_eagles">時報鷹</string>
+    <string name="team_eagles_short">鷹</string>
+    <string name="team_tigers">三商虎</string>
+    <string name="team_tigers_short">虎</string>
+    <string name="team_dragons">味全龍</string>
+    <string name="team_dragons_short">龍</string>
+    <string name="team_makoto_cobras">誠泰COBRAS</string>
+    <string name="team_makoto_cobras_short">COBRAS</string>
+    <string name="team_makoto_cobras_short2">蛇</string>
+    <string name="team_makoto_sun">誠泰太陽</string>
+    <string name="team_makoto_sun_short">太陽</string>
+    <string name="team_media_t_rex">米迪亞暴龍</string>
+    <string name="team_media_t_rex_short">暴龍</string>
+    <string name="team_media_t_rex_short2">暴</string>
+    <string name="team_ct_whales">中信鯨</string>
+    <string name="team_ct_whales_short">鯨</string>
+    <string name="team_kg_whales">和信鯨</string>
+    <string name="team_kg_whales_short">鯨</string>
+    <!-- 2014-03-15++ different source -->
+    <string name="team_lamigo_monkeys_short3">Lamigo</string>
+    <string name="team_eda_rhinos_short2">義大</string>
+    <string name="team_711_lions_short2">統一</string>
+    <string name="team_ct_elephants_short2">中信兄弟</string>
+
+    <!-- alarm before game start -->
+    <string-array name="notify_time_value">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+    </string-array>
+
+    <string-array name="notify_pending_action_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <!-- GeneralFragment -->
+    <string name="title_cpbl_offical">CPBL 中華職棒大聯盟</string>
+    <string name="summary_cpbl_offical">http://www.cpbl.com.tw/</string>
+    <string name="title_twbsball_wiki">台灣棒球維基館</string>
+    <string name="summary_twbsball_wiki">http://twbsball.dils.tku.edu.tw/</string>
+    <string name="title_zxc22">中華職棒觀眾人數分析</string>
+    <string name="summary_zxc22">http://zxc22.idv.tw</string>
+    <string name="title_actionbarsherlock">ActionBarSherlock</string>
+    <string name="summary_actionbarsherlock">Copyright 2012 Jake Wharton</string>
+    <string name="title_npombourcq">ActionBarDrawerToggle.java</string>
+    <string name="summary_npombourcq">ActionBarSherlock compatible ActionBarDrawerToggle</string>
+    <string name="title_asset_studio">Android Asset Studio</string>
+    <string name="summary_asset_studio">Creative Commons 3.0 BY</string>
+    <string name="title_iconic_set">Iconic icon set</string>
+    <string name="summary_iconic_set">Creative Commons Share Alike 3.0</string>
+    <string name="title_showcaseview">ShowcaseView</string>
+    <string name="summary_showcaseview">Copyright Alex Curran © 2012.</string>
+    <string name="title_nine_old_android">NineOldAndroids</string>
+    <string name="summary_nine_old_android">Copyright 2012 Jake Wharton</string>
+
+</resources>

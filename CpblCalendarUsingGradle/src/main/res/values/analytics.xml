@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="TypographyDashes">
+    <!--Replace placeholder ID with your tracking ID-->
+    <string name="ga_trackingId">UA-4163873-6</string>
+
+    <!--Enable automatic activity tracking-->
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <!--Enable automatic exception tracking-->
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <!-- AdMob ID -->
+    <string name="ad_trackingId">a151e5722a9a626</string>
+</resources>

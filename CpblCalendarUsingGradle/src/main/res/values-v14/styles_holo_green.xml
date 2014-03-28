@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <style name="Theme.Holo_green" parent="@style/Theme.Sherlock.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_holo_green</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Holo_green</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Holo_green</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Holo_green</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Holo_green</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_holo_green</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_holo_green</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Holo_green</item>
+
+        <!-- Light.DarkActionBar specific -->
+        <item name="android:actionBarWidgetTheme">@style/Theme.Holo_green.Widget</item>
+
+        <!-- created by http://android-holo-colors.com/-->
+        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_holo_light</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+        <item name="android:buttonStyle">@style/ButtonHolo_green</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonHolo_green</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerHolo_green</item>
+        <item name="android:seekBarStyle">@style/SeekBarHolo_green</item>
+        <item name="android:buttonStyleToggle">@style/ToggleHolo_green</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+
+        <!-- ShowcaseView theme
+        <item name="showcaseViewStyle">@style/ShowcaseTheme</item>-->
+    </style>
+
+    <style name="ActionBar.Solid.Holo_green" parent="@style/Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/ab_solid_holo_green</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_holo_green</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_holo_green</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Holo_green</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Holo_green" parent="@style/Widget.Sherlock.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_holo_green</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Holo_green</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Holo_green.Widget" parent="@style/Theme.Sherlock">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Holo_green</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
+    </style>
+
+    <!-- created by http://android-holo-colors.com/-->
+    <style name="ButtonHolo_green" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+    </style>
+
+    <style name="ImageButtonHolo_green" parent="android:Widget.Holo.Light.ImageButton">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+    </style>
+
+    <style name="SpinnerHolo_green" parent="android:Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_holo_light</item>
+        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+    </style>
+
+    <style name="SeekBarHolo_green" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/scrubber_control_selector_holo_light</item>
+    </style>
+
+    <style name="ToggleHolo_green" parent="android:Widget.Holo.Light.Button.Toggle">
+        <item name="android:background">@drawable/btn_toggle_holo_light</item>
+    </style>
+
+    <!-- Holo AlertDialog-->
+    <style name="WindowTitleHolo_green" parent="android:TextAppearance.Holo.DialogWindowTitle">
+        <item name="android:textColor">@color/holo_green_dark</item>
+        <item name="android:background">@drawable/ab_transparent_holo_green</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar">
+        <!--<item name="android:actionBarItemBackground">@drawable/selectable_background_holo_green</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Holo_green</item>-->
+    </style>
+
+    <style name="Theme.Holo_green.DialogWindowTitle" parent="WindowTitleHolo_green">
+
+    </style>
+
+</resources>

@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+			  android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              tools:context=".SplashActivity"
+              android:baselineAligned="false">
+
+    <!-- The navigation drawer -->
+    <LinearLayout
+        android:id="@+id/left_drawer"
+        android:orientation="vertical"
+        android:layout_width="320dp"
+        android:layout_height="match_parent">
+
+        <include
+            android:layout_width="320dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            layout="@layout/layout_query_pane"/>
+
+        <LinearLayout
+            android:id="@+id/adLayout"
+            android:layout_width="320dp"
+            android:layout_height="64dp"
+            android:orientation="vertical"
+            android:gravity="bottom">
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+            android:id="@+id/content_frame"
+            tools:layout="@layout/listview_item_matchup"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/team_board"/>
+
+        <include
+            android:id="@+id/team_board"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/min_lead_team_board_height"
+            layout="@layout/leader_board"
+            android:layout_gravity="center"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

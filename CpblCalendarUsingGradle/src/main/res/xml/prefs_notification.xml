@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:key="preference_screen">
+
+    <CheckBoxPreference
+        android:key="enable_notification"
+        android:title="@string/title_notification_settings"
+        android:summaryOn="@string/title_enable_notification_on"
+        android:summaryOff="@string/title_enable_notification_off"
+        android:defaultValue="@bool/def_enable_notification"></CheckBoxPreference>
+
+    <Preference
+        android:key="debug_alarm_list"
+        android:title="Alarm list">
+    </Preference>
+
+    <PreferenceCategory
+        android:key="notification_group"
+        android:title="@string/title_notification_settings"
+        android:dependency="enable_notification">
+
+        <se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference
+            android:key="notify_teams"
+            android:title="@string/title_notify_teams"
+            android:entries="@array/cpbl_team_name"
+            android:entryValues="@array/cpbl_team_id"
+            android:dependency="enable_notification"/>
+        <!--
+            MultiSelectListPreference example
+            http://stackoverflow.com/a/11777632
+        -->
+
+        <CheckBoxPreference
+            android:key="manual_game_notify"
+            android:title="@string/title_manual_game_notify"
+            android:summaryOn="@string/title_manual_game_notify_on"
+            android:summaryOff="@string/title_manual_game_notify_off"
+            android:defaultValue="@bool/def_manual_game_notify"
+            android:dependency="enable_notification"></CheckBoxPreference>
+
+        <ListPreference
+            android:key="notify_alarm"
+            android:title="@string/title_notify_alarm"
+            android:entries="@array/notify_time"
+            android:entryValues="@array/notify_time_value"
+            android:defaultValue="@string/def_notify_alarm"
+            android:dependency="enable_notification"/>
+
+        <ListPreference
+            android:key="notify_pending_action"
+            android:title="@string/title_notify_pending_action"
+            android:entries="@array/notify_pending_action"
+            android:entryValues="@array/notify_pending_action_value"
+            android:defaultValue="@string/def_notify_pending_action"
+            android:dependency="enable_notification"/>
+
+        <CheckBoxPreference
+            android:key="enable_notify_dialog"
+            android:title="@string/title_show_dialog"
+            android:summaryOn="@string/title_show_dialog_on"
+            android:summaryOff="@string/title_show_dialog_off"
+            android:defaultValue="@bool/def_enable_notify_dialog"
+            android:dependency="enable_notification"></CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:key="enable_notify_vibrate"
+            android:title="@string/title_vibrate"
+            android:summaryOn="@string/title_vibrate_on"
+            android:summaryOff="@string/title_vibrate_off"
+            android:defaultValue="@bool/def_notify_vibrate"
+            android:dependency="enable_notification"></CheckBoxPreference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

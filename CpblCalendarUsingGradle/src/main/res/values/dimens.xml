@@ -1,0 +1,17 @@
+<resources>
+    <bool name="config_tablet">false</bool>
+    <bool name="config_landscape">false</bool>
+
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_huge">24dp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="min_lead_team_board_height">240dp</dimen>
+    <dimen name="min_notify_dialog_width">240dp</dimen>
+
+</resources>

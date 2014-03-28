@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_leader_board"
+        android:showAsAction="always"
+        android:title="@string/action_leader_board"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/menu_action_more"
+        android:icon="@drawable/ic_menu_moreoverflow_normal_holo_dark"
+        android:showAsAction="always"
+        android:title="@string/action_more">
+        <menu>
+            <item
+                android:id="@+id/action_settings"
+                android:showAsAction="withText"
+                android:title="@string/action_settings"
+                android:icon="@drawable/ic_action_settings"/>
+            <item
+                android:id="@+id/action_refresh"
+                android:showAsAction="withText"
+                android:title="@string/action_refresh"
+                android:icon="@drawable/ic_action_refresh"/>
+            <item
+                android:id="@+id/action_go_to_cpbl"
+                android:showAsAction="withText"
+                android:title="@string/action_go_to_website"/>
+        </menu>
+    </item>
+</menu>

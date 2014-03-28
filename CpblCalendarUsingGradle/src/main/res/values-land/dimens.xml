@@ -1,0 +1,11 @@
+<resources>
+    <bool name="config_tablet">false</bool>
+    <bool name="config_landscape">true</bool>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for landscape devices (e.g. 7" tablets) here.
+    -->
+    <dimen name="min_notify_dialog_width">300dp</dimen>
+
+</resources>

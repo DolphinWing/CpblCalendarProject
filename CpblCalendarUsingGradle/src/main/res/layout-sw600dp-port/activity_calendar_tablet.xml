@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              tools:context=".SplashActivity"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/content_outer_frame"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+            android:id="@+id/content_frame"
+            tools:layout="@layout/listview_item_matchup"/>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@android:id/progress"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+    <!-- The navigation drawer -->
+    <include
+        android:id="@+id/left_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        layout="@layout/layout_query_pane_port"
+        android:layout_marginTop="@dimen/padding_small"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/adLayout"
+            android:layout_weight="4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            android:minHeight="50dp">
+        </LinearLayout>
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"></View>
+    </LinearLayout>
+</LinearLayout>

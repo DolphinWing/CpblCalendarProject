@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              tools:context=".SplashActivity">
+
+    <!-- The navigation drawer -->
+    <LinearLayout
+        android:id="@+id/left_drawer"
+        android:orientation="vertical"
+        android:layout_width="320dp"
+        android:layout_height="match_parent">
+
+        <include
+            android:layout_width="320dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            layout="@layout/layout_query_pane"/>
+
+        <LinearLayout
+            android:id="@+id/adLayout"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:gravity="bottom">
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--<FrameLayout
+        android:id="@+id/center_frame"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        >
+    </FrameLayout>-->
+    <FrameLayout
+        android:id="@+id/content_outer_frame"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+            android:id="@+id/content_frame"
+            tools:layout="@layout/listview_item_matchup"/>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@android:id/progress"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+</LinearLayout>
