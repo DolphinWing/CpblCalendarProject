@@ -1,0 +1,28 @@
+#Android Studio auto generated
+local.properties
+
+# IntelliJ project files
+*.iml
+*.ipr
+*.iws
+.idea/i
+.idea/
+
+# Gradle
+.gradle
+build
+
+#currently no use
+libraries/libShowcaseView
+
+#sub-folders
+*/*.iml
+*/*.ipr
+*/*.iws
+*/build
+
+libraries/*/build
+libraries/*/*.iml
+libraries/*/*.ipr
+libraries/*/*.iws
+
