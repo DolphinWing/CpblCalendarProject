@@ -352,7 +352,7 @@ public class CpblCalendarHelper extends HttpHelper {
                         for (int g = 0; g < (games.length - 1); g++) {
                             gameList.add(parseOneGameHtml2014(year, month, d, games[g]));
                         }
-                        if (games.length > 2)//more than one game
+                        if (false && games.length > 2)//more than one game
                             for (int j = 1; j < (games.length - 1); j++) {
                                 Game g1 = gameList.get(gameList.size() - j);
                                 g1.Url = g1.IsFinal ? g1.Url : g1.Url.replace("1.html",
@@ -486,6 +486,7 @@ public class CpblCalendarHelper extends HttpHelper {
 //            game.Url = String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
 //                    URL_BASE, game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
             game.Url = "http://www.cpbltv.com/channel/1.html";//[80]dolphin++
+            game.Url = "http://www.cpbltv.com/";//[84]dolphin++
         }
 
         return game;
@@ -520,7 +521,7 @@ public class CpblCalendarHelper extends HttpHelper {
                             gameList.add(parseOneGameHtml2014zxc(month, i, mGame.group(1)));
                             g++;
                         }
-                        if (g > 1) {//more than one game
+                        if (false && g > 1) {//more than one game
                             for (int j = 1; j < g; j++) {
                                 Game g1 = gameList.get(gameList.size() - j);
                                 g1.Url = g1.IsFinal ? g1.Url : g1.Url.replace("1.html",
@@ -584,6 +585,7 @@ public class CpblCalendarHelper extends HttpHelper {
 //                game.Url = String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
 //                        URL_BASE, game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
                 game.Url = "http://www.cpbltv.com/channel/1.html";//[80]dolphin++
+                game.Url = "http://www.cpbltv.com/";//[84]dolphin++
             }
         } catch (Exception e) {
         }
@@ -594,13 +596,13 @@ public class CpblCalendarHelper extends HttpHelper {
     public static ArrayList<Game> getCache(Context context, String fileName) {
         //String fileName = String.format("%04d-%02d.json", year, month);
         File f = new File(context.getExternalCacheDir(), fileName);
-        Log.d(TAG, "getCache " + f.getAbsolutePath());
+        //Log.d(TAG, "getCache " + f.getAbsolutePath());
         if (f.exists()) {
             //convert JSON string to ArrayList<Game> object
             return Game.listFromJson(context, FileUtils.readFileToString(f));
         }
         f = new File(context.getCacheDir(), fileName);
-        Log.d(TAG, "getCache " + f.getAbsolutePath());
+        //Log.d(TAG, "getCache " + f.getAbsolutePath());
         if (f.exists()) {
             //convert JSON string to ArrayList<Game> object
             return Game.listFromJson(context, FileUtils.readFileToString(f));
@@ -622,11 +624,11 @@ public class CpblCalendarHelper extends HttpHelper {
         //String fileName = String.format("%04d-%02d.json", year, month);
         File f = new File(context.getExternalCacheDir(), fileName);
         //convert ArrayList<Game> object to JSON string
-        Log.d(TAG, "putCache " + f.getAbsolutePath());
+        //Log.d(TAG, "putCache " + f.getAbsolutePath());
         boolean r = FileUtils.writeStringToFile(f, Game.listToJson(context, list));
         if (!r) {
             f = new File(context.getCacheDir(), fileName);
-            Log.d(TAG, "putCache " + f.getAbsolutePath());
+            //Log.d(TAG, "putCache " + f.getAbsolutePath());
             r = FileUtils.writeStringToFile(f, Game.listToJson(context, list));
         }
         return r;
@@ -648,6 +650,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public static Calendar getNowTime() {
         //Log.d(TAG, Locale.TAIWAN.toString());
-        return Calendar.getInstance(Locale.TAIWAN);
+        //return Calendar.getInstance(Locale.TAIWAN);
+        return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
     }
 }

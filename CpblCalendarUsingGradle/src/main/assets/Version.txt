@@ -14,6 +14,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 我的網誌連結 http://wp.me/p179cd-H
 
 --
+[84] @ 2014-03-29
+    don't check channel about the game
+    fix Calendar getNowTime() that get the time of GMT-8 ... = ="
+
 [83] @ 2014-03-29
     fix GameListFragment.onListItemClick upcoming games url
     add always cache mode entry

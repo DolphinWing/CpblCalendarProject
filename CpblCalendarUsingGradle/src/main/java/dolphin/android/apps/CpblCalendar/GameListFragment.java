@@ -2,6 +2,7 @@ package dolphin.android.apps.CpblCalendar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -130,7 +131,7 @@ public class GameListFragment extends SherlockListFragment
                                 game.Kind, game.StartTime.get(Calendar.YEAR), game.Id) : null;
             } else {
                 url = game.Url;//default is live url
-                Log.d(TAG, game.StartTime.getTime().toString());
+                //Log.d(TAG, game.StartTime.getTime().toString());
             }
 
             if (game != null && url != null) {//[78]-- game.IsFinal) {
@@ -173,6 +174,7 @@ public class GameListFragment extends SherlockListFragment
         private boolean bShowToday;
         private boolean bIsTablet;//[47]dolphin++
         private AlarmHelper mAlarmHelper;//[50]dolphin++
+        private Calendar mNow;
 
         public MyAdapter(Context context, List<Game> objects) {
             super(context, android.R.id.text1, objects);
@@ -185,6 +187,8 @@ public class GameListFragment extends SherlockListFragment
             bIsTablet = mContext.getResources().getBoolean(R.bool.config_tablet);
 
             mAlarmHelper = new AlarmHelper(mContext);
+            mNow = CpblCalendarHelper.getNowTime();
+            //Log.d(TAG, mNow.getTime().toString());
         }
 
         @Override
@@ -284,10 +288,16 @@ public class GameListFragment extends SherlockListFragment
 //                tv4.setText("-");//no score
 
             //live channel
+            boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));//[84]dolphin++
+            //Log.d(TAG, game.StartTime.getTime().toString() + " " + bLiveNow);
             TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
-            if (game.Channel != null) {
+            if (mNow.get(Calendar.YEAR) >= 2014) {//CPBL TV live!
+                tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);
+                tv6.setText(bLiveNow ? getString(R.string.title_live_on_cpbltv) : "");
+                tv6.setTextColor(Color.RED);
+            } else if (game.Channel != null) {
                 tv6.setVisibility(View.VISIBLE);
-                tv6.setText(game.Channel);
+                tv6.setText(getString(R.string.title_live_now, game.Channel));
             } else {
                 tv6.setVisibility(View.GONE);
             }
@@ -333,7 +343,7 @@ public class GameListFragment extends SherlockListFragment
             if (alarm != null) {
                 alarm.setTag(game);
                 if (PreferenceUtils.isEnableNotification(getSherlockActivity())) {
-                    alarm.setVisibility(game.IsFinal ? View.GONE : View.VISIBLE);
+                    alarm.setVisibility(game.IsFinal || bLiveNow ? View.GONE : View.VISIBLE);
                     alarm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
