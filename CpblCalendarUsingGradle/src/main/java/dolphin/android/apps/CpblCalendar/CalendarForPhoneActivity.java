@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -248,6 +249,11 @@ public class CalendarForPhoneActivity extends CalendarActivity
         mDrawerLayout.closeDrawer(mDrawerList);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
         onLoading(true);//[30]dolphin++
+    }
+
+    @Override
+    public void onQueryStateChange(String msg) {
+        Log.d(TAG, "onQueryUpdate: " + msg);
     }
 
     @Override

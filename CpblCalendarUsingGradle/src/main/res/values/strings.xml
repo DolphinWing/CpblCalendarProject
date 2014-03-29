@@ -2,11 +2,14 @@
 <resources>
 
     <string name="app_name">CPBL賽程表</string>
+    <!-- ActionBar strings -->
     <string name="action_settings">設定</string>
     <string name="action_refresh">更新</string>
     <string name="action_more">更多</string>
     <string name="action_leader_board">戰績</string>
+    <string name="action_cache_mode">離線模式</string>
 
+    <!-- general string -->
     <string name="title_game_field">比賽球場</string>
     <string name="title_game_kind">比賽類別</string>
     <string name="title_game_year">年份</string>

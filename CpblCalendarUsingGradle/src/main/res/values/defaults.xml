@@ -27,4 +27,7 @@
     <bool name="def_enable_notify_dialog">false</bool>
     <bool name="def_notify_vibrate">false</bool>
 
+    <!-- enable cache mode -->
+    <bool name="def_cache_mode">false</bool>
+
 </resources>

@@ -160,6 +160,11 @@ public class CalendarForTabletActivity extends CalendarActivity
             }
 
             @Override
+            public void onQueryStateChange(String msg) {
+                Log.d(TAG, "onQueryUpdate: " + msg);
+            }
+
+            @Override
             public void onQuerySuccess(CpblCalendarHelper helper,
                                        ArrayList<Game> gameArrayList) {
                 //if (mShowcaseView != null && mShowcaseView.isShown()) {//[20]dolphin++

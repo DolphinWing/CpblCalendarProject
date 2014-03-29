@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
@@ -103,6 +104,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
         mGameField = getResources().getStringArray(R.array.cpbl_game_field_id);
         mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id);
+        mCacheMode = PreferenceUtils.isCacheMode(this);//[83]dolphin++
 
         //[33]dolphin++ java.lang.IllegalStateException
         // android.support.v4.app.FragmentManagerImpl.enqueueAction
@@ -172,6 +174,19 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+        mCacheMode = PreferenceUtils.isCacheMode(this);
+        Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
+        MenuItem item = menu.findItem(R.id.action_cache_mode);
+        if (item != null) {
+            item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
+                    : R.drawable.holo_green_btn_check_off_holo_dark);
+            //item.setCheckable(mCacheMode);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings: {
@@ -203,6 +218,14 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             }
             CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext());
             return true;
+            case R.id.action_cache_mode:
+                mCacheMode = !mCacheMode;
+                PreferenceUtils.setCacheMode(getBaseContext(), mCacheMode);
+                Log.d(TAG, String.format("onOptionsItemSelected mCacheMode=%s", mCacheMode));
+                //item.setCheckable(mCacheMode);
+                item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
+                        : R.drawable.holo_green_btn_check_off_holo_dark);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -270,6 +293,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     public interface OnQueryCallback {
         public void onQueryStart();
 
+        public void onQueryStateChange(String msg);
+
         public void onQuerySuccess(CpblCalendarHelper helper,
                                    ArrayList<Game> gameArrayList);
 
@@ -284,6 +309,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     private int mMonth;
     private String mField = "00";
     private CpblCalendarHelper mHelper = null;
+    private boolean mCacheMode = false;
 
     public boolean IsQuery() {
         return mIsQuery;

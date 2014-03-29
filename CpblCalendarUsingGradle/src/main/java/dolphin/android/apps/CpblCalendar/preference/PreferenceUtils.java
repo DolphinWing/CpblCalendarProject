@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +42,9 @@ public class PreferenceUtils {
     //ShowcaseView
     public final static String KEY_SHOWCASE_PHONE = "showcase_phone";
     //public final static String KEY_SHOWCASE_TABLET = "showcase_tablet";
+
+    //ActionBar
+    public final static String KEY_CACHE_MODE = "cache_mode";
 
     //[50]dolphin++ Notifications
     public final static String KEY_ENABLE_NOTIFICATION = "enable_notification";
@@ -257,5 +259,18 @@ public class PreferenceUtils {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         return isEngineerMode(context) ? true : pref.getBoolean(KEY_NOTIFY_VIBRATE,
                 context.getResources().getBoolean(R.bool.def_notify_vibrate));
+    }
+
+    public static boolean isCacheMode(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getBoolean(KEY_CACHE_MODE,
+                context.getResources().getBoolean(R.bool.def_cache_mode));
+    }
+
+    public static void setCacheMode(Context context, boolean enabled) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(KEY_CACHE_MODE, enabled);
+        editor.commit();
     }
 }
