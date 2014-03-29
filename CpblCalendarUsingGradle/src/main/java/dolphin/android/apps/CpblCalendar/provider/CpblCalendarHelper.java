@@ -14,6 +14,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -580,7 +581,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 //Log.d(TAG, String.format("==> %d people", Integer.parseInt(res[2])));
                 game.People = Integer.parseInt(res[2]);
             } else {
-//                game.Url = String.format("%s/game/starter.aspx?gameno=%s&year=%d&game=%d",
+//                game.Url = String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
 //                        URL_BASE, game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
                 game.Url = "http://www.cpbltv.com/channel/1.html";//[80]dolphin++
             }
@@ -646,6 +647,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static Calendar getNowTime() {
-        return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+        //Log.d(TAG, Locale.TAIWAN.toString());
+        return Calendar.getInstance(Locale.TAIWAN);
     }
 }
