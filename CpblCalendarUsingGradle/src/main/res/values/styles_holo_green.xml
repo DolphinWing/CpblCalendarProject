@@ -182,4 +182,14 @@
 
     </style>
 
+    <!-- Loading animation style -->
+    <style name="Theme.Holo_green.LoadingText" parent="@android:style/TextAppearance.Medium.Inverse">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal|bottom</item>
+        <item name="android:layout_marginBottom">@dimen/padding_huge</item>
+        <item name="android:padding">@dimen/padding_medium</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
 </resources>

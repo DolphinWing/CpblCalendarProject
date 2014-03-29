@@ -35,12 +35,29 @@
         </LinearLayout>
     </LinearLayout>
 
-    <fragment
+    <FrameLayout
+        android:id="@+id/content_outer_frame"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
-        android:id="@+id/content_frame"
-        tools:layout="@layout/listview_item_matchup"/>
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+            android:id="@+id/content_frame"
+            tools:layout="@layout/listview_item_matchup"/>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@android:id/progress"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@android:id/message"
+            style="@style/Theme.Holo_green.LoadingText"/>
+    </FrameLayout>
 
 </LinearLayout>

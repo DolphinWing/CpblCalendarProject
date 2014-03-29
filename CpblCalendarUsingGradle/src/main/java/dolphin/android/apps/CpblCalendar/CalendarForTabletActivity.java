@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-//import com.espian.showcaseview.OnShowcaseEventListener;
-//import com.espian.showcaseview.ShowcaseView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +22,9 @@ import java.util.Calendar;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+
+//import com.espian.showcaseview.OnShowcaseEventListener;
+//import com.espian.showcaseview.ShowcaseView;
 
 //import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.AdSize;
@@ -38,11 +39,12 @@ public class CalendarForTabletActivity extends CalendarActivity
 //        implements OnShowcaseEventListener
 {
     private ArrayList<Game> mGameList = null;
-//    private ShowcaseView mShowcaseView;
+    //    private ShowcaseView mShowcaseView;
     //private boolean mIsTutorialQuery = false;//[20]dolphin++
     private TextView mLeaderBoardTitle = null;
     private WebView mLeaderBoardContent = null;
     private View mProgressView;
+    private TextView mProgressText;//[84]dolphin++
 
 //    private AdView adView;//[37]++ add AdMob Ads to screen
 
@@ -50,7 +52,10 @@ public class CalendarForTabletActivity extends CalendarActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_tablet);
+
         mProgressView = findViewById(android.R.id.progress);
+        mProgressText = (TextView) findViewById(android.R.id.message);
+
         initQueryPane();
 
 //        //[20]dolphin++ add tablet tutorial
@@ -162,6 +167,8 @@ public class CalendarForTabletActivity extends CalendarActivity
             @Override
             public void onQueryStateChange(String msg) {
                 Log.d(TAG, "onQueryUpdate: " + msg);
+                if (mProgressText != null)
+                    mProgressText.setText(msg);
             }
 
             @Override
@@ -210,6 +217,8 @@ public class CalendarForTabletActivity extends CalendarActivity
 
         if (mProgressView != null)
             mProgressView.setVisibility(View.GONE);
+        if (mProgressText != null)
+            mProgressText.setVisibility(View.GONE);
         setSupportProgressBarIndeterminateVisibility(false);//hide loading animation
     }
 
@@ -238,6 +247,8 @@ public class CalendarForTabletActivity extends CalendarActivity
 
         if (mProgressView != null)
             mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
+        if (mProgressText != null)
+            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
         setSupportProgressBarIndeterminateVisibility(is_load);
     }
 

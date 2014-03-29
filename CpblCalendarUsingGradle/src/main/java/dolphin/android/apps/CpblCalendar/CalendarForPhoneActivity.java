@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -37,6 +38,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     private View mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private View mProgressView;
+    private TextView mProgressText;//[84]dolphin++
 
 //    TabHost mTabHost;
 //    ViewPager mViewPager;
@@ -97,6 +99,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         mProgressView = findViewById(android.R.id.progress);
+        mProgressText = (TextView) findViewById(android.R.id.message);
 //        //setup tab-viewpager
 //        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
 //        mTabHost.setup();
@@ -254,6 +257,8 @@ public class CalendarForPhoneActivity extends CalendarActivity
     @Override
     public void onQueryStateChange(String msg) {
         Log.d(TAG, "onQueryUpdate: " + msg);
+        if (mProgressText != null)
+            mProgressText.setText(msg);
     }
 
     @Override
@@ -279,6 +284,11 @@ public class CalendarForPhoneActivity extends CalendarActivity
 
         if (mProgressView != null)
             mProgressView.setVisibility(View.GONE);
+        if (mProgressText != null)
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                mProgressText.animate().alpha(0).setDuration(500).start();
+//            else
+            mProgressText.setVisibility(View.GONE);
         setSupportProgressBarIndeterminateVisibility(false);//hide loading animation
     }
 
@@ -309,6 +319,11 @@ public class CalendarForPhoneActivity extends CalendarActivity
 
         if (mProgressView != null)
             mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
+        if (mProgressText != null)
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                mProgressText.animate().alpha(is_load ? 0 : 1).setDuration(500).start();
+//            else
+            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
         setSupportProgressBarIndeterminateVisibility(is_load);
     }
 

@@ -182,6 +182,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
                     : R.drawable.holo_green_btn_check_off_holo_dark);
             //item.setCheckable(mCacheMode);
+            item.setVisible(getResources().getBoolean(R.bool.feature_cache));
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -356,15 +357,23 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         else if (resources.getBoolean(R.bool.demo_zxc22)) {
                             gameList = mHelper.query2014zxc(mMonth);
                         } else {//do real job
+                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
+                                    mYear, mMonth));
                             gameList = mHelper.query2014();
-                            if (gameList == null || gameList.size() <= 0)//backup plan
+                            if (gameList == null || gameList.size() <= 0) {//backup plan
+                                doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                                        mYear, mMonth));
                                 gameList = mHelper.query2014zxc(mMonth);
+                            }
                         }
                     }
+                    doQueryStateUpdateCallback(getString(R.string.title_download_complete));
 
                     if (resources.getBoolean(R.bool.feature_auto_load_next)) {
                         //auto load next month games
                         if (mMonth >= 3 && mMonth < 10 && now.get(Calendar.DAY_OF_MONTH) > 15) {
+                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                                    mYear, mMonth + 1));
                             ArrayList<Game> list = mHelper.query2014zxc(mMonth + 1);
                             for (Game g : list) {
                                 if (g.StartTime.get(Calendar.DAY_OF_MONTH) > 15)
@@ -373,6 +382,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                             }
                         }
                     }
+                    doQueryStateUpdateCallback(getString(R.string.title_download_complete));
 
                     if (gameList != null)
                         doQueryCallback(gameList);
@@ -392,12 +402,25 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
                     if (mHelper.canUseCache())
                         gameList = mHelper.getCache(mYear, mMonth);//try to read from cache
-                    else
+                    else {
+                        doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                                mYear, mMonth));
                         gameList = mHelper.query2014zxc(mMonth);
+                    }
                     doQueryCallback(gameList);
                 }
             }
         }).start();
+    }
+
+    private void doQueryStateUpdateCallback(final String message) {
+        if (mActivity != null && mQueryCallback != null)
+            CalendarActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mQueryCallback.onQueryStateChange(message);
+                }
+            });
     }
 
     /**

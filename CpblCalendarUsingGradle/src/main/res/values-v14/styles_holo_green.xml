@@ -44,6 +44,7 @@
         <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
         <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
         <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+        <item name="android:progressBarStyle">@android:style/Widget.Holo.ProgressBar</item>
 
         <!-- ShowcaseView theme
         <item name="showcaseViewStyle">@style/ShowcaseTheme</item>-->

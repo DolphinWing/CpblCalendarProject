@@ -88,5 +88,10 @@
     <!-- live message -->
     <string name="title_live_on_cpbltv">Live! on CPBL TV</string>
     <string name="title_live_now">Live! on %s</string>
+    <!-- download message -->
+    <string name="title_download_from_cpbl">自 CPBL 官網下載中 %1$04d/%2$02d</string>
+    <string name="title_download_from_zxc22">自 zxc22.idv.tw 下載中 %1$04d/%2$02d</string>
+    <string name="title_download_complete">資料下載完成，解析中</string>
+    <string name="title_parse_complete">資料解析完成</string>
 
 </resources>

@@ -26,6 +26,10 @@
             android:layout_height="wrap_content"
             android:id="@android:id/progress"
             android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@android:id/message"
+            style="@style/Theme.Holo_green.LoadingText"/>
     </FrameLayout>
 
     <!-- The navigation drawer -->
