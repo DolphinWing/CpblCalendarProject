@@ -118,27 +118,35 @@ public class GameListFragment extends SherlockListFragment
             //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
             //Log.d(TAG, "  game.Url: " + game.Url);
 
-            String url = game.Url;
+            String url = null;
             if (game.IsFinal) {
                 url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
                         CpblCalendarHelper.URL_BASE,
                         game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
-            } else {//if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
-                game.Url = String.format("%s/game/starter.aspx?gameno=%s&year=%d&game=%d",
-                        CpblCalendarHelper.URL_BASE,
-                        game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
-//            } else {
-//                //default live url
-//                Log.d(TAG, game.StartTime.getTime().toString());
+            } else if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
+                url = within3Days(game.StartTime) ?
+                        String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
+                                CpblCalendarHelper.URL_BASE,
+                                game.Kind, game.StartTime.get(Calendar.YEAR), game.Id) : null;
+            } else {
+                url = game.Url;//default is live url
+                Log.d(TAG, game.StartTime.getTime().toString());
             }
-            Log.d(TAG, "  game.Url: " + url);
+
             if (game != null && url != null) {//[78]-- game.IsFinal) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+                if (PreferenceUtils.isEngineerMode(getActivity()))
+                    Log.d(TAG, "Url=" + url.substring(url.lastIndexOf("/")));
+                else
+                    startActivity(i);
             }
         }
+    }
+
+    private boolean within3Days(Calendar c) {
+        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= ONE_DAY * 2);
     }
 
     //Long click on ListFragment
