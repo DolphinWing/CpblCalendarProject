@@ -6,10 +6,11 @@
     <bool name="feature_notify_teams">false</bool>
     <bool name="demo_notification">false</bool>
     <bool name="demo_no_data">false</bool>
-    <bool name="demo_zxc22">false</bool>
+    <bool name="demo_zxc22">true</bool>
     <bool name="feature_auto_load_next">true</bool>
     <bool name="feature_cache">true</bool>
     <bool name="demo_cache">false</bool>
+    <bool name="feature_cache_mode">false</bool>
 
     <!-- show leader board on layout -->
     <bool name="def_include_lead_board">false</bool>

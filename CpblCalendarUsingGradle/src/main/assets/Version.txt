@@ -14,6 +14,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 我的網誌連結 http://wp.me/p179cd-H
 
 --
+[85] @ 2014-03-30
+    check suspend games
+    get data from zxc22.idv.tw, no more cpbl.com.tw
+    change time display
+
 [84] @ 2014-03-29
     don't check channel about the game
     fix Calendar getNowTime() that get the time of GMT-8 ... = ="

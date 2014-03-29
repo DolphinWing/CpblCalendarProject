@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableString;
-import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -188,7 +187,7 @@ public class GameListFragment extends SherlockListFragment
 
             mAlarmHelper = new AlarmHelper(mContext);
             mNow = CpblCalendarHelper.getNowTime();
-            //Log.d(TAG, mNow.getTime().toString());
+            //Log.d(TAG, mNow.toString());
         }
 
         @Override
@@ -208,13 +207,14 @@ public class GameListFragment extends SherlockListFragment
             //game time
             Calendar c = game.StartTime;
             TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
-            String date_str = String.format("%s, %s",
+            String date_str = String.format("%s, %02d:%02d",
                     //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
                     //[53]dolphin++ use DAY_OF_WEEK to all devices
                     //new SimpleDateFormat(bIsTablet ? "MMM dd (E)" : "MMM dd",
                     new SimpleDateFormat("MMM dd (E)", Locale.TAIWAN).format(c.getTime()),
                     //time
-                    DateFormat.getTimeFormat(getSherlockActivity()).format(c.getTime()));
+                    //DateFormat.getTimeFormat(getSherlockActivity()).format(c.getTime()));
+                    c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
             date_str = bIsTablet && withinOneWeek(c) //[53]dolphin++ only tablets
                     ? String.format("%s (%s)", date_str,
                     //relative time span to have better date idea
@@ -289,7 +289,7 @@ public class GameListFragment extends SherlockListFragment
 
             //live channel
             boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));//[84]dolphin++
-            //Log.d(TAG, game.StartTime.getTime().toString() + " " + bLiveNow);
+            //Log.d(TAG, c.toString() + " live=" + bLiveNow);
             TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
             if (mNow.get(Calendar.YEAR) >= 2014) {//CPBL TV live!
                 tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);

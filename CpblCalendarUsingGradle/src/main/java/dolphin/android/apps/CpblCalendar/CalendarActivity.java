@@ -176,13 +176,13 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     @Override
     public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
         mCacheMode = PreferenceUtils.isCacheMode(this);
-        Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
+        //Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
         MenuItem item = menu.findItem(R.id.action_cache_mode);
         if (item != null) {
             item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
                     : R.drawable.holo_green_btn_check_off_holo_dark);
             //item.setCheckable(mCacheMode);
-            item.setVisible(getResources().getBoolean(R.bool.feature_cache));
+            item.setVisible(getResources().getBoolean(R.bool.feature_cache_mode));
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -355,16 +355,18 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         if (now.get(Calendar.YEAR) < 2014)
                             gameList = mHelper.query(gameKind, mYear, mMonth, mField);
                         else if (resources.getBoolean(R.bool.demo_zxc22)) {
+                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                                    mYear, mMonth));
                             gameList = mHelper.query2014zxc(mMonth);
                         } else {//do real job
-                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
+//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
+//                                    mYear, mMonth));
+//                            gameList = mHelper.query2014();
+//                            if (gameList == null || gameList.size() <= 0) {//backup plan
+                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                     mYear, mMonth));
-                            gameList = mHelper.query2014();
-                            if (gameList == null || gameList.size() <= 0) {//backup plan
-                                doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                                        mYear, mMonth));
-                                gameList = mHelper.query2014zxc(mMonth);
-                            }
+                            gameList = mHelper.query2014zxc(mMonth);
+//                            }
                         }
                     }
                     doQueryStateUpdateCallback(getString(R.string.title_download_complete));
@@ -380,9 +382,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                                     break;
                                 gameList.add(g);
                             }
+
+                            doQueryStateUpdateCallback(getString(R.string.title_download_complete));
                         }
                     }
-                    doQueryStateUpdateCallback(getString(R.string.title_download_complete));
 
                     if (gameList != null)
                         doQueryCallback(gameList);
@@ -445,7 +448,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         if (gameList != null && mHelper != null && mHelper.canUseCache()) {
             Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
             boolean r = mHelper.putCache(mYear, mMonth, gameList);
-            Log.v(TAG, String.format(" result: %s", (r ? "success" : "failed")));
+            Log.v(TAG, String.format("result: %s", (r ? "success" : "failed")));
         }
 
         if (mActivity != null && mQueryCallback != null)
@@ -493,7 +496,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
      * @return
      */
     private ArrayList<Game> get_debug_list(int year, int month) {
-        Log.d(TAG, "get_debug_list");
+        //Log.d(TAG, "get_debug_list");
         ArrayList<Game> gameList = new ArrayList<Game>();
         for (int i = 0; i < 30; i++) {
             Game game = new Game();

@@ -505,6 +505,7 @@ public class CpblCalendarHelper extends HttpHelper {
             String url = "http://zxc22.idv.tw/sche/main.asp?mmm=@month&place=&team=";
             url = url.replace("@month", String.valueOf(month));
             String html = getUrlContent(url, ENCODE_BIG5);
+            //Log.d(TAG, "getUrlContent " + html.length());
             if (html.contains("<tr bgcolor=\"orange\">")) {
                 //<font face=arial color=black>6<BR>
                 String[] days = html.substring(html.indexOf("<tr bgcolor=\"orange\">"))
@@ -513,13 +514,39 @@ public class CpblCalendarHelper extends HttpHelper {
                 for (int i = 1; i < days.length; i++) {
                     //check those days with games
                     if (days[i].contains("<font color=blue>")) {
-                        // Log.d(TAG, String.valueOf(i) + " " + days[i]);
+                        String[] data = days[i].split("<BR>");
+                        //Log.d(TAG, String.valueOf(i) + " " + days[i]);
                         Matcher mGame = Pattern.compile(PATTERN_GAME_2014_ZXC).matcher(days[i]);
                         int g = 0;//to calculate how many games today
                         while (mGame != null && mGame.find()) {
                             //Log.d(TAG, mGame.group(1));
-                            gameList.add(parseOneGameHtml2014zxc(month, i, mGame.group(1)));
-                            g++;
+                            try {
+                                if (mGame.group(1).contains("-")) {
+                                    gameList.add(parseOneGameHtml2014zxc(month, i,
+                                            mGame.group(1)));
+                                    g++;
+                                } else throw new Exception("Oops! suspended game");
+                            } catch (Exception e) {
+                                //Log.d(TAG, mGame.group(1));
+                                //Log.e(TAG, "e: " + e.getMessage());
+                                //e.printStackTrace();
+
+                                //Log.d(TAG, "==> " + data.length + ", g=" + g);
+                                String extra = data[g + 1];
+                                //Log.d(TAG, extra);
+                                if (extra.startsWith("<font color=red>")) {
+                                    g--;
+                                    gameList.remove(gameList.size() - 1);
+                                } else if (extra.startsWith("<font color=green>")) {
+                                    //                      01234567890123456789
+                                    Game suspend = gameList.get(gameList.size() - 1);
+                                    suspend.IsDelay = true;
+                                    suspend.StartTime.set(Calendar.HOUR_OF_DAY, 14);
+                                    suspend.StartTime.set(Calendar.MINUTE, 5);
+                                    suspend.DelayMessage = extra.substring(18,
+                                            extra.indexOf("</"));
+                                }
+                            }
                         }
                         if (false && g > 1) {//more than one game
                             for (int j = 1; j < g; j++) {
@@ -531,6 +558,8 @@ public class CpblCalendarHelper extends HttpHelper {
                         }
                     }
                 }
+            } else {
+                Log.e(TAG, "no data: " + html);
             }
         } catch (Exception e) {
             Log.e(TAG, "query: " + e.getMessage());

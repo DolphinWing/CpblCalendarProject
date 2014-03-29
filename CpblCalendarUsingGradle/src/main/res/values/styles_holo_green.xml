@@ -189,7 +189,7 @@
         <item name="android:layout_gravity">center_horizontal|bottom</item>
         <item name="android:layout_marginBottom">@dimen/padding_huge</item>
         <item name="android:padding">@dimen/padding_medium</item>
-        <item name="android:background">@android:color/darker_gray</item>
+        <item name="android:background">#88000000</item>
     </style>
 
 </resources>
