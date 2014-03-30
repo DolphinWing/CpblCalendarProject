@@ -40,13 +40,8 @@
             android:textColor="@android:color/secondary_text_light"/>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/icon_alarm"
-            android:src="@drawable/ic_device_access_alarm"
-            android:background="@drawable/item_background_holo_light"
-            android:paddingLeft="@dimen/padding_medium"
-            android:paddingRight="@dimen/padding_medium"/>
+            style="@style/Theme.Holo_green.AlarmIcon"/>
 
         <TextView
             android:layout_width="0dp"
