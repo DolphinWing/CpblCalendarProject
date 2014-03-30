@@ -14,6 +14,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 我的網誌連結 http://wp.me/p179cd-H
 
 --
+[86] @ 2014-03-30
+    implement cache mode
+    change alarm icon style(add padding and add to styles.xml)
+
 [85] @ 2014-03-30
     check suspend games
     get data from zxc22.idv.tw, no more cpbl.com.tw
