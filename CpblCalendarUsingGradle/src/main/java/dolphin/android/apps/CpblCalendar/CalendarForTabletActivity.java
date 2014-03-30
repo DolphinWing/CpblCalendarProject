@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -43,8 +42,6 @@ public class CalendarForTabletActivity extends CalendarActivity
     //private boolean mIsTutorialQuery = false;//[20]dolphin++
     private TextView mLeaderBoardTitle = null;
     private WebView mLeaderBoardContent = null;
-    private View mProgressView;
-    private TextView mProgressText;//[84]dolphin++
 
 //    private AdView adView;//[37]++ add AdMob Ads to screen
 
@@ -52,9 +49,6 @@ public class CalendarForTabletActivity extends CalendarActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_tablet);
-
-        mProgressView = findViewById(android.R.id.progress);
-        mProgressText = (TextView) findViewById(android.R.id.message);
 
         initQueryPane();
 
@@ -166,9 +160,9 @@ public class CalendarForTabletActivity extends CalendarActivity
 
             @Override
             public void onQueryStateChange(String msg) {
-                Log.d(TAG, "onQueryUpdate: " + msg);
-                if (mProgressText != null)
-                    mProgressText.setText(msg);
+                //Log.d(TAG, "onQueryUpdate: " + msg);
+                if (getProgressText() != null)
+                    getProgressText().setText(msg);
             }
 
             @Override
@@ -215,11 +209,12 @@ public class CalendarForTabletActivity extends CalendarActivity
             }
         }
 
-        if (mProgressView != null)
-            mProgressView.setVisibility(View.GONE);
-        if (mProgressText != null)
-            mProgressText.setVisibility(View.GONE);
-        setSupportProgressBarIndeterminateVisibility(false);//hide loading animation
+//        if (mProgressView != null)
+//            mProgressView.setVisibility(View.GONE);
+//        if (mProgressText != null)
+//            mProgressText.setVisibility(View.GONE);
+//        setSupportProgressBarIndeterminateVisibility(false);//hide loading animation
+        super.onLoading(false);
     }
 
 //    @Override
@@ -230,6 +225,7 @@ public class CalendarForTabletActivity extends CalendarActivity
 //        super.onResumeFragments();
 //    }
 
+    @Override
     public void onLoading(boolean is_load) {
         FragmentManager fmgr = getSupportFragmentManager();
         if (fmgr != null) {
@@ -245,11 +241,12 @@ public class CalendarForTabletActivity extends CalendarActivity
             //}
         }
 
-        if (mProgressView != null)
-            mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
-        if (mProgressText != null)
-            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
-        setSupportProgressBarIndeterminateVisibility(is_load);
+//        if (mProgressView != null)
+//            mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
+//        if (mProgressText != null)
+//            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
+//        setSupportProgressBarIndeterminateVisibility(is_load);
+        super.onLoading(is_load);
     }
 
     @Override

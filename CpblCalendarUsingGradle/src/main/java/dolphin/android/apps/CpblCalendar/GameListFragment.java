@@ -67,11 +67,11 @@ public class GameListFragment extends SherlockListFragment
             } catch (Exception e) {
                 Log.e(TAG, "isUpComingOn: " + e.getMessage());
             }
-            if (gameArrayList.size() > 0
-                    && gameArrayList.get(0).Source == Game.SOURCE_ZXC22)
-                activity.getSupportActionBar().setSubtitle(String.format("%s: %s",
-                        getString(R.string.title_data_source),
-                        getString(R.string.summary_zxc22)));
+//            if (gameArrayList.size() > 0
+//                    && gameArrayList.get(0).Source == Game.SOURCE_ZXC22)
+//                activity.getSupportActionBar().setSubtitle(String.format("%s: %s",
+//                        getString(R.string.title_data_source),
+//                        getString(R.string.summary_zxc22)));
         } else {
             Log.e(TAG, "updateAdapter null");
         }

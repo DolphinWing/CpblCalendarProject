@@ -72,6 +72,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     public Spinner mSpinnerMonth;
     public Button mButtonQuery;
 
+    private View mProgressView;
+    private TextView mProgressText;//[84]dolphin++
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Holo_green);
@@ -130,6 +133,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mSpinnerKind = (Spinner) findViewById(R.id.spinner2);
         mSpinnerYear = (Spinner) findViewById(R.id.spinner3);
         mSpinnerMonth = (Spinner) findViewById(R.id.spinner4);
+
+        mProgressView = findViewById(android.R.id.progress);
+        mProgressText = (TextView) findViewById(android.R.id.message);
 
         final Calendar now = CpblCalendarHelper.getNowTime();
         mYear = now.get(Calendar.YEAR);//[78]dolphin++ add initial value
@@ -201,7 +207,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             }
             return true;
             case R.id.action_refresh://[13]dolphin++
-                mButtonQuery.performClick();
+                if (PreferenceUtils.isCacheMode(this))
+                    runDownloadCache();
+                else
+                    mButtonQuery.performClick();
                 return true;//break;
             case R.id.action_leader_board://[26]dolphin++
                 showLeaderBoard();
@@ -220,12 +229,15 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext());
             return true;
             case R.id.action_cache_mode:
-                mCacheMode = !mCacheMode;
-                PreferenceUtils.setCacheMode(getBaseContext(), mCacheMode);
-                Log.d(TAG, String.format("onOptionsItemSelected mCacheMode=%s", mCacheMode));
-                //item.setCheckable(mCacheMode);
-                item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
-                        : R.drawable.holo_green_btn_check_off_holo_dark);
+                if (mCacheMode) {//cancel
+                    mCacheMode = false;
+                    PreferenceUtils.setCacheMode(getBaseContext(), mCacheMode);
+                    item.setIcon(R.drawable.holo_green_btn_check_off_holo_dark);
+
+                    mButtonQuery.performClick();//refresh a again
+                } else {//show confirm dialog
+                    showCacheModeEnableDialog(item);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -234,11 +246,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     private Button.OnClickListener onQueryClick = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
-            mButtonQuery.setEnabled(false);//disable the button
-            mSpinnerField.setEnabled(false);
-            mSpinnerKind.setEnabled(false);
-            mSpinnerYear.setEnabled(false);
-            mSpinnerMonth.setEnabled(false);
+            onLoading(true);
             mIsQuery = true;//Log.d(TAG, "onQueryClick");
             setSupportProgressBarIndeterminateVisibility(mIsQuery);
 
@@ -256,17 +264,15 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
             final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
             final SherlockFragmentActivity activity = getSFActivity();
-            if (HttpHelper.checkNetworkAvailable(activity) && !bDemoCache)
+            if (PreferenceUtils.isCacheMode(activity) || bDemoCache) //do cache mode query
+                doCacheModeQuery(activity, year, month, getOnQueryCallback());
+            else if (HttpHelper.checkNetworkAvailable(activity) && !bDemoCache)
                 doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
                         year, month, field, getOnQueryCallback());
             else {//[35]dolphin++ check network
-                if (!bDemoCache)
-                    Toast.makeText(activity, R.string.no_available_network,
-                            Toast.LENGTH_LONG).show();//[47] change SHORT to LONG
-                //[79]dolphin-- doQueryCallback(null);//[47]++ do callback to return
-                mActivity = activity;
-                mQueryCallback = getOnQueryCallback();
-                doQueryCallback(CpblCalendarHelper.getCache(activity, mYear, mMonth));//[79]dolphin++
+                Toast.makeText(activity, R.string.no_available_network,
+                        Toast.LENGTH_LONG).show();//[47] change SHORT to LONG
+                doQueryCallback(null);//[47]++ do callback to return
             }
         }
     };
@@ -314,6 +320,29 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     public boolean IsQuery() {
         return mIsQuery;
+    }
+
+    public TextView getProgressText() {
+        return mProgressText;
+    }
+
+    public void onLoading(boolean is_load) {
+        mButtonQuery.setEnabled(false);//disable the button
+        mSpinnerField.setEnabled(false);
+        mSpinnerKind.setEnabled(false);
+        mSpinnerYear.setEnabled(false);
+        mSpinnerMonth.setEnabled(false);
+
+        if (mProgressView != null)
+            mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
+        if (mProgressText != null) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                mProgressText.animate().alpha(is_load ? 0 : 1).setDuration(500).start();
+//            else
+            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
+            mProgressText.setText(is_load ? getString(R.string.title_download) : "");
+        }
+        setSupportProgressBarIndeterminateVisibility(is_load);
     }
 
     /**
@@ -403,9 +432,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         );
                     }
 
-                    if (mHelper.canUseCache())
+                    if (mHelper.canUseCache()) {
+                        doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
+                                mYear, mMonth));
                         gameList = mHelper.getCache(mYear, mMonth);//try to read from cache
-                    else {
+                    } else {
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                 mYear, mMonth));
                         gameList = mHelper.query2014zxc(mMonth);
@@ -445,7 +476,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             );
         }
 
-        if (gameList != null && mHelper != null && mHelper.canUseCache()) {
+        if (gameList != null && mHelper != null && mHelper.canUseCache()
+                && !PreferenceUtils.isCacheMode(this)) {
             Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
             boolean r = mHelper.putCache(mYear, mMonth, gameList);
             Log.v(TAG, String.format("result: %s", (r ? "success" : "failed")));
@@ -471,6 +503,21 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                                 }
                             }
                         }
+
+                        if (gameList.size() > 0) {
+                            switch (gameList.get(0).Source) {
+                                case Game.SOURCE_ZXC22:
+                                    getSFActivity().getSupportActionBar()
+                                            .setSubtitle(String.format("%s: %s",
+                                                    getString(R.string.title_data_source),
+                                                    getString(R.string.summary_zxc22)));
+                                    break;
+                            }
+                        }
+                        if (PreferenceUtils.isCacheMode(getBaseContext()))
+                            getSFActivity().getSupportActionBar()
+                                    .setSubtitle(R.string.action_cache_mode);
+
                         mQueryCallback.onQuerySuccess(mHelper, gameList);
                     } else {
                         mQueryCallback.onQueryError();
@@ -608,5 +655,95 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         super.onStop();
         //... // The rest of your onStop() code.
         EasyTracker.getInstance(this).activityStop(this);
+    }
+
+    private void showCacheModeEnableDialog(final MenuItem item) {
+        new AlertDialog.Builder(CalendarActivity.this).setCancelable(true)
+                .setMessage(R.string.title_cache_mode_enable_message)
+                .setTitle(R.string.action_cache_mode)
+                .setPositiveButton(R.string.title_cache_mode_start,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mCacheMode = true;
+                                PreferenceUtils.setCacheMode(getBaseContext(), mCacheMode);
+                                item.setIcon(R.drawable.holo_green_btn_check_on_holo_dark);
+                                //mButtonQuery.performClick();
+                                runDownloadCache();
+                            }
+                        }
+                )
+                .setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //do nothing
+                            }
+                        }
+                ).show();
+//        Log.d(TAG, String.format("onOptionsItemSelected mCacheMode=%s", mCacheMode));
+//        //item.setCheckable(mCacheMode);
+//        item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
+//                : R.drawable.holo_green_btn_check_off_holo_dark);
+    }
+
+    private void runDownloadCache() {
+        onLoading(true);
+
+        mHelper = new CpblCalendarHelper(mActivity);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int m = 3; m <= 10; m++) {
+                    doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                            mYear, m));
+                    ArrayList<Game> list = mHelper.query2014zxc(m);
+                    boolean r = mHelper.putCache(mYear, m, list);
+                    Log.v(TAG, String.format("%04d/%02d result: %s", mYear, m,
+                            (r ? "success" : "failed")));
+                }
+
+                CalendarActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mButtonQuery.performClick();
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void doCacheModeQuery(SherlockFragmentActivity activity,
+                                  int year, int month, OnQueryCallback callback) {
+        mActivity = activity;
+        mQueryCallback = callback;
+        mYear = year;
+        mMonth = month;
+
+        final Resources resources = mActivity.getResources();
+        mHelper = new CpblCalendarHelper(mActivity);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Game> gameList = mHelper.getCache(mYear, mMonth);
+                Calendar now = CpblCalendarHelper.getNowTime();
+                if (resources.getBoolean(R.bool.feature_auto_load_next)) {
+                    //auto load next month games
+                    if (mMonth >= 3 && mMonth < 10 && now.get(Calendar.DAY_OF_MONTH) > 15) {
+                        doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
+                                mYear, mMonth + 1));
+                        ArrayList<Game> list = mHelper.query2014zxc(mMonth + 1);
+                        for (Game g : list) {
+                            if (g.StartTime.get(Calendar.DAY_OF_MONTH) > 15)
+                                break;
+                            gameList.add(g);
+                        }
+
+                        doQueryStateUpdateCallback(getString(R.string.title_download_complete));
+                    }
+                }
+                doQueryCallback(gameList);
+            }
+        }).start();
     }
 }
