@@ -44,6 +44,7 @@ public class Game {
 
     public final static int SOURCE_CPBL = 0;
     public final static int SOURCE_ZXC22 = 1;
+    public final static int SOURCE_CPBL_2013 = 2;
 
     public int People = 0;
 

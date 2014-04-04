@@ -14,7 +14,6 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,11 +25,12 @@ import dolphin.android.util.FileUtils;
 public class CpblCalendarHelper extends HttpHelper {
     private final static String TAG = "CpblCalendarHelper";
     public final static String URL_BASE = "http://www.cpbl.com.tw";
+    public final static String URL_BASE_2013 = "http://cpblweb.ksi.com.tw";
     private final static String SCORE_QUERY_STRING =
             "?gamekind=@kind&myfield=@field&mon=@month&qyear=@year";
-    private final static String ALL_SCORE_URL = URL_BASE + "/standings/Allscoreqry.aspx";
+    private final static String ALL_SCORE_URL = URL_BASE_2013 + "/standings/AllScoreqry.aspx";
 
-    private final static String RESULT_URL = URL_BASE + "/GResult/Result.aspx";
+    private final static String RESULT_URL = URL_BASE_2013 + "/GResult/Result.aspx";
     private final static String RESULT_QUERY_STRING = "?gameno=@kind&pbyear=@year&game=@id";
     public final static String URL_SCHEDULE_2014 = URL_BASE + "/schedule.aspx";
 
@@ -67,6 +67,7 @@ public class CpblCalendarHelper extends HttpHelper {
         url = url.replace("@field", field);
         //Log.d(TAG, url);
 
+        long startTime = System.currentTimeMillis();
         try {
             String html = getUrlContent(url);
             //Log.d(TAG, String.format("html %d", html.length()));
@@ -104,7 +105,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 for (int d = 1; d < days.length; d++) {//String day : days) {
                     String day = days[d];
                     //Integer.parseInt(day.substring(day.indexOf(">") + 1));
-                    //Log.d(TAG, String.format(" which day: %d", d));
+                    //Log.d(TAG, String.format(" which day: %d >> %s", d, day));
                     if (day.contains("div align=right")) {
                         //at least one game
                         String data = day.substring(day.indexOf("</a>") + 4);
@@ -134,6 +135,9 @@ public class CpblCalendarHelper extends HttpHelper {
             e.printStackTrace();
         }
 
+        long endTime = System.currentTimeMillis();
+        Log.v(TAG, String.format("query y=%d m=%d k=%s f=%s, wasted %d ms",
+                year, month, kind, field, ((endTime - startTime))));
         mGameList = gameList;
         return gameList;
     }
@@ -165,6 +169,8 @@ public class CpblCalendarHelper extends HttpHelper {
     private Game parseOneGameHtml(String kind, int year, int month, int day, String str) {
         Game game = new Game();
         game.Kind = kind;
+        game.Source = Game.SOURCE_CPBL_2013;
+        //Log.d(TAG, str);
 
         game.StartTime = getNowTime();
         game.StartTime.set(Calendar.YEAR, year);
@@ -172,9 +178,9 @@ public class CpblCalendarHelper extends HttpHelper {
         game.StartTime.set(Calendar.DAY_OF_MONTH, day);
         game.StartTime.set(Calendar.SECOND, 0);
         game.StartTime.set(Calendar.MILLISECOND, 0);//[51]dolphin++ fix alarm key floating
-        game.StartTime.setTimeZone(TimeZone.getTimeZone("GMT+0800"));//[55]dolphin++
+        //game.StartTime.setTimeZone(TimeZone.getTimeZone("GMT+0800"));//[55]dolphin++
 
-        boolean bLive = kind.equalsIgnoreCase("01") && (year >= 2006);
+        boolean bLive = kind.equalsIgnoreCase("01") && (year >= 2006 && year < 2014);
 
         // check if this game is final, that can help use different pattern
         // to get correct game info from website, also need URL for back link
@@ -258,6 +264,7 @@ public class CpblCalendarHelper extends HttpHelper {
             msg = (msg.lastIndexOf("<br>") >= 0) ? msg.substring(0, msg.lastIndexOf("<br>")) : msg;
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, "game extra " + e.getMessage());
         }
         //Log.d(TAG, "delay: " + msg);
         game.DelayMessage = msg.replace("<br>", " ").trim();
@@ -367,7 +374,8 @@ public class CpblCalendarHelper extends HttpHelper {
             e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
-        Log.v(TAG, String.format("wasted %d ms", ((endTime - startTime))));
+        Log.v(TAG, String.format("query2014 %d/%d wasted %d ms",
+                year, month, ((endTime - startTime))));
         mGameList = gameList;
         return gameList;
     }
@@ -377,6 +385,55 @@ public class CpblCalendarHelper extends HttpHelper {
         intent.setData(Uri.parse(URL_SCHEDULE_2014));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    //                <div class="topinfo">
+//                    <ul>
+//                        <li><img src="assets/images/logo/L01_logo_07.png"></li>
+//                        <li>4</li>
+//                        <li>4</li>
+//                        <li>1</li>
+//                        <li>0.500</li>
+//                        <li>1</li>
+//                    </ul>
+//                </div>
+    private final static String PATTERN_BOARD_TEAM_2014 =
+            "<div class=\"topinfo\">[^<]*<ul>[^<]*<li><img src=\"([^\"]+)\"></li>[^<]*" +
+                    "<li>([^<]+)</li>[^<]*<li>([^<]+)</li>[^<]*<li>([^<]+)</li>[^<]*" +
+                    "<li>([^<]+)</li>[^<]*<li>([^<]*)</li>*";
+
+    public ArrayList<Stand> query2014LeaderBoard() {
+        long startTime = System.currentTimeMillis();
+        ArrayList<Stand> list = new ArrayList<Stand>();
+        try {
+            String html = getUrlContent(URL_BASE);
+            if (html != null && html.contains("<!--standing-->")
+                    && html.contains("<!--top5-->")) {
+                String boardHtml = html.substring(html.indexOf("<!--standing-->"),
+                        html.indexOf("<!--top5-->"));
+                //Log.d(TAG, mScoreBoardHtml);
+                Matcher matchTeams = Pattern.compile(PATTERN_BOARD_TEAM_2014).matcher(boardHtml);
+                while (matchTeams != null && matchTeams.find()) {
+                    Log.d(TAG, matchTeams.group(1));
+                    Team team = Team.getTeam2014(mContext, matchTeams.group(1));
+                    int win = Integer.parseInt(matchTeams.group(2));
+                    int lose = Integer.parseInt(matchTeams.group(3));
+                    int tie = Integer.parseInt(matchTeams.group(4));
+                    float rate = Float.parseFloat(matchTeams.group(5));
+                    float behind = list.size() > 0 ? Float.parseFloat(matchTeams.group(6)) : 0;
+                    Log.d(TAG, String.format("%d-%d-%d, %.03f, %.01f", win, tie, lose, rate, behind));
+                    list.add(new Stand(team, win, lose, tie, rate, behind));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "query2014LeaderBoard: " + e.getMessage());
+            e.printStackTrace();
+            mScoreBoardHtml = null;
+            list = null;
+        }
+        long endTime = System.currentTimeMillis();
+        Log.v(TAG, String.format("wasted %d ms", ((endTime - startTime))));
+        return list;
     }
 
     private final static String PATTERN_TEAM_2014 =
@@ -566,7 +623,8 @@ public class CpblCalendarHelper extends HttpHelper {
             e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
-        Log.v(TAG, String.format("wasted %d ms", ((endTime - startTime))));
+        Log.v(TAG, String.format("query2014zxc m=%d wasted %d ms",
+                month, ((endTime - startTime))));
         mGameList = gameList;
         return gameList;
     }

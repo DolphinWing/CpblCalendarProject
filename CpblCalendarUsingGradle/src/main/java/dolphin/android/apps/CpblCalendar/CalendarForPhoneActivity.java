@@ -11,15 +11,17 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.ActionBarDrawerToggle;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -63,7 +65,9 @@ public class CalendarForPhoneActivity extends CalendarActivity
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-        if (Calendar.getInstance().get(Calendar.YEAR) < 2014) {//[70]dolphin++ lock drawer
+        //[70]dolphin++ lock drawer
+        //[87]dolphin++ use new flag to control it
+        if (getResources().getBoolean(R.bool.feature_query_panel)) {
             // enable ActionBar app icon to behave as action to toggle nav drawer
             getSActionBar().setDisplayHomeAsUpEnabled(true);
             getSActionBar().setHomeButtonEnabled(true);
@@ -90,17 +94,12 @@ public class CalendarForPhoneActivity extends CalendarActivity
                 }
             };
             mDrawerLayout.setDrawerListener(mDrawerToggle);
+        } else {
+            //[70]dolphin++ lock drawer
+            //http://stackoverflow.com/a/17165256/2673859
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
 
-        //[70]dolphin++ lock drawer
-        //http://stackoverflow.com/a/17165256/2673859
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-//        //setup tab-viewpager
-//        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
-//        mTabHost.setup();
-//        mViewPager = (ViewPager) findViewById(R.id.pager);
-//        mTabsAdapter = new FragmentTabsAdapter(this, mTabHost, mViewPager);
         initQueryPane();
         //[18]dolphin++ check tutorial
         //[19]dolphin++ debug in engineer build
@@ -150,21 +149,8 @@ public class CalendarForPhoneActivity extends CalendarActivity
             }
         });
 
-//        mTabsAdapter.addTab(mTabHost.newTabSpec("upcoming").setIndicator(getString(R.string.tab_title_upcoming)),
-//                GameListFragment.class, genFragmentExtras(false));
-//        mTabsAdapter.addTab(mTabHost.newTabSpec("previous").setIndicator(getString(R.string.tab_title_previous)),
-//                GameListFragment.class, genFragmentExtras(true));
-//        if (savedInstanceState != null) {
-//            mTabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
-//        }
     }
 
-//    private Bundle genFragmentExtras(boolean bPast)
-//    {
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("past", bPast);
-//        return bundle;
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
@@ -182,6 +168,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         boolean visible = !drawerOpen & !IsQuery();
+//        boolean cacheMode = PreferenceUtils.isCacheMode(this);//[87]dolphin++
         MenuItem item = menu.findItem(R.id.menu_action_more);
         if (item != null) {//[25]dolphin++
             item.setVisible(visible);
@@ -189,11 +176,11 @@ public class CalendarForPhoneActivity extends CalendarActivity
             menu.findItem(R.id.action_settings).setVisible(visible);
             menu.findItem(R.id.action_refresh).setVisible(visible);
         }
-        if (Calendar.getInstance().get(Calendar.YEAR) < 2014) {//[70]dolphin++
-            item = menu.findItem(R.id.action_leader_board);//[26]dolphin++
-            if (item != null)
-                item.setVisible(visible);
-        }
+        //if (Calendar.getInstance().get(Calendar.YEAR) < 2014) {//[70]dolphin++
+        item = menu.findItem(R.id.action_leader_board);//[26]dolphin++
+        if (item != null)
+            item.setVisible(/*cacheMode ? false : */visible);//[87]dolphin++
+        //}
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -216,7 +203,6 @@ public class CalendarForPhoneActivity extends CalendarActivity
      * When using the ActionBarDrawerToggle, you must call it during
      * onPostCreate() and onConfigurationChanged()...
      */
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -259,6 +245,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
 
     @Override
     public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList) {
+        //mDrawerLayout.closeDrawer(mDrawerList);//[87]dolphin++ put to success?
         //Log.d(TAG, "onSuccess");
         updateGameListFragment(gameArrayList);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -274,18 +261,19 @@ public class CalendarForPhoneActivity extends CalendarActivity
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
             if (frag1 != null) {
                 frag1.updateAdapter(gameArrayList);
-                trans.commitAllowingStateLoss();//[30]dolphin++
+                try {
+                    trans.commitAllowingStateLoss();//[30]dolphin++
+                } catch (IllegalStateException e) {
+                    Log.e(TAG, "onLoading: " + e.getMessage());
+                    EasyTracker easyTracker = EasyTracker.getInstance(this);
+                    if (easyTracker != null) {
+                        easyTracker.send(MapBuilder.createEvent("Exception",
+                                "commitAllowingStateLoss", "phone", null).build());
+                    }
+                }
             }
         }
 
-//        if (mProgressView != null)
-//            mProgressView.setVisibility(View.GONE);
-//        if (mProgressText != null)
-////            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-////                mProgressText.animate().alpha(0).setDuration(500).start();
-////            else
-//            mProgressText.setVisibility(View.GONE);
-//        setSupportProgressBarIndeterminateVisibility(false);//hide loading animation
         super.onLoading(false);
     }
 
@@ -315,24 +303,8 @@ public class CalendarForPhoneActivity extends CalendarActivity
             //}
         }
 
-//        if (mProgressView != null)
-//            mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
-//        if (mProgressText != null)
-////            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-////                mProgressText.animate().alpha(is_load ? 0 : 1).setDuration(500).start();
-////            else
-//            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
-//        setSupportProgressBarIndeterminateVisibility(is_load);
         super.onLoading(is_load);
     }
-
-//    @Override
-//    protected void onResumeFragments() {
-//        //http://stackoverflow.com/a/12450060
-////        if (mGameList != null)//[30]dolphin++
-////            updateGameListFragment(mGameList);
-//        super.onResumeFragments();
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -19,12 +19,12 @@
             android:layout_gravity="start"
             layout="@layout/layout_query_pane"/>
 
-        <include
+        <!--<include
             android:id="@+id/team_board"
             android:layout_width="match_parent"
             android:layout_height="@dimen/min_lead_team_board_height"
             layout="@layout/leader_board"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"/>-->
 
         <LinearLayout
             android:id="@+id/adLayout"

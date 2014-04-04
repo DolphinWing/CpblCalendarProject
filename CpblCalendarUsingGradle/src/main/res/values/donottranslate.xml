@@ -55,8 +55,8 @@
 		<item>嘉義縣</item>
 		<item>台北市</item>
 		<item>台東</item>
-        <item>洲際</item>
-        <item>桃園</item>
+        <item>台中洲際</item>
+        <item>桃園國際</item>
     </string-array>
 
     <string-array name="cpbl_game_kind_id">

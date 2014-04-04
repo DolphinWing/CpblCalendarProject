@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 19
-        versionCode 86
-        versionName "1.2.0"
+        versionCode 87
+        versionName "1.3.0"
     }
 
     //http://stackoverflow.com/a/19210105/2673859

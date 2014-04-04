@@ -4,6 +4,7 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 快速取得CPBL中華職棒例行賽賽程表 <del>也可以很快的查詢過去的歷史對戰資料喔!</del>
 
 資料來源：CPBL中華職棒官網賽程 http://www.cpbl.com.tw/
+　　　　　中華職棒舊官方網址 http://cpblweb.ksi.com.tw/
 　　　　　中華職棒觀眾人數分析 http://zxc22.idv.tw (感謝站長carhow)
 圖片來源：台灣棒球維基館 http://twbsball.dils.tku.edu.tw
 開源函式庫：ActionBarSherlock, ShowcaseView, NineOldAndroids
@@ -14,9 +15,30 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 我的網誌連結 http://wp.me/p179cd-H
 
 --
+[87] @ 2014-04-04
+    add leader board (standing board) to phone activity
+    remove some useless codes
+    hide spinner when not applicable
+    use new flags to control layout
+        feature_query_panel: since CPBL restore old website, now we can enable it
+            see http://www.cpbl.com.tw/info/newspage.aspx?a=11575
+        feature_admob: admob on tablets
+    fix CPBL old data link
+    fix 2014 data parsing no live channel
+
 [86] @ 2014-03-30
     implement cache mode
     change alarm icon style(add padding and add to styles.xml)
+
+使用了新的gradle build tool
+增加載入中的提示，修正一些資料來源的問題，目前資料改由zxc22.idv.tw提供(感謝站長carhow)
+點擊場次的功能修改為：已經結束的比賽如舊；正在進行中的比賽將會打開cpbltv.com網頁；兩天內的比賽會開啟CPBL的介紹網頁
+
+新功能!!
+● 離線模式: 將可以將所有賽程下載到本機端，請在下拉式選單中啟用。
+● 通知功能: 開放測試中，請到設定中啟用。啟用後，點擊時間旁邊的小鬧鐘圖示，紅色表式啟動該場通知；灰色表示未啟動。
+
+新功能如有問題歡迎直接寫信至 dolphinwing74+googleplay@gmail.com
 
 [85] @ 2014-03-30
     check suspend games

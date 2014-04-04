@@ -58,20 +58,24 @@ public class GameListFragment extends SherlockListFragment
         //http://stackoverflow.com/a/5888331
         if (PreferenceUtils.isUpComingOn(activity) && gameArrayList != null) {
             try {//[8]++ try to scroll to not playing game at beginning
-                for (int i = 0; i < gameArrayList.size(); i++) {
-                    if (!gameArrayList.get(i).IsFinal) {
-                        this.getListView().setSelection(i);
-                        break;//break when the upcoming game if found
+                if (PreferenceUtils.isCacheMode(activity)) {//[87]dolphin++ select after game
+                    Calendar now = CpblCalendarHelper.getNowTime();
+                    for (int i = 0; i < gameArrayList.size(); i++) {
+                        if (gameArrayList.get(i).StartTime.after(now)) {
+                            this.getListView().setSelection(i);
+                            break;//break when the upcoming game if found
+                        }
                     }
-                }
+                } else
+                    for (int i = 0; i < gameArrayList.size(); i++) {
+                        if (!gameArrayList.get(i).IsFinal) {
+                            this.getListView().setSelection(i);
+                            break;//break when the upcoming game if found
+                        }
+                    }
             } catch (Exception e) {
                 Log.e(TAG, "isUpComingOn: " + e.getMessage());
             }
-//            if (gameArrayList.size() > 0
-//                    && gameArrayList.get(0).Source == Game.SOURCE_ZXC22)
-//                activity.getSupportActionBar().setSubtitle(String.format("%s: %s",
-//                        getString(R.string.title_data_source),
-//                        getString(R.string.summary_zxc22)));
         } else {
             Log.e(TAG, "updateAdapter null");
         }
@@ -118,16 +122,17 @@ public class GameListFragment extends SherlockListFragment
             //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
             //Log.d(TAG, "  game.Url: " + game.Url);
 
+            Calendar now = CpblCalendarHelper.getNowTime();
             String url = null;
-            if (game.IsFinal) {
-                url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
-                        CpblCalendarHelper.URL_BASE,
-                        game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
-            } else if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
+            if (game.StartTime.after(now)) {
                 url = within3Days(game.StartTime) ?
                         String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
                                 CpblCalendarHelper.URL_BASE,
                                 game.Kind, game.StartTime.get(Calendar.YEAR), game.Id) : null;
+            } else if (game.IsFinal || PreferenceUtils.isCacheMode(getActivity())) {
+                url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
+                        CpblCalendarHelper.URL_BASE,
+                        game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
             } else {
                 url = game.Url;//default is live url
                 //Log.d(TAG, game.StartTime.getTime().toString());
@@ -206,6 +211,9 @@ public class GameListFragment extends SherlockListFragment
 
             //game time
             Calendar c = game.StartTime;
+            boolean bNoScoreNoLive = (game.Source == Game.SOURCE_CPBL_2013
+                    && c.get(Calendar.YEAR) >= 2014);
+
             TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
             String date_str = String.format("%s, %02d:%02d",
                     //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
@@ -253,9 +261,10 @@ public class GameListFragment extends SherlockListFragment
             tv3.setTextColor(getResources().getColor(game.IsFinal
                     ? android.R.color.primary_text_light
                     : android.R.color.secondary_text_light_nodisable));
-//[78]dolphin--
-//            if (game.Source == Game.SOURCE_ZXC22)//[72]dolphin++
-//                tv3.setText("-");//no score
+            //[72]dolphin++ no score
+            //[87]dolphin++ CPBL_2013 source no score
+            if (bNoScoreNoLive)
+                tv3.setText("-");//no score
 
             TextView tv4 = (TextView) convertView.findViewById(R.id.textView4);
             TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
@@ -283,12 +292,14 @@ public class GameListFragment extends SherlockListFragment
             tv4.setTextColor(getResources().getColor(game.IsFinal
                     ? android.R.color.primary_text_light
                     : android.R.color.secondary_text_light_nodisable));
-//[78]dolphin--
-//            if (game.Source == Game.SOURCE_ZXC22)//[72]dolphin++
-//                tv4.setText("-");//no score
+            //[72]dolphin++ no score
+            //[87]dolphin++ CPBL_2013 source no score
+            if (bNoScoreNoLive)
+                tv4.setText("-");//no score
 
-            //live channel
-            boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));//[84]dolphin++
+            //[84]dolphin++//live channel
+            boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));
+            bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
             //Log.d(TAG, c.toString() + " live=" + bLiveNow);
             TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
             if (mNow.get(Calendar.YEAR) >= 2014) {//CPBL TV live!
@@ -304,7 +315,8 @@ public class GameListFragment extends SherlockListFragment
 
             //game field
             TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
-            tv7.setText(bIsTablet ? String.format("@%s", game.Field) : game.Field);
+            tv7.setText(game.Source == Game.SOURCE_CPBL || !game.Field.contains("＠")
+                    ? String.format("@%s", game.Field) : game.Field);
 
             //delay message
             TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
@@ -343,7 +355,8 @@ public class GameListFragment extends SherlockListFragment
             if (alarm != null) {
                 alarm.setTag(game);
                 if (PreferenceUtils.isEnableNotification(getSherlockActivity())) {
-                    alarm.setVisibility(game.IsFinal || bLiveNow ? View.GONE : View.VISIBLE);
+                    alarm.setVisibility(game.IsFinal || bLiveNow
+                            || game.StartTime.before(mNow) ? View.GONE : View.VISIBLE);
                     alarm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

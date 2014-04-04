@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +46,7 @@ public class CalendarForTabletActivity extends CalendarActivity
     private TextView mLeaderBoardTitle = null;
     private WebView mLeaderBoardContent = null;
 
+    private boolean mEnableAdMob = false;
 //    private AdView adView;//[37]++ add AdMob Ads to screen
 
     @Override
@@ -113,13 +117,18 @@ public class CalendarForTabletActivity extends CalendarActivity
         });
 
         //[70]dolphin++ hide left drawer since we can't change month or year now
-        View leftDrawer = findViewById(R.id.left_drawer);
-        if (leftDrawer != null)
-            leftDrawer.setVisibility(View.GONE);
-        leftDrawer = findViewById(R.id.left_drawer_sw720dp);
-        if (leftDrawer != null)//only sw720dp and larger
-            leftDrawer.setVisibility(View.GONE);
+        //[87]dolphin++ use new flag to control it
+        if (!getResources().getBoolean(R.bool.feature_query_panel)) {
+            View leftDrawer = findViewById(R.id.left_drawer);
+            if (leftDrawer != null)
+                leftDrawer.setVisibility(View.GONE);
+            leftDrawer = findViewById(R.id.left_drawer_sw720dp);
+            if (leftDrawer != null)//only sw720dp and larger
+                leftDrawer.setVisibility(View.GONE);
+        }
 
+        mEnableAdMob = getResources().getBoolean(R.bool.feature_admob);
+        if (mEnableAdMob) {
 //        //[37]dolphin++ http://goo.gl/YOfr9
 //        adView = new AdView(this, AdSize.BANNER, "a151e5722a9a626");
 //        if (adView != null) {
@@ -132,8 +141,10 @@ public class CalendarForTabletActivity extends CalendarActivity
 //            request.addTestDevice(AdRequest.TEST_EMULATOR);
 //            adView.loadAd(request);
 //        }
-        LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
-        layout.setVisibility(View.GONE);//[79]dolphin++ remove AdView for now
+        } else {
+            LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
+            layout.setVisibility(View.GONE);//[79]dolphin++ remove AdView for now
+        }
     }
 
     @Override
@@ -209,21 +220,8 @@ public class CalendarForTabletActivity extends CalendarActivity
             }
         }
 
-//        if (mProgressView != null)
-//            mProgressView.setVisibility(View.GONE);
-//        if (mProgressText != null)
-//            mProgressText.setVisibility(View.GONE);
-//        setSupportProgressBarIndeterminateVisibility(false);//hide loading animation
         super.onLoading(false);
     }
-
-//    @Override
-//    protected void onResumeFragments() {
-//        //http://stackoverflow.com/a/12450060
-////        if (mGameList != null)//[30]dolphin++
-////            updateGameListFragment(mGameList);
-//        super.onResumeFragments();
-//    }
 
     @Override
     public void onLoading(boolean is_load) {
@@ -234,18 +232,18 @@ public class CalendarForTabletActivity extends CalendarActivity
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
             if (frag1 != null)
                 frag1.setListShown(is_load);
-            //try {
-            trans.commitAllowingStateLoss();//[30]dolphin++
-            //} catch (IllegalStateException e) {
-            //    Log.e(TAG, "onLoading: " + e.getMessage());
-            //}
+            try {
+                trans.commitAllowingStateLoss();//[30]dolphin++
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "onLoading: " + e.getMessage());
+                EasyTracker easyTracker = EasyTracker.getInstance(this);
+                if (easyTracker != null) {
+                    easyTracker.send(MapBuilder.createEvent("Exception",
+                            "commitAllowingStateLoss", "tablet", null).build());
+                }
+            }
         }
 
-//        if (mProgressView != null)
-//            mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
-//        if (mProgressText != null)
-//            mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
-//        setSupportProgressBarIndeterminateVisibility(is_load);
         super.onLoading(is_load);
     }
 
@@ -273,6 +271,7 @@ public class CalendarForTabletActivity extends CalendarActivity
         //check if the ActionBar MenuItem is required
         MenuItem item = menu.findItem(R.id.menu_action_more);
         boolean visible = !IsQuery();
+//        boolean cacheMode = PreferenceUtils.isCacheMode(this);//[87]dolphin++
         if (item != null) {//[25]dolphin++
             item.setVisible(visible);
         } else {
@@ -280,11 +279,11 @@ public class CalendarForTabletActivity extends CalendarActivity
             menu.findItem(R.id.action_refresh).setVisible(visible);//[13]dolphin++
         }
 
-        if (Calendar.getInstance().get(Calendar.YEAR) < 2014) {//[70]dolphin++
-            item = menu.findItem(R.id.action_leader_board);//[26]dolphin++
-            if (item != null)
-                item.setVisible(visible);
-        }
+        //if (Calendar.getInstance().get(Calendar.YEAR) < 2014) {//[70]dolphin++
+        item = menu.findItem(R.id.action_leader_board);//[26]dolphin++
+        if (item != null)
+            item.setVisible(/*cacheMode ? false : */visible);//[87]dolphin++
+        //}
         return super.onPrepareOptionsMenu(menu);
     }
 
