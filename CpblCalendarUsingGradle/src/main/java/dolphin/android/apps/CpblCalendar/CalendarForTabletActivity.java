@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,11 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,10 +33,6 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 //import com.espian.showcaseview.OnShowcaseEventListener;
 //import com.espian.showcaseview.ShowcaseView;
-
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.AdSize;
-//import com.google.android.gms.ads.AdView;
 
 /**
  * Created by dolphin on 2013/6/3.
@@ -47,7 +49,7 @@ public class CalendarForTabletActivity extends CalendarActivity
     private WebView mLeaderBoardContent = null;
 
     private boolean mEnableAdMob = false;
-//    private AdView adView;//[37]++ add AdMob Ads to screen
+    private AdView adView;//[37]++ add AdMob Ads to screen
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +143,21 @@ public class CalendarForTabletActivity extends CalendarActivity
 //            request.addTestDevice(AdRequest.TEST_EMULATOR);
 //            adView.loadAd(request);
 //        }
+            try {
+                adView = new AdView(this);
+                adView.setAdUnitId(getString(R.string.ad_trackingId));
+                adView.setAdSize(AdSize.BANNER);
+
+                LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
+                layout.addView(adView);
+
+                AdRequest adRequest = new AdRequest.Builder()
+                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                        .build();
+                adView.loadAd(adRequest);
+            } catch (Exception e) {
+                adView = null;
+            }
         } else {
             LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
             layout.setVisibility(View.GONE);//[79]dolphin++ remove AdView for now
@@ -153,10 +170,55 @@ public class CalendarForTabletActivity extends CalendarActivity
     }
 
     @Override
+    protected void onPause() {
+        //[88]dolphin++ AdMob service in Google Play Services
+        if (adView != null) adView.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //[88]dolphin++ AdMob service in Google Play Services
+        //https://developer.android.com/google/play-services/setup.html?hl=zh-tw#ensure
+        int errorCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        switch (errorCode) {
+            case ConnectionResult.SUCCESS:
+                break;
+            case ConnectionResult.SERVICE_MISSING:
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+            case ConnectionResult.SERVICE_DISABLED:
+                showGooglePlayServiceErrorDialog(errorCode);
+                return;
+            default:
+                break;
+        }
+
+        if (adView != null) adView.resume();
+    }
+
+    private void showGooglePlayServiceErrorDialog(int errorCode) {
+        Log.w(TAG, String.format("showGooglePlayServiceErrorDialog %d", errorCode));
+        GooglePlayServicesUtil.getErrorDialog(errorCode, CalendarForTabletActivity.this, 0,
+                new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        Log.w(TAG, "showGooglePlayServiceErrorDialog onCancel");
+                        adView = null;
+                        mEnableAdMob = false;
+                        LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
+                        if (layout != null) layout.setVisibility(View.GONE);
+                    }
+                }
+        ).show();
+    }
+
+    @Override
     protected void onDestroy() {
 //        if (adView != null)//[37]++ add AdMob Ads to screen
 //            adView.destroy();
-
+        if (adView != null) adView.destroy();//[88]dolphin++ now in Google Play Services
         super.onDestroy();
     }
 

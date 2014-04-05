@@ -12,7 +12,7 @@
     <bool name="demo_cache">false</bool>
     <bool name="feature_cache_mode">true</bool>
     <bool name="feature_query_panel">true</bool>
-    <bool name="feature_admob">false</bool>
+    <bool name="feature_admob">true</bool>
 
     <!-- show leader board on layout -->
     <bool name="def_include_lead_board">false</bool>

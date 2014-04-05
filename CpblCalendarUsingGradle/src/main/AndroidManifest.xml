@@ -52,11 +52,12 @@
             android:name=".preference.GBPreferenceActivity"
             android:screenOrientation="locked"/>
 
-        <!--
-                <activity
-                    android:name="com.google.android.gms.ads.AdActivity"
-                    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
-        -->
+
+        <activity
+            android:enabled="@bool/feature_admob"
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+
 
         <receiver
             android:name=".NotifyReceiver"
@@ -74,11 +75,11 @@
             android:screenOrientation="locked"
             android:theme="@style/Theme.Holo_green.Dialog"
             android:excludeFromRecents="true"/>
-        <!--
-                <meta-data
-                    android:name="com.google.android.gms.version"
-                    android:value="@integer/google_play_services_version"/>
-        -->
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
     </application>
 
 </manifest>
