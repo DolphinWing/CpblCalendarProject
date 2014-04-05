@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +44,14 @@ public class DisplayFragment extends PreferenceFragment
         mFavoritePref = findPreference(PreferenceUtils.KEY_FAVORITE_TEAMS);
         if (mFavoritePref != null) {
             mFavoritePref.setOnPreferenceChangeListener(this);
+        }
+
+        //[88]dolphin++ force to remove
+        PreferenceGroup group =
+                (PreferenceGroup) findPreference(PreferenceUtils.KEY_DISPLAY_GROUP);
+        if (group != null) {
+            Preference pref = findPreference(PreferenceUtils.KEY_INCLUDE_LEADER);
+            if (pref != null) group.removePreference(pref);
         }
 
         mCpblTeams = getActivity().getResources().getStringArray(R.array.cpbl_team_id);

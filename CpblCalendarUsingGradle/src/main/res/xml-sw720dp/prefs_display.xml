@@ -35,9 +35,12 @@
             android:key="include_lead_board"
             android:title="@string/title_include_lead_board"
             android:enabled="false"
-            android:summaryOn="@string/title_include_lead_board_on"
-            android:summaryOff="@string/title_include_lead_board_off"
+            android:summary="@string/title_include_lead_board_no_support"
             android:defaultValue="@bool/def_include_lead_board"/>
         <!-- [70]dolphin++ new layout of CPBL website, not support leader board now -->
+        <!-- [88]dolphin++ force to use MenuItem
+            android:summaryOn="@string/title_include_lead_board_on"
+            android:summaryOff="@string/title_include_lead_board_off"
+        -->
     </PreferenceCategory>
 </PreferenceScreen>

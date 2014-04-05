@@ -16,6 +16,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -284,7 +286,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             int fieldIndex = mSpinnerField.getSelectedItemPosition();
             String fieldId = mGameField[fieldIndex];
             if (fieldIndex > 0)
-                getSActionBar().setTitle(String.format("%s@%s", kind,
+                getSActionBar().setTitle(String.format("%s＠%s", kind,
                         mSpinnerField.getSelectedItem().toString()));
 
             getSActionBar().setSubtitle(String.format("%s %s",
@@ -632,7 +634,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             game.Id = month + i + (year % 100);
             game.HomeTeam = new Team(this, Team.ID_EDA_RHINOS);
             game.AwayTeam = new Team(this, Team.ID_LAMIGO_MONKEYS);
-            game.Field = "@somewhere";
+            game.Field = "＠somewhere";
             game.StartTime = CpblCalendarHelper.getNowTime();
             game.StartTime.set(Calendar.HOUR_OF_DAY, 18);
             game.StartTime.add(Calendar.DAY_OF_YEAR, i - 3);
@@ -703,6 +705,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             WebView webView = (WebView) view.findViewById(R.id.webView);//new WebView(this);
             // http://pop1030123.iteye.com/blog/1399305
             //webView.getSettings().setDefaultTextEncodingName(CpblCalendarHelper.ENCODE_UTF8);
+            webView.getSettings().setJavaScriptEnabled(false);
+            webView.getSettings().setSupportZoom(false);
 
             //Log.d(TAG, html);
             // Encoding issue with WebView's loadData
@@ -710,6 +714,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             if (webView != null)
                 webView.loadData(html, "text/html; charset=" +
                         CpblCalendarHelper.ENCODE_UTF8, null);
+//            TextView message = (TextView) view.findViewById(android.R.id.message);
+//            if (message != null)
+//                message.setText(new SpannableString(Html.fromHtml(html)));
 
             dialog.setView(view);//webView
             dialog.show();
@@ -729,17 +736,28 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     null, null).build());
     }
 
+    ArrayList<Stand> mStanding = null;
+
     public void showLeaderBoard2014() {
-        internalLoading(true);
+        if (mStanding != null) {
+            doShowLeaderBoard2014(mStanding);
+            invalidateOptionsMenu();
+            return;
+        }
+
+        mIsQuery = true;//indicate that now it is downloading
+        invalidateOptionsMenu();
+        internalLoading(true);//download from website
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final ArrayList<Stand> standing = mHelper.query2014LeaderBoard();
+                mStanding = mHelper.query2014LeaderBoard();
                 CalendarActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        doShowLeaderBoard2014(standing);
+                        doShowLeaderBoard2014(mStanding);
                         internalLoading(false);
+                        mIsQuery = false;
                         invalidateOptionsMenu();
                     }
                 });
@@ -747,25 +765,32 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }).start();
     }
 
-    private final static String TABLE_ROW_TEMPLATE = "<tr style='%style'>" +
-            "<td style='width:40%;'>@team</td>" +
-            "<td style='width:15%;text-align:center'>@win</td>" +
-            "<td style='width:15%;text-align:center'>@lose</td>" +
-            "<td style='width:15%;text-align:center'>@tie</td>" +
-            "<td style='width:15%;text-align:center'>@behind</td></tr>";
+    private final static String TABLE_ROW_TEMPLATE =
+            "<tr style='%style' bgcolor='@bgcolor'>" +
+                    "<td style='width:40%;'>@team</td>" +
+                    "<td style='width:15%;text-align:center'>@win</td>" +
+                    "<td style='width:15%;text-align:center'>@lose</td>" +
+                    "<td style='width:15%;text-align:center'>@tie</td>" +
+                    "<td style='width:15%;text-align:center'>@behind</td></tr>";
 
     public void doShowLeaderBoard2014(ArrayList<Stand> standing) {
         String standingHtml = "<table style='width:100%;'>";
         standingHtml += TABLE_ROW_TEMPLATE
-                .replace("@style", "background-color:#ccf;font-weight:bold;")
+                .replace("@style", "color:white;")
+                .replace("@bgcolor", "#669900")
+                .replace("td", "th")
                 .replace("@team", getString(R.string.title_team))
                 .replace("@win", getString(R.string.title_win))
                 .replace("@lose", getString(R.string.title_lose))
                 .replace("@tie", getString(R.string.title_tie))
                 .replace("@behind", getString(R.string.title_game_behind));
         //standingHtml += "<tr><td colspan='5'><hr /></td></tr>";
+        final String[] color = {"#F1EFE6", "#E6F1EF"};
+        int c = 0;
         for (Stand stand : standing)
             standingHtml += TABLE_ROW_TEMPLATE
+                    .replace("@style", "")
+                    .replace("@bgcolor", color[(c++ % 2)])
                     .replace("@team", stand.getTeam().getName())
                     .replace("@win", String.valueOf(stand.getGamesWon()))
                     .replace("@lose", String.valueOf(stand.getGamesLost()))

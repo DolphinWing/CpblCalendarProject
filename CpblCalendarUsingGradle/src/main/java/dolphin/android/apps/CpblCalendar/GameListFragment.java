@@ -316,7 +316,7 @@ public class GameListFragment extends SherlockListFragment
             //game field
             TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
             tv7.setText(game.Source == Game.SOURCE_CPBL || !game.Field.contains("＠")
-                    ? String.format("@%s", game.Field) : game.Field);
+                    ? String.format("＠%s", game.Field) : game.Field);
 
             //delay message
             TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);

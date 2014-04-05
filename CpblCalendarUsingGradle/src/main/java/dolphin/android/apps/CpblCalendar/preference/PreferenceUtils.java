@@ -187,9 +187,10 @@ public class PreferenceUtils {
      * @return
      */
     public static boolean isIncludeLeaderBoard(Context context) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
-                context.getResources().getBoolean(R.bool.def_include_lead_board));
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+//        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
+//                context.getResources().getBoolean(R.bool.def_include_lead_board));
+        return false;//[88]dolphin++ force to use menu item
     }
 
     /**
