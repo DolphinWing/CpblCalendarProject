@@ -9,51 +9,29 @@
                 android:paddingTop="@dimen/padding_small">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@android:id/icon"
-        android:src="@drawable/ic_drawer_light"
-        android:scaleType="fitCenter"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/padding_small"/>
+        style="@style/Theme.Holo_green.Match.Drawer"
+        android:id="@android:id/icon"/>
 
     <LinearLayout
+        style="@style/Theme.Holo_green.Match.Title"
         android:id="@+id/match_title"
-        android:layout_toLeftOf="@android:id/icon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left|center_vertical"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/padding_medium"
-        android:paddingRight="@dimen/padding_small"
-        android:paddingBottom="@dimen/padding_small">
+        android:layout_toLeftOf="@android:id/icon">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/app_name"
-            android:id="@+id/textView1"
-            android:layout_gravity="left|center_vertical"
-            android:textColor="@android:color/secondary_text_light"/>
+            style="@style/Theme.Holo_green.Match.Time"
+            android:id="@+id/textView1"/>
 
         <ImageView
             android:id="@+id/icon_alarm"
             style="@style/Theme.Holo_green.AlarmIcon"/>
 
         <TextView
+            style="@style/Theme.Holo_green.Match.GameId"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/empty_data"
             android:id="@+id/textView9"
-            android:layout_gravity="right|center_vertical"
-            android:gravity="center_vertical|right"
-            android:textColor="@android:color/secondary_text_light_nodisable"
-            android:autoText="false"/>
+            android:gravity="center_vertical|right"/>
 
     </LinearLayout>
 
@@ -68,62 +46,32 @@
         android:paddingRight="@dimen/padding_medium">
 
         <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@android:id/icon1"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center_vertical"/>
+            style="@style/Theme.Holo_green.Match.Logo"
+            android:id="@android:id/icon1"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="0.3"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/empty_data"
-            android:id="@+id/textView2"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"/>
+            style="@style/Theme.Holo_green.Match.Team"
+            android:id="@+id/textView2"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="0.2"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/empty_data"
-            android:id="@+id/textView3"
-            android:layout_gravity="center"
-            android:gravity="center"/>
+            style="@style/Theme.Holo_green.Match.Score"
+            android:id="@+id/textView3"/>
 
         <View
             android:layout_width="@dimen/padding_small"
             android:layout_height="match_parent"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="0.2"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/empty_data"
-            android:id="@+id/textView4"
-            android:layout_gravity="center"
-            android:gravity="center"/>
+            style="@style/Theme.Holo_green.Match.Score"
+            android:id="@+id/textView4"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="0.3"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/empty_data"
-            android:id="@+id/textView5"
-            android:layout_gravity="center"
-            android:gravity="center"/>
+            style="@style/Theme.Holo_green.Match.Team"
+            android:id="@+id/textView5"/>
 
         <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@android:id/icon2"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center_vertical"/>
+            style="@style/Theme.Holo_green.Match.Logo"
+            android:id="@android:id/icon2"/>
 
     </LinearLayout>
 
@@ -140,34 +88,19 @@
         android:paddingTop="@dimen/padding_small">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/empty_data"
-            android:id="@+id/textView6"
-            android:layout_gravity="right|center_vertical"
-            android:textColor="@android:color/secondary_text_light"/>
+            style="@style/Theme.Holo_green.Match.Channel"
+            android:id="@+id/textView6"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/title_game_field"
-            android:id="@+id/textView7"
-            android:textColor="@android:color/secondary_text_light"
-            android:gravity="center_vertical|right"/>
+            style="@style/Theme.Holo_green.Match.Field"
+            android:id="@+id/textView7"/>
 
     </LinearLayout>
 
     <TextView
+        style="@style/Theme.Holo_green.Match.ExtraMsg"
         android:layout_below="@+id/more_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/empty_data"
         android:id="@+id/textView8"
-        android:layout_gravity="left|center_vertical"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_huge"
         android:layout_marginRight="@dimen/padding_huge"

@@ -60,11 +60,8 @@
                 tools:layout="@layout/listview_item_matchup"/>
 
             <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@android:id/progress"
-                android:layout_gravity="center"/>
+                style="@style/Theme.Holo_green.LoadingIcon"
+                android:id="@android:id/progress"/>
 
             <TextView
                 android:id="@android:id/message"

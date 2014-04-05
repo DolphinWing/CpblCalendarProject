@@ -14,4 +14,12 @@
     <dimen name="min_lead_team_board_height">240dp</dimen>
     <dimen name="min_notify_dialog_width">240dp</dimen>
 
+    <!-- Theme.Holo_green.Match -->
+    <dimen name="match_team_textSize">22sp</dimen>
+    <dimen name="match_field_textSize">14sp</dimen>
+    <dimen name="match_channel_textSize">14sp</dimen>
+    <dimen name="match_extraMsg_textSize">14sp</dimen>
+    <dimen name="match_logo_width">48dp</dimen>
+    <dimen name="match_logo_height">48dp</dimen>
+
 </resources>

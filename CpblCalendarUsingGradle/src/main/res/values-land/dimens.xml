@@ -8,4 +8,10 @@
     -->
     <dimen name="min_notify_dialog_width">300dp</dimen>
 
+    <!-- Theme.Holo_green.Match -->
+    <dimen name="match_field_textSize">18sp</dimen>
+    <dimen name="match_channel_textSize">18sp</dimen>
+    <dimen name="match_logo_width">48dp</dimen>
+    <dimen name="match_logo_height">48dp</dimen>
+
 </resources>

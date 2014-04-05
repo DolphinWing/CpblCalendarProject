@@ -109,4 +109,28 @@
 
     </style>
 
+    <!-- Loading animation style -->
+    <style name="Theme.Holo_green.LoadingText" parent="@android:style/TextAppearance.Holo.Medium.Inverse">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal|bottom</item>
+        <item name="android:layout_marginBottom">@dimen/padding_huge</item>
+        <item name="android:padding">@dimen/padding_medium</item>
+        <item name="android:background">#88000000</item>
+    </style>
+
+    <style name="Theme.Holo_green.LoadingIcon" parent="@android:style/Widget.Holo.ProgressBar.Large">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <!-- Match row style -->
+    <style name="Theme.Holo_green.TextLarge" parent="@android:style/TextAppearance.Holo.Large"/>
+
+    <style name="Theme.Holo_green.TextMedium" parent="@android:style/TextAppearance.Holo.Medium"/>
+
+    <style name="Theme.Holo_green.TextSmall" parent="@android:style/TextAppearance.Holo.Small"/>
+
+
 </resources>
