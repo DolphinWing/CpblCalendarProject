@@ -209,7 +209,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
                     : R.drawable.holo_green_btn_check_off_holo_dark);
             //item.setCheckable(mCacheMode);
-            item.setVisible(getResources().getBoolean(R.bool.feature_cache_mode));
+            item.setVisible(!mIsQuery && getResources().getBoolean(R.bool.feature_cache_mode));
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -824,6 +824,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     private void runDownloadCache() {
         onLoading(true);
+        mIsQuery = true;//[88]dolphin++ indicate now is loading
+        invalidateOptionsMenu();
 
         mHelper = new CpblCalendarHelper(mActivity);
         new Thread(new Runnable() {
