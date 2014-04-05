@@ -540,6 +540,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     case Game.SOURCE_ZXC22:
                         extra = "zxc22";
                         break;
+                    case Game.SOURCE_CPBL_2013:
+                        extra = "cpbl_old";
+                        break;
                 }
             easyTracker.send(MapBuilder.createEvent("UI", "doQueryCallback",
                     String.format("%04d/%02d:%s", mYear, mMonth, extra), null).build());
