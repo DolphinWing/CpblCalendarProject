@@ -19,6 +19,13 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[89] @ 2014-04-07
+    fix Elephant -> CT Elephant
+        java.util.ConcurrentModificationException
+            check http://goo.gl/sfsrWc or http://goo.gl/KTDRdB
+    fix 1.2.0 java.lang.NullPointerException
+    set initial year >= 2014 (possible issue from 1.1.0 java.lang.NegativeArraySizeException)
+
 [88] @ 2014-04-05
     add data tracker to identify old CPBL website
     restore AdMob on tablet devices
@@ -26,8 +33,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
     change the loading indicator for cache mode on 10" tablets
     move many styles to styles.xml
 
-增加顯示戰績、篩選場地、時間功能
-修正部分排版異常
+增加顯示戰績、篩選場地、時間功能。修正部分排版異常，同步賽程時間等。
+
+注意！如果你先前已經下載過離線賽程，請點擊刷新更新資料。
+
 
 [87] @ 2014-04-04
     add leader board (standing board) to phone activity

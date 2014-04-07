@@ -2,14 +2,16 @@
 <resources>
 
     <string-array name="cpbl_team_name">
-        <item>兄弟象</item>
+        <!--<item>兄弟象</item> [89]++ -->
+        <item>中信兄弟象</item>
         <item>統一7-ELEVEn獅</item>
         <item>義大犀牛</item>
         <item>Lamigo桃猿</item>
     </string-array>
 
     <string-array name="cpbl_team_id">
-        <item>1</item>
+        <!--<item>1</item> [89]++ -->
+        <item>17</item>
         <item>2</item>
         <item>7</item>
         <item>14</item>

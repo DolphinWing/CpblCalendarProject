@@ -21,22 +21,39 @@ import dolphin.android.apps.CpblCalendar.R;
  */
 public class Team {
     public final static int ID_UNKNOWN = 0;
+    //ID_ELEPHANTS -> ID_CT_ELEPHANTS
     public final static int ID_ELEPHANTS = 1;
+    //
     public final static int ID_UNI_LIONS = 2;
+    //
     public final static int ID_W_DRAGONS = 3;
+    //
     public final static int ID_SS_TIGERS = 4;
+    //
     public final static int ID_JUNGO_BEARS = 5;
+    //ID_JUNGO_BEARS -> ID_SINON_BULLS
     public final static int ID_SINON_BULLS = 6;
+    //ID_SINON_BULLS -> ID_EDA_RHINOS
     public final static int ID_EDA_RHINOS = 7;
+    //
     public final static int ID_TIME_EAGLES = 8;
+    //
     public final static int ID_CT_WHALES = 9;
-    public final static int ID_KG_WHALES = 15;
+    //ID_MKT_SUNS -> ID_MKT_COBRAS
     public final static int ID_MKT_COBRAS = 10;
-    public final static int ID_MKT_SUNS = 16;
+    //ID_MKT_COBRAS -> ID_MEDIA_T_REX
     public final static int ID_MEDIA_T_REX = 11;
+    //
     public final static int ID_FIRST_KINGO = 12;
+    //ID_FIRST_KINGO -> ID_LANEW_BEARS
     public final static int ID_LANEW_BEARS = 13;
+    //ID_LANEW_BEARS -> ID_LAMIGO_MONKEYS
     public final static int ID_LAMIGO_MONKEYS = 14;
+    //ID_KG_WHALES -> ID_CT_WHALES
+    public final static int ID_KG_WHALES = 15;
+    //ID_MKT_SUNS -> ID_MKT_COBRAS -> ID_MEDIA_T_REX
+    public final static int ID_MKT_SUNS = 16;
+    //ID_ELEPHANTS -> ID_CT_ELEPHANTS
     public final static int ID_CT_ELEPHANTS = 17;
 
     /**

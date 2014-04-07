@@ -8,6 +8,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -142,9 +143,9 @@ public class PreferenceUtils {
         HashMap<Integer, Team> teams = new HashMap<Integer, Team>();
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {//SDK > 11
-                SharedPreferences pref =
-                        PreferenceManager.getDefaultSharedPreferences(context);
-                Set<String> teamSet = pref.getStringSet(KEY_FAVORITE_TEAMS, null);
+                dolphin.android.preference.PreferenceUtils utils =
+                        new dolphin.android.preference.PreferenceUtils(context);
+                Set<String> teamSet = getFavoriteTeams_pre(utils);
                 if (teamSet != null) {
                     Iterator<String> iterator = teamSet.iterator();
                     while (iterator.hasNext()) {
@@ -157,7 +158,7 @@ public class PreferenceUtils {
             } else
                 throw new Exception("pre HONEYCOMB");
         } catch (Exception e) {
-            //pre-Honeycomb devices
+            //pre-Honeycomb devices, no favorite team options
             String[] teamSet = context.getResources().getStringArray(R.array.cpbl_team_id);
             for (String team : teamSet) {
                 int id = Integer.parseInt(team);
@@ -165,7 +166,30 @@ public class PreferenceUtils {
                 teams.put(id, new Team(context, id));
             }
         }
+
         return teams;
+    }
+
+    public static Set<String> getFavoriteTeams_pre(dolphin.android.preference.PreferenceUtils utils) {
+        Set<String> newSet = new HashSet<String>();
+        Set<String> teamSet = utils.getStringSet(KEY_FAVORITE_TEAMS, null);
+        if (teamSet != null) {
+            Iterator<String> iterator = teamSet.iterator();
+            while (iterator.hasNext()) {
+                int id = Integer.parseInt(iterator.next());
+                //2014: ID_ELEPHANTS -> ID_CT_ELEPHANTS
+                if (id == Team.ID_ELEPHANTS) {
+                    //http://goo.gl/sfsrWc http://goo.gl/KTDRdB
+                    //teamSet.remove(String.valueOf(Team.ID_ELEPHANTS));
+                    //iterator.remove();
+                    //id = Team.ID_CT_ELEPHANTS;
+                    newSet.add(String.valueOf(Team.ID_CT_ELEPHANTS));
+                } else newSet.add(String.valueOf(id));
+            }
+            utils.putStringSet(KEY_FAVORITE_TEAMS, newSet);
+            return newSet;
+        }
+        return null;
     }
 
     /**

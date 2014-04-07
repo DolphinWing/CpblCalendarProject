@@ -31,6 +31,11 @@ public class DisplayFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs_display);
 
+        //[89]dolphin++
+        dolphin.android.preference.PreferenceUtils utils =
+                new dolphin.android.preference.PreferenceUtils(getActivity());
+        PreferenceUtils.getFavoriteTeams_pre(utils);
+
         //dolphin++ 2013-06-17
 
         // Multi select ListPreference now comes

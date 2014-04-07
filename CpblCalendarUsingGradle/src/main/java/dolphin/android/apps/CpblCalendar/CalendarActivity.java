@@ -128,6 +128,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         //[56]++ refresh the alarm when open the activity
         if (PreferenceUtils.isEnableNotification(this))
             NotifyReceiver.setNextAlarm(this);
+        mActivity = getSFActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
     }
 
     /**
@@ -144,11 +145,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
         final Calendar now = CpblCalendarHelper.getNowTime();
         mYear = now.get(Calendar.YEAR);//[78]dolphin++ add initial value
+        mYear = (mYear > 2013) ? mYear : 2014;//[89]dolphin++ set initial value
         mMonth = now.get(Calendar.MONTH) + 1;//[78]dolphin++ add initial value
 
-        String[] years = new String[now.get(Calendar.YEAR) - 1990 + 1];
-        for (int i = 1990; i <= now.get(Calendar.YEAR); i++) {
-            years[now.get(Calendar.YEAR) - i] = String.format("%d (%s)",
+        String[] years = new String[mYear - 1990 + 1];
+        for (int i = 1990; i <= mYear; i++) {
+            years[mYear - i] = String.format("%d (%s)",
                     i, getString(R.string.title_cpbl_year, (i - 1989)));
             //years[now.get(Calendar.YEAR) - i] = String.format("%d (%s)",
             //        i, getString(R.string.title_cpbl_year));
@@ -567,7 +569,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         HashMap<Integer, Team> teams =
                                 PreferenceUtils.getFavoriteTeams(mActivity);
                         //2013 has 4 teams only, should I check this?
-                        if (teams.size() < 4 /*&& mYear >= 2013*/) {
+                        //[89]dolphin++ only filter out this year, check array size
+                        if (teams.size() < getResources().getStringArray(R.array.cpbl_team_id).length
+                            && mYear >= CpblCalendarHelper.getNowTime().get(Calendar.YEAR)) {
                             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
                                 Game game = i.next();
                                 if (teams.containsKey(game.HomeTeam.getId())
