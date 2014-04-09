@@ -483,15 +483,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         throw new Exception("no data");
                 } catch (Exception e) {
                     Log.e(TAG, "doWebQuery: " + e.getMessage());
-                    EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-                    if (easyTracker != null) {
-                        easyTracker.send(MapBuilder.createEvent("Exception",//Category
-                                        "doWebQuery",//Action (required)
-                                        e.getMessage(),//label
-                                        null)//Event value
-                                        .build()
-                        );
-                    }
+                    sendTrackerException("doWebQuery", e.getMessage(), null);
 
                     //can use cache, so try to read from cache
                     if (mHelper.canUseCache()) {
@@ -507,6 +499,14 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 }
             }
         }).start();
+    }
+
+    private void sendTrackerException(String action, String label, long evtValue) {
+        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
+        if (easyTracker != null) {
+            easyTracker.send(MapBuilder.createEvent("Exception", action, 
+                label, evtValue).build());
+        }
     }
 
     private void doQueryStateUpdateCallback(int resId) {
@@ -554,9 +554,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
         if (gameList != null && mHelper != null && mHelper.canUseCache()
                 && !PreferenceUtils.isCacheMode(this)) {
-            Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
+            //Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
             boolean r = mHelper.putCache(mYear, mMonth, gameList);
-            Log.v(TAG, String.format("result: %s", (r ? "success" : "failed")));
+            Log.v(TAG, String.format("%04d-%02d.json result: %s", mYear, mMonth, 
+                (r ? "success" : "failed")));
         }
 
         if (mActivity != null && mQueryCallback != null)
@@ -718,9 +719,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             if (webView != null)
                 webView.loadData(html, "text/html; charset=" +
                         CpblCalendarHelper.ENCODE_UTF8, null);
-//            TextView message = (TextView) view.findViewById(android.R.id.message);
-//            if (message != null)
-//                message.setText(new SpannableString(Html.fromHtml(html)));
+            //TextView message = (TextView) view.findViewById(android.R.id.message);
+            //if (message != null)
+            //    message.setText(new SpannableString(Html.fromHtml(html)));
 
             dialog.setView(view);//webView
             dialog.show();
@@ -870,7 +871,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         list = mHelper.query2014zxc(m);
                     }
                     boolean r = mHelper.putCache(mYear, m, list);
-                    Log.v(TAG, String.format("%04d/%02d result: %s", mYear, m,
+                    Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));
                 }
                 doQueryStateUpdateCallback(R.string.title_download_complete);

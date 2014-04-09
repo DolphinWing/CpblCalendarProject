@@ -26,9 +26,6 @@ import dolphin.android.apps.CpblCalendar.provider.ActionBarDrawerToggle;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
-//import com.espian.showcaseview.OnShowcaseEventListener;
-//import com.espian.showcaseview.ShowcaseView;
-
 /**
  * Created by dolphin on 2013/6/3.
  * <p/>
@@ -40,13 +37,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     private View mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-//    TabHost mTabHost;
-//    ViewPager mViewPager;
-//    FragmentTabsAdapter mTabsAdapter;
-
     private ArrayList<Game> mGameList = null;
-
-//    private ShowcaseView mShowcaseView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,27 +95,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
         //[18]dolphin++ check tutorial
         //[19]dolphin++ debug in engineer build
 //        if (!isTutorialDone()) {
-//            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//            co.hideOnClickOutside = false;
-//            co.block = true;
-//            //co.shotType = ShowcaseView.TYPE_ONE_SHOT;
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//                mShowcaseView = ShowcaseView.insertShowcaseView(android.R.id.home,
-//                        this, getString(R.string.phone_activity_showcase_title),
-//                        getString(R.string.phone_activity_showcase_detail), co);
-//            } else {
-//                mShowcaseView = ShowcaseView.insertShowcaseView(24.0f, 62.0f,
-//                        this, getString(R.string.phone_activity_showcase_title),
-//                        getString(R.string.phone_activity_showcase_detail), co);
-//            }
-//            try {//in case that will have exception, directly set tutorial flag true
-//                mShowcaseView.setOnShowcaseEventListener(this);
-//            } catch (Exception e) {
-//                Log.e(TAG, "show tutorial exception: " + e.getMessage());
-//                setTutorialDone();
-//            }
-//        } else {
-//            mShowcaseView = null;
+//            //TODO
 //        }
 
         //[39]dolphin++ for rotation
@@ -264,12 +235,8 @@ public class CalendarForPhoneActivity extends CalendarActivity
                 try {
                     trans.commitAllowingStateLoss();//[30]dolphin++
                 } catch (IllegalStateException e) {
-                    Log.e(TAG, "onLoading: " + e.getMessage());
-                    EasyTracker easyTracker = EasyTracker.getInstance(this);
-                    if (easyTracker != null) {
-                        easyTracker.send(MapBuilder.createEvent("Exception",
-                                "commitAllowingStateLoss", "phone", null).build());
-                    }
+                    Log.e(TAG, "updateGameListFragment: " + e.getMessage());
+                    sendTrackerException();
                 }
             }
         }
@@ -296,14 +263,23 @@ public class CalendarForPhoneActivity extends CalendarActivity
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
             if (frag1 != null)
                 frag1.setListShown(is_load);
-            //try {
-            trans.commitAllowingStateLoss();//[30]dolphin++
-            //} catch (IllegalStateException e) {
-            //    Log.e(TAG, "onLoading: " + e.getMessage());
-            //}
+            try {
+                trans.commitAllowingStateLoss();//[30]dolphin++
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "onLoading: " + e.getMessage());
+                sendTrackerException();
+            }
         }
 
         super.onLoading(is_load);
+    }
+
+    private void sendTrackerException() {
+        EasyTracker easyTracker = EasyTracker.getInstance(this);
+        if (easyTracker != null) {
+            easyTracker.send(MapBuilder.createEvent("Exception",
+                    "commitAllowingStateLoss", "phone", null).build());
+        }
     }
 
     @Override
@@ -315,25 +291,6 @@ public class CalendarForPhoneActivity extends CalendarActivity
         //onQuerySuccess(mGameList);//reload the fragment when possible preferences change
         mButtonQuery.performClick();//[22]dolphin++
     }
-
-//    @Override
-//    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//        //Log.d(TAG, "onShowcaseViewShow");
-//    }
-//
-//    @Override
-//    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//        //Log.d(TAG, "onShowcaseViewHide");
-//        setTutorialDone();
-//        mShowcaseView = null;//don't use it later
-//    }
-//
-//    @Override
-//    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-//        //Log.d(TAG, "onShowcaseViewDidHide");
-//        setTutorialDone();
-//        mShowcaseView = null;//don't use it later
-//    }
 
     @Override
     public void OnFragmentAttached() {

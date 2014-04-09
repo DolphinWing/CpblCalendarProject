@@ -30,9 +30,6 @@ import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
-//import com.espian.showcaseview.OnShowcaseEventListener;
-//import com.espian.showcaseview.ShowcaseView;
-
 /**
  * Created by dolphin on 2013/6/3.
  * <p/>
@@ -59,20 +56,7 @@ public class CalendarForTabletActivity extends CalendarActivity
 
 //        //[20]dolphin++ add tablet tutorial
 //        if (!isTutorialDone()) {
-//            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//            co.hideOnClickOutside = false;
-//            co.block = true;
-//            mShowcaseView = ShowcaseView.insertShowcaseView(android.R.id.button1,
-//                    this, getString(R.string.phone_activity_showcase_title),
-//                    getString(R.string.tablet_activity_showcase_detail), co);
-//
-//            try {//in case that will have exception, directly set tutorial flag true
-//                mShowcaseView.setOnShowcaseEventListener(this);
-//                //mIsTutorialQuery = true;//mark that button click will be tutorial query
-//            } catch (Exception e) {
-//                Log.e(TAG, "show tutorial exception: " + e.getMessage());
-//                setTutorialDone();
-//            }
+//            //TODO
 //        }
 
         View leaderBoard = findViewById(R.id.team_board);
@@ -130,18 +114,6 @@ public class CalendarForTabletActivity extends CalendarActivity
 
         mEnableAdMob = getResources().getBoolean(R.bool.feature_admob);
         if (mEnableAdMob) {
-//        //[37]dolphin++ http://goo.gl/YOfr9
-//        adView = new AdView(this, AdSize.BANNER, "a151e5722a9a626");
-//        if (adView != null) {
-//            LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
-//            if (layout != null) {
-//                layout.addView(adView);
-//            }
-//
-//            AdRequest request = new AdRequest();
-//            request.addTestDevice(AdRequest.TEST_EMULATOR);
-//            adView.loadAd(request);
-//        }
             try {
                 adView = new AdView(this);
                 adView.setAdUnitId(getString(R.string.ad_trackingId));
@@ -215,8 +187,6 @@ public class CalendarForTabletActivity extends CalendarActivity
 
     @Override
     protected void onDestroy() {
-//        if (adView != null)//[37]++ add AdMob Ads to screen
-//            adView.destroy();
         if (adView != null) adView.destroy();//[88]dolphin++ now in Google Play Services
         super.onDestroy();
     }
@@ -240,10 +210,6 @@ public class CalendarForTabletActivity extends CalendarActivity
             @Override
             public void onQuerySuccess(CpblCalendarHelper helper,
                                        ArrayList<Game> gameArrayList) {
-                //if (mShowcaseView != null && mShowcaseView.isShown()) {//[20]dolphin++
-                //    mShowcaseView.hide();
-                //    //mShowcaseView = null;
-                //}
                 if (mLeaderBoardContent != null) {//[27]dolphin++
                     //Log.d(TAG, html);
                     // Encoding issue with WebView's loadData
@@ -277,7 +243,11 @@ public class CalendarForTabletActivity extends CalendarActivity
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
             if (frag1 != null) {
                 frag1.updateAdapter(gameArrayList);
-                trans.commitAllowingStateLoss();//[30]dolphin++
+                try {
+                    trans.commitAllowingStateLoss();//[30]dolphin++
+                } catch (IllegalStateException e) {
+                    sendTrackerException();
+                }
             }
         }
 
@@ -297,15 +267,19 @@ public class CalendarForTabletActivity extends CalendarActivity
                 trans.commitAllowingStateLoss();//[30]dolphin++
             } catch (IllegalStateException e) {
                 Log.e(TAG, "onLoading: " + e.getMessage());
-                EasyTracker easyTracker = EasyTracker.getInstance(this);
-                if (easyTracker != null) {
-                    easyTracker.send(MapBuilder.createEvent("Exception",
-                            "commitAllowingStateLoss", "tablet", null).build());
-                }
+                sendTrackerException();
             }
         }
 
         super.onLoading(is_load);
+    }
+
+    private void sendTrackerException() {
+        EasyTracker easyTracker = EasyTracker.getInstance(this);
+        if (easyTracker != null) {
+            easyTracker.send(MapBuilder.createEvent("Exception",
+                    "commitAllowingStateLoss", "tablet", null).build());
+        }
     }
 
     @Override
@@ -364,27 +338,6 @@ public class CalendarForTabletActivity extends CalendarActivity
         //[22]dolphin-- updateGameListFragment(mGameList);
         mButtonQuery.performClick();//[22]dolphin++
     }
-
-//    @Override
-//    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//        setTutorialDone();
-//        //if (mIsTutorialQuery) {
-//        //    mButtonQuery.performClick();
-//        //    mIsTutorialQuery = false;
-//        //}
-//        mShowcaseView = null;
-//    }
-//
-//    @Override
-//    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-//        setTutorialDone();
-//        mShowcaseView = null;
-//    }
-//
-//    @Override
-//    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//
-//    }
 
     @Override
     public void OnFragmentAttached() {
