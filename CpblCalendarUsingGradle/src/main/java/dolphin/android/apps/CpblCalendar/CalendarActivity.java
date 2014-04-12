@@ -16,8 +16,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Html;
-import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -483,7 +481,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         throw new Exception("no data");
                 } catch (Exception e) {
                     Log.e(TAG, "doWebQuery: " + e.getMessage());
-                    sendTrackerException("doWebQuery", e.getMessage(), null);
+                    sendTrackerException("doWebQuery", e.getMessage(), 0);
 
                     //can use cache, so try to read from cache
                     if (mHelper.canUseCache()) {
@@ -504,8 +502,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     private void sendTrackerException(String action, String label, long evtValue) {
         EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
         if (easyTracker != null) {
-            easyTracker.send(MapBuilder.createEvent("Exception", action, 
-                label, evtValue).build());
+            easyTracker.send(MapBuilder.createEvent("Exception", action,
+                    label, evtValue).build());
         }
     }
 
@@ -556,8 +554,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 && !PreferenceUtils.isCacheMode(this)) {
             //Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
             boolean r = mHelper.putCache(mYear, mMonth, gameList);
-            Log.v(TAG, String.format("%04d-%02d.json result: %s", mYear, mMonth, 
-                (r ? "success" : "failed")));
+            Log.v(TAG, String.format("%04d-%02d.json result: %s", mYear, mMonth,
+                    (r ? "success" : "failed")));
         }
 
         if (mActivity != null && mQueryCallback != null)
@@ -572,7 +570,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         //2013 has 4 teams only, should I check this?
                         //[89]dolphin++ only filter out this year, check array size
                         if (teams.size() < getResources().getStringArray(R.array.cpbl_team_id).length
-                            && mYear >= CpblCalendarHelper.getNowTime().get(Calendar.YEAR)) {
+                                && mYear >= CpblCalendarHelper.getNowTime().get(Calendar.YEAR)) {
                             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
                                 Game game = i.next();
                                 if (teams.containsKey(game.HomeTeam.getId())
