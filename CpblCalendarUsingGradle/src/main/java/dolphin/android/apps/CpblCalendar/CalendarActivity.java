@@ -1,5 +1,12 @@
 package dolphin.android.apps.CpblCalendar;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -27,12 +34,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,24 +58,35 @@ import dolphin.android.net.HttpHelper;
  */
 public abstract class CalendarActivity extends ABSFragmentActivity
         implements EmptyFragmentWithCallbackOnResume.OnFragmentAttachedListener {
+
     protected final static String TAG = "CalendarActivity";
+
     private final static boolean OFFLINE_DEBUG = false;
 
     private String[] mGameField;
+
     private String[] mGameKind;
 
     public final static String KEY_GAME_KIND = "kind";
+
     public final static String KEY_GAME_FIELD = "field";
+
     public final static String KEY_GAME_YEAR = "year";
+
     public final static String KEY_GAME_MONTH = "month";
 
     public Spinner mSpinnerKind;
+
     public Spinner mSpinnerField;
+
     public Spinner mSpinnerYear;
+
     public Spinner mSpinnerMonth;
+
     public Button mButtonQuery;
 
     private View mProgressView;
+
     private TextView mProgressText;//[84]dolphin++
 
     @Override
@@ -84,7 +96,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         super.onCreate(savedInstanceState);
 
         if (PreferenceUtils.isEngineerMode(this))//[28]dolphin
+        {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
 
         //only after GB needs to set this
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -124,9 +138,16 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }
 
         //[56]++ refresh the alarm when open the activity
-        if (PreferenceUtils.isEnableNotification(this))
+        if (PreferenceUtils.isEnableNotification(this)) {
             NotifyReceiver.setNextAlarm(this);
+        }
         mActivity = getSFActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
+    }
+
+    @Override
+    protected void onDestroy() {
+        mActivity = null;//[91]dolphin++
+        super.onDestroy();
     }
 
     /**
@@ -189,14 +210,18 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (outState != null) {//create a new object for save state
-            if (mSpinnerKind != null)
+            if (mSpinnerKind != null) {
                 outState.putInt(KEY_GAME_KIND, mSpinnerKind.getSelectedItemPosition());
-            if (mSpinnerField != null)
+            }
+            if (mSpinnerField != null) {
                 outState.putInt(KEY_GAME_FIELD, mSpinnerField.getSelectedItemPosition());
-            if (mSpinnerYear != null)
+            }
+            if (mSpinnerYear != null) {
                 outState.putInt(KEY_GAME_YEAR, mSpinnerYear.getSelectedItemPosition());
-            if (mSpinnerMonth != null)
+            }
+            if (mSpinnerMonth != null) {
                 outState.putInt(KEY_GAME_MONTH, mSpinnerMonth.getSelectedItemPosition());
+            }
 
             super.onSaveInstanceState(outState);
         }
@@ -230,10 +255,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             }
             return true;
             case R.id.action_refresh://[13]dolphin++
-                if (PreferenceUtils.isCacheMode(this))
+                if (PreferenceUtils.isCacheMode(this)) {
                     runDownloadCache();
-                else
+                } else {
                     mButtonQuery.performClick();
+                }
                 return true;//break;
             case R.id.action_leader_board://[26]dolphin++
                 //[87]dolphin-- showLeaderBoard(mHelper.getScoreBoardHtml());
@@ -285,21 +311,23 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
             int fieldIndex = mSpinnerField.getSelectedItemPosition();
             String fieldId = mGameField[fieldIndex];
-            if (fieldIndex > 0)
-                getSActionBar().setTitle(String.format("%s＠%s", kind,
+            if (fieldIndex > 0) {
+                getSActionBar().setTitle(String.format("%s�?s", kind,
                         mSpinnerField.getSelectedItem().toString()));
+            }
 
             getSActionBar().setSubtitle(String.format("%s %s",
                     gameYear, mSpinnerMonth.getSelectedItem().toString()));
 
             final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
             final SherlockFragmentActivity activity = getSFActivity();
-            if (PreferenceUtils.isCacheMode(activity) || bDemoCache) //do cache mode query
+            if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
+
                 doCacheModeQuery(activity, year, month, getOnQueryCallback());
-            else if (HttpHelper.checkNetworkAvailable(activity) && !bDemoCache)
+            } else if (HttpHelper.checkNetworkAvailable(activity) && !bDemoCache) {
                 doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
                         year, month, fieldId, getOnQueryCallback());
-            else {//[35]dolphin++ check network
+            } else {//[35]dolphin++ check network
                 Toast.makeText(activity, R.string.no_available_network,
                         Toast.LENGTH_LONG).show();//[47] change SHORT to LONG
                 doQueryCallback(null);//[47]++ do callback to return
@@ -311,15 +339,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     /**
      * get Activity instance
-     *
-     * @return
      */
     public abstract SherlockFragmentActivity getSFActivity();
 
     /**
      * get OnQueryCallback interface implementation
-     *
-     * @return
      */
     public abstract OnQueryCallback getOnQueryCallback();
 
@@ -328,24 +352,33 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     public interface OnQueryCallback {
+
         public void onQueryStart();
 
         public void onQueryStateChange(String msg);
 
         public void onQuerySuccess(CpblCalendarHelper helper,
-                                   ArrayList<Game> gameArrayList);
+                ArrayList<Game> gameArrayList);
 
         public void onQueryError();
     }
 
     private Activity mActivity;
+
     private OnQueryCallback mQueryCallback;
+
     private boolean mIsQuery = false;
+
     private int mKind = 1;//[78]dolphin++ add initial value
+
     private int mYear;
+
     private int mMonth;
+
     private String mField = "F00";
+
     private CpblCalendarHelper mHelper = null;
+
     private boolean mCacheMode = false;
 
     public boolean IsQuery() {
@@ -358,8 +391,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     /**
      * add this method not to be override by child activity
-     *
-     * @param is_load
      */
     private void internalLoading(boolean is_load) {
         mButtonQuery.setEnabled(!is_load);//disable the button when loading
@@ -369,8 +400,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         //Log.d(TAG, "mSpinnerYear isEnabled = " + mSpinnerYear.isEnabled());
         mSpinnerMonth.setEnabled(!is_load);
 
-        if (mProgressView != null)
+        if (mProgressView != null) {
             mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
+        }
         if (mProgressText != null) {
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 //                mProgressText.animate().alpha(is_load ? 0 : 1).setDuration(500).start();
@@ -387,20 +419,16 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     /**
      * do query action to the web
-     *
-     * @param activity
-     * @param kind
-     * @param year
-     * @param month
-     * @param callback
      */
     public void doWebQuery(SherlockFragmentActivity activity,
-                           int kind, int year, int month, String field,
-                           OnQueryCallback callback) {
+            int kind, int year, int month, String field,
+            OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
         if (mQueryCallback != null)//call before start
+        {
             mQueryCallback.onQueryStart();
+        }
         mKind = kind;//[22]dolphin++
         mYear = year;//[22]dolphin++
         mMonth = month;//[22]dolphin++
@@ -422,9 +450,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     } else {//try local cache
                         //query from Internet
 //                        if (now.get(Calendar.YEAR) < 2014)
-                        if (mYear < 2014)
+                        if (mYear < 2014) {
                             gameList = mHelper.query(gameKind, mYear, mMonth, mField);
-                        else if (resources.getBoolean(R.bool.demo_zxc22)) {
+                        } else if (resources.getBoolean(R.bool.demo_zxc22)) {
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                     mYear, mMonth));
                             gameList = mHelper.query2014zxc(mMonth);
@@ -432,7 +460,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
 //                            gameList = mHelper.query2014();
-                            ArrayList<Game> tmpList = mHelper.query(gameKind, mYear, mMonth, mField);
+                            ArrayList<Game> tmpList = mHelper
+                                    .query(gameKind, mYear, mMonth, mField);
 //                            if (gameList == null || gameList.size() <= 0) {//backup plan
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                     mYear, mMonth));
@@ -440,7 +469,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                            }
                             try {//update the data from CPBL website
                                 doQueryStateUpdateCallback(R.string.title_download_complete);
-                                if (tmpList != null)
+                                if (tmpList != null) {
                                     if (gameList != null) {
                                         for (Game g : gameList) {
                                             for (Game t : tmpList) {
@@ -452,7 +481,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                                                 }
                                             }
                                         }
-                                    } else gameList = tmpList;
+                                    } else {
+                                        gameList = tmpList;
+                                    }
+                                }
                             } catch (Exception e) {
                             }
                         }
@@ -466,8 +498,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                                     mYear, mMonth + 1));
                             ArrayList<Game> list = mHelper.query2014zxc(mMonth + 1);
                             for (Game g : list) {
-                                if (g.StartTime.get(Calendar.DAY_OF_MONTH) > 15)
+                                if (g.StartTime.get(Calendar.DAY_OF_MONTH) > 15) {
                                     break;
+                                }
                                 gameList.add(g);
                             }
 
@@ -475,10 +508,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         }
                     }
 
-                    if (gameList != null)
+                    if (gameList != null) {
                         doQueryCallback(gameList);
-                    else
+                    } else {
                         throw new Exception("no data");
+                    }
                 } catch (Exception e) {
                     Log.e(TAG, "doWebQuery: " + e.getMessage());
                     sendTrackerException("doWebQuery", e.getMessage(), 0);
@@ -512,19 +546,18 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     private void doQueryStateUpdateCallback(final String message) {
-        if (mActivity != null && mQueryCallback != null)
+        if (mActivity != null && mQueryCallback != null) {
             CalendarActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mQueryCallback.onQueryStateChange(message);
                 }
             });
+        }
     }
 
     /**
      * callback of Query action
-     *
-     * @param gameList
      */
     private void doQueryCallback(final ArrayList<Game> gameList) {
         mIsQuery = false;
@@ -534,7 +567,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             int type = (gameList != null && gameList.size() > 0)
                     ? gameList.get(0).Source : -1;
             String extra = mCacheMode ? "cache" : "unknown";
-            if (!mCacheMode)
+            if (!mCacheMode) {
                 switch (type) {
                     case Game.SOURCE_CPBL:
                         extra = "cpbl";
@@ -546,6 +579,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         extra = "cpbl_old";
                         break;
                 }
+            }
             easyTracker.send(MapBuilder.createEvent("UI", "doQueryCallback",
                     String.format("%04d/%02d:%s", mYear, mMonth, extra), null).build());
         }
@@ -558,7 +592,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     (r ? "success" : "failed")));
         }
 
-        if (mActivity != null && mQueryCallback != null)
+        if (mActivity != null && mQueryCallback != null) {
             mActivity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -569,7 +603,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                                 PreferenceUtils.getFavoriteTeams(mActivity);
                         //2013 has 4 teams only, should I check this?
                         //[89]dolphin++ only filter out this year, check array size
-                        if (teams.size() < getResources().getStringArray(R.array.cpbl_team_id).length
+                        if (teams.size() < getResources()
+                                .getStringArray(R.array.cpbl_team_id).length
                                 && mYear >= CpblCalendarHelper.getNowTime().get(Calendar.YEAR)) {
                             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
                                 Game game = i.next();
@@ -605,9 +640,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         }
 
                         //show offline mode indicator
-                        if (PreferenceUtils.isCacheMode(getBaseContext()))
+                        if (PreferenceUtils.isCacheMode(getBaseContext())) {
                             getSFActivity().getSupportActionBar()
                                     .setSubtitle(R.string.action_cache_mode);
+                        }
 
                         mQueryCallback.onQuerySuccess(mHelper, gameList);
                     } else {
@@ -617,16 +653,13 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     //internalLoading(false);//[87]dolphin++ but no need
                 }
             });
-        else
+        } else {
             Log.e(TAG, "what happened?");
+        }
     }
 
     /**
      * generate a debug list for offline test
-     *
-     * @param year
-     * @param month
-     * @return
      */
     private ArrayList<Game> get_debug_list(int year, int month) {
         //Log.d(TAG, "get_debug_list");
@@ -651,13 +684,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     /**
      * check if the tutorial is done
-     *
-     * @return
      */
     public boolean isTutorialDone() {
         if (CpblCalendarHelper.getNowTime().get(Calendar.YEAR) < 2014) {
-            if (PreferenceUtils.isEngineerMode(getBaseContext()))
+            if (PreferenceUtils.isEngineerMode(getBaseContext())) {
                 return false;//[39]dolphin++ move to global method
+            }
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
             return pref.getBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, false);
         }
@@ -700,8 +732,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             LayoutInflater inflater = LayoutInflater.from(this);
             View view = inflater.inflate(R.layout.leader_board, null);
             TextView textView = (TextView) view.findViewById(android.R.id.title);
-            if (textView != null)
+            if (textView != null) {
                 textView.setText(mSpinnerKind.getItemAtPosition(1).toString());
+            }
 
             // android from html cannot recognize all HTML tag
             // http://stackoverflow.com/a/8632338
@@ -714,9 +747,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             //Log.d(TAG, html);
             // Encoding issue with WebView's loadData
             // http://stackoverflow.com/a/9402988
-            if (webView != null)
+            if (webView != null) {
                 webView.loadData(html, "text/html; charset=" +
                         CpblCalendarHelper.ENCODE_UTF8, null);
+            }
             //TextView message = (TextView) view.findViewById(android.R.id.message);
             //if (message != null)
             //    message.setText(new SpannableString(Html.fromHtml(html)));
@@ -726,17 +760,19 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
             //set button style as holo green light
             View btOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            if (btOk != null)
+            if (btOk != null) {
                 btOk.setBackgroundResource(R.drawable.item_background_holo_light);
+            }
 
         } catch (Exception e) {
             Log.e(TAG, "showLeaderBoard: " + e.getMessage());
         }
 
         EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-        if (easyTracker != null)
+        if (easyTracker != null) {
             easyTracker.send(MapBuilder.createEvent("UI", "showLeaderBoard",
                     null, null).build());
+        }
     }
 
     ArrayList<Stand> mStanding = null;
@@ -755,15 +791,17 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             @Override
             public void run() {
                 mStanding = mHelper.query2014LeaderBoard();
-                CalendarActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        doShowLeaderBoard2014(mStanding);
-                        internalLoading(false);
-                        mIsQuery = false;
-                        invalidateOptionsMenu();
-                    }
-                });
+                if (mActivity != null) {//[91]dolphin++
+                    CalendarActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            doShowLeaderBoard2014(mStanding);
+                            internalLoading(false);
+                            mIsQuery = false;
+                            invalidateOptionsMenu();
+                        }
+                    });
+                }
             }
         }).start();
     }
@@ -790,7 +828,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         //standingHtml += "<tr><td colspan='5'><hr /></td></tr>";
         final String[] color = {"#F1EFE6", "#E6F1EF"};
         int c = 0;
-        for (Stand stand : standing)
+        for (Stand stand : standing) {
             standingHtml += TABLE_ROW_TEMPLATE
                     .replace("@style", "")
                     .replace("@bgcolor", color[(c++ % 2)])
@@ -799,6 +837,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     .replace("@lose", String.valueOf(stand.getGamesLost()))
                     .replace("@tie", String.valueOf(stand.getGamesTied()))
                     .replace("@behind", String.valueOf(stand.getGamesBehind()));
+        }
         standingHtml += "</table>";
         showLeaderBoard(standingHtml);
     }
@@ -874,22 +913,26 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 }
                 doQueryStateUpdateCallback(R.string.title_download_complete);
 
-                CalendarActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mButtonQuery.performClick();
-                    }
-                });
+                if (mActivity != null) {//[91]dolphin++
+                    CalendarActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mButtonQuery.performClick();
+                        }
+                    });
+                }
             }
         }).start();
     }
 
     private void doCacheModeQuery(SherlockFragmentActivity activity,
-                                  int year, int month, OnQueryCallback callback) {
+            int year, int month, OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
-        if (mQueryCallback != null)//call before start
+        if (mQueryCallback != null) {//call before start
+
             mQueryCallback.onQueryStart();
+        }
         mYear = year;
         mMonth = month;
 
@@ -907,8 +950,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                                 mYear, mMonth + 1));
                         ArrayList<Game> list = mHelper.query2014zxc(mMonth + 1);
                         for (Game g : list) {
-                            if (g.StartTime.get(Calendar.DAY_OF_MONTH) > 15)
+                            if (g.StartTime.get(Calendar.DAY_OF_MONTH) > 15) {
                                 break;
+                            }
                             gameList.add(g);
                         }
 

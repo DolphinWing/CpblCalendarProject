@@ -19,44 +19,44 @@
 
     <string-array name="cpbl_game_field_id">
         <item>F00</item>
-		<item>F01</item>
+        <item>F01</item>
         <item>F02</item>
         <item>F03</item>
         <item>F04</item>
-		<item>F05</item>
+        <item>F05</item>
         <item>F06</item>
         <item>F07</item>
         <item>F08</item>
         <item>F09</item>
         <item>F10</item>
-		<item>F11</item>
+        <item>F11</item>
         <item>F12</item>
         <item>F13</item>
-		<item>F14</item>
-		<item>F15</item>
-		<item>F17</item>
+        <item>F14</item>
+        <item>F15</item>
+        <item>F17</item>
         <item>F19</item>
         <item>F23</item>
     </string-array>
 
     <string-array name="cpbl_game_field_name">
         <item>所有球場</item>
-		<item>羅東</item>
+        <item>羅東</item>
         <item>新竹</item>
         <item>台中</item>
         <item>台南</item>
-		<item>立德</item>
+        <item>立德</item>
         <item>屏東</item>
         <item>嘉義市</item>
         <item>新莊</item>
         <item>澄清湖</item>
         <item>天母</item>
-		<item>龍潭</item>
+        <item>龍潭</item>
         <item>花蓮</item>
         <item>斗六</item>
-		<item>嘉義縣</item>
-		<item>台北市</item>
-		<item>台東</item>
+        <item>嘉義縣</item>
+        <item>台北市</item>
+        <item>台東</item>
         <item>台中洲際</item>
         <item>桃園國際</item>
     </string-array>

@@ -107,7 +107,7 @@ public class Team {
         if (name.equalsIgnoreCase(c.getString(R.string.team_first_kinkon_short2)))
             return ID_FIRST_KINGO;
         if (name.equalsIgnoreCase(c.getString(R.string.team_makoto_cobras_short2)))
-            return (year <= 2003) ? ID_MKT_COBRAS : ID_MKT_SUNS;
+            return (year > 2003) ? ID_MKT_COBRAS : ID_MKT_SUNS;
         if (name.equalsIgnoreCase(c.getString(R.string.team_media_t_rex_short2)))
             return ID_MEDIA_T_REX;
 

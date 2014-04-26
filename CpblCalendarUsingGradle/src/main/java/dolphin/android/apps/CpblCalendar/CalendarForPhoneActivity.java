@@ -1,5 +1,11 @@
 package dolphin.android.apps.CpblCalendar;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -13,15 +19,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.ActionBarDrawerToggle;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -33,8 +33,11 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  */
 public class CalendarForPhoneActivity extends CalendarActivity
         implements CalendarActivity.OnQueryCallback/*, OnShowcaseEventListener*/ {
+
     private DrawerLayout mDrawerLayout;
+
     private View mDrawerList;
+
     private ActionBarDrawerToggle mDrawerToggle;
 
     private ArrayList<Game> mGameList = null;
@@ -122,14 +125,14 @@ public class CalendarForPhoneActivity extends CalendarActivity
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getSupportMenuInflater().inflate(R.menu.splash, menu);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//[29]dolphin++
-            if (menu.findItem(R.id.action_leader_board) != null)
+            if (menu.findItem(R.id.action_leader_board) != null) {
                 menu.removeItem(R.id.action_leader_board);
+            }
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -149,8 +152,9 @@ public class CalendarForPhoneActivity extends CalendarActivity
         }
         //if (Calendar.getInstance().get(Calendar.YEAR) < 2014) {//[70]dolphin++
         item = menu.findItem(R.id.action_leader_board);//[26]dolphin++
-        if (item != null)
+        if (item != null) {
             item.setVisible(/*cacheMode ? false : */visible);//[87]dolphin++
+        }
         //}
         return super.onPrepareOptionsMenu(menu);
     }
@@ -178,16 +182,20 @@ public class CalendarForPhoneActivity extends CalendarActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        if (mDrawerToggle != null)//[70]dolphin++ check NullPointer
+        if (mDrawerToggle != null) {//[70]dolphin++ check NullPointer
+        
             mDrawerToggle.syncState();
+        }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
-        if (mDrawerToggle != null)//[70]dolphin++ check NullPointer
+        if (mDrawerToggle != null) {//[70]dolphin++ check NullPointer
+        
             mDrawerToggle.onConfigurationChanged(newConfig);
+        }
     }
 
     @Override
@@ -210,8 +218,9 @@ public class CalendarForPhoneActivity extends CalendarActivity
     @Override
     public void onQueryStateChange(String msg) {
         //Log.d(TAG, "onQueryUpdate: " + msg);
-        if (getProgressText() != null)
+        if (getProgressText() != null) {
             getProgressText().setText(msg);
+        }
     }
 
     @Override
@@ -261,8 +270,9 @@ public class CalendarForPhoneActivity extends CalendarActivity
             FragmentTransaction trans = fmgr.beginTransaction();
             GameListFragment frag1 =
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
-            if (frag1 != null)
+            if (frag1 != null) {
                 frag1.setListShown(is_load);
+            }
             try {
                 trans.commitAllowingStateLoss();//[30]dolphin++
             } catch (IllegalStateException e) {

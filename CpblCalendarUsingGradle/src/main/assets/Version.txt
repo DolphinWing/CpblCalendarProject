@@ -19,6 +19,19 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[91] @ 2014-04-26
+    fix java.lang.NullPointerException @ 1.3.1
+        CalendarActivity.this.runOnUiThread (http://goo.gl/xXcqqh)
+    fix MKT Cobra and MKT Suns icon id and year (http://goo.gl/HScK4n)
+        應用程式版本：1.3.1
+        crane-a721
+        賴雋昕 於 2014/4/26 的下午2:24 發表
+        經過自動翻譯的評論 (原文：愛爾蘭文)
+        隱藏原文評論
+        原文評論
+        2003年的賽程有誤 球隊應為太陽隊 不是COBRAS COBRAS是2004-2007年的球隊
+
+[90]
 [89] @ 2014-04-07
     fix Elephant -> CT Elephant
         java.util.ConcurrentModificationException
