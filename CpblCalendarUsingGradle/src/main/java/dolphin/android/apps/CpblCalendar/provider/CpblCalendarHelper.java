@@ -23,21 +23,31 @@ import dolphin.android.net.HttpHelper;
 import dolphin.android.util.FileUtils;
 
 public class CpblCalendarHelper extends HttpHelper {
+
     private final static String TAG = "CpblCalendarHelper";
+
     public final static String URL_BASE = "http://www.cpbl.com.tw";
+
     public final static String URL_BASE_2013 = "http://cpblweb.ksi.com.tw";
+
     private final static String SCORE_QUERY_STRING =
             "?gamekind=@kind&myfield=@field&mon=@month&qyear=@year";
+
     private final static String ALL_SCORE_URL = URL_BASE_2013 + "/standings/AllScoreqry.aspx";
 
     private final static String RESULT_URL = URL_BASE_2013 + "/GResult/Result.aspx";
+
     private final static String RESULT_QUERY_STRING = "?gameno=@kind&pbyear=@year&game=@id";
+
     public final static String URL_SCHEDULE_2014 = URL_BASE + "/schedule.aspx";
 
     private Context mContext;
+
     //[26}++
     private ArrayList<Game> mGameList = null;
+
     private String mScoreBoardHtml = null;
+
     private boolean mUseCache = false;
 
     public CpblCalendarHelper(Context context) {
@@ -116,11 +126,15 @@ public class CpblCalendarHelper extends HttpHelper {
                             //Log.d(TAG, String.format(" %d games today", games.length));
                             for (String g : games) {
                                 Game g2 = parseOneGameHtml(kind, year, month, d, g);
-                                if (g2 != null) gameList.add(g2);
+                                if (g2 != null) {
+                                    gameList.add(g2);
+                                }
                             }
                         } else {//only one game today
                             Game g1 = parseOneGameHtml(kind, year, month, d, data);
-                            if (g1 != null) gameList.add(g1);
+                            if (g1 != null) {
+                                gameList.add(g1);
+                            }
                         }
                     } else {//no game today
                         //Log.d(TAG, String.format("no game: #%d", d));
@@ -145,6 +159,7 @@ public class CpblCalendarHelper extends HttpHelper {
     private final static String PATTERN_RESULT =
             //<div?|<br> #  <br>away   <font>  score   </font> home  <br> field <br> time       live
             "<[^>]*>([0-9]+)<br>([^<]+)<[^>]*>([0-9:]+)<[^>]*>([^<]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)";
+
     private final static String PATTERN_RESULT_WITHOUT_LIVE =
             //<div?|<br> #  <br>away   <font>  score   </font> home  <br> field <br> time
             "<[^>]*>([0-9]+)<br>([^<]+)<[^>]*>([0-9:]+)<[^>]*>([^<]+)<br>([^<]+)<br>([^<]+)<br>";
@@ -152,6 +167,7 @@ public class CpblCalendarHelper extends HttpHelper {
     private final static String PATTERN_TOPLAY =
             //<div?|<br> #  <br> match      field <br> time  <br> live
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)";
+
     private final static String PATTERN_TOPLAY_WITHOUT_LIVE =
             //<div?|<br> #  <br> match      field <br> time
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>";
@@ -187,10 +203,11 @@ public class CpblCalendarHelper extends HttpHelper {
         //<img src="../images/ico/final.gif" border=0>
         game.IsFinal = str.contains("images/ico/final.gif");
         String pattern = "";
-        if (game.IsFinal)
+        if (game.IsFinal) {
             pattern = bLive ? PATTERN_RESULT : PATTERN_RESULT_WITHOUT_LIVE;
-        else
+        } else {
             pattern = bLive ? PATTERN_TOPLAY : PATTERN_TOPLAY_WITHOUT_LIVE;
+        }
 
         String schedule = "";
         Matcher matcher = Pattern.compile(pattern).matcher(str);
@@ -255,10 +272,11 @@ public class CpblCalendarHelper extends HttpHelper {
         String msg = "";
 
         try {//try to get some extra info from the rest of string
-            if (bLive)
+            if (bLive) {
                 msg = str.substring(str.indexOf(game.Channel) + game.Channel.length() + 4);
-            else
+            } else {
                 msg = str.substring(str.indexOf(schedule) + schedule.length() + 4);
+            }
             msg = (msg.lastIndexOf("<img") >= 0) ? msg.substring(0, msg.lastIndexOf("<img")) : msg;
             msg = (msg.lastIndexOf("<a") >= 0) ? msg.substring(0, msg.lastIndexOf("<a")) : msg;
             msg = (msg.lastIndexOf("<br>") >= 0) ? msg.substring(0, msg.lastIndexOf("<br>")) : msg;
@@ -304,7 +322,9 @@ public class CpblCalendarHelper extends HttpHelper {
         int year = now.get(Calendar.YEAR);
         int month = now.get(Calendar.MONTH) + 1;
         int day = now.get(Calendar.DAY_OF_MONTH);
-        if (year >= 2014) return get_kind_seq(context, kind);//[70]++
+        if (year >= 2014) {
+            return get_kind_seq(context, kind);//[70]++
+        }
         //if (month > 3 && month < 10)
         //    kind = "01";
         //else
@@ -325,8 +345,9 @@ public class CpblCalendarHelper extends HttpHelper {
                 context.getResources().getStringArray(R.array.cpbl_game_kind_id);
         int k = 0;
         for (String ks : kinds) {
-            if (ks.equalsIgnoreCase(kind))
+            if (ks.equalsIgnoreCase(kind)) {
                 return k;
+            }
             k++;
         }
         return 1;
@@ -343,29 +364,63 @@ public class CpblCalendarHelper extends HttpHelper {
         try {
             String html = getUrlContent(URL_SCHEDULE_2014);
             //Log.d(TAG, "query2014 " + html.length());
-            if (html.contains("<div class=\"game")) {//have games
-                String[] days = html.split("<div class=\"date");
+            if (html.contains("<tr class=\"game\">")) {//have games
+                String[] days = html.split("<table class=\"day\">");
                 //Log.d(TAG, "days " + days.length);
                 for (String day : days) {
                     //check those days with games
-                    if (day.contains("<div class=\"line\">")) {
-                        String data = day.substring(day.indexOf("<div class=\"day\">"));
-                        String date = data.substring(data.indexOf(">") + 1,
-                                data.indexOf("</div>"));
-                        //Log.d(TAG, "date: " + date);
-                        int d = Integer.parseInt(date);
-                        String[] games = data.split("<div class=\"line\"></div>");
-                        //Log.d(TAG, "  games " + games.length);
-                        for (int g = 0; g < (games.length - 1); g++) {
-                            gameList.add(parseOneGameHtml2014(year, month, d, games[g]));
-                        }
-                        if (false && games.length > 2)//more than one game
-                            for (int j = 1; j < (games.length - 1); j++) {
-                                Game g1 = gameList.get(gameList.size() - j);
-                                g1.Url = g1.IsFinal ? g1.Url : g1.Url.replace("1.html",
-                                        String.format("%d.html", (games.length - j)));
-                                //Log.d(TAG, String.format("%d: %s", g1.Id, g1.Url));
+                    String data = day.substring(day.indexOf("<tr"));
+                    //<tr class="beforegame">
+                    //<tr class="gameing">
+                    //<tr class="futuregame">
+                    String date = data.substring(data.indexOf("<td>") + 4,
+                            data.indexOf("</td>"));
+                    //Log.d(TAG, "date: " + date);
+                    int d = 0;
+                    try {
+                        d = Integer.parseInt(date);
+                    } catch (NumberFormatException e) {
+                        d = 0;
+                    }
+                    if (d > 0) {//day.contains("<td class=\"line\">")) {
+                        String[] games = data.split("<td class=\"line\">");
+                        //Log.d(TAG, String.format(" day=%d games=%d", d, games.length));
+                        for (int g = 0; g < games.length; g++) {
+                            //[92]dolphin++
+                            if (games[g].contains("<tr class='suspend'>")) {
+//      <table><tr class='suspend'><td>
+//      <table><tr><th></th><th>51</th><th></th></tr></table>
+//      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
+                                if (games[g].contains("<td colspan='3' class='suspend'>")) {
+                                    Log.v(TAG, String.format("suspend day=%d", d));
+                                    continue;//don't add to list
+                                }
+                                //use <tr class="game"> to get games
+                                String[] gamesHack = games[g].split("<tr class=\"game\">");
+                                //Log.d(TAG, String.format("gamesHack %d", gamesHack.length));
+                                for (int h = 1; h < gamesHack.length; h++) {
+                                    String gameStr = gamesHack[0] + gamesHack[h];
+                                    Game g1 = parseOneGameHtml2014(year, month, d, gameStr);
+                                    if (g1 != null) {
+                                        gameList.add(g1);
+                                    }
+                                }
+                            } else if (games[g].contains("<tr class='normal'>")) {
+                                //normal games
+                                Game g2 = parseOneGameHtml2014(year, month, d, games[g]);
+                                if (g2 != null) {
+                                    gameList.add(g2);
+                                }
                             }
+                        }
+//                        if (false && games.length > 2) {//more than one game
+//                            for (int j = 1; j < (games.length - 1); j++) {
+//                                Game g1 = gameList.get(gameList.size() - j);
+//                                g1.Url = g1.IsFinal ? g1.Url : g1.Url.replace("1.html",
+//                                        String.format("%d.html", (games.length - j)));
+//                                //Log.d(TAG, String.format("%d: %s", g1.Id, g1.Url));
+//                            }
+//                        }
                     }
                 }
             }
@@ -421,7 +476,8 @@ public class CpblCalendarHelper extends HttpHelper {
                     int tie = Integer.parseInt(matchTeams.group(4));
                     float rate = Float.parseFloat(matchTeams.group(5));
                     float behind = list.size() > 0 ? Float.parseFloat(matchTeams.group(6)) : 0;
-                    Log.d(TAG, String.format("%d-%d-%d, %.03f, %.01f", win, tie, lose, rate, behind));
+                    Log.d(TAG, String.format("%d-%d-%d, %.03f, %.01f",
+                            win, tie, lose, rate, behind));
                     list.add(new Stand(team, win, lose, tie, rate, behind));
                 }
             }
@@ -440,9 +496,12 @@ public class CpblCalendarHelper extends HttpHelper {
             //<img src="assets/.../away.png"></td><td>field</td><td><img src="assets/.../home.png
             //"<img src=\"([^\"]+)[^>]*>[^>]*>[^>]*>";
             "<img src=\"([^\"]+)[^>]*>[^>]*>[^>]*>([^<]+)<[^<]*<[^<]*<img src=\"([^\"]+)";
+
     private final static String PATTERN_GAME_ID_2014 =
-            //<div class='score'><table><tr><th colspan='3'>6</th></tr>
-            "<div class='score'><table><tr><th colspan='3'>([^<]+)</th></tr>";
+            //<table><tr class='normal'><td>
+            //<table><tr><th></th><th>48</th><th></th></tr></table>
+            "<table><tr><th>[^<]*</th><th>([\\d]+)</th><th>[^<]*</th></tr></table>";
+
     private final static String PATTERN_RESULT_2014 =
             //
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)";
@@ -452,24 +511,49 @@ public class CpblCalendarHelper extends HttpHelper {
         game.Source = Game.SOURCE_CPBL;
         game.Kind = "01";
         game.StartTime = getNowTime();
-        if (year > 0)
+        if (year > 0) {
             game.StartTime.set(Calendar.YEAR, year);
-        if (month > 0)
+        }
+        if (month > 0) {
             game.StartTime.set(Calendar.MONTH, month - 1);
+        }
         game.StartTime.set(Calendar.DAY_OF_MONTH, day);
 
-//        <div class="game">
-//        <div class="team">
-//        <table><tr><td><img src="assets/images/logo/B03_logo_05.png"></td>
-//        <td>台南</td>
-//        <td><img src="assets/images/logo/L01_logo_05.png"></td>
+//        <!--兩個對戰組合的分隔線-->
+//        <tr class="team">
+//        <td><div class="teamlogo">
+//        <table><tr><td><img src="http://cpbl-elta.cdn.hinet.net/assets/images/logo/E02_logo_05.png" /></td>
+//        <td class="stadium">桃園國際</td>
+//        <td><img src="http://cpbl-elta.cdn.hinet.net/assets/images/logo/A02_logo_05.png" /></td>
 //        </tr>
 //        </table>
 //        </div>
-//        <div class='score'><table><tr><th colspan='3'>2</th></tr>
-//        <tr><td class='no'>6</td><td><a href='game/box.aspx?gameno=07&year=2014&game=2'>
-// <img src='assets/images/c_final.png'></a></td><td class='no'>10</td></tr></table></div>
-//        </div>
+//        </td>
+//        </tr>
+//        <tr class="game">
+//        <td class="score">
+//        <table><tr class='suspend'><td>
+//        <table><tr><th>補賽</th><th>50</th><th>雙賽1</th></tr></table>
+//        </td></tr><tr><td>
+//        <table><tr><td class='no'><a href='game/starters.aspx?gameno=01&year=2014&game=50'>
+// <img src='http://cpbl-elta.cdn.hinet.net/assets/images/c_player.png'></a></td>
+// <td>13:05</td><td class='info' title='博斯運動網.ELTA體育台.CPBLTV'>
+// <img src='http://cpbl-elta.cdn.hinet.net/assets/images/c_tv.png' /></td></tr></table>
+//        </td></tr></table>
+//        </td></tr>
+//
+//        <tr class="game">
+//        <td class="score">
+//        <table><tr class='normal'><td>
+//        <table><tr><th></th><th>52</th><th>雙賽2</th></tr></table>
+//        </td></tr><tr><td>
+//        <table><tr><td class='no'><a href='game/starters.aspx?gameno=01&year=2014&game=52'>
+// <img src='http://cpbl-elta.cdn.hinet.net/assets/images/c_player.png'></a></td><td>17:05</td>
+// <td class='info' title='博斯運動網 .華視 .CPBLTV'>
+// <img src='http://cpbl-elta.cdn.hinet.net/assets/images/c_tv.png' /></td></tr></table>
+//        </td></tr></table>
+//        </td></tr>
+//        <tr><td class="line"></td></tr>
 
 //        <div class="team">
 //        <table><tr><td><img src="assets/images/logo/B03_logo_05.png"></td>
@@ -497,8 +581,9 @@ public class CpblCalendarHelper extends HttpHelper {
         }
 
         Matcher matchID = Pattern.compile(PATTERN_GAME_ID_2014).matcher(str);
-        if (matchID != null && matchID.find())
+        if (matchID != null && matchID.find()) {
             game.Id = Integer.parseInt(matchID.group(1));
+        }
         //Log.d(TAG, "  game.Id = " + game.Id);
 
         if (game.IsFinal) {
@@ -516,8 +601,15 @@ public class CpblCalendarHelper extends HttpHelper {
             game.Url = URL_BASE + "/" + url;
             //Log.d(TAG, "    url = " + game.Url);
         } else {
-            //<tr><td class='no'></td><td>PM 06:35</td><td class='info'>
-            String time = str.substring(str.indexOf("<td class='no'>") + 1);
+            //Log.d(TAG, "game.Id = " + game.Id);
+            String time = "18:35";
+            if (str.contains("assets/images/c_player.png")) {
+                //assets/images/c_player.png'></a></td><td>17:05</td>
+                time = str.substring(str.indexOf("assets/images/c_player.png"));
+            } else {
+                //<tr><td class='no'></td><td>PM 06:35</td><td class='info'>
+                time = str.substring(str.indexOf("<td class='no'>") + 1);
+            }
             time = time.substring(time.indexOf("<td") + 4);
             time = time.substring(0, time.indexOf("</td"));
             //Log.d(TAG, "    time = " + time);
@@ -528,6 +620,9 @@ public class CpblCalendarHelper extends HttpHelper {
                 hour = Integer.parseInt(ts[1]);
                 hour = ts[0].equalsIgnoreCase("PM") ? hour + 12 : hour;
                 minute = Integer.parseInt(ts[2]);
+            } else if (ts.length == 2) {
+                hour = Integer.parseInt(ts[0]);
+                minute = Integer.parseInt(ts[1]);
             } else {
                 int dayOfWeek = game.StartTime.get(Calendar.DAY_OF_WEEK);
                 boolean isWeekend = (dayOfWeek == Calendar.SATURDAY ||
@@ -535,6 +630,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 hour = isWeekend ? 17 : 18;
                 minute = isWeekend ? 05 : 35;
             }
+
             //Log.d(TAG, String.format("    time = %02d:%02d", hour, minute));
             game.StartTime.set(Calendar.HOUR_OF_DAY, hour);
             game.StartTime.set(Calendar.MINUTE, minute);
@@ -582,7 +678,9 @@ public class CpblCalendarHelper extends HttpHelper {
                                     gameList.add(parseOneGameHtml2014zxc(month, i,
                                             mGame.group(1)));
                                     g++;
-                                } else throw new Exception("Oops! suspended game");
+                                } else {
+                                    throw new Exception("Oops! suspended game");
+                                }
                             } catch (Exception e) {
                                 //Log.d(TAG, mGame.group(1));
                                 //Log.e(TAG, "e: " + e.getMessage());
@@ -598,7 +696,7 @@ public class CpblCalendarHelper extends HttpHelper {
                                     //                      01234567890123456789
                                     Game suspend = gameList.get(gameList.size() - 1);
                                     suspend.IsDelay = true;
-                                    suspend.StartTime.set(Calendar.HOUR_OF_DAY, 14);
+                                    suspend.StartTime.set(Calendar.HOUR_OF_DAY, 13);
                                     suspend.StartTime.set(Calendar.MINUTE, 5);
                                     suspend.DelayMessage = extra.substring(18,
                                             extra.indexOf("</"));
@@ -702,8 +800,9 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public ArrayList<Game> getCache(int year, int month) {
-        if (canUseCache())
+        if (canUseCache()) {
             return getCache(mContext, String.format("%04d-%02d.json", year, month));
+        }
         return null;
     }
 
@@ -726,8 +825,9 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public boolean putCache(int year, int month, ArrayList<Game> list) {
-        if (canUseCache())
+        if (canUseCache()) {
             return putCache(mContext, String.format("%04d-%02d.json", year, month), list);
+        }
         return false;
     }
 

@@ -19,6 +19,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[92] @ 2014-04-27
+    fix suspend game was not updated in old calendar list
+
 [91] @ 2014-04-26
     fix java.lang.NullPointerException @ 1.3.1
         CalendarActivity.this.runOnUiThread (http://goo.gl/xXcqqh)

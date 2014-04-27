@@ -460,8 +460,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
 //                            gameList = mHelper.query2014();
-                            ArrayList<Game> tmpList = mHelper
-                                    .query(gameKind, mYear, mMonth, mField);
+                            ArrayList<Game> tmpList = mHelper.query2014();
+                            //.query(gameKind, mYear, mMonth, mField);
 //                            if (gameList == null || gameList.size() <= 0) {//backup plan
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                     mYear, mMonth));
@@ -469,22 +469,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                            }
                             try {//update the data from CPBL website
                                 doQueryStateUpdateCallback(R.string.title_download_complete);
-                                if (tmpList != null) {
-                                    if (gameList != null) {
-                                        for (Game g : gameList) {
-                                            for (Game t : tmpList) {
-                                                if (g.Id == t.Id) {
-                                                    g.StartTime = t.StartTime;
-                                                    g.Field = t.Field;
-                                                    //Log.d(TAG, g.StartTime.toString());
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        gameList = tmpList;
-                                    }
-                                }
+                                mergeGameList(gameList, tmpList);
                             } catch (Exception e) {
                             }
                         }
@@ -539,6 +524,33 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             easyTracker.send(MapBuilder.createEvent("Exception", action,
                     label, evtValue).build());
         }
+    }
+
+    private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList) {
+        if (refList != null) {
+            if (mainList != null) {
+                for (Game g : mainList) {
+                    if (g.IsFinal) {//no need to check time
+                        continue;
+                    }
+                    //Log.d(TAG, String.format("g=%d @ %d", g.Id,
+                    //        g.StartTime.get(Calendar.DAY_OF_MONTH)));
+                    for (Game t : refList) {
+                        if (g.Id == t.Id) {
+                            g.StartTime = t.StartTime;
+                            g.Field = t.Field;
+                            //Log.d(TAG, String.format("===> %02d:%02d",
+                            //        g.StartTime.get(Calendar.HOUR_OF_DAY),
+                            //        g.StartTime.get(Calendar.MINUTE)));
+                            break;
+                        }
+                    }
+                }
+            } else {
+                return refList;//gameList = tmpList;
+            }
+        }
+        return mainList;
     }
 
     private void doQueryStateUpdateCallback(int resId) {
