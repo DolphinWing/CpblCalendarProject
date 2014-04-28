@@ -19,6 +19,16 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[93] @ 2014-04-28
+    fix game field incorrect
+        應用程式版本：1.3.2
+        HTC One max (t6ul)
+        周煒平 於 2014/4/28 的上午9:51 發表
+        球場以桃園國際球場搜尋會顯示資料錯誤
+    fix ActionBar title show incorrect game field (using filter)
+    fix delay message after game final
+    move ＠ to xml
+
 [92] @ 2014-04-27
     fix suspend game was not updated in old calendar list
 

@@ -1,5 +1,8 @@
 package dolphin.android.apps.CpblCalendar;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockListFragment;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,9 +23,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.app.SherlockListFragment;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,8 +39,11 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  */
 public class GameListFragment extends SherlockListFragment
         implements ListView.OnItemLongClickListener {
+
     private final static String TAG = "GameListFragment";
+
     private final static long ONE_DAY = 1000 * 60 * 60 * 24;
+
     private final static long ONE_WEEK = ONE_DAY * 7;
 
     /**
@@ -66,13 +69,14 @@ public class GameListFragment extends SherlockListFragment
                             break;//break when the upcoming game if found
                         }
                     }
-                } else
+                } else {
                     for (int i = 0; i < gameArrayList.size(); i++) {
                         if (!gameArrayList.get(i).IsFinal) {
                             this.getListView().setSelection(i);
                             break;//break when the upcoming game if found
                         }
                     }
+                }
             } catch (Exception e) {
                 Log.e(TAG, "isUpComingOn: " + e.getMessage());
             }
@@ -82,9 +86,11 @@ public class GameListFragment extends SherlockListFragment
 //        this.setEmptyText(PreferenceUtils.getFavoriteTeams(activity).size() > 0
 //                ? getString(R.string.no_games_this_month)
 //                : getString(R.string.no_favorite_teams));//[31]dolphin++
-        if (PreferenceUtils.getFavoriteTeams(activity).size() > 0)
+        if (PreferenceUtils.getFavoriteTeams(activity).size() > 0) {
             this.getListView().setEmptyView(getEmptyView());
-        else this.setEmptyText(getString(R.string.no_favorite_teams));
+        } else {
+            this.setEmptyText(getString(R.string.no_favorite_teams));
+        }
         this.setListShown(true);
     }
 
@@ -142,10 +148,11 @@ public class GameListFragment extends SherlockListFragment
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (PreferenceUtils.isEngineerMode(getActivity()))
+                if (PreferenceUtils.isEngineerMode(getActivity())) {
                     Log.d(TAG, "Url=" + url.substring(url.lastIndexOf("/")));
-                else
+                } else {
                     startActivity(i);
+                }
             }
         }
     }
@@ -171,13 +178,21 @@ public class GameListFragment extends SherlockListFragment
      * private implementation of our game show
      */
     private class MyAdapter extends ArrayAdapter<Game> {
+
         private Context mContext;
+
         private LayoutInflater mInflater;
+
         private boolean bShowWinner;
+
         private boolean bShowLogo;
+
         private boolean bShowToday;
+
         private boolean bIsTablet;//[47]dolphin++
+
         private AlarmHelper mAlarmHelper;//[50]dolphin++
+
         private Calendar mNow;
 
         public MyAdapter(Context context, List<Game> objects) {
@@ -263,8 +278,9 @@ public class GameListFragment extends SherlockListFragment
                     : android.R.color.secondary_text_light_nodisable));
             //[72]dolphin++ no score
             //[87]dolphin++ CPBL_2013 source no score
-            if (bNoScoreNoLive)
+            if (bNoScoreNoLive) {
                 tv3.setText("-");//no score
+            }
 
             TextView tv4 = (TextView) convertView.findViewById(R.id.textView4);
             TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
@@ -294,8 +310,9 @@ public class GameListFragment extends SherlockListFragment
                     : android.R.color.secondary_text_light_nodisable));
             //[72]dolphin++ no score
             //[87]dolphin++ CPBL_2013 source no score
-            if (bNoScoreNoLive)
+            if (bNoScoreNoLive) {
                 tv4.setText("-");//no score
+            }
 
             //[84]dolphin++//live channel
             boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));
@@ -315,8 +332,9 @@ public class GameListFragment extends SherlockListFragment
 
             //game field
             TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
-            tv7.setText(game.Source == Game.SOURCE_CPBL || !game.Field.contains("＠")
-                    ? String.format("＠%s", game.Field) : game.Field);
+            tv7.setText(game.Source == Game.SOURCE_CPBL ||
+                    !game.Field.contains(getString(R.string.title_at))
+                    ? String.format("%s%s", getString(R.string.title_at), game.Field) : game.Field);
 
             //delay message
             TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
@@ -344,10 +362,11 @@ public class GameListFragment extends SherlockListFragment
 
             //[23]dolphin++ add a background layer id
             View bg = convertView.findViewById(R.id.match_title);
-            if (bg != null && bShowToday)//[22]dolphin++
+            if (bg != null && bShowToday) {//[22]dolphin++
                 convertView.setBackgroundResource(DateUtils.isToday(c.getTimeInMillis())
                         ? R.drawable.item_highlight_background_holo_light
                         : android.R.color.transparent);
+            }
             //}//[24]++ fix darker highlight when enable highlightToday
 
             //[50]++ notification

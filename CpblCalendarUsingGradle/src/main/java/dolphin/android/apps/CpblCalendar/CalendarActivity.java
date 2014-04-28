@@ -312,7 +312,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             int fieldIndex = mSpinnerField.getSelectedItemPosition();
             String fieldId = mGameField[fieldIndex];
             if (fieldIndex > 0) {
-                getSActionBar().setTitle(String.format("%s�?s", kind,
+                getSActionBar().setTitle(String.format("%s%s%s", kind,
+                        getString(R.string.title_at),
                         mSpinnerField.getSelectedItem().toString()));
             }
 
@@ -530,9 +531,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         if (refList != null) {
             if (mainList != null) {
                 for (Game g : mainList) {
-                    if (g.IsFinal) {//no need to check time
-                        continue;
-                    }
+                    //[93]dolphin--
+                    //if (g.IsFinal) {//no need to check time
+                    //    continue;
+                    //}
                     //Log.d(TAG, String.format("g=%d @ %d", g.Id,
                     //        g.StartTime.get(Calendar.DAY_OF_MONTH)));
                     for (Game t : refList) {
@@ -682,7 +684,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             game.Id = month + i + (year % 100);
             game.HomeTeam = new Team(this, Team.ID_EDA_RHINOS);
             game.AwayTeam = new Team(this, Team.ID_LAMIGO_MONKEYS);
-            game.Field = "＠somewhere";
+            game.Field = getString(R.string.title_at) + "somewhere";
             game.StartTime = CpblCalendarHelper.getNowTime();
             game.StartTime.set(Calendar.HOUR_OF_DAY, 18);
             game.StartTime.add(Calendar.DAY_OF_YEAR, i - 3);

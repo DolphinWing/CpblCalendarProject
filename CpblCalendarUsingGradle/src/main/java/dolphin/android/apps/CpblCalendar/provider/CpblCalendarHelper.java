@@ -99,12 +99,12 @@ public class CpblCalendarHelper extends HttpHelper {
 
                 //href="javascript:__doPostBack('Cal_Score','4880')" 
                 //style="color:#FFFFFF" title="5月12日">12</a>
-                //<div align=right>68<br>犀牛 <font color=ffff00>2:3</font> 象<br>＠花蓮
+                //<div align=right>68<br>犀牛 <font color=ffff00>2:3</font> 象<br>花蓮
                 //<br>13:05<br>緯來體育台<br><font color=red>補 2013/5/11</font><br> 
                 //<a href=http://www.cpbl.com.tw/GResult/Result.aspx?gameno=01&pbyear=2013&game=68 
                 //target="new"><img src="../images/ico/final.gif" border=0></a><br>
                 //<img src="../images/ico/ScoreqryLine.gif">
-                //<br>71<br>獅 <font color=ffff00>11:3</font> 桃猿<br>＠桃園
+                //<br>71<br>獅 <font color=ffff00>11:3</font> 桃猿<br>桃園
                 //<br>17:05<br>緯來體育台<br> 
                 //<a href=http://www.cpbl.com.tw/GResult/Result.aspx?gameno=01&pbyear=2013&game=71 
                 //target="new"><img src="../images/ico/final.gif" border=0></a><br>
@@ -392,7 +392,7 @@ public class CpblCalendarHelper extends HttpHelper {
 //      <table><tr><th></th><th>51</th><th></th></tr></table>
 //      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
                                 if (games[g].contains("<td colspan='3' class='suspend'>")) {
-                                    Log.v(TAG, String.format("suspend day=%d", d));
+                                    //Log.v(TAG, String.format("suspend day=%d", d));
                                     continue;//don't add to list
                                 }
                                 //use <tr class="game"> to get games
@@ -692,14 +692,23 @@ public class CpblCalendarHelper extends HttpHelper {
                                 if (extra.startsWith("<font color=red>")) {
                                     g--;
                                     gameList.remove(gameList.size() - 1);
-                                } else if (extra.startsWith("<font color=green>")) {
-                                    //                      01234567890123456789
-                                    Game suspend = gameList.get(gameList.size() - 1);
-                                    suspend.IsDelay = true;
-                                    suspend.StartTime.set(Calendar.HOUR_OF_DAY, 13);
-                                    suspend.StartTime.set(Calendar.MINUTE, 5);
-                                    suspend.DelayMessage = extra.substring(18,
-                                            extra.indexOf("</"));
+                                } else {//[93]dolphin++ fix delay message after game final
+                                    if (extra.contains("<font color=blue>")) {
+                                        extra.substring(
+                                                0, extra.indexOf("<font color=blue>"));
+                                    }
+                                    if (extra.contains("<font color=green>")) {
+                                        //              01234567890123456789
+                                        extra = extra
+                                                .substring(extra.indexOf("<font color=green>"));
+                                        Game suspend = gameList.get(gameList.size() - 1);
+                                        suspend.IsDelay = true;
+                                        suspend.StartTime.set(Calendar.HOUR_OF_DAY, 13);
+                                        suspend.StartTime.set(Calendar.MINUTE, 5);
+                                        suspend.DelayMessage = extra.substring(18,
+                                                extra.indexOf("</"));
+                                        //Log.d(TAG, suspend.DelayMessage);
+                                    }
                                 }
                             }
                         }
