@@ -62,6 +62,9 @@
         <item>桃園國際</item>
     </string-array>
 
+    <string name="cpbl_game_field_name_F19">洲際</string>
+    <string name="cpbl_game_field_name_F23">桃園</string>
+
     <string-array name="cpbl_game_kind_id">
         <item>07</item>
         <item>01</item>

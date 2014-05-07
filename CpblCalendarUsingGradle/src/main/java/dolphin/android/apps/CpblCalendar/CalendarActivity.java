@@ -633,10 +633,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         //check field data
                         //Log.d(TAG, mSpinnerField.getSelectedItem().toString());
                         if (mYear >= 2014 && mSpinnerField.getSelectedItemPosition() > 0) {
-                            String field = mSpinnerField.getSelectedItem().toString();
+                            //String field = mSpinnerField.getSelectedItem().toString();
                             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
-                                Game game = i.next();
-                                if (!game.Field.contains(field)) {
+                                //Game game = i.next();
+                                //if (!game.Field.contains(field)) {
+                                if (!matchField(i.next())){
                                     i.remove();
                                 }
                             }
@@ -670,6 +671,20 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         } else {
             Log.e(TAG, "what happened?");
         }
+    }
+
+    private boolean matchField(Game game) {
+        String field = mSpinnerField.getSelectedItem().toString();
+        boolean matched = game.Field.contains(field);
+        int fieldIndex = mSpinnerField.getSelectedItemPosition();
+        String fieldId = mGameField[fieldIndex];
+        if (fieldId.equals("F19")) {
+            matched |= game.Field.contains(getString(R.string.cpbl_game_field_name_F19));
+        }
+        if (fieldId.equals("F23")) {
+            matched |= game.Field.contains(getString(R.string.cpbl_game_field_name_F23));
+        }
+        return matched;
     }
 
     /**

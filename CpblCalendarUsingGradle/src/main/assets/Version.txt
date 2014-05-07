@@ -19,6 +19,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[94] @ 2014-05-07
+    fix 桃園國際球場/桃園 and 台中洲際/洲際 match check
+        private boolean matchField(Game game)
+
 [93] @ 2014-04-28
     fix game field incorrect
         應用程式版本：1.3.2
