@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -470,7 +471,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                            }
                             try {//update the data from CPBL website
                                 doQueryStateUpdateCallback(R.string.title_download_complete);
-                                mergeGameList(gameList, tmpList);
+                                mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
                             } catch (Exception e) {
                             }
                         }
@@ -527,10 +528,20 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }
     }
 
-    private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList) {
+    private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList,
+            SparseArray<Game> delayList) {
         if (refList != null) {
             if (mainList != null) {
                 for (Game g : mainList) {
+                    //[95]dolphin++ check delay game first
+                    Game d = delayList.get(g.Id);
+                    if (g.IsDelay && d != null) {
+                        //g.StartTime = delayList.get(g.Id).StartTime;
+                        g.StartTime.set(Calendar.HOUR_OF_DAY,
+                                d.StartTime.get(Calendar.HOUR_OF_DAY));
+                        g.StartTime.set(Calendar.MINUTE,
+                                d.StartTime.get(Calendar.MINUTE));
+                    }
                     //[93]dolphin--
                     //if (g.IsFinal) {//no need to check time
                     //    continue;
@@ -637,7 +648,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
                                 //Game game = i.next();
                                 //if (!game.Field.contains(field)) {
-                                if (!matchField(i.next())){
+                                if (!matchField(i.next())) {
                                     i.remove();
                                 }
                             }

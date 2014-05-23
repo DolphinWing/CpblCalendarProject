@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.util.SparseArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -785,6 +786,38 @@ public class CpblCalendarHelper extends HttpHelper {
         }
 
         return game;
+    }
+
+    public SparseArray<Game> getDelayGameList() {
+        SparseArray<Game> list = new SparseArray<Game>();
+        try {
+            String html = getUrlContent("http://zxc22.idv.tw/delay.asp", ENCODE_BIG5);
+            html = html.substring(html.indexOf("<table"));
+            html = html.substring(html.indexOf("</tr>"));
+            html = html.substring(html.indexOf("</tr>"));
+            String[] games = html.split("<tr");
+            //Log.d(TAG, "games " + games.length);
+            for (int i = 2; i < games.length - 1; i++) {
+                String[] info = games[i].split("</td>");
+                //Log.d(TAG, ">>> " + game);
+                //<td align=center><font face=arial size=2>1</font></td>
+                String id = info[1].substring(info[1].lastIndexOf("<font"));
+                id = id.substring(id.indexOf(">") + 1, id.indexOf("</"));
+                String time = info[3].substring(info[3].lastIndexOf("<font"));
+                time = time.substring(time.indexOf(">") + 1, time.indexOf("</"));
+                //Log.d(TAG, "id=" + id + ", time=" + time);
+                Game g = new Game();
+                g.Id = Integer.parseInt(id);
+                g.StartTime = CpblCalendarHelper.getNowTime();
+                g.StartTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.split(":")[0]));
+                g.StartTime.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
+                //Log.d(TAG, "id=" + g.Id);
+                list.put(g.Id, g);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public static ArrayList<Game> getCache(Context context, String fileName) {
