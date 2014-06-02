@@ -19,6 +19,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[96] @ 2014-06-01
+    update Google Analytics API to v4
+
+[95] @ 2014-05-23
+    修正不同月份的補賽時間不正確
+
 [94] @ 2014-05-07
     fix 桃園國際球場/桃園 and 台中洲際/洲際 match check
         private boolean matchField(Game game)

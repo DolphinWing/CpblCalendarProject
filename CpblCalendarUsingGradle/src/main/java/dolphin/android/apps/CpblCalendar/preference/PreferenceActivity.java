@@ -1,14 +1,16 @@
 package dolphin.android.apps.CpblCalendar.preference;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import android.annotation.TargetApi;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.analytics.tracking.android.EasyTracker;
-
 import java.util.List;
 
+import dolphin.android.apps.CpblCalendar.CpblApplication;
 import dolphin.android.apps.CpblCalendar.R;
 
 /**
@@ -33,8 +35,20 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
         //setTheme(R.style.Theme_Holo_green);
         super.onCreate(savedInstanceState);
 
-        if (PreferenceUtils.isEngineerMode(this))//[28]dolphin
+        // Get tracker.
+        Tracker t = ((CpblApplication) getApplication()).getTracker(
+                CpblApplication.TrackerName.APP_TRACKER);
+        if (t != null) {
+            // Set screen name.
+            // Where path is a String representing the screen name.
+            t.setScreenName("dolphin.android.apps.CpblCalendar.preference.PreferenceActivity");
+            // Send a screen view.
+            t.send(new HitBuilders.AppViewBuilder().build());
+        }
+
+        if (PreferenceUtils.isEngineerMode(this)) {//[28]dolphin
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
     }
 
     @Override
@@ -54,17 +68,17 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //... // The rest of your onStart() code.
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //... // The rest of your onStop() code.
-        EasyTracker.getInstance(this).activityStop(this);
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        //... // The rest of your onStart() code.
+//        EasyTracker.getInstance(this).activityStart(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        //... // The rest of your onStop() code.
+//        EasyTracker.getInstance(this).activityStop(this);
+//    }
 }

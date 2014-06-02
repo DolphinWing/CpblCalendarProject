@@ -1,8 +1,5 @@
 package dolphin.android.apps.CpblCalendar;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 
@@ -285,11 +282,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     }
 
     private void sendTrackerException() {
-        EasyTracker easyTracker = EasyTracker.getInstance(this);
-        if (easyTracker != null) {
-            easyTracker.send(MapBuilder.createEvent("Exception",
-                    "commitAllowingStateLoss", "phone", null).build());
-        }
+        sendTrackerException("commitAllowingStateLoss", "phone", 0);
     }
 
     @Override

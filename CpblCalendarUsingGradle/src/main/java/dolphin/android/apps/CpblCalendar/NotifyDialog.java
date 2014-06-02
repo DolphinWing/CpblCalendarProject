@@ -1,5 +1,8 @@
 package dolphin.android.apps.CpblCalendar;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.pm.ActivityInfo;
@@ -9,9 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,14 +24,17 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * Created by dolphin on 2013/9/1.
  */
 public class NotifyDialog extends Activity {
+
     public final static String EXTRA_GAME1 = "game1";
+
     public final static String EXTRA_GAME2 = "game2";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (PreferenceUtils.isEngineerMode(this))
+        if (PreferenceUtils.isEngineerMode(this)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
 
         setContentView(R.layout.activity_notify_dialog);
 
@@ -70,8 +73,9 @@ public class NotifyDialog extends Activity {
 
         if (game1 != null) {
             updateMatchUp(layout1, game1, bIsTablet, bShowLogo);
-        } else
+        } else {
             layout1.setVisibility(View.GONE);
+        }
 
         if (game2 != null) {
             updateMatchUp(layout2, game2, bIsTablet, bShowLogo);
@@ -82,20 +86,22 @@ public class NotifyDialog extends Activity {
 
         int alarmTime = PreferenceUtils.getAlarmNotifyTime(getBaseContext());
         boolean isVibrate = PreferenceUtils.isEnableNotifyVibrate(getBaseContext());
-        EasyTracker easyTracker = EasyTracker.getInstance(NotifyDialog.this);
-        if (easyTracker != null) {
-            easyTracker.send(MapBuilder.createEvent("UI",//Category
-                            "NotifyDialog",//Action (required)
-                            String.format("before=%d, vibrate=%s",
-                                    alarmTime, isVibrate),//label
-                            null
-                    ).build()
-            );
-        }
+//        EasyTracker easyTracker = EasyTracker.getInstance(NotifyDialog.this);
+//        if (easyTracker != null) {
+//            easyTracker.send(MapBuilder.createEvent("UI",//Category
+//                            "NotifyDialog",//Action (required)
+//                            String.format("before=%d, vibrate=%s",
+//                                    alarmTime, isVibrate),//label
+//                            null
+//                    ).build()
+//            );
+//        }
+        sendGmsGoogleAnalyticsReport("UI", "NotifyDialog",
+                String.format("before=%d, vibrate=%s", alarmTime, isVibrate));
     }
 
     private void updateMatchUp(ViewGroup convertView, Game game,
-                               boolean bIsTablet, boolean bShowLogo) {
+            boolean bIsTablet, boolean bShowLogo) {
         convertView.findViewById(R.id.textView3).setVisibility(View.GONE);
         convertView.findViewById(R.id.textView4).setVisibility(View.GONE);
         convertView.findViewById(R.id.textView8).setVisibility(View.GONE);
@@ -140,17 +146,41 @@ public class NotifyDialog extends Activity {
         ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //... // The rest of your onStart() code.
-        EasyTracker.getInstance(this).activityStart(this);
-    }
+    //
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        //... // The rest of your onStart() code.
+//        EasyTracker.getInstance(this).activityStart(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        //... // The rest of your onStop() code.
+//        EasyTracker.getInstance(this).activityStop(this);
+//    }
+    protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
+        // Get tracker.
+        Tracker t = ((CpblApplication) getApplication()).getTracker(
+                CpblApplication.TrackerName.APP_TRACKER);
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        //... // The rest of your onStop() code.
-        EasyTracker.getInstance(this).activityStop(this);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("dolphin.android.apps.CpblCalendar.NotifyDialog");
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
+        // This event will also be sent with &cd=Home%20Screen.
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .build());
+
+        // Clear the screen name field when we're done.
+        t.setScreenName(null);
     }
 }

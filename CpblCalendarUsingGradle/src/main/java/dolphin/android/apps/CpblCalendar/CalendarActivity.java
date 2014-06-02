@@ -1,7 +1,10 @@
 package dolphin.android.apps.CpblCalendar;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
+//import com.google.analytics.tracking.android.EasyTracker;
+//import com.google.analytics.tracking.android.MapBuilder;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -267,19 +270,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 item.setVisible(false);
                 showLeaderBoard2014();//[87]dolphin++
                 return true;//break;
-            case R.id.action_go_to_cpbl: {
-                EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-                if (easyTracker != null) {
-                    easyTracker.send(MapBuilder.createEvent("UI",//Category
-                                    "go_to_website",//Action (required)
-                                    null,//label
-                                    null)//Event value (long)
-                                    .build()
-                    );
-                }
-            }
-            CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext());
-            return true;
+            case R.id.action_go_to_cpbl:
+                sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
+                CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext());
+                return true;
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel
                     mCacheMode = false;
@@ -520,12 +514,52 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }).start();
     }
 
-    private void sendTrackerException(String action, String label, long evtValue) {
-        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-        if (easyTracker != null) {
-            easyTracker.send(MapBuilder.createEvent("Exception", action,
-                    label, evtValue).build());
-        }
+    protected void sendTrackerException(String action, String label, long evtValue) {
+//        sendGoogleAnalyticsTracker("Exception", action, label, evtValue);
+        sendGmsGoogleAnalyticsReport("dolphin.android.apps.CpblCalendar.CalendarActivity",
+                "Exception", action, label);
+    }
+
+    protected void sendTrackerException(String path, String action, String label) {
+        sendGmsGoogleAnalyticsReport(path, "Exception", action, label);
+    }
+
+//    protected void sendGoogleAnalyticsTracker(String category, String action, String label,
+//            long evtValue) {
+//        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
+//        if (easyTracker != null) {
+//            easyTracker.send(MapBuilder.createEvent(category, action,
+//                    label, evtValue).build());
+//        }
+//    }
+    protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
+        sendGmsGoogleAnalyticsReport("dolphin.android.apps.CpblCalendar.CalendarActivity",
+                category, action, label);
+    }
+
+    protected void sendGmsGoogleAnalyticsReport(String path, String category, String action,
+            String label) {
+        // Get tracker.
+        Tracker t = ((CpblApplication) getApplication()).getTracker(
+                CpblApplication.TrackerName.APP_TRACKER);
+
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName(path);
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
+        // This event will also be sent with &cd=Home%20Screen.
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .build());
+
+        // Clear the screen name field when we're done.
+        t.setScreenName(null);
     }
 
     private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList,
@@ -587,27 +621,24 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     private void doQueryCallback(final ArrayList<Game> gameList) {
         mIsQuery = false;
 
-        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-        if (easyTracker != null) {
-            int type = (gameList != null && gameList.size() > 0)
-                    ? gameList.get(0).Source : -1;
-            String extra = mCacheMode ? "cache" : "unknown";
-            if (!mCacheMode) {
-                switch (type) {
-                    case Game.SOURCE_CPBL:
-                        extra = "cpbl";
-                        break;
-                    case Game.SOURCE_ZXC22:
-                        extra = "zxc22";
-                        break;
-                    case Game.SOURCE_CPBL_2013:
-                        extra = "cpbl_old";
-                        break;
-                }
+        int type = (gameList != null && gameList.size() > 0)
+                ? gameList.get(0).Source : -1;
+        String extra = mCacheMode ? "cache" : "unknown";
+        if (!mCacheMode) {
+            switch (type) {
+                case Game.SOURCE_CPBL:
+                    extra = "cpbl";
+                    break;
+                case Game.SOURCE_ZXC22:
+                    extra = "zxc22";
+                    break;
+                case Game.SOURCE_CPBL_2013:
+                    extra = "cpbl_old";
+                    break;
             }
-            easyTracker.send(MapBuilder.createEvent("UI", "doQueryCallback",
-                    String.format("%04d/%02d:%s", mYear, mMonth, extra), null).build());
         }
+        sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
+                String.format("%04d/%02d:%s", mYear, mMonth, extra));
 
         if (gameList != null && mHelper != null && mHelper.canUseCache()
                 && !PreferenceUtils.isCacheMode(this)) {
@@ -808,11 +839,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             Log.e(TAG, "showLeaderBoard: " + e.getMessage());
         }
 
-        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-        if (easyTracker != null) {
-            easyTracker.send(MapBuilder.createEvent("UI", "showLeaderBoard",
-                    null, null).build());
-        }
+        sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
     }
 
     ArrayList<Stand> mStanding = null;
@@ -882,19 +909,19 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         showLeaderBoard(standingHtml);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //... // The rest of your onStart() code.
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //... // The rest of your onStop() code.
-        EasyTracker.getInstance(this).activityStop(this);
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        //... // The rest of your onStart() code.
+//        EasyTracker.getInstance(this).activityStart(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        //... // The rest of your onStop() code.
+//        EasyTracker.getInstance(this).activityStop(this);
+//    }
 
     private void showCacheModeEnableDialog(final MenuItem item) {
         new AlertDialog.Builder(CalendarActivity.this).setCancelable(true)
@@ -970,7 +997,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mActivity = activity;
         mQueryCallback = callback;
         if (mQueryCallback != null) {//call before start
-
             mQueryCallback.onQueryStart();
         }
         mYear = year;

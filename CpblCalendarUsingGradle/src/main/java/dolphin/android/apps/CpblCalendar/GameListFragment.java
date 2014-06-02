@@ -3,6 +3,7 @@ package dolphin.android.apps.CpblCalendar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -151,7 +153,12 @@ public class GameListFragment extends SherlockListFragment
                 if (PreferenceUtils.isEngineerMode(getActivity())) {
                     Log.d(TAG, "Url=" + url.substring(url.lastIndexOf("/")));
                 } else {
-                    startActivity(i);
+                    try {//[97]dolphin++
+                        startActivity(i);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(getActivity(), R.string.query_error,
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }

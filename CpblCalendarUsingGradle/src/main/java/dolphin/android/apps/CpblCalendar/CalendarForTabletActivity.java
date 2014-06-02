@@ -1,5 +1,14 @@
 package dolphin.android.apps.CpblCalendar;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,16 +21,6 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -275,11 +274,7 @@ public class CalendarForTabletActivity extends CalendarActivity
     }
 
     private void sendTrackerException() {
-        EasyTracker easyTracker = EasyTracker.getInstance(this);
-        if (easyTracker != null) {
-            easyTracker.send(MapBuilder.createEvent("Exception",
-                    "commitAllowingStateLoss", "tablet", null).build());
-        }
+        sendTrackerException("commitAllowingStateLoss", "tablet", 0);
     }
 
     @Override
