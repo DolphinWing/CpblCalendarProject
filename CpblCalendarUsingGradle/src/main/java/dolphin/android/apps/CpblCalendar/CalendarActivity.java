@@ -965,15 +965,45 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
+                //[98]dolphin++ add check delay list
+                SparseArray<Game> delayList = mHelper.getDelayGameList();
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
                     ArrayList<Game> list = mHelper.query("01", mYear, m, "F00");
-                    if (list == null) {
-                        doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                                mYear, m));
-                        list = mHelper.query2014zxc(m);
-                    }
+//                    if (list == null) {
+                    doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                            mYear, m));
+//                        list = mHelper.query2014zxc(m);
+//                    }
+                    ArrayList<Game> list2 = mHelper.query2014zxc(m);
+
+//                    Log.v(TAG, "delayList.size() = " + delayList.size());
+//                    for (int i = 0; i < delayList.size(); i++) {
+//                        //check if the game is in this month
+//                        Game d = delayList.get(delayList.keyAt(i));
+//                        Log.v(TAG, " ID = " + d.Id + " " + d.StartTime.getTime().toString());
+//                        if (d.StartTime.get(Calendar.MONTH) == m - 1) {
+//                            boolean alreadyIn = false;
+//                            //check if the game is already in the list
+//                            for (Game g : list) {//[98]dolphin++ add check delay list
+//                                if (g.Id == d.Id /*&& g.IsDelay*/) {
+//                                    //g.StartTime = delayList.get(g.Id).StartTime;
+//                                    g.StartTime.set(Calendar.HOUR_OF_DAY,
+//                                            d.StartTime.get(Calendar.HOUR_OF_DAY));
+//                                    g.StartTime.set(Calendar.MINUTE,
+//                                            d.StartTime.get(Calendar.MINUTE));
+//                                    alreadyIn = true;
+//                                }
+//                            }
+//
+//                            if (!alreadyIn) {//add the game to the list
+//                                list.add(d);
+//                            }
+//                        }
+//                    }
+                    list = mergeGameList(list2, list2, delayList);
+
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));

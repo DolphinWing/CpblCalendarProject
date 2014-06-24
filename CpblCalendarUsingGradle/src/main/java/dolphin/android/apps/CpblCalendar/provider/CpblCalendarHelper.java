@@ -812,6 +812,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 g.StartTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.split(":")[0]));
                 g.StartTime.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
                 //Log.d(TAG, "id=" + g.Id);
+                g.IsDelay = true;
                 list.put(g.Id, g);
             }
         } catch (Exception e) {

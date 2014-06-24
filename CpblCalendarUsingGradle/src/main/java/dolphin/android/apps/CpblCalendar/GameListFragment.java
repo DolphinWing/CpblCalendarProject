@@ -48,6 +48,8 @@ public class GameListFragment extends SherlockListFragment
 
     private final static long ONE_WEEK = ONE_DAY * 7;
 
+    private final static long LONGEST_GAME = 60 * 60 * 7;
+
     /**
      * update the adapter to ListView
      *
@@ -325,6 +327,8 @@ public class GameListFragment extends SherlockListFragment
             boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));
             bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
             //Log.d(TAG, c.toString() + " live=" + bLiveNow);
+            bLiveNow &= (mNow.getTimeInMillis() - game.StartTime.getTimeInMillis() < LONGEST_GAME);
+            //Log.d(TAG, game.StartTime.getTime().toString());
             TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
             if (mNow.get(Calendar.YEAR) >= 2014) {//CPBL TV live!
                 tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);
