@@ -1,5 +1,5 @@
 <resources>
-    <bool name="config_tablet">true</bool>
+    <bool name="config_tablet">false</bool>
     <!--<bool name="config_landscape">false</bool>-->
 
     <dimen name="padding_small">8dp</dimen>

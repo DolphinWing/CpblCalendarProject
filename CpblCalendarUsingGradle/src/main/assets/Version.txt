@@ -19,6 +19,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[99] @ 2014-06-29
+    fix team leader board
+    change the offline suspend game merge rule
+    change Nexus 7 to phone version layout
+
 [98] @ 2014-06-25
     fix offline mode suspend games
 

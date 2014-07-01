@@ -454,7 +454,7 @@ public class CpblCalendarHelper extends HttpHelper {
 //                    </ul>
 //                </div>
     private final static String PATTERN_BOARD_TEAM_2014 =
-            "<div class=\"topinfo\">[^<]*<ul>[^<]*<li><img src=\"([^\"]+)\"></li>[^<]*" +
+            "<div class=\"topinfo\">[^<]*<ul>[^<]*<li><a[^<]*<img src=\"([^\"]+)\"></a></li>[^<]*" +
                     "<li>([^<]+)</li>[^<]*<li>([^<]+)</li>[^<]*<li>([^<]+)</li>[^<]*" +
                     "<li>([^<]+)</li>[^<]*<li>([^<]*)</li>*";
 

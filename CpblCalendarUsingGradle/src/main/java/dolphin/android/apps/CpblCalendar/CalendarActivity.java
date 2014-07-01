@@ -1002,7 +1002,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                            }
 //                        }
 //                    }
-                    list = mergeGameList(list2, list2, delayList);
+                    list = mergeGameList2(list2, list, delayList);
 
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
@@ -1058,5 +1058,38 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 doQueryCallback(gameList);
             }
         }).start();
+    }
+
+    private ArrayList<Game> mergeGameList2(ArrayList<Game> mainList, ArrayList<Game> refList,
+            SparseArray<Game> delayList) {
+        //assume main list is refList as zxc22.idv.tw
+        if (refList != null) {
+            //assume refList is cpbl old website
+            if (mainList != null) {
+                for (Game game : mainList) {
+                    if (refList.contains(game)) {//ok, the game stays
+                        for (Game rg : refList) {
+                            if (rg.Id == game.Id
+                                    && rg.StartTime.get(Calendar.DAY_OF_YEAR) == game.StartTime
+                                    .get(Calendar.DAY_OF_YEAR)) {
+                                game.StartTime = rg.StartTime;
+                                game.Field = rg.Field;
+                            }
+                        }
+                    }//no in refList
+                    Game d = delayList.get(game.Id);
+                    if (game.IsDelay && d != null) {
+                        //g.StartTime = delayList.get(g.Id).StartTime;
+                        game.StartTime.set(Calendar.HOUR_OF_DAY,
+                                d.StartTime.get(Calendar.HOUR_OF_DAY));
+                        game.StartTime.set(Calendar.MINUTE,
+                                d.StartTime.get(Calendar.MINUTE));
+                    }
+                }
+            } else {//no main list
+                return refList;
+            }
+        }
+        return mainList;
     }
 }
