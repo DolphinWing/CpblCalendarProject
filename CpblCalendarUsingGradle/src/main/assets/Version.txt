@@ -4,7 +4,7 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 本程式目前提供以下功能
 ● 檢視模式: 快速取得CPBL中華職棒今年例行賽賽程表，也可以很快的查詢2013年之前的歷史對戰資料。
 ● 離線模式: 可以將所有賽程下載到本機端。請在下拉式選單中啟用。啟用離線模式將不會顯示今年的對戰成績。
-● 通知功能: 開放測試中，請到設定中啟用。啟用後，點擊時間旁邊的小鬧鐘圖示，紅色表式啟動該場通知；灰色表示未啟動。
+● 通知功能: 開放測試中，請到設定中啟用。啟用後，點擊時間旁邊的小鬧鐘圖示，紅色表示啟動該場通知；灰色表示未啟動。
 
 資料來源：CPBL中華職棒官網賽程 http://www.cpbl.com.tw/
 　　　　　中華職棒舊官方網址 http://cpblweb.ksi.com.tw/
@@ -19,6 +19,16 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[103] @ 2014-08-09
+    use build.gradle for Android L Preview test
+
+[102] @ 2014-08-07
+    change phone layout to 0dp margin
+    change layout for material design (in progress)
+
+[100] @ 2014-07-02, work
+    change offline mode in large to dropdown menu
+
 [99] @ 2014-06-29
     fix team leader board
     change the offline suspend game merge rule

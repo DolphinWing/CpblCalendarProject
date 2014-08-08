@@ -1,17 +1,11 @@
 package dolphin.android.apps.CpblCalendar;
 
-//import com.google.analytics.tracking.android.EasyTracker;
-//import com.google.analytics.tracking.android.MapBuilder;
-
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,13 +17,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,6 +32,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,8 +42,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-import dolphin.android.app.ABSFragmentActivity;
-import dolphin.android.apps.CpblCalendar.preference.GBPreferenceActivity;
+import dolphin.android.apps.CpblCalendar.CpblApplication;
+import dolphin.android.apps.CpblCalendar.NotifyReceiver;
+import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -60,7 +58,8 @@ import dolphin.android.net.HttpHelper;
  * <p/>
  * Base implementation of CalendarActivity for different style
  */
-public abstract class CalendarActivity extends ABSFragmentActivity
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+public abstract class CalendarActivity extends Activity
         implements EmptyFragmentWithCallbackOnResume.OnFragmentAttachedListener {
 
     protected final static String TAG = "CalendarActivity";
@@ -95,12 +94,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Holo_green);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        if (PreferenceUtils.isEngineerMode(this))//[28]dolphin
-        {
+        if (PreferenceUtils.isEngineerMode(this)) {//[28]dolphin
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
 
@@ -114,6 +112,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     .penaltyLog()
                     .permitDiskWrites()//[19]dolphin++
                     .permitDiskReads()//[19]dolphin++
+                    .permitNetwork()//[101]dolphin++
                     .build());
         }
 
@@ -134,7 +133,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         // android.support.v4.app.FragmentManagerImpl.enqueueAction
         // http://stackoverflow.com/a/12681526
         if (savedInstanceState == null) {
-            final FragmentManager fm = this.getSupportFragmentManager();
+            final FragmentManager fm = this.getFragmentManager();
             final FragmentTransaction ft = fm.beginTransaction();
             final Fragment emptyFragmentWithCallback = new EmptyFragmentWithCallbackOnResume();
             ft.add(emptyFragmentWithCallback, EmptyFragmentWithCallbackOnResume.TAG);
@@ -145,7 +144,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         if (PreferenceUtils.isEnableNotification(this)) {
             NotifyReceiver.setNextAlarm(this);
         }
-        mActivity = getSFActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
+        mActivity = this;//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
     }
 
     @Override
@@ -153,6 +152,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mActivity = null;//[91]dolphin++
         super.onDestroy();
     }
+
+    protected abstract Activity getActivity();
 
     /**
      * initial the query pane
@@ -232,10 +233,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         mCacheMode = PreferenceUtils.isCacheMode(this);
         //Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
-        MenuItem item = menu.findItem(R.id.action_cache_mode);
+        android.view.MenuItem item = menu.findItem(R.id.action_cache_mode);
         if (item != null) {
             item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
                     : R.drawable.holo_green_btn_check_off_holo_dark);
@@ -246,15 +247,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings: {
                 Intent i = new Intent();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    i.setClass(this, PreferenceActivity.class);
-                } else {
-                    i.setClass(this, GBPreferenceActivity.class);
-                }
+                i.setClass(this, PreferenceActivity.class);
                 startActivityForResult(i, 0);
             }
             return true;
@@ -294,10 +291,10 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         public void onClick(View view) {
             onLoading(true);
             mIsQuery = true;//Log.d(TAG, "onQueryClick");
-            setSupportProgressBarIndeterminateVisibility(mIsQuery);
+            setProgressBarIndeterminateVisibility(mIsQuery);
 
             String kind = mSpinnerKind.getSelectedItem().toString();
-            getSActionBar().setTitle(kind);
+            getActionBar().setTitle(kind);
 
             String gameYear = mSpinnerYear.getSelectedItem().toString();
             int year = Integer.parseInt(gameYear.split(" ")[0]);
@@ -307,16 +304,16 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             int fieldIndex = mSpinnerField.getSelectedItemPosition();
             String fieldId = mGameField[fieldIndex];
             if (fieldIndex > 0) {
-                getSActionBar().setTitle(String.format("%s%s%s", kind,
+                getActionBar().setTitle(String.format("%s%s%s", kind,
                         getString(R.string.title_at),
                         mSpinnerField.getSelectedItem().toString()));
             }
 
-            getSActionBar().setSubtitle(String.format("%s %s",
+            getActionBar().setSubtitle(String.format("%s %s",
                     gameYear, mSpinnerMonth.getSelectedItem().toString()));
 
             final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
-            final SherlockFragmentActivity activity = getSFActivity();
+            final Activity activity = getActivity();
             if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
 
                 doCacheModeQuery(activity, year, month, getOnQueryCallback());
@@ -330,13 +327,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             }
         }
     };
-
-    //public abstract void doQuery(int kind, int year, int month);
-
-    /**
-     * get Activity instance
-     */
-    public abstract SherlockFragmentActivity getSFActivity();
 
     /**
      * get OnQueryCallback interface implementation
@@ -354,7 +344,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         public void onQueryStateChange(String msg);
 
         public void onQuerySuccess(CpblCalendarHelper helper,
-                ArrayList<Game> gameArrayList);
+                                   ArrayList<Game> gameArrayList);
 
         public void onQueryError();
     }
@@ -406,7 +396,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
             mProgressText.setText(is_load ? getString(R.string.title_download) : "");
         }
-        setSupportProgressBarIndeterminateVisibility(is_load);
+        setProgressBarIndeterminateVisibility(is_load);
     }
 
     public void onLoading(boolean is_load) {
@@ -416,13 +406,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     /**
      * do query action to the web
      */
-    public void doWebQuery(SherlockFragmentActivity activity,
-            int kind, int year, int month, String field,
-            OnQueryCallback callback) {
+    public void doWebQuery(Activity activity,
+                           int kind, int year, int month, String field,
+                           OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
-        if (mQueryCallback != null)//call before start
-        {
+        if (mQueryCallback != null) {//call before start
             mQueryCallback.onQueryStart();
         }
         mKind = kind;//[22]dolphin++
@@ -538,7 +527,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     protected void sendGmsGoogleAnalyticsReport(String path, String category, String action,
-            String label) {
+                                                String label) {
         // Get tracker.
         Tracker t = ((CpblApplication) getApplication()).getTracker(
                 CpblApplication.TrackerName.APP_TRACKER);
@@ -563,7 +552,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList,
-            SparseArray<Game> delayList) {
+                                          SparseArray<Game> delayList) {
         if (refList != null) {
             if (mainList != null) {
                 for (Game g : mainList) {
@@ -688,7 +677,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         if (gameList.size() > 0) {//update subtitle
                             switch (gameList.get(0).Source) {
                                 case Game.SOURCE_ZXC22:
-                                    getSFActivity().getSupportActionBar()
+                                    getActivity().getActionBar()
                                             .setSubtitle(String.format("%s: %s",
                                                     getString(R.string.title_data_source),
                                                     getString(R.string.summary_zxc22)));
@@ -698,7 +687,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
                         //show offline mode indicator
                         if (PreferenceUtils.isCacheMode(getBaseContext())) {
-                            getSFActivity().getSupportActionBar()
+                            getActivity().getActionBar()
                                     .setSubtitle(R.string.action_cache_mode);
                         }
 
@@ -882,6 +871,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                     "<td style='width:15%;text-align:center'>@behind</td></tr>";
 
     public void doShowLeaderBoard2014(ArrayList<Stand> standing) {
+        if (standing == null)
+            return;//[102]dolphin++
         String standingHtml = "<table style='width:100%;'>";
         standingHtml += TABLE_ROW_TEMPLATE
                 .replace("@style", "color:white;")
@@ -908,20 +899,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         standingHtml += "</table>";
         showLeaderBoard(standingHtml);
     }
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        //... // The rest of your onStart() code.
-//        EasyTracker.getInstance(this).activityStart(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        //... // The rest of your onStop() code.
-//        EasyTracker.getInstance(this).activityStop(this);
-//    }
 
     private void showCacheModeEnableDialog(final MenuItem item) {
         new AlertDialog.Builder(CalendarActivity.this).setCancelable(true)
@@ -977,31 +954,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                        list = mHelper.query2014zxc(m);
 //                    }
                     ArrayList<Game> list2 = mHelper.query2014zxc(m);
-
-//                    Log.v(TAG, "delayList.size() = " + delayList.size());
-//                    for (int i = 0; i < delayList.size(); i++) {
-//                        //check if the game is in this month
-//                        Game d = delayList.get(delayList.keyAt(i));
-//                        Log.v(TAG, " ID = " + d.Id + " " + d.StartTime.getTime().toString());
-//                        if (d.StartTime.get(Calendar.MONTH) == m - 1) {
-//                            boolean alreadyIn = false;
-//                            //check if the game is already in the list
-//                            for (Game g : list) {//[98]dolphin++ add check delay list
-//                                if (g.Id == d.Id /*&& g.IsDelay*/) {
-//                                    //g.StartTime = delayList.get(g.Id).StartTime;
-//                                    g.StartTime.set(Calendar.HOUR_OF_DAY,
-//                                            d.StartTime.get(Calendar.HOUR_OF_DAY));
-//                                    g.StartTime.set(Calendar.MINUTE,
-//                                            d.StartTime.get(Calendar.MINUTE));
-//                                    alreadyIn = true;
-//                                }
-//                            }
-//
-//                            if (!alreadyIn) {//add the game to the list
-//                                list.add(d);
-//                            }
-//                        }
-//                    }
                     list = mergeGameList2(list2, list, delayList);
 
                     boolean r = mHelper.putCache(mYear, m, list);
@@ -1022,8 +974,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }).start();
     }
 
-    private void doCacheModeQuery(SherlockFragmentActivity activity,
-            int year, int month, OnQueryCallback callback) {
+    private void doCacheModeQuery(Activity activity,
+                                  int year, int month, OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
         if (mQueryCallback != null) {//call before start
@@ -1061,7 +1013,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     private ArrayList<Game> mergeGameList2(ArrayList<Game> mainList, ArrayList<Game> refList,
-            SparseArray<Game> delayList) {
+                                           SparseArray<Game> delayList) {
         //assume main list is refList as zxc22.idv.tw
         if (refList != null) {
             //assume refList is cpbl old website

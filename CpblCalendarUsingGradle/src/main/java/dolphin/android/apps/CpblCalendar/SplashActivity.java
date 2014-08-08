@@ -28,9 +28,12 @@ public class SplashActivity extends SherlockActivity {
         //helper.query(2013, 5);
 
         Intent intent = new Intent();
+        final boolean is_debug = getResources().getBoolean(R.bool.pref_engineer_mode);
         final boolean is_tablet = getResources().getBoolean(R.bool.config_tablet);
         //final boolean is_land = getResources().getBoolean(R.bool.config_landscape);
-        if (is_tablet/* && is_land*/) {
+        if (is_debug) {
+            intent.setClass(this, CalendarForPhoneActivity.class);
+        } else if (is_tablet/* && is_land*/) {
             intent.setClass(this, CalendarForTabletActivity.class);
         } else {
             intent.setClass(this, CalendarForPhoneActivity.class);

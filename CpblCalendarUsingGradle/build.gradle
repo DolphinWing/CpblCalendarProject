@@ -1,14 +1,11 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1'
+    compileSdkVersion 'android-L'
+    buildToolsVersion '20.0.0'
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 19
-        versionCode 99
-        versionName "1.4.0"
+        versionCode 103
     }
 
     //http://stackoverflow.com/a/19210105/2673859
@@ -30,7 +27,6 @@ android {
             }
         }
     }
-
     buildTypes {
         release {
             runProguard false
@@ -39,14 +35,28 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+    productFlavors {
+        preview {
+            minSdkVersion 'L'
+            targetSdkVersion 'L'
+            versionName '1.5 L Preview'
+        }
+        full {
+            minSdkVersion 10
+            targetSdkVersion 19
+            versionName '1.4.2'
+        }
+    }
 }
 
 dependencies {
     compile 'com.google.android.gms:play-services:+'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:19.0.+'
+    compile 'com.android.support:support-v4:+'
     compile 'com.google.code.gson:gson:2.2.+'
     //compile project(':libraries:libShowcaseView')
     compile project(':libraries:MyUtilsLibrary')
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
+    //compile 'com.android.support:recyclerview-v7:+'
+    //compile 'com.android.support:appcompat-v7:20.+'
 }

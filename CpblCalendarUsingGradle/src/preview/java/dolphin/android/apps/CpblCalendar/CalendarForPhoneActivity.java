@@ -1,33 +1,44 @@
 package dolphin.android.apps.CpblCalendar;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import dolphin.android.apps.CpblCalendar.provider.ActionBarDrawerToggle;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+
+//import android.support.v4.app.ActionBarDrawerToggle;
+//import android.support.v4.app.FragmentManager;
+//import android.support.v4.app.FragmentTransaction;
+//import android.support.v4.view.GravityCompat;
+//import android.support.v4.widget.DrawerLayout;
+//import android.support.v7.app.ActionBarActivity;
+
+//import dolphin.android.apps.CpblCalendar.provider.ActionBarDrawerToggle;
 
 /**
  * Created by dolphin on 2013/6/3.
  * <p/>
  * CalendarActivity for phone version, with a ActionBarDrawer pane.
  */
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class CalendarForPhoneActivity extends CalendarActivity
         implements CalendarActivity.OnQueryCallback/*, OnShowcaseEventListener*/ {
 
@@ -60,8 +71,8 @@ public class CalendarForPhoneActivity extends CalendarActivity
         //[87]dolphin++ use new flag to control it
         if (getResources().getBoolean(R.bool.feature_query_panel)) {
             // enable ActionBar app icon to behave as action to toggle nav drawer
-            getSActionBar().setDisplayHomeAsUpEnabled(true);
-            getSActionBar().setHomeButtonEnabled(true);
+            //getActionBar().setDisplayHomeAsUpEnabled(true);
+            //getActionBar().setHomeButtonEnabled(true);
 
             // ActionBarDrawerToggle ties together the the proper interactions
             // between the sliding drawer and the action bar app icon
@@ -123,9 +134,9 @@ public class CalendarForPhoneActivity extends CalendarActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getSupportMenuInflater().inflate(R.menu.splash, menu);
+        getMenuInflater().inflate(R.menu.splash, menu);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//[29]dolphin++
             if (menu.findItem(R.id.action_leader_board) != null) {
                 menu.removeItem(R.id.action_leader_board);
@@ -135,7 +146,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         boolean visible = !drawerOpen & !IsQuery();
@@ -157,7 +168,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         //[21]dolphin-- not to hide the tutorial
         //if (mShowcaseView != null && mShowcaseView.isShown()) {//[18]dolphin++
         //    mShowcaseView.hide();
@@ -180,7 +191,6 @@ public class CalendarForPhoneActivity extends CalendarActivity
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         if (mDrawerToggle != null) {//[70]dolphin++ check NullPointer
-        
             mDrawerToggle.syncState();
         }
     }
@@ -190,13 +200,12 @@ public class CalendarForPhoneActivity extends CalendarActivity
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         if (mDrawerToggle != null) {//[70]dolphin++ check NullPointer
-        
             mDrawerToggle.onConfigurationChanged(newConfig);
         }
     }
 
     @Override
-    public SherlockFragmentActivity getSFActivity() {
+    protected Activity getActivity() {
         return this;
     }
 
@@ -231,7 +240,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     private void updateGameListFragment(ArrayList<Game> gameArrayList) {
         mGameList = gameArrayList;//as a temp storage
 
-        FragmentManager fmgr = getSupportFragmentManager();
+        FragmentManager fmgr = getFragmentManager();
         if (fmgr != null) {//update the fragment
             FragmentTransaction trans = fmgr.beginTransaction();
             GameListFragment frag1 =
@@ -255,14 +264,14 @@ public class CalendarForPhoneActivity extends CalendarActivity
         //Log.e(TAG, "onError");
         onLoading(false);//[30]dolphin++
         updateGameListFragment(new ArrayList<Game>());//[59]++ no data
-        Toast.makeText(getSFActivity(), R.string.query_error,
+        Toast.makeText(getActivity(), R.string.query_error,
                 Toast.LENGTH_SHORT).show();//[31]dolphin++
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
     }
 
     @Override
     public void onLoading(boolean is_load) {
-        FragmentManager fmgr = getSupportFragmentManager();
+        FragmentManager fmgr = getFragmentManager();
         if (fmgr != null) {
             FragmentTransaction trans = fmgr.beginTransaction();
             GameListFragment frag1 =
