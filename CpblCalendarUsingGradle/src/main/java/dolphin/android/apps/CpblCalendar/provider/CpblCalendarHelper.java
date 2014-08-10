@@ -688,7 +688,12 @@ public class CpblCalendarHelper extends HttpHelper {
                                 //e.printStackTrace();
 
                                 //Log.d(TAG, "==> " + data.length + ", g=" + g);
-                                String extra = data[g + 1];
+                                String extra;
+                                if (g < data.length - 1) {
+                                    extra = data[g + 1];
+                                } else {
+                                    extra = data[g];
+                                }
                                 //Log.d(TAG, extra);
                                 if (extra.startsWith("<font color=red>")) {
                                     g--;
