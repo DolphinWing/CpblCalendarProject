@@ -124,8 +124,9 @@ public class Team {
     public static int getTeamLogo(int id, int year) {
         switch (id) {
             case ID_ELEPHANTS:
-            case ID_CT_ELEPHANTS://[69]dolphin++
                 return R.drawable.elephant_1990_2013;
+            case ID_CT_ELEPHANTS://[69]dolphin++
+                return R.drawable.elephant_2014;
             case ID_UNI_LIONS:
                 if (year >= 2009)
                     return R.drawable.lion_2009_2013;
