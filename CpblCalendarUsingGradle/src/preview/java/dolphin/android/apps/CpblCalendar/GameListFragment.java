@@ -69,9 +69,7 @@ public class GameListFragment extends ListFragment
         } else {
             Log.e(TAG, "updateAdapter null");
         }
-//        this.setEmptyText(PreferenceUtils.getFavoriteTeams(activity).size() > 0
-//                ? getString(R.string.no_games_this_month)
-//                : getString(R.string.no_favorite_teams));//[31]dolphin++
+
         if (PreferenceUtils.getFavoriteTeams(activity).size() > 0) {
             this.getListView().setEmptyView(getEmptyView());
         } else {
@@ -90,8 +88,6 @@ public class GameListFragment extends ListFragment
             ((ViewGroup) getListView().getParent()).addView(mEmptyView);
         }
         if (mEmptyView != null) {
-//            TextView tv = (TextView) mEmptyView.findViewById(android.R.id.text1);
-//            tv.setText(R.string.no_games_this_month);
             View button1 = mEmptyView.findViewById(android.R.id.button1);
             if (button1 != null) {
                 button1.setOnClickListener(new View.OnClickListener() {

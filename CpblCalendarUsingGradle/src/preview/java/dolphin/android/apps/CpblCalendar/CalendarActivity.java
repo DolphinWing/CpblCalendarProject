@@ -3,9 +3,6 @@ package dolphin.android.apps.CpblCalendar;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,9 +39,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-import dolphin.android.apps.CpblCalendar.CpblApplication;
-import dolphin.android.apps.CpblCalendar.NotifyReceiver;
-import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -116,10 +110,6 @@ public abstract class CalendarActivity extends Activity
                     .build());
         }
 
-//        //[72]dolphin++ https://code.google.com/p/android-query/wiki/Service
-//        MarketService ms = new MarketService(this);
-//        ms.level(MarketService.REVISION).checkVersion();
-
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancelAll();//[51]dolphin++ clear all notifications
@@ -128,17 +118,6 @@ public abstract class CalendarActivity extends Activity
         mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id);
         mCacheMode = PreferenceUtils.isCacheMode(this);//[83]dolphin++
         //Log.d(TAG, "mCacheMode = " + mCacheMode);
-
-        //[33]dolphin++ java.lang.IllegalStateException
-        // android.support.v4.app.FragmentManagerImpl.enqueueAction
-        // http://stackoverflow.com/a/12681526
-        if (savedInstanceState == null) {
-            final FragmentManager fm = this.getFragmentManager();
-            final FragmentTransaction ft = fm.beginTransaction();
-            final Fragment emptyFragmentWithCallback = new EmptyFragmentWithCallbackOnResume();
-            ft.add(emptyFragmentWithCallback, EmptyFragmentWithCallbackOnResume.TAG);
-            ft.commit();
-        }
 
         //[56]++ refresh the alarm when open the activity
         if (PreferenceUtils.isEnableNotification(this)) {
@@ -185,7 +164,7 @@ public abstract class CalendarActivity extends Activity
         mSpinnerYear.setAdapter(adapter);
 
         //[87]dolphin++ hide spinner when not applicable
-        final View layout1 = findViewById(R.id.layout1);
+        //final View layout1 = findViewById(R.id.layout1);
         final View layout2 = findViewById(R.id.layout2);
         mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

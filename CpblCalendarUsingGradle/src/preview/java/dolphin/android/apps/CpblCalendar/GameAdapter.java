@@ -199,7 +199,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
             tv8.setText(Html.fromHtml(game.DelayMessage));
             tv8.setVisibility(View.VISIBLE);
         } else {
-            tv8.setVisibility(View.GONE);
+            tv8.setVisibility(View.INVISIBLE);
         }
 
         TextView tv9 = (TextView) convertView.findViewById(R.id.textView9);
@@ -232,7 +232,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
             alarm.setTag(game);
             if (PreferenceUtils.isEnableNotification(mContext)) {
                 alarm.setVisibility(game.IsFinal || bLiveNow
-                        || game.StartTime.before(mNow) ? View.INVISIBLE : View.VISIBLE);
+                        || game.StartTime.before(mNow) ? View.GONE : View.VISIBLE);
                 alarm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -256,7 +256,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
                         ? R.drawable.ic_device_access_alarmed
                         : R.drawable.ic_device_access_alarm);
             } else {
-                alarm.setVisibility(View.INVISIBLE);
+                alarm.setVisibility(View.GONE);
             }
         }
 
