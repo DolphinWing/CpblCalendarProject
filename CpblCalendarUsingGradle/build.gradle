@@ -41,7 +41,7 @@ android {
             targetSdkVersion 'L'
             versionName '1.5 L Preview'
         }
-        full {
+        offical {
             minSdkVersion 10
             targetSdkVersion 19
             versionName '1.4.2'
