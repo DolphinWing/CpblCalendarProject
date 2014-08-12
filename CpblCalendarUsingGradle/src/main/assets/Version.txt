@@ -19,6 +19,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[105] @ 2014-08-12
+    [How-to] Use the v21 Support Libs on Older Versions & Target L
+        While Remaining Backwards-Compatible
+    http://redd.it/297xli
+    from http://stackoverflow.com/a/24457934
+
 [104] @ 2014-08-10
     fix parsing error for delay games
     add 2014 new elephant logo
