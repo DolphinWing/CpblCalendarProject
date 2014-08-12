@@ -73,13 +73,14 @@ public class CalendarForPhoneActivity extends CalendarActivity
             // enable ActionBar app icon to behave as action to toggle nav drawer
             //getActionBar().setDisplayHomeAsUpEnabled(true);
             //getActionBar().setHomeButtonEnabled(true);
+            //getActionBar().setDisplayUseLogoEnabled(true);
 
             // ActionBarDrawerToggle ties together the the proper interactions
             // between the sliding drawer and the action bar app icon
             mDrawerToggle = new ActionBarDrawerToggle(
                     this,                       /* host Activity */
                     mDrawerLayout,              /* DrawerLayout object */
-                    R.drawable.ic_drawer_light, /* nav drawer image to replace 'Up' caret */
+                    R.drawable.ic_launcher, /* nav drawer image to replace 'Up' caret */
                     R.string.app_name,     /* "open drawer" description for accessibility */
                     R.string.app_name     /* "close drawer" description for accessibility */
             ) {
@@ -131,6 +132,15 @@ public class CalendarForPhoneActivity extends CalendarActivity
             }
         });
 
+
+        findViewById(R.id.button_floating_action).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mDrawerLayout.openDrawer(mDrawerList);
+                    }
+                }
+        );
     }
 
     @Override

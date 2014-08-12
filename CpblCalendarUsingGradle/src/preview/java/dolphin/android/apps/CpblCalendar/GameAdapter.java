@@ -208,6 +208,11 @@ public class GameAdapter extends ArrayAdapter<Game> {
         //url indicator
         ImageView iv1 = (ImageView) convertView.findViewById(android.R.id.icon);
         iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
+        if (bLiveNow) {
+            iv1.setImageResource(R.drawable.ic_live_indicator);
+            iv1.setVisibility(View.VISIBLE);
+            tv6.setVisibility(View.GONE);
+        }
 
         //team logo
         ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);

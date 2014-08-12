@@ -19,6 +19,13 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[106] @ 2014-08-12
+    update L style
+        put ActionBarSherlock to official, let preview uses Holo and Material
+        add floating action button
+        move drawer layout to the right with floating action button
+        other layout tweaks
+
 [105] @ 2014-08-12
     [How-to] Use the v21 Support Libs on Older Versions & Target L
         While Remaining Backwards-Compatible

@@ -18,7 +18,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -154,6 +153,13 @@ public class GameListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getListView().setOnItemLongClickListener(this);
+
+        //https://github.com/makovkastar/FloatingActionButton
+//        FloatingActionButton floatingActionButton =
+//                (FloatingActionButton)getActivity().findViewById(R.id.button_floating_action);
+//        if (floatingActionButton != null) {
+//            floatingActionButton.attachToListView(getListView());
+//        }
     }
 
     @Override

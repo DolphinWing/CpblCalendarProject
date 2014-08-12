@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     tools:context=".SplashActivity"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_medium"
+    android:paddingBottom="@dimen/padding_small"
     android:paddingTop="@dimen/padding_small">
 
     <FrameLayout
@@ -27,7 +27,7 @@
 
         <ImageView
             android:id="@android:id/icon"
-            android:src="@android:drawable/ic_menu_info_details"
+            android:src="@drawable/ic_action_action_about"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:padding="4dp" />
@@ -73,15 +73,15 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@android:id/icon1"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 app:border_width="1dp"
                 app:border_color="@android:color/secondary_text_light_nodisable" />
 
             <TextView
                 style="@style/Theme.Holo_green.Match.Team"
                 android:id="@+id/textView2"
-                android:layout_marginLeft="@dimen/padding_large" />
+                android:layout_marginLeft="16dp" />
 
             <TextView
                 style="@style/Theme.Holo_green.Match.Score"
@@ -103,15 +103,15 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@android:id/icon2"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 app:border_width="1dp"
                 app:border_color="@android:color/secondary_text_light_nodisable" />
 
             <TextView
                 style="@style/Theme.Holo_green.Match.Team"
                 android:id="@+id/textView5"
-                android:layout_marginLeft="@dimen/padding_large" />
+                android:layout_marginLeft="16dp" />
 
             <TextView
                 style="@style/Theme.Holo_green.Match.Score"

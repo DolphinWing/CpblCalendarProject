@@ -18,7 +18,7 @@
 -->
 
 <resources>
-    <style name="Theme.Holo_green" parent="@android:style/Theme.Material.Light" >
+    <style name="Theme.Holo_green" parent="@android:style/Theme.Material.Light.DarkActionBar" >
         <!-- Main theme colors -->
         <!--   your app's branding color (for the app bar) -->
         <item name="android:colorPrimary">@color/holo_green_dark</item>
@@ -26,6 +26,19 @@
         <item name="android:colorPrimaryDark">@color/holo_green_light</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="android:colorAccent">@color/holo_green_light</item>
+    </style>
+
+    <!-- Match row style -->
+    <style name="Theme.Holo_green.Match"/>
+
+    <style name="Theme.Holo_green.Match.Drawer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/ic_drawer</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">@dimen/padding_small</item>
     </style>
 
     <style name="Theme.Holo_green.Match.Title" parent="Theme.Holo_green.TextMedium">
@@ -54,8 +67,9 @@
         <!--<item name="android:textColor">@android:color/secondary_text_light_nodisable</item>-->
         <item name="android:text">@string/empty_data</item>
         <item name="android:autoText">false</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
+
     <style name="Theme.Holo_green.Match.Logo">
         <item name="android:layout_width">@dimen/match_logo_width</item>
         <item name="android:layout_height">@dimen/match_logo_height</item>
@@ -63,6 +77,7 @@
         <item name="android:scaleType">fitCenter</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
+
     <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.TextMedium">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -72,10 +87,12 @@
         <item name="android:text">@string/empty_data</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
+
     <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
         <item name="android:layout_weight">0.2</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
+
     <style name="Theme.Holo_green.Match.Field" parent="Theme.Holo_green.TextSmall">
         <item name="android:layout_width">wrap_content</item>
         <!--<item name="android:layout_weight">1</item>-->
@@ -87,6 +104,7 @@
         <!--<item name="android:textSize">@dimen/match_field_textSize</item>-->
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
+
     <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.TextSmall">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -96,5 +114,39 @@
         <item name="android:text">@string/empty_data</item>
         <!--<item name="android:textSize">@dimen/match_extraMsg_textSize</item>-->
         <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Channel" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@android:color/secondary_text_light</item>
+        <item name="android:text">@string/empty_data</item>
+        <item name="android:textSize">@dimen/match_channel_textSize</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Team09" parent="Theme.Holo_green.Match.Team">
+    </style>
+
+    <!-- Alarm icon style -->
+    <style name="Theme.Holo_green.AlarmIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/ic_device_access_alarm</item>
+        <item name="android:background">@drawable/item_background_holo_light</item>
+        <item name="android:paddingLeft">@dimen/padding_medium</item>
+        <item name="android:paddingRight">@dimen/padding_medium</item>
+        <item name="android:paddingTop">@dimen/padding_small</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+    </style>
+
+    <!-- Query Panel style -->
+    <style name="Theme.Holo_green.QueryPane"/>
+
+    <style name="Theme.Holo_green.QueryPane.Title" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:padding">@dimen/padding_small</item>
     </style>
 </resources>
