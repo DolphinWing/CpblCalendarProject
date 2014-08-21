@@ -15,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.melnykov.fab.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -155,11 +157,11 @@ public class GameListFragment extends ListFragment
         getListView().setOnItemLongClickListener(this);
 
         //https://github.com/makovkastar/FloatingActionButton
-//        FloatingActionButton floatingActionButton =
-//                (FloatingActionButton)getActivity().findViewById(R.id.button_floating_action);
-//        if (floatingActionButton != null) {
-//            floatingActionButton.attachToListView(getListView());
-//        }
+        FloatingActionButton floatingActionButton =
+                (FloatingActionButton)getActivity().findViewById(R.id.button_floating_action);
+        if (floatingActionButton != null) {
+            floatingActionButton.attachToListView(getListView());
+        }
     }
 
     @Override

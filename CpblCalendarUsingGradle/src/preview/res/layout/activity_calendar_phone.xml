@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_margin="32dp"
+            android:layout_margin="16dp"
             android:src="@android:drawable/ic_menu_search"
             app:fab_colorNormal="@color/holo_green_light"
             app:fab_colorPressed="@color/holo_green_light_light"
