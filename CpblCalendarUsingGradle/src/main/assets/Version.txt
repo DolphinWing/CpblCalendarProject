@@ -22,6 +22,7 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 [107] @ 2014-10-06
     remove no use open source in preference
     ActionButton style for tablets
+    the team logo should not be disabled in new design
 
 [106] @ 2014-08-12
     update L style
