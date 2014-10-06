@@ -253,7 +253,7 @@ public abstract class CalendarActivity extends Activity
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel
                     mCacheMode = false;
-                    PreferenceUtils.setCacheMode(getBaseContext(), mCacheMode);
+                    PreferenceUtils.setCacheMode(getBaseContext(), false);
                     item.setIcon(R.drawable.holo_green_btn_check_off_holo_dark);
                     //item.setCheckable(mCacheMode);
                     mButtonQuery.performClick();//refresh a again
@@ -634,6 +634,7 @@ public abstract class CalendarActivity extends Activity
                                 Game game = i.next();
                                 if (teams.containsKey(game.HomeTeam.getId())
                                         || teams.containsKey(game.AwayTeam.getId())) {
+                                    //we need this data
                                 } else {//remove from the list
                                     i.remove();
                                 }
@@ -653,7 +654,8 @@ public abstract class CalendarActivity extends Activity
                             }
                         }
 
-                        if (gameList.size() > 0) {//update subtitle
+                        if (gameList.size() > 0 && getActivity()!= null &&
+                                getActivity().getActionBar() != null) {//update subtitle
                             switch (gameList.get(0).Source) {
                                 case Game.SOURCE_ZXC22:
                                     getActivity().getActionBar()
