@@ -37,7 +37,7 @@
             android:src="@android:drawable/ic_menu_search"
             app:fab_colorNormal="@color/holo_green_light"
             app:fab_colorPressed="@color/holo_green_light_light"
-            app:fab_type="mini"
+            app:fab_type="normal"
             app:fab_shadow="true"/>
     </FrameLayout>
 

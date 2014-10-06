@@ -46,7 +46,7 @@
             android:title="@string/title_iconic_set"
             android:summary="@string/summary_iconic_set" >
         </Preference>-->
-        <Preference
+        <!--<Preference
             android:key="lib_showcaseview"
             android:title="@string/title_showcaseview"
             android:summary="@string/summary_showcaseview">
@@ -55,7 +55,7 @@
             android:key="lib_nineold_android"
             android:title="@string/title_nine_old_android"
             android:summary="@string/summary_nine_old_android">
-        </Preference>
+        </Preference>-->
     </PreferenceCategory>
 
 </PreferenceScreen>
