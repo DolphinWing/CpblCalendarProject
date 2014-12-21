@@ -96,6 +96,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
                     invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 }
             };
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
             mDrawerLayout.setDrawerListener(mDrawerToggle);
         } else {
             //[70]dolphin++ lock drawer
