@@ -20,9 +20,10 @@
             android:id="@+id/content_frame"
             tools:layout="@layout/listview_item_matchup"/>
 
-        <ProgressBar
+        <!--<ProgressBar
             style="@style/Theme.Holo_green.LoadingIcon"
-            android:id="@android:id/progress"/>
+            android:id="@android:id/progress"/>-->
+        <include layout="@layout/include_loading_frame" />
 
         <TextView
             android:id="@android:id/message"
