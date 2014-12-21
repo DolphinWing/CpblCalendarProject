@@ -1,8 +1,5 @@
 package dolphin.android.apps.CpblCalendar;
 
-//import com.google.analytics.tracking.android.EasyTracker;
-//import com.google.analytics.tracking.android.MapBuilder;
-
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 

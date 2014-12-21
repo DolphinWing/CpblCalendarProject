@@ -25,8 +25,6 @@
         android:largeScreens="true"
         android:xlargeScreens="true" />
 
-    <uses-sdk tools:node="replace" />
-
     <application
         android:allowBackup="true"
         android:name=".CpblApplication"

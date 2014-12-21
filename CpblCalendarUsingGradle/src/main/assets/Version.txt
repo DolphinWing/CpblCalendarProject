@@ -19,6 +19,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[108] @ 2014-12-13
+    update build tool to Android Studio 1.0
+
 [107] @ 2014-10-06
     remove no use open source in preference
     ActionButton style for tablets
