@@ -22,6 +22,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 [108] @ 2014-12-13
     update build tool to Android Studio 1.0
 
+    @ 2014-12-21
+    fix 2008/08~09 leak html when parsing delay messages
+    fix preview flavor activity FC
+    change official loading progress icon, adding background
+
 [107] @ 2014-10-06
     remove no use open source in preference
     ActionButton style for tablets

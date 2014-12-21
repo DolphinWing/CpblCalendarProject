@@ -273,7 +273,7 @@ public class CpblCalendarHelper extends HttpHelper {
         String msg = "";
 
         try {//try to get some extra info from the rest of string
-            if (bLive) {
+            if (bLive && !game.Channel.isEmpty()) {
                 msg = str.substring(str.indexOf(game.Channel) + game.Channel.length() + 4);
             } else {
                 msg = str.substring(str.indexOf(schedule) + schedule.length() + 4);
