@@ -26,6 +26,8 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
     fix 2008/08~09 leak html when parsing delay messages
     fix preview flavor activity FC
     change official loading progress icon, adding background
+    Use smaller set of Google Play Services
+        http://developer.android.com/google/play-services/setup.html
 
 [107] @ 2014-10-06
     remove no use open source in preference
