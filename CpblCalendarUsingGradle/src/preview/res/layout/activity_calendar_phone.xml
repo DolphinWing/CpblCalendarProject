@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/padding_large"
-            android:src="@android:drawable/ic_menu_search"
+            android:src="@drawable/ic_action_action_search"
             app:fab_colorNormal="@color/holo_green_light"
             app:fab_colorPressed="@color/holo_green_light_light"
             app:fab_type="mini"
