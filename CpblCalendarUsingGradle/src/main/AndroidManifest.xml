@@ -42,6 +42,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".CalendarForPhoneActivity"
             android:screenOrientation="locked" />
@@ -51,15 +52,11 @@
         <activity
             android:name=".preference.PreferenceActivity"
             android:screenOrientation="locked" />
-        <activity
-            android:name=".preference.GBPreferenceActivity"
-            android:screenOrientation="locked" />
 
         <activity
             android:enabled="@bool/feature_admob"
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-
 
         <receiver
             android:name=".NotifyReceiver"
