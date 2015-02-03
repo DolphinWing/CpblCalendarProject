@@ -1,12 +1,5 @@
 package dolphin.android.apps.CpblCalendar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -28,12 +21,17 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -512,7 +510,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     protected void sendTrackerException(String action, String label, long evtValue) {
-//        sendGoogleAnalyticsTracker("Exception", action, label, evtValue);
         sendGmsGoogleAnalyticsReport("dolphin.android.apps.CpblCalendar.CalendarActivity",
                 "Exception", action, label);
     }
@@ -521,14 +518,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         sendGmsGoogleAnalyticsReport(path, "Exception", action, label);
     }
 
-//    protected void sendGoogleAnalyticsTracker(String category, String action, String label,
-//            long evtValue) {
-//        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-//        if (easyTracker != null) {
-//            easyTracker.send(MapBuilder.createEvent(category, action,
-//                    label, evtValue).build());
-//        }
-//    }
     protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
         sendGmsGoogleAnalyticsReport("dolphin.android.apps.CpblCalendar.CalendarActivity",
                 category, action, label);
@@ -907,20 +896,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         standingHtml += "</table>";
         showLeaderBoard(standingHtml);
     }
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        //... // The rest of your onStart() code.
-//        EasyTracker.getInstance(this).activityStart(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        //... // The rest of your onStop() code.
-//        EasyTracker.getInstance(this).activityStop(this);
-//    }
 
     private void showCacheModeEnableDialog(final MenuItem item) {
         new AlertDialog.Builder(CalendarActivity.this).setCancelable(true)

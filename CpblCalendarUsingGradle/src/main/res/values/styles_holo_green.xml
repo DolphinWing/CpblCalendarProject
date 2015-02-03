@@ -19,7 +19,7 @@
 
 <resources>
 
-    <style name="Theme.Holo_green" parent="@style/Theme.Sherlock.Light.DarkActionBar">
+    <style name="Theme.Holo_green" parent="@android:style/Theme">
         <item name="actionBarItemBackground">@drawable/selectable_background_holo_green</item>
         <item name="popupMenuStyle">@style/PopupMenu.Holo_green</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
@@ -48,50 +48,6 @@
 
         <!-- ShowcaseView theme
         <item name="showcaseViewStyle">@style/ShowcaseTheme</item> -->
-    </style>
-
-    <style name="ActionBar.Solid.Holo_green" parent="@style/Widget.Sherlock.Light.ActionBar.Solid.Inverse">
-        <item name="background">@drawable/ab_solid_holo_green</item>
-        <item name="backgroundStacked">@drawable/ab_stacked_solid_holo_green</item>
-        <item name="backgroundSplit">@drawable/ab_bottom_solid_holo_green</item>
-        <item name="progressBarStyle">@style/ProgressBar.Holo_green</item>
-    </style>
-
-    <style name="ActionBar.Transparent.Holo_green" parent="@style/Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/ab_transparent_holo_green</item>
-        <item name="progressBarStyle">@style/ProgressBar.Holo_green</item>
-    </style>
-
-    <style name="PopupMenu.Holo_green" parent="@style/Widget.Sherlock.ListPopupWindow">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>
-    </style>
-
-    <style name="DropDownListView.Holo_green" parent="@style/Widget.Sherlock.ListView.DropDown">
-        <item name="android:listSelector">@drawable/selectable_background_holo_green</item>
-    </style>
-
-    <style name="ActionBarTabStyle.Holo_green" parent="@style/Widget.Sherlock.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_indicator_ab_holo_green</item>
-    </style>
-
-    <style name="DropDownNav.Holo_green" parent="@style/Widget.Sherlock.Spinner.DropDown.ActionBar">
-        <item name="android:background">@drawable/spinner_background_ab_holo_green</item>
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background_holo_green</item>
-    </style>
-
-    <style name="ProgressBar.Holo_green" parent="@style/Widget.Sherlock.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/progress_horizontal_holo_green</item>
-    </style>
-
-    <style name="ActionButton.CloseMode.Holo_green" parent="@style/Widget.Sherlock.ActionButton.CloseMode">
-        <item name="android:background">@drawable/btn_cab_done_holo_green</item>
-    </style>
-
-    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
-    <style name="Theme.Holo_green.Widget" parent="@style/Theme.Sherlock">
-        <item name="popupMenuStyle">@style/PopupMenu.Holo_green</item>
-        <item name="dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
     </style>
 
     <!-- created by http://android-holo-colors.com/ -->
@@ -156,16 +112,6 @@
         <item name="android:textColor">#000000</item>
     </style>
 
-    <!-- ShowcaseView theme
-    <style name="ShowcaseTheme" parent="ShowcaseView">
-        <!- -<item name="sv_titleTextColor">#ffbb33</item>- ->
-        <!- -<item name="sv_detailTextColor">#ffbb33</item>- ->
-        <item name="sv_backgroundColor">#AA000000</item>
-        <!- -<item name="sv_buttonBackgroundColor">@drawable/btn_default_holo_light</item>- ->
-        <!- -<item name="sv_buttonForegroundColor">@drawable/btn_default_holo_light</item>- ->
-        <!- -<item name="sv_buttonText">Close</item>- ->
-    </style>-->
-
     <!-- Holo AlertDialog-->
     <style name="WindowTitleHolo_green" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle">
         <item name="android:textColor">@color/holo_green_dark</item>
@@ -178,10 +124,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.Holo_green.DialogWindowTitle" parent="WindowTitleHolo_green">
-
-    </style>
-
+    <style name="Theme.Holo_green.DialogWindowTitle" parent="WindowTitleHolo_green" />
 
     <style name="Theme.Holo_green.TextLarge" parent="@android:style/TextAppearance.Large"/>
 

@@ -2,6 +2,8 @@
 <resources>
     <string name="title_at">＠</string>
 
+    <string name="empty_data">(null)</string>
+
     <string-array name="cpbl_team_name">
         <!--<item>兄弟象</item> [89]++ -->
         <item>中信兄弟象</item>

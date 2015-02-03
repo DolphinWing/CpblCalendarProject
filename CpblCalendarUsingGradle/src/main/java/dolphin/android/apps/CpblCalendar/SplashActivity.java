@@ -1,13 +1,12 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockActivity;
-
 //import android.support.v4.app.ActionBarDrawerToggle;
 
-public class SplashActivity extends SherlockActivity {
+public class SplashActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

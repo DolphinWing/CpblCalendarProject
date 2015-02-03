@@ -79,4 +79,80 @@
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
     </style>
 
+    <!-- Match row style -->
+    <style name="Theme.Holo_green.TextLarge" parent="@style/Base.TextAppearance.AppCompat.Large"/>
+
+    <style name="Theme.Holo_green.TextMedium" parent="@style/Base.TextAppearance.AppCompat.Medium"/>
+
+    <style name="Theme.Holo_green.TextSmall" parent="@style/Base.TextAppearance.AppCompat.Small"/>
+
+    <style name="Theme.Holo_green.LoadingText" parent="@android:style/TextAppearance.Medium.Inverse">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal|bottom</item>
+        <item name="android:layout_marginBottom">96dp</item>
+        <item name="android:padding">@dimen/padding_medium</item>
+        <item name="android:background">#66000000</item>
+    </style>
+
+    <!-- match style -->
+    <style name="Theme.Holo_green.Match.Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/padding_medium</item>
+        <item name="android:paddingRight">@dimen/padding_small</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.TextMedium">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_weight">0.8</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:text">@string/empty_data</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
+        <item name="android:layout_weight">0.2</item>
+        <item name="android:textSize">@dimen/abc_text_size_large_material</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.GameId" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:text">@string/empty_data</item>
+        <item name="android:autoText">false</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Field" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:text">@string/title_game_field</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:text">@string/empty_data</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <!-- Query Panel style -->
+    <style name="Theme.Holo_green.QueryPane"/>
+
+    <style name="Theme.Holo_green.QueryPane.Title" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:padding">@dimen/padding_small</item>
+    </style>
+
 </resources>

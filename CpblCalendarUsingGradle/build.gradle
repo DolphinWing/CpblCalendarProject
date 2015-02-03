@@ -61,12 +61,11 @@ dependencies {
     officialCompile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 
     previewCompile 'de.hdodenhof:circleimageview:1.1.1'
-    //compile 'com.android.support:recyclerview-v7:+'
-    //previewCompile 'com.android.support:appcompat-v7:+'
+    previewCompile 'com.android.support:appcompat-v7:21.0.3'
     previewCompile 'com.melnykov:floatingactionbutton:1.0.1'
 
     compile 'com.google.code.gson:gson:2.2.2'
     //compile project(':libraries:libShowcaseView')
-    compile project(':libraries:MyUtilsLibrary')
+    officialCompile project(':libraries:MyUtilsLibrary')
     //compile fileTree(dir: 'libs', include: ['*.jar'])
 }

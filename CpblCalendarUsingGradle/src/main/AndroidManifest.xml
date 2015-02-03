@@ -35,7 +35,7 @@
             android:screenOrientation="locked"
             android:name="dolphin.android.apps.CpblCalendar.SplashActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Sherlock.NoActionBar">
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
