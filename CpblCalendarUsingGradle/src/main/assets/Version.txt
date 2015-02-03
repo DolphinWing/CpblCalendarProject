@@ -19,6 +19,26 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[111] @ 2015-02-02
+    fix drop down menu icon in official flavor
+    //fix no game kind after 2014
+    use new game kind for 2014 new website
+    fix click to url no game kind
+    //use 2014 new website as data source
+
+[110] @ 2015-02-01
+    fix CPBL 2014 score parsing error
+    preview flavor
+        add progress loading view
+        add v7-appcompat
+
+    Known issue: ListView item cannot be clicked
+
+[109] @ 2015-01-30
+    use new AspNetHelper to get data directly from CPBL website
+        use zxc22 as backup data
+    FIXME: remove merge game for debugging, see if we can parse data from CPBL directly
+
 [108] @ 2014-12-13
     update build tool to Android Studio 1.0
 

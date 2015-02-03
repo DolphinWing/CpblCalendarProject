@@ -53,11 +53,6 @@ public class CalendarForTabletActivity extends CalendarActivity
 
         initQueryPane();
 
-//        //[20]dolphin++ add tablet tutorial
-//        if (!isTutorialDone()) {
-//            //TODO
-//        }
-
         View leaderBoard = findViewById(R.id.team_board);
         if (leaderBoard != null) {//[27]dolphin++ for xlarge screen
             mLeaderBoardTitle = (TextView) findViewById(android.R.id.title);
@@ -169,19 +164,10 @@ public class CalendarForTabletActivity extends CalendarActivity
     }
 
     private void showGooglePlayServiceErrorDialog(int errorCode) {
-//        Log.w(TAG, String.format("showGooglePlayServiceErrorDialog %d", errorCode));
-//        GooglePlayServicesUtil.getErrorDialog(errorCode, CalendarForTabletActivity.this, 0,
-//                new DialogInterface.OnCancelListener() {
-//                    @Override
-//                    public void onCancel(DialogInterface dialogInterface) {
-//                        Log.w(TAG, "showGooglePlayServiceErrorDialog onCancel");
         adView = null;
         mEnableAdMob = false;
         LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
         if (layout != null) layout.setVisibility(View.GONE);
-//                    }
-//                }
-//        ).show();
     }
 
     @Override

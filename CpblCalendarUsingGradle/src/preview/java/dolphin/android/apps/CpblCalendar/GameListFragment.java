@@ -28,8 +28,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * Created by dolphin on 2013/6/3.
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class GameListFragment extends ListFragment
-        implements ListView.OnItemLongClickListener {
+public class GameListFragment extends ListFragment implements ListView.OnItemLongClickListener {
 
     private final static String TAG = "GameListFragment";
 
@@ -104,7 +103,8 @@ public class GameListFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        //super.onListItemClick(l, v, position, id);
+        super.onListItemClick(l, v, position, id);
+        Log.d(TAG, "onListItemClick: " + position);
         if (v != null) {
             Game game = (Game) v.getTag();
             //Log.d(TAG, "onListItemClick: " + position);
@@ -127,7 +127,7 @@ public class GameListFragment extends ListFragment
                 //Log.d(TAG, game.StartTime.getTime().toString());
             }
 
-            if (game != null && url != null) {//[78]-- game.IsFinal) {
+            if (/*game != null && */url != null) {//[78]-- game.IsFinal) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -158,7 +158,7 @@ public class GameListFragment extends ListFragment
 
         //https://github.com/makovkastar/FloatingActionButton
         FloatingActionButton floatingActionButton =
-                (FloatingActionButton)getActivity().findViewById(R.id.button_floating_action);
+                (FloatingActionButton) getActivity().findViewById(R.id.button_floating_action);
         if (floatingActionButton != null) {
             floatingActionButton.attachToListView(getListView());
         }
@@ -166,6 +166,7 @@ public class GameListFragment extends ListFragment
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+        //FIXME: don't do anything
         return true;
     }
 

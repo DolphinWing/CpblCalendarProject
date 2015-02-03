@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/spinner2"
                     android:layout_gravity="left|center_vertical"
-                    android:entries="@array/cpbl_game_kind_name"/>
+                    android:entries="@array/cpbl_game_kind_name_2014"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

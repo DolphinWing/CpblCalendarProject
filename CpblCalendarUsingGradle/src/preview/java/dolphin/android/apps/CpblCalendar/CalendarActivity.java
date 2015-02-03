@@ -182,7 +182,7 @@ public abstract class CalendarActivity extends Activity
         mSpinnerYear.setEnabled(!mCacheMode);
 
         adapter = new ArrayAdapter<String>(getBaseContext(),
-                R.layout.sherlock_spinner_item,
+                android.R.layout.simple_spinner_item,
                 new DateFormatSymbols(Locale.TAIWAN).getMonths());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerMonth.setAdapter(adapter);
@@ -423,19 +423,19 @@ public abstract class CalendarActivity extends Activity
                         } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
-//                            gameList = mHelper.query2014();
-                            ArrayList<Game> tmpList = mHelper.query2014();
+                            gameList = mHelper.query2014(mYear, mMonth);
+//                            ArrayList<Game> tmpList = mHelper.query2014();
                             //.query(gameKind, mYear, mMonth, mField);
 //                            if (gameList == null || gameList.size() <= 0) {//backup plan
-                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                                    mYear, mMonth));
-                            gameList = mHelper.query2014zxc(mMonth);
+//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+//                                    mYear, mMonth));
+//                            gameList = mHelper.query2014zxc(mMonth);
 //                            }
-                            try {//update the data from CPBL website
-                                doQueryStateUpdateCallback(R.string.title_download_complete);
-                                mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
-                            } catch (Exception e) {
-                            }
+//                            try {//update the data from CPBL website
+                            doQueryStateUpdateCallback(R.string.title_download_complete);
+//                                mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
+//                            } catch (Exception e) {
+//                            }
                         }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
@@ -492,14 +492,6 @@ public abstract class CalendarActivity extends Activity
         sendGmsGoogleAnalyticsReport(path, "Exception", action, label);
     }
 
-//    protected void sendGoogleAnalyticsTracker(String category, String action, String label,
-//            long evtValue) {
-//        EasyTracker easyTracker = EasyTracker.getInstance(CalendarActivity.this);
-//        if (easyTracker != null) {
-//            easyTracker.send(MapBuilder.createEvent(category, action,
-//                    label, evtValue).build());
-//        }
-//    }
     protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
         sendGmsGoogleAnalyticsReport("dolphin.android.apps.CpblCalendar.CalendarActivity",
                 category, action, label);
@@ -528,44 +520,6 @@ public abstract class CalendarActivity extends Activity
 
         // Clear the screen name field when we're done.
         t.setScreenName(null);
-    }
-
-    private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList,
-                                          SparseArray<Game> delayList) {
-        if (refList != null) {
-            if (mainList != null) {
-                for (Game g : mainList) {
-                    //[95]dolphin++ check delay game first
-                    Game d = delayList.get(g.Id);
-                    if (g.IsDelay && d != null) {
-                        //g.StartTime = delayList.get(g.Id).StartTime;
-                        g.StartTime.set(Calendar.HOUR_OF_DAY,
-                                d.StartTime.get(Calendar.HOUR_OF_DAY));
-                        g.StartTime.set(Calendar.MINUTE,
-                                d.StartTime.get(Calendar.MINUTE));
-                    }
-                    //[93]dolphin--
-                    //if (g.IsFinal) {//no need to check time
-                    //    continue;
-                    //}
-                    //Log.d(TAG, String.format("g=%d @ %d", g.Id,
-                    //        g.StartTime.get(Calendar.DAY_OF_MONTH)));
-                    for (Game t : refList) {
-                        if (g.Id == t.Id) {
-                            g.StartTime = t.StartTime;
-                            g.Field = t.Field;
-                            //Log.d(TAG, String.format("===> %02d:%02d",
-                            //        g.StartTime.get(Calendar.HOUR_OF_DAY),
-                            //        g.StartTime.get(Calendar.MINUTE)));
-                            break;
-                        }
-                    }
-                }
-            } else {
-                return refList;//gameList = tmpList;
-            }
-        }
-        return mainList;
     }
 
     private void doQueryStateUpdateCallback(int resId) {
@@ -654,7 +608,7 @@ public abstract class CalendarActivity extends Activity
                             }
                         }
 
-                        if (gameList.size() > 0 && getActivity()!= null &&
+                        if (gameList.size() > 0 && getActivity() != null &&
                                 getActivity().getActionBar() != null) {//update subtitle
                             switch (gameList.get(0).Source) {
                                 case Game.SOURCE_ZXC22:
@@ -928,14 +882,14 @@ public abstract class CalendarActivity extends Activity
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
-                    ArrayList<Game> list = mHelper.query("01", mYear, m, "F00");
+                    ArrayList<Game> list = mHelper.query2014(mYear, m);
 //                    if (list == null) {
-                    doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                            mYear, m));
-//                        list = mHelper.query2014zxc(m);
-//                    }
-                    ArrayList<Game> list2 = mHelper.query2014zxc(m);
-                    list = mergeGameList2(list2, list, delayList);
+//                    doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+//                            mYear, m));
+////                        list = mHelper.query2014zxc(m);
+////                    }
+//                    ArrayList<Game> list2 = mHelper.query2014zxc(m);
+//                    list = mergeGameList2(list2, list, delayList);
 
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
@@ -993,36 +947,4 @@ public abstract class CalendarActivity extends Activity
         }).start();
     }
 
-    private ArrayList<Game> mergeGameList2(ArrayList<Game> mainList, ArrayList<Game> refList,
-                                           SparseArray<Game> delayList) {
-        //assume main list is refList as zxc22.idv.tw
-        if (refList != null) {
-            //assume refList is cpbl old website
-            if (mainList != null) {
-                for (Game game : mainList) {
-                    if (refList.contains(game)) {//ok, the game stays
-                        for (Game rg : refList) {
-                            if (rg.Id == game.Id
-                                    && rg.StartTime.get(Calendar.DAY_OF_YEAR) == game.StartTime
-                                    .get(Calendar.DAY_OF_YEAR)) {
-                                game.StartTime = rg.StartTime;
-                                game.Field = rg.Field;
-                            }
-                        }
-                    }//no in refList
-                    Game d = delayList.get(game.Id);
-                    if (game.IsDelay && d != null) {
-                        //g.StartTime = delayList.get(g.Id).StartTime;
-                        game.StartTime.set(Calendar.HOUR_OF_DAY,
-                                d.StartTime.get(Calendar.HOUR_OF_DAY));
-                        game.StartTime.set(Calendar.MINUTE,
-                                d.StartTime.get(Calendar.MINUTE));
-                    }
-                }
-            } else {//no main list
-                return refList;
-            }
-        }
-        return mainList;
-    }
 }

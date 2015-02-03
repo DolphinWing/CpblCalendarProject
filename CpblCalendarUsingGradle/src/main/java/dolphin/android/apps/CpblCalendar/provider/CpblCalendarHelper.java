@@ -343,7 +343,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private static int get_kind_seq(Context context, String kind) {
         final String[] kinds =
-                context.getResources().getStringArray(R.array.cpbl_game_kind_id);
+                context.getResources().getStringArray(R.array.cpbl_game_kind_id_2014);
         int k = 0;
         for (String ks : kinds) {
             if (ks.equalsIgnoreCase(kind)) {
@@ -355,15 +355,26 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public ArrayList<Game> query2014() {
-        return query2014(0, 0, null, null);
+        return query2014(0, 0, null);
     }
 
-    public ArrayList<Game> query2014(int year, int month, String place, String game) {
+    public ArrayList<Game> query2014(int year, int month) {
+        return query2014(year, month, null);
+    }
+
+    public ArrayList<Game> query2014(int year, int month, String kind) {
         long startTime = System.currentTimeMillis();
         //Log.d(TAG, "query2014");
         ArrayList<Game> gameList = new ArrayList<Game>();
-        try {
-            String html = getUrlContent(URL_SCHEDULE_2014);
+        try {//
+            String html;// = getUrlContent(URL_SCHEDULE_2014);
+            AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+            html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+            html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+            if (kind != null && !kind.isEmpty()) {//choose game kind
+                html = helper.makeRequest("ctl00$cphBox$ddl_gameno", kind);
+            }
+
             //Log.d(TAG, "query2014 " + html.length());
             if (html.contains("<tr class=\"game\">")) {//have games
                 String[] days = html.split("<table class=\"day\">");
@@ -401,27 +412,20 @@ public class CpblCalendarHelper extends HttpHelper {
                                 //Log.d(TAG, String.format("gamesHack %d", gamesHack.length));
                                 for (int h = 1; h < gamesHack.length; h++) {
                                     String gameStr = gamesHack[0] + gamesHack[h];
-                                    Game g1 = parseOneGameHtml2014(year, month, d, gameStr);
+                                    //Log.d(TAG, gameStr);
+                                    Game g1 = parseOneGameHtml2014(year, month, d, kind, gameStr);
                                     if (g1 != null) {
                                         gameList.add(g1);
                                     }
                                 }
                             } else if (games[g].contains("<tr class='normal'>")) {
                                 //normal games
-                                Game g2 = parseOneGameHtml2014(year, month, d, games[g]);
+                                Game g2 = parseOneGameHtml2014(year, month, d, kind, games[g]);
                                 if (g2 != null) {
                                     gameList.add(g2);
                                 }
                             }
                         }
-//                        if (false && games.length > 2) {//more than one game
-//                            for (int j = 1; j < (games.length - 1); j++) {
-//                                Game g1 = gameList.get(gameList.size() - j);
-//                                g1.Url = g1.IsFinal ? g1.Url : g1.Url.replace("1.html",
-//                                        String.format("%d.html", (games.length - j)));
-//                                //Log.d(TAG, String.format("%d: %s", g1.Id, g1.Url));
-//                            }
-//                        }
                     }
                 }
             }
@@ -469,7 +473,7 @@ public class CpblCalendarHelper extends HttpHelper {
                         html.indexOf("<!--top5-->"));
                 //Log.d(TAG, mScoreBoardHtml);
                 Matcher matchTeams = Pattern.compile(PATTERN_BOARD_TEAM_2014).matcher(boardHtml);
-                while (matchTeams != null && matchTeams.find()) {
+                while (/*matchTeams != null && */matchTeams.find()) {
                     Log.d(TAG, matchTeams.group(1));
                     Team team = Team.getTeam2014(mContext, matchTeams.group(1));
                     int win = Integer.parseInt(matchTeams.group(2));
@@ -501,16 +505,16 @@ public class CpblCalendarHelper extends HttpHelper {
     private final static String PATTERN_GAME_ID_2014 =
             //<table><tr class='normal'><td>
             //<table><tr><th></th><th>48</th><th></th></tr></table>
-            "<table><tr><th>[^<]*</th><th>([\\d]+)</th><th>[^<]*</th></tr></table>";
+            "<table><tr><th>([^<]*)</th><th>([\\d]+)</th><th>([^<]*)</th></tr></table>";
 
     private final static String PATTERN_RESULT_2014 =
             //
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)";
 
-    private Game parseOneGameHtml2014(int year, int month, int day, String str) {
+    private Game parseOneGameHtml2014(int year, int month, int day, String kind, String str) {
         Game game = new Game();
         game.Source = Game.SOURCE_CPBL;
-        game.Kind = "01";
+        game.Kind = kind;
         game.StartTime = getNowTime();
         if (year > 0) {
             game.StartTime.set(Calendar.YEAR, year);
@@ -570,7 +574,7 @@ public class CpblCalendarHelper extends HttpHelper {
         game.IsFinal = str.contains("assets/images/c_final.png");
 
         Matcher matchTeams = Pattern.compile(PATTERN_TEAM_2014).matcher(str);
-        if (matchTeams != null && matchTeams.find()) {
+        if (/*matchTeams != null && */matchTeams.find()) {
             //Log.d(TAG, "  AWAY: " + matchTeams.group(1));
             game.Field = matchTeams.group(2);
             //Log.d(TAG, "  HOME: " + matchTeams.group(3));
@@ -582,8 +586,14 @@ public class CpblCalendarHelper extends HttpHelper {
         }
 
         Matcher matchID = Pattern.compile(PATTERN_GAME_ID_2014).matcher(str);
-        if (matchID != null && matchID.find()) {
-            game.Id = Integer.parseInt(matchID.group(1));
+        if (/*matchID != null && */matchID.find()) {
+            game.Id = Integer.parseInt(matchID.group(2));
+            if (!matchID.group(3).isEmpty()) {
+                game.DelayMessage = matchID.group(3);
+            }
+            if (!matchID.group(1).isEmpty()) {
+                game.DelayMessage += String.format("(%s)", matchID.group(1));
+            }
         }
         //Log.d(TAG, "  game.Id = " + game.Id);
 
@@ -592,7 +602,8 @@ public class CpblCalendarHelper extends HttpHelper {
             awayScore = awayScore.substring(0, awayScore.indexOf("<"));
             //Log.d(TAG, "    awayScore = " + awayScore);
             game.AwayScore = Integer.parseInt(awayScore);
-            String homeScore = str.substring(str.lastIndexOf("<td class='no'>") + 15);
+            //[110]dolphin-- String homeScore = str.substring(str.lastIndexOf("<td class='no'>") + 15);
+            String homeScore = str.substring(str.lastIndexOf("<td class='info'>") + 17);
             homeScore = homeScore.substring(0, homeScore.indexOf("<"));
             //Log.d(TAG, "    homeScore = " + homeScore);
             game.HomeScore = Integer.parseInt(homeScore);

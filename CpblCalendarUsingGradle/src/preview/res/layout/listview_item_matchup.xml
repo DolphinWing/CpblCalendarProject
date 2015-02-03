@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     tools:context=".SplashActivity"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_small"
+    android:paddingBottom="@dimen/padding_medium"
     android:paddingTop="@dimen/padding_small">
 
     <FrameLayout
@@ -37,6 +37,7 @@
     <LinearLayout
         style="@style/Theme.Holo_green.Match.Title"
         android:id="@+id/match_title"
+        android:paddingLeft="16dp"
         android:layout_toLeftOf="@+id/item_control_pane">
 
         <TextView
@@ -73,8 +74,10 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@android:id/icon1"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 app:border_width="1dp"
                 app:border_color="@android:color/secondary_text_light_nodisable" />
 
@@ -103,8 +106,10 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@android:id/icon2"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 app:border_width="1dp"
                 app:border_color="@android:color/secondary_text_light_nodisable" />
 
@@ -125,10 +130,10 @@
     <LinearLayout
         android:id="@+id/more_info"
         android:layout_below="@+id/match_up"
-        android:layout_toLeftOf="@+id/item_control_pane"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
+        android:layout_toLeftOf="@+id/item_control_pane"
         android:paddingLeft="16dp"
         android:paddingRight="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
@@ -144,7 +149,6 @@
             android:visibility="gone" />
         <TextView
             style="@style/Theme.Holo_green.Match.ExtraMsg"
-            android:layout_below="@+id/more_info"
             android:id="@+id/textView8"
             android:paddingLeft="@dimen/padding_large" />
     </LinearLayout>

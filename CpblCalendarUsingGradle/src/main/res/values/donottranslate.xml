@@ -95,6 +95,22 @@
         <item>亞洲冬季棒球聯盟</item>
     </string-array>
 
+    <string-array name="cpbl_game_kind_id_2014">
+        <item>01</item>
+        <item>05</item>
+        <item>07</item>
+        <item>02</item>
+        <item>03</item>
+    </string-array>
+
+    <string-array name="cpbl_game_kind_name_2014">
+        <item>例行賽</item>
+        <item>季後挑戰賽</item>
+        <item>熱身賽</item>
+        <item>明星賽</item>
+        <item>總冠軍賽</item>
+    </string-array>
+
     <!-- Teams -->
     <string name="team_elephants">兄弟象</string>
     <string name="team_elephants_short">象</string>

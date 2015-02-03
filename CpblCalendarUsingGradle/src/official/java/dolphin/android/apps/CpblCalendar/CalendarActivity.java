@@ -121,7 +121,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mNotifyMgr.cancelAll();//[51]dolphin++ clear all notifications
 
         mGameField = getResources().getStringArray(R.array.cpbl_game_field_id);
-        mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id);
+        mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id_2014);
         mCacheMode = PreferenceUtils.isCacheMode(this);//[83]dolphin++
         //Log.d(TAG, "mCacheMode = " + mCacheMode);
 
@@ -178,21 +178,21 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerYear.setAdapter(adapter);
 
-        //[87]dolphin++ hide spinner when not applicable
-        final View layout1 = findViewById(R.id.layout1);
-        final View layout2 = findViewById(R.id.layout2);
-        mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //layout1.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
-                layout2.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+//        //[87]dolphin++ hide spinner when not applicable
+//        final View layout1 = findViewById(R.id.layout1);
+//        final View layout2 = findViewById(R.id.layout2);
+//        mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                //layout1.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
+//                layout2.setVisibility(i < (now.get(Calendar.YEAR) - 2013) ? View.INVISIBLE : View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
 
         mSpinnerYear.setEnabled(!mCacheMode);
 
@@ -272,7 +272,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel
                     mCacheMode = false;
-                    PreferenceUtils.setCacheMode(getBaseContext(), mCacheMode);
+                    PreferenceUtils.setCacheMode(getBaseContext(), false);
                     item.setIcon(R.drawable.holo_green_btn_check_off_holo_dark);
                     //item.setCheckable(mCacheMode);
                     mButtonQuery.performClick();//refresh a again
@@ -289,7 +289,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         public void onClick(View view) {
             onLoading(true);
             mIsQuery = true;//Log.d(TAG, "onQueryClick");
-            setSupportProgressBarIndeterminateVisibility(mIsQuery);
+            setSupportProgressBarIndeterminateVisibility(true);
 
             String kind = mSpinnerKind.getSelectedItem().toString();
             getSActionBar().setTitle(kind);
@@ -313,9 +313,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
             final SherlockFragmentActivity activity = getSFActivity();
             if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
-
                 doCacheModeQuery(activity, year, month, getOnQueryCallback());
-            } else if (HttpHelper.checkNetworkAvailable(activity) && !bDemoCache) {
+            } else if (HttpHelper.checkNetworkAvailable(activity)/* && !bDemoCache*/) {
                 doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
                         year, month, fieldId, getOnQueryCallback());
             } else {//[35]dolphin++ check network
@@ -349,7 +348,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         public void onQueryStateChange(String msg);
 
         public void onQuerySuccess(CpblCalendarHelper helper,
-                ArrayList<Game> gameArrayList);
+                                   ArrayList<Game> gameArrayList);
 
         public void onQueryError();
     }
@@ -360,7 +359,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     private boolean mIsQuery = false;
 
-    private int mKind = 1;//[78]dolphin++ add initial value
+    private int mKind = 0;//[78]dolphin++ add initial value
 
     private int mYear;
 
@@ -412,8 +411,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
      * do query action to the web
      */
     public void doWebQuery(SherlockFragmentActivity activity,
-            int kind, int year, int month, String field,
-            OnQueryCallback callback) {
+                           int kind, int year, int month, String field,
+                           OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
         if (mQueryCallback != null)//call before start
@@ -450,19 +449,20 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
-//                            gameList = mHelper.query2014();
-                            ArrayList<Game> tmpList = mHelper.query2014();
+                            gameList = mHelper.query2014(mYear, mMonth, gameKind);
+//                            ArrayList<Game> tmpList = mHelper.query2014();
                             //.query(gameKind, mYear, mMonth, mField);
 //                            if (gameList == null || gameList.size() <= 0) {//backup plan
-                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                                    mYear, mMonth));
-                            gameList = mHelper.query2014zxc(mMonth);
+                            //doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                            //        mYear, mMonth));
+//                            gameList = mHelper.query2014zxc(mMonth);
+                            //ArrayList<Game> tmpList = mHelper.query2014zxc(mMonth);
 //                            }
-                            try {//update the data from CPBL website
-                                doQueryStateUpdateCallback(R.string.title_download_complete);
-                                mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
-                            } catch (Exception e) {
-                            }
+//                            try {//update the data from CPBL website
+                            doQueryStateUpdateCallback(R.string.title_download_complete);
+//                                //mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
+//                            } catch (Exception e) {
+//                            }
                         }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
@@ -524,7 +524,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     protected void sendGmsGoogleAnalyticsReport(String path, String category, String action,
-            String label) {
+                                                String label) {
         // Get tracker.
         Tracker t = ((CpblApplication) getApplication()).getTracker(
                 CpblApplication.TrackerName.APP_TRACKER);
@@ -549,7 +549,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList,
-            SparseArray<Game> delayList) {
+                                          SparseArray<Game> delayList) {
         if (refList != null) {
             if (mainList != null) {
                 for (Game g : mainList) {
@@ -946,11 +946,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                             mYear, m));
                     ArrayList<Game> list = mHelper.query("01", mYear, m, "F00");
 //                    if (list == null) {
-                    doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                            mYear, m));
+                    //doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+                    //        mYear, m));
 //                        list = mHelper.query2014zxc(m);
 //                    }
-                    ArrayList<Game> list2 = mHelper.query2014zxc(m);
+                    //ArrayList<Game> list2 = mHelper.query2014zxc(m);
 
 //                    Log.v(TAG, "delayList.size() = " + delayList.size());
 //                    for (int i = 0; i < delayList.size(); i++) {
@@ -976,7 +976,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                            }
 //                        }
 //                    }
-                    list = mergeGameList2(list2, list, delayList);
+                    //list = mergeGameList2(list, list2, delayList);
 
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
@@ -997,7 +997,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     private void doCacheModeQuery(SherlockFragmentActivity activity,
-            int year, int month, OnQueryCallback callback) {
+                                  int year, int month, OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
         if (mQueryCallback != null) {//call before start
@@ -1035,7 +1035,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     }
 
     private ArrayList<Game> mergeGameList2(ArrayList<Game> mainList, ArrayList<Game> refList,
-            SparseArray<Game> delayList) {
+                                           SparseArray<Game> delayList) {
         //assume main list is refList as zxc22.idv.tw
         if (refList != null) {
             //assume refList is cpbl old website
