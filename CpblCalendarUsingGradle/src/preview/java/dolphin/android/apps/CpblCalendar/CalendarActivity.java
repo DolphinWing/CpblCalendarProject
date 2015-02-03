@@ -115,7 +115,7 @@ public abstract class CalendarActivity extends Activity
         mNotifyMgr.cancelAll();//[51]dolphin++ clear all notifications
 
         mGameField = getResources().getStringArray(R.array.cpbl_game_field_id);
-        mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id);
+        mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id_2014);
         mCacheMode = PreferenceUtils.isCacheMode(this);//[83]dolphin++
         //Log.d(TAG, "mCacheMode = " + mCacheMode);
 
@@ -162,23 +162,6 @@ public abstract class CalendarActivity extends Activity
                 android.R.layout.simple_spinner_item, years);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerYear.setAdapter(adapter);
-
-        //[87]dolphin++ hide spinner when not applicable
-        //final View layout1 = findViewById(R.id.layout1);
-        final View layout2 = findViewById(R.id.layout2);
-        mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //layout1.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
-                layout2.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
         mSpinnerYear.setEnabled(!mCacheMode);
 
         adapter = new ArrayAdapter<String>(getBaseContext(),
@@ -334,7 +317,7 @@ public abstract class CalendarActivity extends Activity
 
     private boolean mIsQuery = false;
 
-    private int mKind = 1;//[78]dolphin++ add initial value
+    private int mKind = 0;//[78]dolphin++ add initial value
 
     private int mYear;
 
@@ -369,9 +352,6 @@ public abstract class CalendarActivity extends Activity
             mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
         }
         if (mProgressText != null) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-//                mProgressText.animate().alpha(is_load ? 0 : 1).setDuration(500).start();
-//            else
             mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
             mProgressText.setText(is_load ? getString(R.string.title_download) : "");
         }
@@ -423,7 +403,7 @@ public abstract class CalendarActivity extends Activity
                         } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
-                            gameList = mHelper.query2014(mYear, mMonth);
+                            gameList = mHelper.query2014(mYear, mMonth, gameKind);
 //                            ArrayList<Game> tmpList = mHelper.query2014();
                             //.query(gameKind, mYear, mMonth, mField);
 //                            if (gameList == null || gameList.size() <= 0) {//backup plan

@@ -104,7 +104,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Log.d(TAG, "onListItemClick: " + position);
+        //Log.d(TAG, "onListItemClick: " + position);
         if (v != null) {
             Game game = (Game) v.getTag();
             //Log.d(TAG, "onListItemClick: " + position);

@@ -122,13 +122,14 @@ public class CalendarForPhoneActivity extends CalendarActivity
         final int month = (savedInstanceState != null)
                 ? savedInstanceState.getInt(KEY_GAME_MONTH)
                 : Calendar.getInstance().get(Calendar.MONTH);
+        final boolean debugMode = getResources().getBoolean(R.bool.pref_engineer_mode);
         new Handler().post(new Runnable() {
             @Override
             public void run() {
                 mSpinnerField.setSelection(field);
                 mSpinnerKind.setSelection(kind);
-                mSpinnerYear.setSelection(year);
-                mSpinnerMonth.setSelection(month);
+                mSpinnerYear.setSelection(debugMode ? 1 : year);
+                mSpinnerMonth.setSelection(debugMode ? 5 : month);
                 mButtonQuery.performClick();//load at beginning
             }
         });

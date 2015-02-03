@@ -19,6 +19,16 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[112] @ 2015-02-04
+    fix preview flavor game kind selection
+
+    GameListFragment onListItemClick is always working.
+    I forgot I have set debug mode not to show browser and just print a log.
+    Now I know why v21 never shows browser when I click it.
+    Because I set debug=true in v21 preview flavor... XD
+
+    TODO: to check the layout of new preview flavor
+
 [111] @ 2015-02-02
     fix drop down menu icon in official flavor
     //fix no game kind after 2014

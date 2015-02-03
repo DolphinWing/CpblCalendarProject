@@ -434,7 +434,7 @@ public class CpblCalendarHelper extends HttpHelper {
             e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
-        Log.v(TAG, String.format("query2014 %d/%d wasted %d ms",
+        Log.v(TAG, String.format("query2014 %d/%02d wasted %d ms",
                 year, month, ((endTime - startTime))));
         mGameList = gameList;
         return gameList;
