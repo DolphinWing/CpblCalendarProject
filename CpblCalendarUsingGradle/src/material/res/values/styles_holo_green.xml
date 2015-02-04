@@ -19,64 +19,21 @@
 
 <resources>
 
-    <style name="Theme.Holo_green" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_holo_green</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu.Holo_green</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
-        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Holo_green</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNav.Holo_green</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Holo_green</item>
-        <item name="android:actionModeBackground">@drawable/cab_background_top_holo_green</item>
-        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_holo_green</item>
-        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Holo_green</item>
-        
-                <!-- Light.DarkActionBar specific -->
-        <item name="android:actionBarWidgetTheme">@style/Theme.Holo_green.Widget</item>
-
+    <style name="Theme.Holo_green" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/holo_green_dark</item>
+        <item name="toolbarStyle">@style/Theme.Holo_green.Toolbar</item>
     </style>
 
-    <style name="ActionBar.Solid.Holo_green" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/ab_solid_holo_green</item>
-        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_holo_green</item>
-        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_holo_green</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Holo_green</item>
+    <style name="Theme.Holo_green.Toolbar" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/holo_green_dark</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
-    <style name="ActionBar.Transparent.Holo_green" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@drawable/ab_transparent_holo_green</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Holo_green</item>
-    </style>
+    <style name="Theme.Holo_green.Settings" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">true</item>
 
-    <style name="PopupMenu.Holo_green" parent="@android:style/Widget.Holo.ListPopupWindow">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>	
-    </style>
-
-    <style name="DropDownListView.Holo_green" parent="@android:style/Widget.Holo.ListView.DropDown">
-        <item name="android:listSelector">@drawable/selectable_background_holo_green</item>
-    </style>
-
-    <style name="ActionBarTabStyle.Holo_green" parent="@android:style/Widget.Holo.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_indicator_ab_holo_green</item>
-    </style>
-
-    <style name="DropDownNav.Holo_green" parent="@android:style/Widget.Holo.Spinner">
-        <item name="android:background">@drawable/spinner_background_ab_holo_green</item>
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background_holo_green</item>
-    </style>
-    
-    <style name="ProgressBar.Holo_green" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/progress_horizontal_holo_green</item>
-    </style>
-    
-    <style name="ActionButton.CloseMode.Holo_green" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
-        <item name="android:background">@drawable/btn_cab_done_holo_green</item>
-    </style>
-
-    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
-    <style name="Theme.Holo_green.Widget" parent="@android:style/Theme.Holo">
-        <item name="android:popupMenuStyle">@style/PopupMenu.Holo_green</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
+        <item name="colorPrimary">@color/holo_green_dark</item>
     </style>
 
     <!-- Match row style -->
@@ -89,10 +46,17 @@
     <style name="Theme.Holo_green.LoadingText" parent="@android:style/TextAppearance.Medium.Inverse">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_horizontal|bottom</item>
         <item name="android:layout_marginBottom">96dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
         <item name="android:padding">@dimen/padding_medium</item>
-        <item name="android:background">#66000000</item>
+        <item name="android:background">#66001100</item>
+    </style>
+
+    <style name="Theme.Holo_green.LoadingIcon" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
     <!-- match style -->

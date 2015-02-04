@@ -14,6 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -53,7 +55,7 @@ import dolphin.android.net.HttpHelper;
  * Base implementation of CalendarActivity for different style
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public abstract class CalendarActivity extends Activity
+public abstract class CalendarActivity extends ActionBarActivity//Activity
         implements EmptyFragmentWithCallbackOnResume.OnFragmentAttachedListener {
 
     protected final static String TAG = "CalendarActivity";
@@ -88,9 +90,8 @@ public abstract class CalendarActivity extends Activity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         if (PreferenceUtils.isEngineerMode(this)) {//[28]dolphin
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
@@ -253,10 +254,12 @@ public abstract class CalendarActivity extends Activity
         public void onClick(View view) {
             onLoading(true);
             mIsQuery = true;//Log.d(TAG, "onQueryClick");
-            setProgressBarIndeterminateVisibility(mIsQuery);
+            setSupportProgressBarIndeterminateVisibility(true);
+
+            final ActionBar actionBar = getSupportActionBar();
 
             String kind = mSpinnerKind.getSelectedItem().toString();
-            getActionBar().setTitle(kind);
+            actionBar.setTitle(kind);
 
             String gameYear = mSpinnerYear.getSelectedItem().toString();
             int year = Integer.parseInt(gameYear.split(" ")[0]);
@@ -266,20 +269,19 @@ public abstract class CalendarActivity extends Activity
             int fieldIndex = mSpinnerField.getSelectedItemPosition();
             String fieldId = mGameField[fieldIndex];
             if (fieldIndex > 0) {
-                getActionBar().setTitle(String.format("%s%s%s", kind,
+                actionBar.setTitle(String.format("%s%s%s", kind,
                         getString(R.string.title_at),
                         mSpinnerField.getSelectedItem().toString()));
             }
 
-            getActionBar().setSubtitle(String.format("%s %s",
+            actionBar.setSubtitle(String.format("%s %s",
                     gameYear, mSpinnerMonth.getSelectedItem().toString()));
 
             final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
             final Activity activity = getActivity();
             if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
-
                 doCacheModeQuery(activity, year, month, getOnQueryCallback());
-            } else if (HttpHelper.checkNetworkAvailable(activity) && !bDemoCache) {
+            } else if (HttpHelper.checkNetworkAvailable(activity)/* && !bDemoCache*/) {
                 doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
                         year, month, fieldId, getOnQueryCallback());
             } else {//[35]dolphin++ check network

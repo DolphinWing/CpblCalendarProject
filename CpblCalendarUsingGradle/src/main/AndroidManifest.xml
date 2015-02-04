@@ -46,12 +46,6 @@
         <activity
             android:name=".CalendarForPhoneActivity"
             android:screenOrientation="locked" />
-        <activity
-            android:name=".CalendarForTabletActivity"
-            android:screenOrientation="locked" />
-        <activity
-            android:name=".preference.PreferenceActivity"
-            android:screenOrientation="locked" />
 
         <activity
             android:enabled="@bool/feature_admob"

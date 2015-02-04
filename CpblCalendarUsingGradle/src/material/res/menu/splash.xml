@@ -1,0 +1,35 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_leader_board"
+        app:showAsAction="always"
+        android:title="@string/action_leader_board"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/action_refresh"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/action_refresh"
+        android:icon="@drawable/ic_action_navigation_refresh_dark" />
+
+    <item
+        android:id="@+id/action_cache_mode"
+        app:showAsAction="withText"
+        android:title="@string/action_cache_mode"
+        android:icon="@drawable/btn_check_holo_light" />
+    <!-- android:checkable="true" -->
+
+    <item
+        android:id="@+id/action_go_to_cpbl"
+        app:showAsAction="withText"
+        android:title="@string/action_go_to_website" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        app:showAsAction="withText"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_action_action_settings_dark" />
+
+</menu>

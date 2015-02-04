@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 21
-        versionCode 112
+        versionCode 113
     }
 
 //    //http://stackoverflow.com/a/19210105/2673859
@@ -38,7 +38,7 @@ android {
         }
     }
     productFlavors {
-        preview {
+        material {
             minSdkVersion 14
             targetSdkVersion 21
             versionName '2.0'
@@ -60,9 +60,9 @@ dependencies {
 
     officialCompile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 
-    previewCompile 'de.hdodenhof:circleimageview:1.1.1'
-    previewCompile 'com.android.support:appcompat-v7:21.0.3'
-    previewCompile 'com.melnykov:floatingactionbutton:1.0.1'
+    materialCompile 'de.hdodenhof:circleimageview:1.1.1'
+    materialCompile 'com.android.support:appcompat-v7:21.0.3'
+    materialCompile 'com.melnykov:floatingactionbutton:1.0.1'
 
     compile 'com.google.code.gson:gson:2.3'
     //compile project(':libraries:libShowcaseView')

@@ -9,16 +9,9 @@
         android:theme="@style/Theme.Holo_green">
 
         <activity
-            android:name=".CalendarForTabletActivity"
-            android:screenOrientation="locked" />
-
-        <activity
-            android:name=".preference.GBPreferenceActivity"
-            android:screenOrientation="locked" />
-
-        <activity
             android:name=".preference.PreferenceActivity"
-            android:screenOrientation="locked" />
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.Holo_green.Settings" />
 
     </application>
 
