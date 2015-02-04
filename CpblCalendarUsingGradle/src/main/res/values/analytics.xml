@@ -12,4 +12,5 @@
 
     <!-- AdMob ID -->
     <string name="ad_trackingId">a151e5722a9a626</string>
+    <string name="tablet_ad_unit_id">ca-app-pub-7557398389502445/7705401382</string>
 </resources>

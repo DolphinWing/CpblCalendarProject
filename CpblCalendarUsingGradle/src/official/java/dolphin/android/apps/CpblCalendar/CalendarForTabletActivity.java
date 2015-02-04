@@ -115,7 +115,7 @@ public class CalendarForTabletActivity extends CalendarActivity
         if (mEnableAdMob) {
             try {
                 adView = new AdView(this);
-                adView.setAdUnitId(getString(R.string.ad_trackingId));
+                adView.setAdUnitId(getString(R.string.tablet_ad_unit_id));
                 adView.setAdSize(AdSize.BANNER);
 
                 LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);

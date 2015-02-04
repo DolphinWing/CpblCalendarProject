@@ -19,6 +19,15 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[113] @ 2015-02-04
+    change new ad id
+    rename preview flavor to material
+
+    move some resources to official flavor, make more material style
+        add v7 ToolBar to replace ActionBar
+        change ToolBar MenuItem sequence
+        change the main layout to RelativeLayout
+
 [112] @ 2015-02-04
     fix preview flavor game kind selection
 
