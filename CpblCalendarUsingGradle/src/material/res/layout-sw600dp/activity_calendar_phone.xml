@@ -4,42 +4,49 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!-- The main content view -->
-    <FrameLayout
-        android:id="@+id/content_outer_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/holo_green_dark" />
+
+        <!-- The main content view -->
         <fragment
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
-            android:id="@+id/content_frame"
-            tools:layout="@layout/listview_item_matchup" />
-
-        <!--<ProgressBar
-            style="@style/Theme.Holo_green.LoadingIcon"
-            android:id="@android:id/progress"/>-->
-
-        <TextView
-            android:id="@android:id/message"
-            style="@style/Theme.Holo_green.LoadingText" />
+            android:layout_below="@+id/toolbar"
+            tools:layout="@layout/listview_item_matchup"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin" />
 
         <!-- http://goo.gl/HYmvGy -->
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/button_floating_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:layout_margin="@dimen/padding_large"
-            android:src="@android:drawable/ic_menu_search"
+            android:src="@drawable/ic_action_action_search"
             app:fab_colorNormal="@color/holo_green_light"
             app:fab_colorPressed="@color/holo_green_light_light"
             app:fab_type="normal"
-            app:fab_shadow="true"/>
-    </FrameLayout>
+            app:fab_shadow="true" />
+
+        <include layout="@layout/include_loading_frame" />
+
+        <TextView
+            android:id="@android:id/message"
+            style="@style/Theme.Holo_green.LoadingText" />
+
+    </RelativeLayout>
 
     <!-- The navigation drawer -->
     <include

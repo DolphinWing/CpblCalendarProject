@@ -7,13 +7,11 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -24,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.webkit.WebView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -133,7 +130,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         super.onDestroy();
     }
 
-    protected abstract Activity getActivity();
+    protected abstract ActionBarActivity getActivity();
 
     /**
      * initial the query pane
@@ -154,10 +151,8 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
 
         String[] years = new String[mYear - 1990 + 1];
         for (int i = 1990; i <= mYear; i++) {
-            years[mYear - i] = String.format("%d (%s)",
-                    i, getString(R.string.title_cpbl_year, (i - 1989)));
-            //years[now.get(Calendar.YEAR) - i] = String.format("%d (%s)",
-            //        i, getString(R.string.title_cpbl_year));
+            String y = getString(R.string.title_cpbl_year, (i - 1989));
+            years[mYear - i] = String.format("%d (%s)", i, y);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(),
                 android.R.layout.simple_spinner_item, years);
@@ -357,7 +352,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
             mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
             mProgressText.setText(is_load ? getString(R.string.title_download) : "");
         }
-        setProgressBarIndeterminateVisibility(is_load);
+        setSupportProgressBarIndeterminateVisibility(is_load);
     }
 
     public void onLoading(boolean is_load) {
@@ -406,18 +401,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
                             gameList = mHelper.query2014(mYear, mMonth, gameKind);
-//                            ArrayList<Game> tmpList = mHelper.query2014();
-                            //.query(gameKind, mYear, mMonth, mField);
-//                            if (gameList == null || gameList.size() <= 0) {//backup plan
-//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-//                                    mYear, mMonth));
-//                            gameList = mHelper.query2014zxc(mMonth);
-//                            }
-//                            try {//update the data from CPBL website
                             doQueryStateUpdateCallback(R.string.title_download_complete);
-//                                mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
-//                            } catch (Exception e) {
-//                            }
                         }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
@@ -465,7 +449,6 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     }
 
     protected void sendTrackerException(String action, String label, long evtValue) {
-//        sendGoogleAnalyticsTracker("Exception", action, label, evtValue);
         sendGmsGoogleAnalyticsReport("dolphin.android.apps.CpblCalendar.CalendarActivity",
                 "Exception", action, label);
     }
@@ -553,18 +536,17 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         }
 
         if (mActivity != null && mQueryCallback != null) {
+            final ActionBar actionBar = getActivity().getSupportActionBar();
             mActivity.runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
                     if (gameList != null) {
                         //[22]dolphin++ add check the favorite teams
-                        HashMap<Integer, Team> teams =
-                                PreferenceUtils.getFavoriteTeams(mActivity);
+                        HashMap<Integer, Team> teams = PreferenceUtils.getFavoriteTeams(mActivity);
                         //2013 has 4 teams only, should I check this?
                         //[89]dolphin++ only filter out this year, check array size
-                        if (teams.size() < getResources()
-                                .getStringArray(R.array.cpbl_team_id).length
+                        if (teams.size() < getResources().getStringArray(R.array.cpbl_team_id).length
                                 && mYear >= CpblCalendarHelper.getNowTime().get(Calendar.YEAR)) {
                             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
                                 Game game = i.next();
@@ -590,22 +572,20 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                             }
                         }
 
-                        if (gameList.size() > 0 && getActivity() != null &&
-                                getActivity().getActionBar() != null) {//update subtitle
+                        //update subtitle
+                        if (gameList.size() > 0 && getActivity() != null && actionBar != null) {
                             switch (gameList.get(0).Source) {
                                 case Game.SOURCE_ZXC22:
-                                    getActivity().getActionBar()
-                                            .setSubtitle(String.format("%s: %s",
-                                                    getString(R.string.title_data_source),
-                                                    getString(R.string.summary_zxc22)));
+                                    actionBar.setSubtitle(String.format("%s: %s",
+                                            getString(R.string.title_data_source),
+                                            getString(R.string.summary_zxc22)));
                                     break;
                             }
                         }
 
                         //show offline mode indicator
-                        if (PreferenceUtils.isCacheMode(getBaseContext())) {
-                            getActivity().getActionBar()
-                                    .setSubtitle(R.string.action_cache_mode);
+                        if (PreferenceUtils.isCacheMode(getBaseContext()) && actionBar != null) {
+                            actionBar.setSubtitle(R.string.action_cache_mode);
                         }
 
                         mQueryCallback.onQuerySuccess(mHelper, gameList);
@@ -660,30 +640,6 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     }
 
     /**
-     * check if the tutorial is done
-     */
-    public boolean isTutorialDone() {
-        if (CpblCalendarHelper.getNowTime().get(Calendar.YEAR) < 2014) {
-            if (PreferenceUtils.isEngineerMode(getBaseContext())) {
-                return false;//[39]dolphin++ move to global method
-            }
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-            return pref.getBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, false);
-        }
-        return true;//[70]jimmy++ new website don't use GET method
-    }
-
-    /**
-     * set tutorial is done
-     */
-    public void setTutorialDone() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, true);
-        editor.commit();
-    }
-
-    /**
      * show leader team board dialog
      */
     public void showLeaderBoard(String html) {
@@ -720,18 +676,9 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
             //webView.getSettings().setDefaultTextEncodingName(CpblCalendarHelper.ENCODE_UTF8);
             webView.getSettings().setJavaScriptEnabled(false);
             webView.getSettings().setSupportZoom(false);
-
-            //Log.d(TAG, html);
             // Encoding issue with WebView's loadData
             // http://stackoverflow.com/a/9402988
-            if (webView != null) {
-                webView.loadData(html, "text/html; charset=" +
-                        CpblCalendarHelper.ENCODE_UTF8, null);
-            }
-            //TextView message = (TextView) view.findViewById(android.R.id.message);
-            //if (message != null)
-            //    message.setText(new SpannableString(Html.fromHtml(html)));
-
+            webView.loadData(html, "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
             dialog.setView(view);//webView
             dialog.show();
 
@@ -844,10 +791,6 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                             }
                         }
                 ).show();
-//        Log.d(TAG, String.format("onOptionsItemSelected mCacheMode=%s", mCacheMode));
-//        //item.setCheckable(mCacheMode);
-//        item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
-//                : R.drawable.holo_green_btn_check_off_holo_dark);
     }
 
     private void runDownloadCache() {
@@ -865,14 +808,6 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
                     ArrayList<Game> list = mHelper.query2014(mYear, m);
-//                    if (list == null) {
-//                    doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-//                            mYear, m));
-////                        list = mHelper.query2014zxc(m);
-////                    }
-//                    ArrayList<Game> list2 = mHelper.query2014zxc(m);
-//                    list = mergeGameList2(list2, list, delayList);
-
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));

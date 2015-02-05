@@ -82,7 +82,7 @@
 
     <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
         <item name="android:layout_weight">0.2</item>
-        <item name="android:textSize">@dimen/abc_text_size_large_material</item>
+        <item name="android:textSize">@dimen/abc_text_size_headline_material</item>
     </style>
 
     <style name="Theme.Holo_green.Match.GameId" parent="Theme.Holo_green.TextSmall">
@@ -97,7 +97,7 @@
         <item name="android:layout_gravity">left|center_vertical</item>
         <item name="android:gravity">center_vertical|left</item>
         <item name="android:text">@string/title_game_field</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.TextSmall">
@@ -112,11 +112,19 @@
     <!-- Query Panel style -->
     <style name="Theme.Holo_green.QueryPane"/>
 
-    <style name="Theme.Holo_green.QueryPane.Title" parent="Theme.Holo_green.TextSmall">
+    <style name="Theme.Holo_green.QueryPane.Title" parent="@style/TextAppearance.AppCompat.Caption">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">left|center_vertical</item>
-        <item name="android:padding">@dimen/padding_small</item>
+        <item name="android:paddingTop">@dimen/padding_medium</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+    </style>
+
+    <style name="Theme.Holo_green.QueryPane.Spinner" parent="@style/Widget.AppCompat.Spinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:spinnerMode">dropdown</item>
     </style>
 
 </resources>

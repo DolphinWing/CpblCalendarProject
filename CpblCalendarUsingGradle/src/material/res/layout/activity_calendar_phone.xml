@@ -22,13 +22,8 @@
             android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
             android:id="@+id/content_frame"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin" />
-
-        <include layout="@layout/include_loading_frame" />
-
-        <TextView
-            android:id="@android:id/message"
-            style="@style/Theme.Holo_green.LoadingText" />
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            tools:layout="@layout/listview_item_matchup" />
 
         <!-- http://goo.gl/HYmvGy -->
         <com.melnykov.fab.FloatingActionButton
@@ -43,8 +38,14 @@
             app:fab_colorPressed="@color/holo_green_light_light"
             app:fab_type="mini"
             app:fab_shadow="true" />
-    </RelativeLayout>
 
+        <include layout="@layout/include_loading_frame" />
+
+        <TextView
+            android:id="@android:id/message"
+            style="@style/Theme.Holo_green.LoadingText" />
+
+    </RelativeLayout>
 
     <!-- The navigation drawer -->
     <include

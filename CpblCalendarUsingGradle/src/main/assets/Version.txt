@@ -19,6 +19,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[114] @ 2015-02-06
+    color and style change for material
+    hide info icon since this is not a useless indicator
+
 [113] @ 2015-02-04
     change new ad id
     rename preview flavor to material

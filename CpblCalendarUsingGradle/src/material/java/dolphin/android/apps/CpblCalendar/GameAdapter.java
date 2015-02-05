@@ -213,6 +213,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
             iv1.setVisibility(View.VISIBLE);
             tv6.setVisibility(View.GONE);
         }
+        iv1.setVisibility(View.INVISIBLE);//[114]jimmy++ always hide
 
         //team logo
         ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);

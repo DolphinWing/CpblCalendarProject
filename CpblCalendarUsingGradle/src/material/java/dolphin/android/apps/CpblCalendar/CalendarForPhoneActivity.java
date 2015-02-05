@@ -1,6 +1,5 @@
 package dolphin.android.apps.CpblCalendar;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -10,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -23,29 +23,17 @@ import java.util.Calendar;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
-//import android.support.v4.app.ActionBarDrawerToggle;
-//import android.support.v4.app.FragmentManager;
-//import android.support.v4.app.FragmentTransaction;
-//import android.support.v4.view.GravityCompat;
-//import android.support.v4.widget.DrawerLayout;
-//import android.support.v7.app.ActionBarActivity;
-
-//import dolphin.android.apps.CpblCalendar.provider.ActionBarDrawerToggle;
-
 /**
  * Created by dolphin on 2013/6/3.
  * <p/>
  * CalendarActivity for phone version, with a ActionBarDrawer pane.
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class CalendarForPhoneActivity extends CalendarActivity
-        implements CalendarActivity.OnQueryCallback/*, OnShowcaseEventListener*/ {
+        implements CalendarActivity.OnQueryCallback {
 
     private DrawerLayout mDrawerLayout;
 
     private View mDrawerList;
-
-//    private ActionBarDrawerToggle mDrawerToggle;
 
     private ArrayList<Game> mGameList = null;
 
@@ -65,43 +53,6 @@ public class CalendarForPhoneActivity extends CalendarActivity
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-//        //[70]dolphin++ lock drawer
-//        //[87]dolphin++ use new flag to control it
-//        if (getResources().getBoolean(R.bool.feature_query_panel)) {
-//            // enable ActionBar app icon to behave as action to toggle nav drawer
-//            //getActionBar().setDisplayHomeAsUpEnabled(true);
-//            //getActionBar().setHomeButtonEnabled(true);
-//            //getActionBar().setDisplayUseLogoEnabled(true);
-//
-//            // ActionBarDrawerToggle ties together the the proper interactions
-//            // between the sliding drawer and the action bar app icon
-//            mDrawerToggle = new ActionBarDrawerToggle(
-//                    this,                       /* host Activity */
-//                    mDrawerLayout,              /* DrawerLayout object */
-//                    R.drawable.ic_launcher, /* nav drawer image to replace 'Up' caret */
-//                    R.string.app_name,     /* "open drawer" description for accessibility */
-//                    R.string.app_name     /* "close drawer" description for accessibility */
-//            ) {
-//                public void onDrawerClosed(View view) {
-//                    mDrawerLayout.setEnabled(true);
-//                    //getSupportActionBar().setTitle("closed");
-//                    invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-//                }
-//
-//                public void onDrawerOpened(View drawerView) {
-//                    mDrawerLayout.setEnabled(false);
-//                    //getSupportActionBar().setTitle("opened");
-//                    invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-//                }
-//            };
-//            mDrawerToggle.setDrawerIndicatorEnabled(false);
-//            mDrawerLayout.setDrawerListener(mDrawerToggle);
-//        } else {
-//            //[70]dolphin++ lock drawer
-//            //http://stackoverflow.com/a/17165256/2673859
-//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//        }
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -169,7 +120,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
     }
 
     @Override
-    protected Activity getActivity() {
+    protected ActionBarActivity getActivity() {
         return this;
     }
 
@@ -205,20 +156,20 @@ public class CalendarForPhoneActivity extends CalendarActivity
         mGameList = gameArrayList;//as a temp storage
 
         FragmentManager fmgr = getFragmentManager();
-        if (fmgr != null) {//update the fragment
-            FragmentTransaction trans = fmgr.beginTransaction();
-            GameListFragment frag1 =
-                    (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
-            if (frag1 != null) {
-                frag1.updateAdapter(gameArrayList);
-                try {
-                    trans.commitAllowingStateLoss();//[30]dolphin++
-                } catch (IllegalStateException e) {
-                    Log.e(TAG, "updateGameListFragment: " + e.getMessage());
-                    sendTrackerException();
-                }
+        //if (fmgr != null) {//update the fragment
+        FragmentTransaction trans = fmgr.beginTransaction();
+        GameListFragment frag1 =
+                (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
+        if (frag1 != null) {
+            frag1.updateAdapter(gameArrayList);
+            try {
+                trans.commitAllowingStateLoss();//[30]dolphin++
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "updateGameListFragment: " + e.getMessage());
+                sendTrackerException();
             }
         }
+        //}
 
         super.onLoading(false);
     }
@@ -236,20 +187,20 @@ public class CalendarForPhoneActivity extends CalendarActivity
     @Override
     public void onLoading(boolean is_load) {
         FragmentManager fmgr = getFragmentManager();
-        if (fmgr != null) {
-            FragmentTransaction trans = fmgr.beginTransaction();
-            GameListFragment frag1 =
-                    (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
-            if (frag1 != null) {
-                frag1.setListShown(is_load);
-            }
-            try {
-                trans.commitAllowingStateLoss();//[30]dolphin++
-            } catch (IllegalStateException e) {
-                Log.e(TAG, "onLoading: " + e.getMessage());
-                sendTrackerException();
-            }
+        //if (fmgr != null) {
+        FragmentTransaction trans = fmgr.beginTransaction();
+        GameListFragment frag1 =
+                (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
+        if (frag1 != null) {
+            frag1.setListShown(is_load);
         }
+        try {
+            trans.commitAllowingStateLoss();//[30]dolphin++
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "onLoading: " + e.getMessage());
+            sendTrackerException();
+        }
+        //}
 
         super.onLoading(is_load);
     }
