@@ -92,6 +92,7 @@
     <string name="title_live_now">Live! on %s</string>
     <!-- download message -->
     <string name="title_download">載入中</string>
+    <string name="title_download_delay_games">更新補賽資料中</string>
     <string name="title_download_from_cpbl">自 CPBL 官網下載中 %1$04d/%2$02d</string>
     <string name="title_download_from_zxc22">自 zxc22.idv.tw 下載中 %1$04d/%2$02d</string>
     <string name="title_download_from_cache">快取 %1$04d/%2$02d 載入中</string>
@@ -108,4 +109,7 @@
     <string name="title_tie">和</string>
     <string name="title_win_rate">勝率</string>
     <string name="title_game_behind">場差</string>
+    <string name="title_activity_delay_game">DelayGameActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

@@ -2,6 +2,8 @@
 <resources>
     <!-- for debug -->
     <bool name="pref_engineer_mode">false</bool>
+
+    <!-- app configs -->
 	<bool name="feature_notify">true</bool>
     <bool name="feature_notify_teams">false</bool>
     <bool name="demo_notification">false</bool>

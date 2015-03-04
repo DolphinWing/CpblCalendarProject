@@ -9,22 +9,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:layout_width="@dimen/activity_horizontal_margin"
+            android:layout_height="match_parent"
+            android:src="@drawable/drawer_shadow"
+            android:scaleType="fitXY"
+            android:scaleX="-1"
+            android:contentDescription="@null"
+            android:layout_alignParentLeft="true" />
+
+        <ImageView
+            android:layout_width="@dimen/activity_horizontal_margin"
+            android:layout_height="match_parent"
+            android:src="@drawable/drawer_shadow"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:layout_alignParentRight="true" />
+
+        <!-- The main content view -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+            <fragment
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+                android:id="@+id/content_frame"
+                tools:layout="@layout/listview_empty_view" />
+        </FrameLayout>
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/holo_green_dark" />
-
-        <!-- The main content view -->
-        <fragment
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
-            android:layout_below="@+id/toolbar"
-            tools:layout="@layout/listview_item_matchup"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@color/holo_green_dark"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin" />
+            android:gravity="bottom"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:paddingBottom="8dp"/>
 
         <!-- http://goo.gl/HYmvGy -->
         <com.melnykov.fab.FloatingActionButton
@@ -44,14 +70,17 @@
 
         <TextView
             android:id="@android:id/message"
-            style="@style/Theme.Holo_green.LoadingText" />
+            style="@style/Theme.Holo_green.LoadingText"
+            android:layout_marginBottom="8dp"
+            android:layout_alignBottom="@+id/button_floating_action"
+            android:layout_alignParentBottom="false" />
 
     </RelativeLayout>
 
     <!-- The navigation drawer -->
     <include
         android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="right"
         layout="@layout/layout_query_pane" />

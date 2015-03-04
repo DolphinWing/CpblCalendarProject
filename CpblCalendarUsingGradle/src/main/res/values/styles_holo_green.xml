@@ -20,19 +20,6 @@
 <resources>
 
     <style name="Theme.Holo_green" parent="@android:style/Theme">
-        <item name="actionBarItemBackground">@drawable/selectable_background_holo_green</item>
-        <item name="popupMenuStyle">@style/PopupMenu.Holo_green</item>
-        <item name="dropDownListViewStyle">@style/DropDownListView.Holo_green</item>
-        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Holo_green</item>
-        <item name="actionDropDownStyle">@style/DropDownNav.Holo_green</item>
-        <item name="actionBarStyle">@style/ActionBar.Solid.Holo_green</item>
-        <item name="actionModeBackground">@drawable/cab_background_top_holo_green</item>
-        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_holo_green</item>
-        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Holo_green</item>
-
-        <!-- Light.DarkActionBar specific -->
-        <item name="actionBarWidgetTheme">@style/Theme.Holo_green.Widget</item>
-
         <!-- created by http://android-holo-colors.com/-->
         <item name="android:radioButtonStyle">@style/RadioButtonHolo_green</item>
         <item name="android:buttonStyle">@style/ButtonHolo_green</item>
@@ -45,9 +32,6 @@
         <item name="android:listViewStyle">@style/ListViewHolo_green</item>
         <item name="android:listViewWhiteStyle">@style/ListViewHolo_green.White</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItemHolo_green</item>
-
-        <!-- ShowcaseView theme
-        <item name="showcaseViewStyle">@style/ShowcaseTheme</item> -->
     </style>
 
     <!-- created by http://android-holo-colors.com/ -->

@@ -28,8 +28,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * <p/>
  * CalendarActivity for phone version, with a ActionBarDrawer pane.
  */
-public class CalendarForPhoneActivity extends CalendarActivity
-        implements CalendarActivity.OnQueryCallback/*, OnShowcaseEventListener*/ {
+public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback {
 
     private DrawerLayout mDrawerLayout;
 
@@ -296,5 +295,10 @@ public class CalendarForPhoneActivity extends CalendarActivity
     @Override
     public void OnFragmentAttached() {
         //[33]dolphin++
+    }
+
+    @Override
+    public String getScreenName() {
+        return GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_PHONE;
     }
 }

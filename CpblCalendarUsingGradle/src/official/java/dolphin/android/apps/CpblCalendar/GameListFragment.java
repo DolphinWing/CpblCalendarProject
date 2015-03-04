@@ -106,47 +106,12 @@ public class GameListFragment extends SherlockListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
         //super.onListItemClick(l, v, position, id);
         if (v != null) {
-            Game game = (Game) v.getTag();
+            //Game game = (Game) v.getTag();
             //Log.d(TAG, "onListItemClick: " + position);
             //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
             //Log.d(TAG, "  game.Url: " + game.Url);
-
-            Calendar now = CpblCalendarHelper.getNowTime();
-            String url = null;
-            if (game.StartTime.after(now)) {
-                url = within3Days(game.StartTime) ?
-                        String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
-                                CpblCalendarHelper.URL_BASE,
-                                game.Kind, game.StartTime.get(Calendar.YEAR), game.Id) : null;
-            } else if (game.IsFinal || PreferenceUtils.isCacheMode(getActivity())) {
-                url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
-                        CpblCalendarHelper.URL_BASE,
-                        game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
-            } else {
-                url = game.Url;//default is live url
-                //Log.d(TAG, game.StartTime.getTime().toString());
-            }
-
-            if (game != null && url != null) {//[78]-- game.IsFinal) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (PreferenceUtils.isEngineerMode(getActivity())) {
-                    Log.d(TAG, "Url=" + url.substring(url.lastIndexOf("/")));
-                } else {
-                    try {//[97]dolphin++
-                        startActivity(i);
-                    } catch (ActivityNotFoundException e) {
-                        Toast.makeText(getActivity(), R.string.query_error,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
+            Utils.startGameActivity(getActivity(), (Game) v.getTag());
         }
-    }
-
-    private boolean within3Days(Calendar c) {
-        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= GameAdapter.ONE_DAY * 2);
     }
 
     //Long click on ListFragment

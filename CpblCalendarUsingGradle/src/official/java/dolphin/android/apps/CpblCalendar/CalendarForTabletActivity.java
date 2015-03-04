@@ -34,9 +34,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * <p/>
  * CalendarActivity for tablet version, with a static query pane.
  */
-public class CalendarForTabletActivity extends CalendarActivity
-//        implements OnShowcaseEventListener
-{
+public class CalendarForTabletActivity extends CalendarActivity {
     private ArrayList<Game> mGameList = null;
     //    private ShowcaseView mShowcaseView;
     //private boolean mIsTutorialQuery = false;//[20]dolphin++
@@ -337,5 +335,10 @@ public class CalendarForTabletActivity extends CalendarActivity
     @Override
     public void OnFragmentAttached() {
         //[33]dolphin++
+    }
+
+    @Override
+    public String getScreenName() {
+        return GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_TABLET;
     }
 }

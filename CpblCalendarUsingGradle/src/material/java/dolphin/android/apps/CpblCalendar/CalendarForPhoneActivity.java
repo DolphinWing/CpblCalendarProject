@@ -1,6 +1,5 @@
 package dolphin.android.apps.CpblCalendar;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -17,6 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -28,14 +30,15 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * <p/>
  * CalendarActivity for phone version, with a ActionBarDrawer pane.
  */
-public class CalendarForPhoneActivity extends CalendarActivity
-        implements CalendarActivity.OnQueryCallback {
+public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback {
 
     private DrawerLayout mDrawerLayout;
 
     private View mDrawerList;
 
     private ArrayList<Game> mGameList = null;
+
+    private AdView mAdView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +59,13 @@ public class CalendarForPhoneActivity extends CalendarActivity
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+//        if (getResources().getBoolean(R.bool.config_tablet)) {
+//            mToolbar.setLogo(R.drawable.ic_launcher);
+//        }
 
         initQueryPane();
+
+        mAdView = (AdView) findViewById(R.id.adView);
 
         //[39]dolphin++ for rotation
         final int kind = (savedInstanceState != null)
@@ -79,6 +87,7 @@ public class CalendarForPhoneActivity extends CalendarActivity
                 mSpinnerYear.setSelection(debugMode ? 1 : year);
                 mSpinnerMonth.setSelection(debugMode ? 5 : month);
                 mButtonQuery.performClick();//load at beginning
+                loadAds();//load ads in the background
             }
         });
 
@@ -222,5 +231,45 @@ public class CalendarForPhoneActivity extends CalendarActivity
     @Override
     public void OnFragmentAttached() {
         //[33]dolphin++
+    }
+
+    private void loadAds() {
+        if (mAdView == null) {
+            return;
+        }
+        // Create an ad request. Check logcat output for the hashed device ID to
+        // get test ads on a physical device. e.g.
+        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        final AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null/* && mAdView.getVisibility() == View.VISIBLE*/) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAdView != null/* && mAdView.getVisibility() == View.VISIBLE*/) {
+            mAdView.resume();
+        }
+    }
+
+    /**
+     * Called before the activity is destroyed
+     */
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 }

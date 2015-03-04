@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 21
-        versionCode 114
+        versionCode 117
     }
 
 //    //http://stackoverflow.com/a/19210105/2673859
@@ -46,7 +46,7 @@ android {
         official {
             minSdkVersion 9
             targetSdkVersion 21
-            versionName '1.4.5'
+            versionName '1.4.6'
         }
     }
 }

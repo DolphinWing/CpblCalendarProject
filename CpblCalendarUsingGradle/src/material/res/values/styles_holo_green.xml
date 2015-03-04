@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- File created by the Android Action Bar Style Generator
+<?xml version="1.0" encoding="utf-8"?><!-- File created by the Android Action Bar Style Generator
 
      Copyright (C) 2011 The Android Open Source Project
      Copyright (C) 2012 readyState Software Ltd
@@ -37,13 +36,13 @@
     </style>
 
     <!-- Match row style -->
-    <style name="Theme.Holo_green.TextLarge" parent="@style/Base.TextAppearance.AppCompat.Large"/>
+    <style name="Theme.Holo_green.TextLarge" parent="@style/TextAppearance.AppCompat.Large" />
 
-    <style name="Theme.Holo_green.TextMedium" parent="@style/Base.TextAppearance.AppCompat.Medium"/>
+    <style name="Theme.Holo_green.TextMedium" parent="@style/TextAppearance.AppCompat.Medium" />
 
-    <style name="Theme.Holo_green.TextSmall" parent="@style/Base.TextAppearance.AppCompat.Small"/>
+    <style name="Theme.Holo_green.TextSmall" parent="@style/TextAppearance.AppCompat.Small" />
 
-    <style name="Theme.Holo_green.LoadingText" parent="@android:style/TextAppearance.Medium.Inverse">
+    <style name="Theme.Holo_green.LoadingText" parent="@style/TextAppearance.AppCompat.Medium.Inverse">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">96dp</item>
@@ -60,7 +59,13 @@
     </style>
 
     <!-- match style -->
-    <style name="Theme.Holo_green.Match.Title">
+    <style name="Theme.Holo_green.Match.Main" parent="@style/TextAppearance.AppCompat.Title" />
+
+    <style name="Theme.Holo_green.Match.Extra" parent="Theme.Holo_green.TextSmall" />
+
+    <style name="Theme.Holo_green.Match.Base" />
+
+    <style name="Theme.Holo_green.Match.Title" parent="Theme.Holo_green.Match.Base">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">left|center_vertical</item>
@@ -71,7 +76,7 @@
         <item name="android:paddingBottom">@dimen/padding_small</item>
     </style>
 
-    <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.TextMedium">
+    <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.Match.Main">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
@@ -82,16 +87,17 @@
 
     <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
         <item name="android:layout_weight">0.2</item>
+        <item name="android:gravity">center_vertical|right</item>
         <item name="android:textSize">@dimen/abc_text_size_headline_material</item>
     </style>
 
-    <style name="Theme.Holo_green.Match.GameId" parent="Theme.Holo_green.TextSmall">
+    <style name="Theme.Holo_green.Match.GameId" parent="Theme.Holo_green.Match.Extra">
         <item name="android:layout_gravity">right|center_vertical</item>
         <item name="android:text">@string/empty_data</item>
         <item name="android:autoText">false</item>
     </style>
 
-    <style name="Theme.Holo_green.Match.Field" parent="Theme.Holo_green.TextSmall">
+    <style name="Theme.Holo_green.Match.Field" parent="Theme.Holo_green.Match.Extra">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">left|center_vertical</item>
@@ -100,17 +106,17 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.TextSmall">
+    <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.Match.Extra">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:gravity">left|center_vertical</item>
         <item name="android:text">@string/empty_data</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <!--<item name="android:textColor">?android:attr/textColorSecondary</item>-->
     </style>
 
     <!-- Query Panel style -->
-    <style name="Theme.Holo_green.QueryPane"/>
+    <style name="Theme.Holo_green.QueryPane" />
 
     <style name="Theme.Holo_green.QueryPane.Title" parent="@style/TextAppearance.AppCompat.Caption">
         <item name="android:layout_width">wrap_content</item>

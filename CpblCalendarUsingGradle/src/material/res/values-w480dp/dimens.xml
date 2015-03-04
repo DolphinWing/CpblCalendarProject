@@ -15,16 +15,6 @@
 -->
 
 <resources>
-
-    <!-- paddings -->
-    <dimen name="padding_small">4dp</dimen>
-    <dimen name="padding_medium">8dp</dimen>
-    <dimen name="padding_large">16dp</dimen>
-    <dimen name="padding_very_large">24dp</dimen>
-
-    <dimen name="list_item_padding_left">6dp</dimen>
-    <dimen name="list_item_padding_right">6dp</dimen>
-    <dimen name="list_item_height_small">48dp</dimen>
-
-    <dimen name="navigation_drawer_width">256dp</dimen>
+    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
+    <dimen name="navigation_drawer_width">360dp</dimen>
 </resources>

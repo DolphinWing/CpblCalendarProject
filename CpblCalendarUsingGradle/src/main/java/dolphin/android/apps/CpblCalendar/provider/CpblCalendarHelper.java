@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.ArrayAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,10 +60,10 @@ public class CpblCalendarHelper extends HttpHelper {
     /**
      * do the web query
      *
-     * @param kind
-     * @param year
-     * @param month
-     * @return
+     * @param kind  game kind
+     * @param year  year
+     * @param month month
+     * @return game list
      */
     public ArrayList<Game> query(String kind, int year, int month) {
         return query(kind, year, month, "F00");
@@ -137,8 +138,8 @@ public class CpblCalendarHelper extends HttpHelper {
                                 gameList.add(g1);
                             }
                         }
-                    } else {//no game today
-                        //Log.d(TAG, String.format("no game: #%d", d));
+//                    } else {//no game today
+//                        //Log.d(TAG, String.format("no game: #%d", d));
                     }
                 }
             } else {//no data to parse
@@ -176,12 +177,12 @@ public class CpblCalendarHelper extends HttpHelper {
     /**
      * convert a game info to Game object
      *
-     * @param kind
-     * @param year
-     * @param month
-     * @param day
-     * @param str
-     * @return
+     * @param kind  game kind
+     * @param year  year
+     * @param month month
+     * @param day   day
+     * @param str   html source
+     * @return game object
      */
     private Game parseOneGameHtml(String kind, int year, int month, int day, String str) {
         Game game = new Game();
@@ -210,18 +211,20 @@ public class CpblCalendarHelper extends HttpHelper {
             pattern = bLive ? PATTERN_TOPLAY : PATTERN_TOPLAY_WITHOUT_LIVE;
         }
 
-        String schedule = "";
+        String schedule;
         Matcher matcher = Pattern.compile(pattern).matcher(str);
 
-        if (matcher != null && matcher.find()) {
-            //we have data, parse it later
-        } else if (bLive) {//[9]try no live when we assume it always has
+//        if (matcher != null && matcher.find()) {
+//            //we have data, parse it later
+//        } else if (bLive) {//[9]try no live when we assume it always has
+        if (!matcher.find() && bLive) {
             //Log.d(TAG, "we assume it has live... IsFinal=" + game.IsFinal);
             matcher = Pattern.compile(game.IsFinal ? PATTERN_RESULT_WITHOUT_LIVE
                     : PATTERN_TOPLAY_WITHOUT_LIVE).matcher(str);
-            if (matcher != null && matcher.find()) {
-                //we have data, parse it later
-            } else {//still no match
+//            if (matcher != null && matcher.find()) {
+//                //we have data, parse it later
+//            } else {//still no match
+            if (!matcher.find()) {
                 Log.e(TAG, "still no game? str: " + str);
                 return null;
             }
@@ -295,7 +298,7 @@ public class CpblCalendarHelper extends HttpHelper {
     /**
      * get last query cached list
      *
-     * @return
+     * @return game list
      */
     public ArrayList<Game> getLastQueryList() {
         return mGameList;
@@ -304,7 +307,7 @@ public class CpblCalendarHelper extends HttpHelper {
     /**
      * get score board html
      *
-     * @return
+     * @return score board html
      */
     public String getScoreBoardHtml() {
         String html = (mScoreBoardHtml != null) ? mScoreBoardHtml.replace("href", "_href") : "";
@@ -314,8 +317,8 @@ public class CpblCalendarHelper extends HttpHelper {
     /**
      * get suggested game kind by date
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return suggested game kind index
      */
     public static int getSuggestedGameKind(Context context) {
         String kind = "01";
@@ -592,7 +595,10 @@ public class CpblCalendarHelper extends HttpHelper {
                 game.DelayMessage = matchID.group(3);
             }
             if (!matchID.group(1).isEmpty()) {
-                game.DelayMessage += String.format("(%s)", matchID.group(1));
+                //game.DelayMessage += String.format("(%s)", matchID.group(1));
+                game.DelayMessage = game.DelayMessage == null ? matchID.group(1)
+                        : String.format("%s (%s)", game.DelayMessage, matchID.group(1));//[115]++
+            }
             }
         }
         //Log.d(TAG, "  game.Id = " + game.Id);
@@ -658,8 +664,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     //<font color=blue>001 義大-統一(新莊)</font>
-    private final static String PATTERN_GAME_2014_ZXC =
-            "<font color=blue>([^/]+)";
+    private final static String PATTERN_GAME_2014_ZXC = "<font color=blue>([^/]+)";
     //"<font color=blue>([^ ]+) ([^\\-]+)-([^\\(]+)([^<]+)</font>";
 
     public ArrayList<Game> query2014zxc(int month) {
@@ -898,5 +903,25 @@ public class CpblCalendarHelper extends HttpHelper {
         //Log.d(TAG, Locale.TAIWAN.toString());
         //return Calendar.getInstance(Locale.TAIWAN);
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+    }
+
+    public static ArrayAdapter<String> buildYearAdapter(Context context, int nowYear) {
+        String[] years = new String[nowYear - 1990 + 1];
+        for (int i = 1990; i <= nowYear; i++) {
+            String y = context.getString(R.string.title_cpbl_year, (i - 1989));
+            years[nowYear - i] = String.format("%d (%s)", i, y);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item, years);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    public static ArrayAdapter<String> buildMonthAdapter(Context context) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item,
+                new DateFormatSymbols(Locale.TAIWAN).getMonths());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 }
