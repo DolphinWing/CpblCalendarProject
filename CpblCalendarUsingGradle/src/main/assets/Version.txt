@@ -19,6 +19,23 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[118/119] @ 2015-03-05
+    multiple APK test
+    add 2014 delay games data download (increase 10 seconds download time)
+    some minor parts improvements
+
+[117] @ 2015-02-08
+    2.0 preview for alpha chaneel
+
+[116] @ 2015-02-07~08
+    update material layout
+
+    underlined highlight winning team has been removed in material
+
+[115] @ 2015-02-06
+    fix some 補賽 is the only game in that day
+    pull common codes together: CalendarActivity and GameAdapter done.
+
 [114] @ 2015-02-06
     color and style change for material
     hide info icon since this is not a useless indicator

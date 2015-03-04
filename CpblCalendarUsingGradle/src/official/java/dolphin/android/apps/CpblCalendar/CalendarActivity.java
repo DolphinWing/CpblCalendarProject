@@ -78,6 +78,9 @@ public abstract class CalendarActivity extends ABSFragmentActivity
     private TextView mProgressText;//[84]dolphin++
 
     private GoogleAnalyticsHelper mAnalytics;
+
+    private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Holo_green);
@@ -91,7 +94,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
         //only after GB needs to set this
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                    .detectDiskReads()
+            Utils.enableStrictMode();
         }
 
 //        //[72]dolphin++ https://code.google.com/p/android-query/wiki/Service
@@ -125,6 +128,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mActivity = getSFActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
 
         mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(), getScreenName());
+        mDelayGames2014 = new SparseArray<>();
     }
 
     @Override
@@ -170,7 +174,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
         mSpinnerYear.setEnabled(!mCacheMode);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
 
         mButtonQuery = (Button) findViewById(android.R.id.button1);
         mButtonQuery.setOnClickListener(onQueryClick);
@@ -392,6 +396,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
+                //[118]dolphin++ add check delay games
+                if (mDelayGames2014.get(mYear) == null) {
+                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
+                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mYear));
+                }
+
                 ArrayList<Game> gameList = null;
                 try {
                     Calendar now = CpblCalendarHelper.getNowTime();
@@ -411,7 +421,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
-                            gameList = mHelper.query2014(mYear, mMonth, gameKind);
+                            gameList = mHelper.query2014(mYear, mMonth, gameKind, mDelayGames2014.get(mYear));
 //                            ArrayList<Game> tmpList = mHelper.query2014();
                             //.query(gameKind, mYear, mMonth, mField);
 //                            if (gameList == null || gameList.size() <= 0) {//backup plan

@@ -14,8 +14,11 @@ import android.util.SparseArray;
 import android.widget.ArrayAdapter;
 
 import java.io.File;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -354,7 +357,7 @@ public class CpblCalendarHelper extends HttpHelper {
             }
             k++;
         }
-        return 1;
+        return 0;
     }
 
     public ArrayList<Game> query2014() {
@@ -366,7 +369,12 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public ArrayList<Game> query2014(int year, int month, String kind) {
+        return query2014(year, month, kind, queryDelayGames2014(year));
+    }
+
+    public ArrayList<Game> query2014(int year, int month, String kind, SparseArray<Game> delayGames) {
         long startTime = System.currentTimeMillis();
+
         //Log.d(TAG, "query2014");
         ArrayList<Game> gameList = new ArrayList<Game>();
         try {//
@@ -416,14 +424,14 @@ public class CpblCalendarHelper extends HttpHelper {
                                 for (int h = 1; h < gamesHack.length; h++) {
                                     String gameStr = gamesHack[0] + gamesHack[h];
                                     //Log.d(TAG, gameStr);
-                                    Game g1 = parseOneGameHtml2014(year, month, d, kind, gameStr);
+                                    Game g1 = parseOneGameHtml2014(year, month, d, kind, gameStr, delayGames);
                                     if (g1 != null) {
                                         gameList.add(g1);
                                     }
                                 }
                             } else if (games[g].contains("<tr class='normal'>")) {
                                 //normal games
-                                Game g2 = parseOneGameHtml2014(year, month, d, kind, games[g]);
+                                Game g2 = parseOneGameHtml2014(year, month, d, kind, games[g], delayGames);
                                 if (g2 != null) {
                                     gameList.add(g2);
                                 }
@@ -514,7 +522,8 @@ public class CpblCalendarHelper extends HttpHelper {
             //
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)";
 
-    private Game parseOneGameHtml2014(int year, int month, int day, String kind, String str) {
+    private Game parseOneGameHtml2014(int year, int month, int day, String kind, String str,
+                                      SparseArray<Game> delayGames) {
         Game game = new Game();
         game.Source = Game.SOURCE_CPBL;
         game.Kind = kind;
@@ -599,6 +608,12 @@ public class CpblCalendarHelper extends HttpHelper {
                 game.DelayMessage = game.DelayMessage == null ? matchID.group(1)
                         : String.format("%s (%s)", game.DelayMessage, matchID.group(1));//[115]++
             }
+            //[118]jimmy++ add delay games list, needs about 10 seconds to generate the list
+            if (delayGames != null && delayGames.get(game.Id) != null) {
+                String d_date = new SimpleDateFormat("yyyy/MM/dd", Locale.TAIWAN).format(
+                        delayGames.get(game.Id).StartTime.getTime());
+                game.DelayMessage = game.DelayMessage == null ? d_date
+                        : String.format("%s (%s)", game.DelayMessage, d_date);
             }
         }
         //Log.d(TAG, "  game.Id = " + game.Id);
@@ -716,7 +731,7 @@ public class CpblCalendarHelper extends HttpHelper {
                                     gameList.remove(gameList.size() - 1);
                                 } else {//[93]dolphin++ fix delay message after game final
                                     if (extra.contains("<font color=blue>")) {
-                                        extra.substring(
+                                        extra = extra.substring(
                                                 0, extra.indexOf("<font color=blue>"));
                                     }
                                     if (extra.contains("<font color=green>")) {
@@ -773,7 +788,7 @@ public class CpblCalendarHelper extends HttpHelper {
         //int hour = isWeekend ? 17 : 18;
         //int minute = isWeekend ? 05 : 35;
         game.StartTime.set(Calendar.HOUR_OF_DAY, isWeekend ? 17 : 18);
-        game.StartTime.set(Calendar.MINUTE, isWeekend ? 05 : 35);
+        game.StartTime.set(Calendar.MINUTE, isWeekend ? 5 : 35);
 
         //<font color=blue>001 義大-統一(新莊)</font>
         String[] data = str.split("[ \\-\\(\\)]");
@@ -804,6 +819,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 game.Url = "http://www.cpbltv.com/";//[84]dolphin++
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return game;
@@ -889,10 +905,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public boolean putCache(int year, int month, ArrayList<Game> list) {
-        if (canUseCache()) {
-            return putCache(mContext, String.format("%04d-%02d.json", year, month), list);
-        }
-        return false;
+        return canUseCache() && putCache(mContext, String.format("%04d-%02d.json", year, month), list);
     }
 
     public boolean canUseCache() {
@@ -923,5 +936,77 @@ public class CpblCalendarHelper extends HttpHelper {
                 new DateFormatSymbols(Locale.TAIWAN).getMonths());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return adapter;
+    }
+
+    public SparseArray<Game> queryDelayGames2014(int year) {
+        long startTime = System.currentTimeMillis();
+
+        SparseArray<Game> delayedGames = new SparseArray<>();
+        for (int month = 3; month <= 10; month++) {
+            String html;// = getUrlContent(URL_SCHEDULE_2014);
+            AspNetHelper helper = new AspNetHelper("http://www.cpbl.com.tw/schedule.aspx");
+            html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+            html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+
+            //Log.d(TAG, "query2014 " + html.length());
+            if (html.contains("<tr class=\"game\">")) {//have games
+                String[] days = html.split("<table class=\"day\">");
+                //Log.d(TAG, "days " + days.length);
+                for (String day : days) {
+                    //check those days with games
+                    String data = day.substring(day.indexOf("<tr"));
+                    //<tr class="beforegame">
+                    //<tr class="gameing">
+                    //<tr class="futuregame">
+                    String date = data.substring(data.indexOf("<td>") + 4, data.indexOf("</td>"));
+                    //Log.d(TAG, "date: " + date);
+                    int d = 0;
+                    try {
+                        d = Integer.parseInt(date);
+                    } catch (NumberFormatException e) {
+                        d = 0;
+                    }
+                    if (d > 0) {//day.contains("<td class=\"line\">")) {
+                        String[] games = data.split("<td class=\"line\">");
+                        //Log.d(TAG, String.format(" day=%d games=%d", d, games.length));
+                        for (String game1 : games) {
+                            //[92]dolphin++
+                            if (game1.contains("<tr class='suspend'>")) {
+//      <table><tr class='suspend'><td>
+//      <table><tr><th></th><th>51</th><th></th></tr></table>
+//      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
+                                if (game1.contains("<td colspan='3' class='suspend'>")) {
+                                    //Log.d(TAG, String.format("suspend month=%d day=%d", month, d));
+                                    //continue;//don't add to list
+                                    //TODO: we need these games
+
+                                    Matcher m = Pattern.compile("<th>([0-9]+)</th>").matcher(game1);
+                                    if (m.find()) {
+                                        //Log.d(TAG, "  id = " + m.group(1));
+                                        Game game = new Game();
+                                        game.Id = Integer.parseInt(m.group(1));
+                                        game.StartTime = CpblCalendarHelper.getNowTime();
+                                        game.StartTime.set(Calendar.YEAR, year);
+                                        game.StartTime.set(Calendar.MONTH, month - 1);
+                                        game.StartTime.set(Calendar.DAY_OF_MONTH, d);
+                                        game.StartTime.set(Calendar.HOUR_OF_DAY, 0);
+
+                                        if (delayedGames.get(game.Id) != null) {
+                                            //Log.d(TAG, "bypass " + game.toString());
+                                            continue;
+                                        }
+                                        delayedGames.put(game.Id, game);
+                                    }
+                                }
+                                //normal games
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        Log.v(TAG, String.format("delay game query wasted %d ms", ((endTime - startTime))));
+        return delayedGames;
     }
 }

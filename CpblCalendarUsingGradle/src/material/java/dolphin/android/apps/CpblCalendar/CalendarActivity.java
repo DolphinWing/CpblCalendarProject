@@ -74,6 +74,9 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     private TextView mProgressText;//[84]dolphin++
 
     private GoogleAnalyticsHelper mAnalytics;
+
+    private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -102,6 +105,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
 
         mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(),
                 GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_BASE);
+        mDelayGames2014 = new SparseArray<>();
     }
 
     @Override
@@ -356,6 +360,12 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         new Thread(new Runnable() {
             @Override
             public void run() {
+                //[118]dolphin++ add check delay games
+                if (mDelayGames2014.get(mYear) == null) {
+                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
+                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mYear));
+                }
+
                 ArrayList<Game> gameList = null;
                 try {
                     Calendar now = CpblCalendarHelper.getNowTime();
@@ -375,7 +385,8 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                         } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
-                            gameList = mHelper.query2014(mYear, mMonth, gameKind);
+                            gameList = mHelper.query2014(mYear, mMonth, gameKind,
+                                    mDelayGames2014.get(mYear));
                             doQueryStateUpdateCallback(R.string.title_download_complete);
                         }
                     }
@@ -510,7 +521,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
 
     public void showLeaderBoard2014() {
         if (mStanding != null) {
-            invalidateOptionsMenu();
+            doShowLeaderBoard2014();
             return;
         }
 
@@ -525,7 +536,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                     CalendarActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            internalLoading(false);
+                            doShowLeaderBoard2014();
                         }
                     });
                 }
