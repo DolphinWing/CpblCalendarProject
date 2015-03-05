@@ -3,19 +3,18 @@ package dolphin.android.apps.CpblCalendar;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ListFragment;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.ScrollDirectionListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +34,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
     /**
      * update the adapter to ListView
      *
-     * @param gameArrayList
+     * @param gameArrayList game list
      */
     public void updateAdapter(ArrayList<Game> gameArrayList) {
         final Activity activity = getActivity();
@@ -120,13 +119,41 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getListView().setOnItemLongClickListener(this);
+        final ListView listView = getListView();
+        listView.setOnItemLongClickListener(this);
 
+        final ActionBarActivity activity = (ActionBarActivity) getActivity();
         //https://github.com/makovkastar/FloatingActionButton
         FloatingActionButton floatingActionButton =
-                (FloatingActionButton) getActivity().findViewById(R.id.button_floating_action);
+                (FloatingActionButton) activity.findViewById(R.id.button_floating_action);
         if (floatingActionButton != null) {
-            floatingActionButton.attachToListView(getListView());
+            floatingActionButton.attachToListView(listView, new ScrollDirectionListener() {
+                @Override
+                public void onScrollDown() {
+                    //Log.d("ListViewFragment", "onScrollDown()");
+//                    if (!activity.getSupportActionBar().isShowing()) {
+//                        activity.getSupportActionBar().show();
+//                    }
+                }
+
+                @Override
+                public void onScrollUp() {
+                    //Log.d("ListViewFragment", "onScrollUp()");
+//                    if (activity.getSupportActionBar().isShowing()) {
+//                        activity.getSupportActionBar().hide();
+//                    }
+                }
+            }, new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    //Log.d("ListViewFragment", "onScrollStateChanged() " + scrollState);
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    //Log.d("ListViewFragment", "onScroll()");
+                }
+            });
         }
     }
 

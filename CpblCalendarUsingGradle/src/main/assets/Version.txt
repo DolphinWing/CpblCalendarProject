@@ -19,10 +19,17 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[120/121] @ 2015-03-05
+    add local cache for delay games
+    add year check to reduce download delay games time of future games
+    update FloatingActionButton to 1.2.0
+
 [118/119] @ 2015-03-05
     multiple APK test
     add 2014 delay games data download (increase 10 seconds download time)
     some minor parts improvements
+
+TODO: add cache to local
 
 [117] @ 2015-02-08
     2.0 preview for alpha chaneel
