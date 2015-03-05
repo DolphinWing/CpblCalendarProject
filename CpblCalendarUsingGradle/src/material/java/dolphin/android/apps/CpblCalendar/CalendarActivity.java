@@ -363,7 +363,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                 //[118]dolphin++ add check delay games
                 if (mDelayGames2014.get(mYear) == null) {
                     doQueryStateUpdateCallback(R.string.title_download_delay_games);
-                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mYear));
+                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
                 }
 
                 ArrayList<Game> gameList = null;

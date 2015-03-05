@@ -369,7 +369,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public ArrayList<Game> query2014(int year, int month, String kind) {
-        return query2014(year, month, kind, queryDelayGames2014(year));
+        return query2014(year, month, kind, /*queryDelayGames2014(year)*/null);
     }
 
     public ArrayList<Game> query2014(int year, int month, String kind, SparseArray<Game> delayGames) {
@@ -424,14 +424,16 @@ public class CpblCalendarHelper extends HttpHelper {
                                 for (int h = 1; h < gamesHack.length; h++) {
                                     String gameStr = gamesHack[0] + gamesHack[h];
                                     //Log.d(TAG, gameStr);
-                                    Game g1 = parseOneGameHtml2014(year, month, d, kind, gameStr, delayGames);
+                                    Game g1 = parseOneGameHtml2014(year, month, d, kind, gameStr,
+                                            delayGames);
                                     if (g1 != null) {
                                         gameList.add(g1);
                                     }
                                 }
                             } else if (games[g].contains("<tr class='normal'>")) {
                                 //normal games
-                                Game g2 = parseOneGameHtml2014(year, month, d, kind, games[g], delayGames);
+                                Game g2 = parseOneGameHtml2014(year, month, d, kind, games[g],
+                                        delayGames);
                                 if (g2 != null) {
                                     gameList.add(g2);
                                 }
@@ -938,11 +940,23 @@ public class CpblCalendarHelper extends HttpHelper {
         return adapter;
     }
 
-    public SparseArray<Game> queryDelayGames2014(int year) {
+    public SparseArray<Game> queryDelayGames2014(Context context, int year) {
         long startTime = System.currentTimeMillis();
 
-        SparseArray<Game> delayedGames = new SparseArray<>();
-        for (int month = 3; month <= 10; month++) {
+        //read current month
+        Calendar now = getNowTime();
+
+        SparseArray<Game> delayedGames = restoreDelayGames2014(context, year);//new SparseArray<>();
+        if (now.get(Calendar.YEAR) != year && delayedGames.size() > 0) {//use cache directly
+            Log.v(TAG, String.format("use cached data, delay games = %d", delayedGames.size()));
+            return delayedGames;
+        }
+
+        //if year == this year, do to current month
+        //if year == last year, do all
+        int m1 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 3;
+        int m2 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 10;
+        for (int month = m1; month <= m2; month++) {
             String html;// = getUrlContent(URL_SCHEDULE_2014);
             AspNetHelper helper = new AspNetHelper("http://www.cpbl.com.tw/schedule.aspx");
             html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
@@ -1007,6 +1021,46 @@ public class CpblCalendarHelper extends HttpHelper {
         }
         long endTime = System.currentTimeMillis();
         Log.v(TAG, String.format("delay game query wasted %d ms", ((endTime - startTime))));
+
+        //store all data to local cache
+        storeDelayGames2014(context, year, delayedGames);
+
+        return delayedGames;
+    }
+
+    private void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
+        //TODO: store all data to local cache
+        String delay_str = "";
+        for (int i = 0; i < games.size(); i++) {
+            Game g = games.valueAt(i);
+            delay_str += String.format("%d/%s;", g.Id,
+                    new SimpleDateFormat("MM/dd", Locale.TAIWAN).format(g.StartTime.getTime()));
+        }
+        File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+        FileUtils.writeStringToFile(f, delay_str);
+    }
+
+    private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
+        SparseArray<Game> delayedGames = new SparseArray<>();
+        //TODO: restore data from cache
+        File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+        String delay_str = FileUtils.readFileToString(f);
+        if (delay_str != null && !delay_str.isEmpty()) {
+            for (String delay : delay_str.split(";")) {
+                Log.d(TAG, delay);
+                if (!delay.isEmpty()) {
+                    String[] d = delay.split("/");
+                    Game g = new Game();
+                    g.Id = Integer.parseInt(d[0]);
+                    g.StartTime = getNowTime();
+                    g.StartTime.set(Calendar.YEAR, year);
+                    g.StartTime.set(Calendar.MONTH, Integer.parseInt(d[1]) - 1);
+                    g.StartTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(d[1]));
+                    g.StartTime.set(Calendar.HOUR_OF_DAY, 0);
+                    delayedGames.put(g.Id, g);
+                }
+            }
+        }
         return delayedGames;
     }
 }
