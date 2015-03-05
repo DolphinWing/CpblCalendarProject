@@ -16,7 +16,8 @@
             android:scaleType="fitXY"
             android:scaleX="-1"
             android:contentDescription="@null"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"
+            android:background="@color/shadow_background" />
 
         <ImageView
             android:layout_width="@dimen/activity_horizontal_margin"
@@ -24,7 +25,8 @@
             android:src="@drawable/drawer_shadow"
             android:contentDescription="@null"
             android:scaleType="fitXY"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"
+            android:background="@color/shadow_background" />
 
         <!-- The main content view -->
         <FrameLayout
@@ -62,7 +64,7 @@
             android:layout_margin="@dimen/padding_large"
             android:src="@drawable/ic_action_action_search"
             app:fab_colorNormal="@color/holo_green_light"
-            app:fab_colorPressed="@color/holo_green_light_light"
+            app:fab_colorPressed="@color/holo_green_dark"
             app:fab_type="normal"
             app:fab_shadow="true" />
 

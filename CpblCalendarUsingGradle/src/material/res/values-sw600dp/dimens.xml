@@ -16,6 +16,6 @@
 
 <resources>
     <bool name="config_tablet">true</bool>
-    <dimen name="activity_horizontal_margin">62dp</dimen>
-    <dimen name="toolbar_height">128dp</dimen>
+    <dimen name="activity_horizontal_margin">54dp</dimen>
+    <dimen name="toolbar_height">96dp</dimen>
 </resources>

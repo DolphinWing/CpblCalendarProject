@@ -22,4 +22,6 @@
     <color name="holo_green_light">#FF99CC00</color>
     <color name="pressed_holo_green">#CC99CC00</color>
     <color name="holo_green_dark">#FF669900</color>
+
+    <color name="shadow_background">#20000000</color>
 </resources>
