@@ -47,7 +47,7 @@ public class HttpHelper {
     public final static String ENCODE_BIG5 = "big5";
 
     /**
-     * {@link StatusLine} HTTP status code when no server error has occurred.
+     * {@link org.apache.http.StatusLine} HTTP status code when no server error has occurred.
      */
     private static final int HTTP_STATUS_OK = 200;
 
@@ -59,13 +59,13 @@ public class HttpHelper {
 
     /**
      * User-agent string to use when making requests. Should be filled using
-     * {@link #prepareUserAgent(Context)} before making any other calls.
+     * {@link #prepareUserAgent(android.content.Context)} before making any other calls.
      */
     private static String sUserAgent = null;
 
     /**
      * Prepare the internal User-Agent string for use. This requires a
-     * {@link Context} to pull the package name and version number for this
+     * {@link android.content.Context} to pull the package name and version number for this
      * application.
      */
     public static void prepareUserAgent(Context context) {
@@ -224,23 +224,32 @@ public class HttpHelper {
      * @return
      */
     public static boolean checkNetworkAvailable(Context context) {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connMgr != null && connMgr.getActiveNetworkInfo() != null)
             return connMgr.getActiveNetworkInfo().isAvailable();
         return false;
     }
 
 
-    public static synchronized boolean getRemoteFile(Context context,
-                                                     String url, String fileName) {
+    public static synchronized boolean getRemoteFile(Context context, String url, String fileName) {
         return getRemoteFile(context, url, fileName, DEFAULT_NETWORK_TIMEOUT);
     }
 
-    public static synchronized boolean getRemoteFile(Context context,
-                                                     String url, String fileName,
+    public static synchronized boolean getRemoteFile(Context context, String url, String fileName,
+                                                     HttpProgressListener listener) {
+        return getRemoteFile(context, url, fileName, DEFAULT_NETWORK_TIMEOUT, listener);
+    }
+
+    public static synchronized boolean getRemoteFile(Context context, String url, String fileName,
                                                      int timeout) {
+        return getRemoteFile(context, url, fileName, timeout, null);
+    }
+
+    public static synchronized boolean getRemoteFile(Context context, String url, String fileName,
+                                                     int timeout, HttpProgressListener listener) {
         try {
-            return getRemoteFile(context, new URL(url), fileName, timeout);
+            return getRemoteFile(context, new URL(url), fileName, timeout, listener);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -251,7 +260,7 @@ public class HttpHelper {
     @SuppressLint("WorldWriteableFiles")
     public static synchronized boolean getRemoteFile(Context context,
                                                      URL aURL, String fileName,
-                                                     int timeout) {
+                                                     int timeout, HttpProgressListener listener) {
         boolean result = false;
         try {
             URLConnection conn = aURL.openConnection();
@@ -259,6 +268,10 @@ public class HttpHelper {
             conn.connect();
             // this will be useful so that you can show a typical 0-100% progress bar
             int fileLength = conn.getContentLength();
+            //Log.v(TAG, String.format("file length: %d", fileLength));
+            if (listener != null) {
+                listener.onStart(fileLength);
+            }
 
             BufferedInputStream bis =
                     new BufferedInputStream(conn.getInputStream());
@@ -278,12 +291,17 @@ public class HttpHelper {
             while ((count = bis.read(data)) != -1) {
                 total += count;
                 // publishing the progress....
+                if (listener != null) {
+                    listener.onUpdate(count, total);
+                }
                 //publishProgress((int) (total * 100 / fileLength));
                 outstream.write(data, 0, count);
             }
-            //Log.d(TAG, String.format("fileLength: %d, total recv: %d",
-            // fileLength, total));
-            result = (fileLength == total);
+            Log.v(TAG, String.format("fileLength: %d, total recv: %d", fileLength, total));
+            result = fileLength > 0 ? (fileLength == total) : total > 0;
+            if (listener != null) {
+                listener.onComplete(total);
+            }
 
             bis.close();
             outstream.close();
@@ -294,6 +312,9 @@ public class HttpHelper {
             e.printStackTrace();
             Log.e(TAG, "Exception: " + e.getMessage());
             result = false;
+            if (listener != null) {
+                listener.onComplete(0);
+            }
         }
         return result;
     }

@@ -1,6 +1,7 @@
 package dolphin.android.net;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 
@@ -20,13 +21,18 @@ public class GoogleDriveHelper {
      * @param dst
      */
     public static boolean download(Context context, String id, File dst) {
+        return download(context, id, dst, null);
+    }
+
+    public static boolean download(Context context, String id, File dst,
+                                   HttpProgressListener listener) {
         if (!HttpHelper.checkNetworkAvailable(context))
             return false;
         //http://stackoverflow.com/a/11855448
         //https://drive.google.com/uc?export=download&id={fileId}
         String url = getUrl(id);
-        boolean r = HttpHelper.getRemoteFile(context, url, dst.getAbsolutePath());
-        //Log.v(TAG, "download " + (r ? "success" : "failed"));
-        return r;
+        boolean r = HttpHelper.getRemoteFile(context, url, dst.getAbsolutePath(), listener);
+        Log.v("GoogleDriveHelper", "download " + (r ? "success" : "failed"));
+        return dst.exists();
     }
 }
