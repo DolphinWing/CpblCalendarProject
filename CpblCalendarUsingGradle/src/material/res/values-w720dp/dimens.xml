@@ -16,4 +16,5 @@
 
 <resources>
     <dimen name="activity_horizontal_margin">128dp</dimen>
+    <dimen name="floating_action_button_margin">90dp</dimen>
 </resources>

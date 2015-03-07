@@ -15,7 +15,7 @@
 -->
 
 <resources>
-
+    <bool name="config_tablet">false</bool>
     <!-- paddings -->
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_medium">8dp</dimen>
@@ -27,4 +27,8 @@
     <dimen name="list_item_height_small">48dp</dimen>
 
     <dimen name="navigation_drawer_width">256dp</dimen>
+
+    <dimen name="activity_horizontal_margin">0dp</dimen>
+    <dimen name="toolbar_height">48dp</dimen>
+    <dimen name="floating_action_button_margin">@dimen/padding_large</dimen>
 </resources>
