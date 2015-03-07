@@ -76,6 +76,9 @@
     <string name="title_show_dialog">除通知外，以對話框提醒</string>
     <string name="title_show_dialog_on">時間到時會輔以對話框提醒</string>
     <string name="title_show_dialog_off">時間到時不會跳出對話框</string>
+    <string name="title_enable_song">自動播放中華職棒主題曲</string>
+    <string name="title_enable_song_on">顯示對話框時，一並播放中華職棒主題曲</string>
+    <string name="title_enable_song_off">顯示對話框時，不播放中華職棒主題曲</string>
     <string name="title_vibrate">震動通知</string>
     <string name="title_vibrate_on">時間到時會輔以震動提醒</string>
     <string name="title_vibrate_off">時間到時不以震動提醒</string>
@@ -98,6 +101,7 @@
     <string name="title_download_from_cache">快取 %1$04d/%2$02d 載入中</string>
     <string name="title_download_complete">資料下載完成，解析中</string>
     <string name="title_parse_complete">資料解析完成</string>
+    <string name="title_download_song">下載中華職棒主題曲</string>
     <!-- cache mode tutorial -->
     <string name="title_cache_mode_enable_message">離線模式將不會自動更新賽程資料。如果要取得新的賽程，請點擊刷新。\n
         \n第一次下載，必須花一點時間下載完整賽程表。</string>

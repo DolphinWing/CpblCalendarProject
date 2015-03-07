@@ -6,13 +6,16 @@ import com.google.android.gms.analytics.Tracker;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -22,12 +25,17 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/9/1.
+ *
+ * Notification Dialog-style Activity
  */
 public class NotifyDialog extends Activity {
+    private final static String TAG = "NotifyDialog";
 
     public final static String EXTRA_GAME1 = "game1";
 
     public final static String EXTRA_GAME2 = "game2";
+
+    private MediaPlayer mMediaPlayer;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +71,28 @@ public class NotifyDialog extends Activity {
                 }
             });
         }
+
+        if (PreferenceUtils.isEnableNotifySong(this)) {//[122]++
+            mMediaPlayer = new MediaPlayer();
+            try {
+                mMediaPlayer.setDataSource(PreferenceUtils.getNotifySong(this).getAbsolutePath());
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();
+            } catch (IOException e) {
+                Log.e(TAG, "MediaPlayer: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mMediaPlayer !=null) {//[122]++
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+        super.onDestroy();
     }
 
     private void load_layout(Game game1, Game game2) {
@@ -86,16 +116,6 @@ public class NotifyDialog extends Activity {
 
         int alarmTime = PreferenceUtils.getAlarmNotifyTime(getBaseContext());
         boolean isVibrate = PreferenceUtils.isEnableNotifyVibrate(getBaseContext());
-//        EasyTracker easyTracker = EasyTracker.getInstance(NotifyDialog.this);
-//        if (easyTracker != null) {
-//            easyTracker.send(MapBuilder.createEvent("UI",//Category
-//                            "NotifyDialog",//Action (required)
-//                            String.format("before=%d, vibrate=%s",
-//                                    alarmTime, isVibrate),//label
-//                            null
-//                    ).build()
-//            );
-//        }
         sendGmsGoogleAnalyticsReport("UI", "NotifyDialog",
                 String.format("before=%d, vibrate=%s", alarmTime, isVibrate));
     }
@@ -146,20 +166,6 @@ public class NotifyDialog extends Activity {
         ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
     }
 
-    //
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        //... // The rest of your onStart() code.
-//        EasyTracker.getInstance(this).activityStart(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        //... // The rest of your onStop() code.
-//        EasyTracker.getInstance(this).activityStop(this);
-//    }
     protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
         // Get tracker.
         Tracker t = ((CpblApplication) getApplication()).getTracker(

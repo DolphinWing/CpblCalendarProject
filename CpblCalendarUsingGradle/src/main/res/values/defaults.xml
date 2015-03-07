@@ -7,7 +7,7 @@
     <!-- app configs -->
 	<bool name="feature_notify">true</bool>
     <bool name="feature_notify_teams">false</bool>
-    <bool name="demo_notification">false</bool>
+    <bool name="demo_notification">true</bool>
     <bool name="demo_no_data">false</bool>
     <bool name="demo_zxc22">false</bool>
     <bool name="feature_auto_load_next">false</bool>
@@ -16,6 +16,7 @@
     <bool name="feature_cache_mode">true</bool>
     <bool name="feature_query_panel">true</bool>
     <bool name="feature_admob">true</bool>
+    <bool name="feature_enable_song">false</bool>
 
     <!-- show leader board on layout -->
     <bool name="def_include_lead_board">false</bool>
@@ -31,6 +32,7 @@
     <string name="def_notify_alarm">0</string>
     <string name="def_notify_pending_action">0</string>
     <bool name="def_enable_notify_dialog">false</bool>
+    <bool name="def_enable_notify_song">false</bool>
     <bool name="def_notify_vibrate">false</bool>
 
     <!-- enable cache mode -->

@@ -11,11 +11,15 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 
+import java.io.File;
+
 import dolphin.android.apps.CpblCalendar.NotifyReceiver;
 import dolphin.android.apps.CpblCalendar.R;
 
 /**
  * Created by dolphin on 2013/8/31.
+ * <p/>
+ * Notification Configurations
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class NotificationFragment extends PreferenceFragment
@@ -35,12 +39,14 @@ public class NotificationFragment extends PreferenceFragment
 
         final Activity activity = getActivity();
         final Resources resources = activity.getResources();
+        final PreferenceGroup group =
+                (PreferenceGroup) findPreference(PreferenceUtils.KEY_NOTIFICATION_GROUP);
+
         mHelper = new AlarmHelper(activity);
         //[50]dolphin++ currently only support manual register alarm
         mNotifyTeams = resources.getBoolean(R.bool.feature_notify_teams);
         if (!mNotifyTeams) {
-            PreferenceGroup group =
-                    (PreferenceGroup) findPreference(PreferenceUtils.KEY_NOTIFICATION_GROUP);
+
             if (group != null) {
                 Preference pref = findPreference(PreferenceUtils.KEY_NOTIFY_TEAMS);
                 if (pref != null)
@@ -59,6 +65,7 @@ public class NotificationFragment extends PreferenceFragment
             p1.setSummary(mPendingActions[PreferenceUtils.getNotifyPendingAction(activity)]);
             p1.setOnPreferenceChangeListener(this);
         }
+
         Preference p2 = findPreference(PreferenceUtils.KEY_NOTIFY_ALARM);
         if (p2 != null) {
             int i = getAlarmTimeIndex(PreferenceUtils.getAlarmNotifyTime(activity));
@@ -67,22 +74,32 @@ public class NotificationFragment extends PreferenceFragment
         }
 
         Preference p3 = findPreference(PreferenceUtils.KEY_ENABLE_NOTIFICATION);
-        if (p3 != null)
+        if (p3 != null) {
             p3.setOnPreferenceChangeListener(this);
+        }
+
+        Preference p4 = findPreference(PreferenceUtils.KEY_NOTIFY_SONG);
+        if (p4 != null) {
+            if (getResources().getBoolean(R.bool.feature_enable_song)) {
+                p4.setOnPreferenceChangeListener(this);
+            } else {
+                group.removePreference(p4);
+            }
+        }
 
         //for debug version, add show existing alarms
         Preference pList = findPreference(KEY_DEBUG_LIST);
-        if (pList != null && !PreferenceUtils.isEngineerMode(getActivity()))
+        if (pList != null && !PreferenceUtils.isEngineerMode(getActivity())) {
             getPreferenceScreen().removePreference(pList);
-
+        }
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object o) {
         String key = preference.getKey();
-        if (key == null)
+        if (key == null) {
             return false;
-        else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_PENDING_ACTION)) {
+        } else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_PENDING_ACTION)) {
             preference.setSummary(mPendingActions[Integer.parseInt(o.toString())]);
         } else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_ALARM)) {
             int i = getAlarmTimeIndex(Integer.parseInt(o.toString()));
@@ -94,14 +111,25 @@ public class NotificationFragment extends PreferenceFragment
                 mHelper.clear();
                 NotifyReceiver.cancelAlarm(getActivity(), null);
             }
+        } else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_SONG)) {
+            //check if we have the song on disk, if not, download it
+            File f = PreferenceUtils.getNotifySong(getActivity());
+            if (Boolean.parseBoolean(o.toString()) && !f.exists()) {
+                Log.d(PreferenceUtils.TAG, "download the theme");
+                new DownloadFileDialog.Builder(getActivity())
+                        .setMessage(R.string.title_download_song)
+                        .setDownloadTask("0B-oMP4622t0hbFlrZTlpaXN4SUk", f, 2775540)
+                        .show();
+            }
         }
         return true;
     }
 
     private int getAlarmTimeIndex(int value) {
         for (int i = 0; i < mNotifyAlarmValues.length; i++) {
-            if (Integer.parseInt(mNotifyAlarmValues[i]) == value)
+            if (Integer.parseInt(mNotifyAlarmValues[i]) == value) {
                 return i;
+            }
         }
         return 0;
     }

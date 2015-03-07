@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,6 +18,8 @@ import dolphin.android.apps.CpblCalendar.provider.Team;
 
 /**
  * Created by dolphin on 2013/6/9.
+ *
+ * Helper class for accessing preference value
  */
 public class PreferenceUtils {
     public static final String TAG = "Preference";
@@ -55,6 +58,7 @@ public class PreferenceUtils {
     public final static String KEY_NOTIFY_ALARM = "notify_alarm";
     public final static String KEY_NOTIFY_PENDING_ACTION = "notify_pending_action";
     public final static String KEY_NOTIFY_DIALOG = "enable_notify_dialog";//[51]++
+    public final static String KEY_NOTIFY_SONG = "enable_notify_song";//[122]++
     public final static String KEY_NOTIFY_VIBRATE = "enable_notify_vibrate";//[62]++
 
     //to start some key website
@@ -278,6 +282,19 @@ public class PreferenceUtils {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         return isEngineerMode(context) ? true : pref.getBoolean(KEY_NOTIFY_DIALOG,
                 context.getResources().getBoolean(R.bool.def_enable_notify_dialog));
+    }
+
+    public static boolean isEnableNotifySong(Context context) {
+        if (!context.getResources().getBoolean(R.bool.feature_enable_song)) {
+            return false;
+        }
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return isEngineerMode(context) ? true : pref.getBoolean(KEY_NOTIFY_SONG,
+                context.getResources().getBoolean(R.bool.def_enable_notify_song));
+    }
+
+    public static File getNotifySong(Context context) {
+        return new File(context.getCacheDir(), "theme.ogg");
     }
 
     public static boolean isEnableNotifyVibrate(Context context) {

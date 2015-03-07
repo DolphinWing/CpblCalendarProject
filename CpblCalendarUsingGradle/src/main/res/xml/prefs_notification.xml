@@ -36,7 +36,7 @@
             android:summaryOn="@string/title_manual_game_notify_on"
             android:summaryOff="@string/title_manual_game_notify_off"
             android:defaultValue="@bool/def_manual_game_notify"
-            android:dependency="enable_notification"></CheckBoxPreference>
+            android:dependency="enable_notification" />
 
         <ListPreference
             android:key="notify_alarm"
@@ -60,7 +60,15 @@
             android:summaryOn="@string/title_show_dialog_on"
             android:summaryOff="@string/title_show_dialog_off"
             android:defaultValue="@bool/def_enable_notify_dialog"
-            android:dependency="enable_notification"></CheckBoxPreference>
+            android:dependency="enable_notification" />
+
+        <CheckBoxPreference
+            android:key="enable_notify_song"
+            android:title="@string/title_enable_song"
+            android:summaryOn="@string/title_enable_song_on"
+            android:summaryOff="@string/title_enable_song_off"
+            android:defaultValue="@bool/def_enable_notify_song"
+            android:dependency="enable_notify_dialog" />
 
         <CheckBoxPreference
             android:key="enable_notify_vibrate"
@@ -68,7 +76,7 @@
             android:summaryOn="@string/title_vibrate_on"
             android:summaryOff="@string/title_vibrate_off"
             android:defaultValue="@bool/def_notify_vibrate"
-            android:dependency="enable_notification"></CheckBoxPreference>
+            android:dependency="enable_notification" />
 
     </PreferenceCategory>
 
