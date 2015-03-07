@@ -2,6 +2,7 @@
 <resources>
     <!-- for debug -->
     <bool name="pref_engineer_mode">false</bool>
+    <bool name="pref_enable_debug_activity">false</bool>
 
     <!-- app configs -->
 	<bool name="feature_notify">true</bool>

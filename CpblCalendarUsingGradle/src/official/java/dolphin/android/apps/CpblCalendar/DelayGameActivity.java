@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileDescriptor;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +19,6 @@ import dolphin.android.apps.CpblCalendar.provider.AspNetHelper;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
-
 public class DelayGameActivity extends Activity {
     private final static String TAG = "DelayGame";
 
@@ -25,6 +26,8 @@ public class DelayGameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delay_game);
+
+        Utils.enableStrictMode();
 
         View button1 = findViewById(android.R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {

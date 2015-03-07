@@ -20,6 +20,15 @@
             android:name=".preference.PreferenceActivity"
             android:screenOrientation="locked" />
 
+        <activity
+            android:name=".DelayGameActivity"
+            android:label="@string/title_activity_delay_game"
+            android:enabled="@bool/pref_enable_debug_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

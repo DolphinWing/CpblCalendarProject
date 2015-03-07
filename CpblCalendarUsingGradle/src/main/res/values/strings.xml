@@ -109,7 +109,5 @@
     <string name="title_tie">和</string>
     <string name="title_win_rate">勝率</string>
     <string name="title_game_behind">場差</string>
-    <string name="title_activity_delay_game">DelayGameActivity</string>
 
-    <string name="hello_world">Hello world!</string>
 </resources>
