@@ -22,12 +22,16 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/8/31.
+ *
+ * Notification receiver and some helper methods
  */
 public class NotifyReceiver extends BroadcastReceiver {
     private final static String TAG = "NotifyReceiver";
     private final static String KEY_GAME = "_game";
 
     public final static String ACTION_ALARM = "dolphin.android.apps.CpblCalendar.ALARM";
+    public final static String ACTION_DELETE_NOTIFICATION =
+            "dolphin.android.apps.CpblCalendar.DELETE_NOTIFICATION";
 
     public void onReceive(Context context, Intent intent) {
         //check notification config
@@ -40,6 +44,9 @@ public class NotifyReceiver extends BroadcastReceiver {
         if (action.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
             //TODO register next alarm on boot complete
             Log.i(TAG, Intent.ACTION_BOOT_COMPLETED);
+        } else if (action.equals(ACTION_DELETE_NOTIFICATION)) {
+            Log.d(TAG, action);
+            return;
         } else {
             String key = intent.getStringExtra(KEY_GAME);
             showAlarm(context, key);
@@ -52,9 +59,9 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * get PendingIntent for AlarmManager
      *
-     * @param context
-     * @param key
-     * @return
+     * @param context Context
+     * @param key game key
+     * @return alarm intent
      */
     public static PendingIntent getAlarmIntent(Context context, String key) {
         Intent intent = new Intent(context, NotifyReceiver.class);
@@ -67,9 +74,9 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * set alarm
      *
-     * @param context
-     * @param alarmTime
-     * @param key
+     * @param context Context
+     * @param alarmTime alarm time
+     * @param key game key
      */
     public static void setAlarm(Context context, Calendar alarmTime, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -81,8 +88,8 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * cancel alarm
      *
-     * @param context
-     * @param key
+     * @param context Context
+     * @param key game key
      */
     public static void cancelAlarm(Context context, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -93,7 +100,7 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * set next available alarm
      *
-     * @param context
+     * @param context Context
      */
     public static void setNextAlarm(Context context) {
         //get next alarm from list
@@ -107,7 +114,7 @@ public class NotifyReceiver extends BroadcastReceiver {
             //Log.d(TAG, "alarm: " + alarm.getTime().toString());
             if (context.getResources().getBoolean(R.bool.demo_notification)) {//debug alarm
                 alarm = CpblCalendarHelper.getNowTime();
-                alarm.add(Calendar.SECOND, 30);
+                alarm.add(Calendar.SECOND, 15);
             }
             setAlarm(context, alarm, AlarmHelper.getAlarmIdKey(nextGame));
         } else {//try to cancel the alarm
@@ -119,11 +126,12 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * show alarm when time arrived
      *
-     * @param context
-     * @param key
+     * @param context Context
+     * @param key game key
      */
     public static void showAlarm(Context context, String key) {
         //Log.v(TAG, "showAlarm " + Calendar.getInstance().getTime().toString());
+        //final boolean demoMode = context.getResources().getBoolean(R.bool.demo_notification);
         AlarmHelper helper = new AlarmHelper(context);
         ArrayList<Game> list = helper.getAlarmList();
         if (list != null && list.size() > 0) {//has alarm
@@ -131,13 +139,15 @@ public class NotifyReceiver extends BroadcastReceiver {
             String bigMsgText = "";
             //get data from the list and show notification
             Game game = list.get(0);
-            Log.d(TAG, game.StartTime.getTime().toString());
+            Log.d(TAG, "game " + game.Id + " @ " + game.StartTime.getTime().toString());
+            //if this game is not the game we want
             if (!AlarmHelper.getAlarmIdKey(game).equalsIgnoreCase(key)) {
                 //Log.w(TAG, " first game is " + AlarmHelper.getAlarmIdKey(game));
                 Calendar now = CpblCalendarHelper.getNowTime();
                 now.set(Calendar.SECOND, 0);
                 now.set(Calendar.MILLISECOND, 0);
                 now.add(Calendar.MINUTE, PreferenceUtils.getAlarmNotifyTime(context));
+                //if the time has passed the game start time, ignore it
                 if (now.compareTo(game.StartTime) <= 0) {
                     Log.w(TAG, "bypass the notification and reset alarm! " + key);
                     cancelAlarm(context, key);
@@ -178,8 +188,9 @@ public class NotifyReceiver extends BroadcastReceiver {
             }
 
             //[51]dolphin++ show dialog
-            if (PreferenceUtils.isEnableNotifyDialog(context))
+            if (PreferenceUtils.isEnableNotifyDialog(context)) {
                 showNotifyDialog(context, list);
+            }
 
             showNotification(context, contentText, bigMsgText);
         } else {
@@ -188,10 +199,10 @@ public class NotifyReceiver extends BroadcastReceiver {
     }
 
     /**
-     * get PendingIntent for Notification
+     * get PendingIntent for Notification click
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return click intent
      */
     private static PendingIntent getClickIntent(Context context) {
         // Creates an Intent for the Activity
@@ -210,11 +221,22 @@ public class NotifyReceiver extends BroadcastReceiver {
     }
 
     /**
+     * get PendingIntent for Notification dismiss
+     * @param context Context
+     * @return dismiss intent
+     */
+    private static PendingIntent getDeleteIntent(Context context) {
+        Intent deleteIntent = new Intent();
+        deleteIntent.setAction(ACTION_DELETE_NOTIFICATION);
+        return PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
+    }
+
+    /**
      * show Notifications
      *
-     * @param context
-     * @param contentText
-     * @param bigMsgText
+     * @param context Context
+     * @param contentText content
+     * @param bigMsgText big message text for rich notification
      */
     private static void showNotification(Context context,
                                          String contentText, String bigMsgText) {
@@ -268,6 +290,7 @@ public class NotifyReceiver extends BroadcastReceiver {
         builder.setDefaults(notifyFlags);
         builder.setLights(Color.GREEN, 1000, 3000);//[59]++ custom LED color if possible
         builder.setTicker(bigMsgText);//[63]dolphin++
+        builder.setDeleteIntent(getDeleteIntent(context));//[122]dolphin++
 
         switch (PreferenceUtils.getNotifyPendingAction(context)) {
             case PreferenceUtils.PENDING_ACTION_DISMISS:
@@ -286,8 +309,8 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * show notification dialog
      *
-     * @param context
-     * @param list
+     * @param context Content
+     * @param list game list
      */
     private static void showNotifyDialog(Context context, ArrayList<Game> list) {
         //Log.v(TAG, "showNotifyDialog");

@@ -59,6 +59,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="dolphin.android.apps.CpblCalendar.ALARM" />
+                <action android:name="dolphin.android.apps.CpblCalendar.DELETE_NOTIFICATION" />
             </intent-filter>
         </receiver>
 

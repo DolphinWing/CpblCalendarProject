@@ -13,10 +13,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/8/31.
+ *
+ * Hleper class to get/set alarm from preference
  */
 public class AlarmHelper {
     public final static String TAG = "AlarmHelper";
@@ -29,18 +32,19 @@ public class AlarmHelper {
     /**
      * get key for Alarm ID
      *
-     * @param game
-     * @return
+     * @param game game
+     * @return alarm id
      */
     public static String getAlarmIdKey(Game game) {
-        return String.format("%d-%d", game.StartTime.getTimeInMillis(), game.Id);
+        //[122]dolphin++ new ker pair for better mapping
+        return String.format("%d-%d-%s", game.StartTime.get(Calendar.YEAR), game.Id, game.Kind);
     }
 
     /**
      * get key for Alarm data
      *
-     * @param game_key
-     * @return
+     * @param game_key alarm key
+     * @return alarm data
      */
     private static String getAlarmDataKey(String game_key) {
         return "_alarm_" + game_key;
@@ -55,7 +59,7 @@ public class AlarmHelper {
     /**
      * add a game to alarm list
      *
-     * @param game
+     * @param game game
      */
     public void addGame(Game game) {
         if (game == null) {
@@ -83,7 +87,7 @@ public class AlarmHelper {
     /**
      * remove a game from alarm list
      *
-     * @param game
+     * @param game game
      */
     public void removeGame(Game game) {
         removeGame(getAlarmIdKey(game));
@@ -92,7 +96,7 @@ public class AlarmHelper {
     /**
      * remove a game from alarm list
      *
-     * @param key
+     * @param key game key
      */
     private void removeGame(String key) {
         Log.v(TAG, "removeGame key: " + key);
@@ -108,20 +112,19 @@ public class AlarmHelper {
     /**
      * update a game data in preference
      *
-     * @param game
+     * @param game game
      */
     public void updateGame(Game game) {
         String key = getAlarmIdKey(game);
         //Log.d(TAG, "updateGame key: " + key);
         Set<String> keySet = pHelper.getStringSet(KEY_ALARM_LIST);
         if (keySet != null) {
-            if (keySet.contains(key))//StartTime not change
+            if (keySet.contains(key)) {
                 pHelper.putString(getAlarmDataKey(key), Game.toPrefString(game));
-            else {//check game id, for some delayed games
-                Iterator<String> iterator = keySet.iterator();
-                while (iterator.hasNext()) {
-                    key = iterator.next().toString();//StartTime-Id
-                    if (Integer.decode(key.split("-")[1]) == game.Id) {
+            } else {//check game id, for old key pair
+                for (String aKeySet : keySet) {
+                    //remove the original key and data
+                    if (Integer.decode(aKeySet.split("-")[1]) == game.Id) {
                         removeGame(key);//remove old entry
                         addGame(game);//put as new entry
                         break;
@@ -134,11 +137,12 @@ public class AlarmHelper {
     /**
      * get entire alarm list
      *
-     * @return
+     * @return game list
      */
     public ArrayList<Game> getAlarmList() {
         Set<String> keySet = pHelper.getStringSet(KEY_ALARM_LIST);
         if (keySet == null) {
+            Log.e(TAG, String.format("%s does not have data", KEY_ALARM_LIST));
             return null;
         }
 
@@ -158,17 +162,18 @@ public class AlarmHelper {
 
         //mAlarmArray.clear();
         ArrayList<Game> list = new ArrayList<Game>();
-        Calendar now = Calendar.getInstance();
+        Calendar now = CpblCalendarHelper.getNowTime();//Calendar.getInstance();
         for (String key : keys) {
             Game g = Game.fromPrefString(mContext, pHelper.getString(getAlarmDataKey(key)));
-            //Log.d(TAG, " " + g.Id + " " + g.StartTime.getTime().toString());
+            Log.d(TAG, " " + g.Id + " " + g.StartTime.getTime().toString());
             //mAlarmArray.put(g.Id, g);//put to memory
-            if (g.StartTime.after(now))
+            if (g.StartTime.after(now)) {
                 list.add(g);
-            else {//should remove from the list
+            } else {//should remove from the list
                 Log.w(TAG, String.format("game %d StartTime is passed.", g.Id));
-                if (g.StartTime.get(Calendar.YEAR) < now.get(Calendar.YEAR))
+                if (g.StartTime.get(Calendar.YEAR) < now.get(Calendar.YEAR)) {
                     removeGame(g);//remove last year's game
+                }
             }
         }
 
@@ -178,21 +183,23 @@ public class AlarmHelper {
     /**
      * check if this game has set alarm
      *
-     * @param game
-     * @return
+     * @param game game
+     * @return true if having set alarm
      */
     public boolean hasAlarm(Game game) {
         String key = getAlarmIdKey(game);
         //Log.d(TAG, "hasAlarm key: " + key);
         Set<String> keySet = pHelper.getStringSet(KEY_ALARM_LIST);
         if (keySet != null) {
-            if (keySet.contains(key))//StartTime not change
+            if (keySet.contains(key)) {
+                Log.d(TAG, "hasAlarm key: " + key);
                 return true;
-            else {//check game id, for some delayed games
-                Iterator<String> iterator = keySet.iterator();
-                while (iterator.hasNext()) {
-                    key = iterator.next().toString();//StartTime-Id
-                    if (Integer.decode(key.split("-")[1]) == game.Id) {
+            } else {//check game id, for some old key pair
+                //[122]dolphin-- now always use year-id-kind as key
+                for (String aKeySet : keySet) {
+                    //key = StartTime-Id
+                    if (Integer.decode(aKeySet.split("-")[1]) == game.Id) {
+                        Log.w(TAG, "try to update " + aKeySet);
                         updateGame(game);//update the delayed info
                         return true;
                     }
@@ -205,12 +212,12 @@ public class AlarmHelper {
     /**
      * get next alarm from the list
      *
-     * @return
+     * @return next game with alarm
      */
     public Game getNextAlarm() {
         ArrayList<Game> list = getAlarmList();
         if (list != null) {//not empty list
-            Calendar now = Calendar.getInstance();
+            Calendar now = CpblCalendarHelper.getNowTime();//Calendar.getInstance();
             for (Game game : list) {
                 //Log.d(TAG, " " + game.Id + " " + game.StartTime.getTime().toString());
                 if (game.StartTime.after(now)) {
@@ -223,6 +230,9 @@ public class AlarmHelper {
         return null;
     }
 
+    /**
+     * clear all alarms
+     */
     public void clear() {
         ArrayList<Game> list = getAlarmList();
         if (list != null) {//not empty list

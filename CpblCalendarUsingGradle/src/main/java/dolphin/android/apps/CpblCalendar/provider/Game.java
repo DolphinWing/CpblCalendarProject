@@ -51,13 +51,13 @@ public class Game {
     /**
      * convert from Game object to string
      *
-     * @param game
-     * @return
+     * @param game game
+     * @return string data
      */
     public static String toPrefString(Game game) {
-        return String.format("%d;%d;%d;%s;%s;%d", game.Id,
+        return String.format("%d;%d;%d;%s;%s;%d;%s", game.Id,
                 game.AwayTeam.getId(), game.HomeTeam.getId(),
-                game.Field, game.Channel, game.StartTime.getTimeInMillis());
+                game.Field, game.Channel, game.StartTime.getTimeInMillis(), game.Kind);
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
@@ -74,10 +74,10 @@ public class Game {
         game.AwayTeam = new Team(context, Integer.decode(gInfo[1]));
         game.HomeTeam = new Team(context, Integer.decode(gInfo[2]));
         game.Field = gInfo[3];
-        game.Channel = (gInfo[4].equalsIgnoreCase("null")
-                || gInfo[4].trim().isEmpty()) ? null : gInfo[4];
+        game.Channel = (gInfo[4].equals("null") || gInfo[4].trim().isEmpty()) ? null : gInfo[4];
         game.StartTime = Calendar.getInstance();
         game.StartTime.setTimeInMillis(Long.decode(gInfo[5]));
+        game.Kind = gInfo.length < 6 ? "01" : gInfo[6];//[122]dolphin++ add Kind
         return game;
     }
 
