@@ -19,6 +19,19 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[122] @ 2015-03-07
+    CPBL main theme
+    https://www.youtube.com/watch?v=nRcg78rxeBQ
+    use http://www.youtube-mp3.org/ to convert YouTube MV to mp3
+    use http://audio.online-convert.com/convert-to-ogg to convert mp3 to ogg
+
+    add feature notify song
+        add download dialog in preference (TODO: need to check song file everytime)
+        add preference to enable this feature in NotifyDialog
+        update GoogleDriveHelper, add HttpProgressListner interface
+    rewrite the alarm key (FIXME: the alarm is not quite accurate still)
+    add default activity
+
 [120/121] @ 2015-03-05
     add local cache for delay games
     add year check to reduce download delay games time of future games
