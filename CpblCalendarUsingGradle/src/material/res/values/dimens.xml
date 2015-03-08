@@ -30,5 +30,5 @@
 
     <dimen name="activity_horizontal_margin">0dp</dimen>
     <dimen name="toolbar_height">48dp</dimen>
-    <dimen name="floating_action_button_margin">@dimen/padding_large</dimen>
+    <dimen name="floating_action_button_margin">16dp</dimen>
 </resources>
