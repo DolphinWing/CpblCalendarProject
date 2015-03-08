@@ -277,8 +277,8 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     /**
      * check if the day is within a week
      *
-     * @param c
-     * @return
+     * @param c Calendar object
+     * @return true if the day is within this week
      */
     private boolean withinOneWeek(Calendar c) {
         return Math.abs(c.getTimeInMillis() - System.currentTimeMillis()) <= (ONE_WEEK);

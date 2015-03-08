@@ -162,6 +162,7 @@ public class AlarmHelper {
 
         //mAlarmArray.clear();
         ArrayList<Game> list = new ArrayList<Game>();
+        //Log.d(TAG, String.format("getAlarmList list size = %d", keys.size()));
         Calendar now = CpblCalendarHelper.getNowTime();//Calendar.getInstance();
         for (String key : keys) {
             Game g = Game.fromPrefString(mContext, pHelper.getString(getAlarmDataKey(key)));

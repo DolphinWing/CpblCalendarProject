@@ -4,9 +4,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -112,6 +115,21 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     protected void onDestroy() {
         mActivity = null;//[91]dolphin++
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        registerReceiver(mRefreshListReceiver,
+                new IntentFilter(NotifyReceiver.ACTION_DELETE_NOTIFICATION));
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mRefreshListReceiver);
+
+        super.onPause();
     }
 
     protected abstract ActionBarActivity getActivity();
@@ -643,4 +661,16 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     protected void sendTrackerException(String action, String label, long evtValue) {
         mAnalytics.sendTrackerException(action, label, evtValue);
     }
+
+    protected BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null && action.equals(NotifyReceiver.ACTION_DELETE_NOTIFICATION)) {
+                AlarmHelper helper = new AlarmHelper(context);
+                helper.getAlarmList();
+                mButtonQuery.performClick();
+            }
+        }
+    };
 }

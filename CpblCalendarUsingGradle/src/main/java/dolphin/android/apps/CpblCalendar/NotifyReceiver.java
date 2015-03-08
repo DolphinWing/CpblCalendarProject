@@ -66,8 +66,9 @@ public class NotifyReceiver extends BroadcastReceiver {
     public static PendingIntent getAlarmIntent(Context context, String key) {
         Intent intent = new Intent(context, NotifyReceiver.class);
         intent.setAction(ACTION_ALARM);
-        if (key != null)
+        if (key != null) {
             intent.putExtra(KEY_GAME, key);
+        }
         return PendingIntent.getBroadcast(context, 2001, intent, 0);
     }
 
@@ -156,13 +157,14 @@ public class NotifyReceiver extends BroadcastReceiver {
             }
             contentText = context.getString(R.string.msg_content_text,
                     game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
-            if (game.Channel != null)
+            if (game.Channel != null) {
                 bigMsgText = context.getString(R.string.msg_big_text_content,
                         game.AwayTeam.getName(), game.HomeTeam.getName(),
                         game.Field, game.Channel);
-            else //[51]dolphin++ some games have no broadcasts
+            } else {//[51]dolphin++ some games have no broadcasts
                 bigMsgText = context.getString(R.string.msg_big_text_content_no_broadcast,
                         game.AwayTeam.getName(), game.HomeTeam.getName(), game.Field);
+            }
             //remove this game from the alarm list
             helper.removeGame(game);//list.remove(0);
 
@@ -195,6 +197,7 @@ public class NotifyReceiver extends BroadcastReceiver {
             showNotification(context, contentText, bigMsgText);
         } else {
             Log.w(TAG, "showAlarm no alarm " + key);
+            cancelAlarm(context, key);//cancel the event in manager
         }
     }
 
@@ -228,7 +231,7 @@ public class NotifyReceiver extends BroadcastReceiver {
     private static PendingIntent getDeleteIntent(Context context) {
         Intent deleteIntent = new Intent();
         deleteIntent.setAction(ACTION_DELETE_NOTIFICATION);
-        return PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
+        return PendingIntent.getBroadcast(context, 2003, deleteIntent, 0);
     }
 
     /**
@@ -315,7 +318,7 @@ public class NotifyReceiver extends BroadcastReceiver {
     private static void showNotifyDialog(Context context, ArrayList<Game> list) {
         //Log.v(TAG, "showNotifyDialog");
         Intent intent = new Intent(context, NotifyDialog.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK/* | Intent.FLAG_ACTIVITY_CLEAR_TASK*/);
         if (list != null && list.size() > 0) {
             Game game = list.get(0);
             intent.putExtra(NotifyDialog.EXTRA_GAME1, Game.toPrefString(game));

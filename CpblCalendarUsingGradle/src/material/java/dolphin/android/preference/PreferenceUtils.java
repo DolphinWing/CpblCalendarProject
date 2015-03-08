@@ -1,5 +1,6 @@
 package dolphin.android.preference;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -11,27 +12,32 @@ import java.util.Set;
 
 /**
  * Created by 97011424 on 2013/8/14.
+ *
+ * Preference Utilities
  */
 public class PreferenceUtils {
 
-    private Context mContext;
     private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     public PreferenceUtils(Context context) {
-        mContext = context;
-        mSharedPreferences = getDefaultSharedPreferences(mContext);
+        mSharedPreferences = getDefaultSharedPreferences(context);
     }
 
     public SharedPreferences getSharedPreferences() {
         return mSharedPreferences;
     }
 
+    @SuppressLint("CommitPrefEdits")
     public SharedPreferences.Editor edit() {
-        return mSharedPreferences.edit();
+        mEditor = mSharedPreferences.edit();
+        return mEditor;
     }
 
     public void commit() {
-
+        if (mEditor != null) {
+            mEditor.apply();
+        }
     }
 
     public Set<String> getStringSet(String key) {
@@ -49,18 +55,20 @@ public class PreferenceUtils {
                 set = mSharedPreferences.getStringSet(key, null);
             } catch (Exception e) {//try to get as String
                 String s = mSharedPreferences.getString(key, null);
-                if (s != null)
+                if (s != null) {
                     set = new HashSet<String>(Arrays.asList(s.split(",")));
-                else
+                } else {
                     set = new HashSet<String>();
+                }
                 //clear the String format, and convert to StringSet
-                mSharedPreferences.edit().remove(key).commit();
+                mSharedPreferences.edit().remove(key).apply();
                 putStringSet(key, set);//update with new format
             }
         } else {
             String s = mSharedPreferences.getString(key, null);
-            if (s != null)
+            if (s != null) {
                 set = new HashSet<String>(Arrays.asList(s.split(",")));
+            }
         }
         return set;
     }
@@ -74,7 +82,7 @@ public class PreferenceUtils {
         } else {
             editor.putString(key, join(set, ","));
         }
-        editor.commit();
+        editor.apply();
     }
 
     private static String join(Set<String> set, String delim) {
@@ -102,13 +110,13 @@ public class PreferenceUtils {
     public void putString(String key, String value) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void remove(String key) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.remove(key);
-        editor.commit();
+        editor.apply();
     }
 
     public static SharedPreferences getDefaultSharedPreferences(Context context) {
@@ -126,7 +134,7 @@ public class PreferenceUtils {
     public void putInt(String key, int value) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean getBoolean(String key) {
@@ -140,6 +148,6 @@ public class PreferenceUtils {
     public void putBoolean(String key, boolean value) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 }

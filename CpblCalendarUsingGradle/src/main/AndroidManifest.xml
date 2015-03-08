@@ -53,10 +53,10 @@
             android:enabled="@bool/feature_admob"
             android:theme="@android:style/Theme.Translucent" />
 
+        <!-- android:process=":remote" -->
         <receiver
             android:name=".NotifyReceiver"
-            android:enabled="@bool/feature_notify"
-            android:process=":remote" >
+            android:enabled="@bool/feature_notify">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="dolphin.android.apps.CpblCalendar.ALARM" />
