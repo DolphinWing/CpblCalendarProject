@@ -10,7 +10,7 @@
         style="@style/Theme.Holo_green.DialogWindowTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_notification"></TextView>
+        android:text="@string/title_notification" />
 
     <LinearLayout
         android:orientation="vertical"

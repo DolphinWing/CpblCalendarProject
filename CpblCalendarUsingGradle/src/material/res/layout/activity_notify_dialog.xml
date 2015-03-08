@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@android:id/text1"
+        style="@style/Theme.Holo_green.DialogWindowTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_notification" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/holo_green_light" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:minWidth="@dimen/min_notify_dialog_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_medium"
+        android:layout_marginRight="@dimen/padding_medium">
+
+        <include
+            android:id="@+id/layout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/listview_item_matchup" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/holo_green_light" />
+
+        <include
+            android:id="@+id/layout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/listview_item_matchup" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Theme.Holo_green.Dialog.ButtonBar">
+
+        <TextView
+            style="@style/Theme.Holo_green.Dialog.Button"
+            android:text="@android:string/ok"
+            android:id="@android:id/button1" />
+    </LinearLayout>
+</LinearLayout>

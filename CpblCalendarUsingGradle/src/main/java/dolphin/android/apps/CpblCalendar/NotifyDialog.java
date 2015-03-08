@@ -1,24 +1,20 @@
 package dolphin.android.apps.CpblCalendar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.text.format.DateFormat;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -64,7 +60,7 @@ public class NotifyDialog extends Activity {
             final Game game2 = bundle.containsKey(EXTRA_GAME2)
                     ? Game.fromPrefString(this, bundle.getString(EXTRA_GAME2)) : null;
 
-            new android.os.Handler().post(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     load_layout(game1, game2);
@@ -102,13 +98,13 @@ public class NotifyDialog extends Activity {
         boolean bShowLogo = PreferenceUtils.isTeamLogoShown(this);
 
         if (game1 != null) {
-            updateMatchUp(layout1, game1, bIsTablet, bShowLogo);
+            GameAdapter.updateNotifyDialogMatchUp(this, layout1, game1, bIsTablet, bShowLogo);
         } else {
             layout1.setVisibility(View.GONE);
         }
 
         if (game2 != null) {
-            updateMatchUp(layout2, game2, bIsTablet, bShowLogo);
+            GameAdapter.updateNotifyDialogMatchUp(this, layout2, game2, bIsTablet, bShowLogo);
         } else {
             findViewById(R.id.separator).setVisibility(View.GONE);
             layout2.setVisibility(View.GONE);
@@ -118,52 +114,6 @@ public class NotifyDialog extends Activity {
         boolean isVibrate = PreferenceUtils.isEnableNotifyVibrate(getBaseContext());
         sendGmsGoogleAnalyticsReport("UI", "NotifyDialog",
                 String.format("before=%d, vibrate=%s", alarmTime, isVibrate));
-    }
-
-    private void updateMatchUp(ViewGroup convertView, Game game,
-            boolean bIsTablet, boolean bShowLogo) {
-        convertView.findViewById(R.id.textView3).setVisibility(View.GONE);
-        convertView.findViewById(R.id.textView4).setVisibility(View.GONE);
-        convertView.findViewById(R.id.textView8).setVisibility(View.GONE);
-        convertView.findViewById(android.R.id.icon).setVisibility(View.GONE);
-        convertView.findViewById(R.id.icon_alarm).setVisibility(View.GONE);
-
-        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
-        Calendar c = game.StartTime;
-        tv1.setText(String.format("%s, %s",
-                //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
-                new SimpleDateFormat(bIsTablet ? "MMM dd (E)" : "MMM dd",
-                        Locale.TAIWAN).format(c.getTime()),//[47]dolphin++
-                //time
-                DateFormat.getTimeFormat(this).format(c.getTime())
-        ));
-
-        TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
-        tv2.setText(game.AwayTeam.getShortName());
-        TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
-        tv5.setText(game.HomeTeam.getShortName());
-
-        TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
-        if (game.Channel != null) {
-            tv6.setVisibility(View.VISIBLE);
-            tv6.setText(game.Channel);
-        } else {
-            tv6.setVisibility(View.GONE);
-        }
-
-        TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
-        tv7.setText(game.Field);
-
-        TextView tv9 = (TextView) convertView.findViewById(R.id.textView9);
-        tv9.setText(String.valueOf(game.Id));//game number as id
-
-        //team logo
-        ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
-        ic1.setImageResource(game.AwayTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
-        ic1.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
-        ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
-        ic2.setImageResource(game.HomeTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
-        ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
     }
 
     protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
@@ -189,4 +139,5 @@ public class NotifyDialog extends Activity {
         // Clear the screen name field when we're done.
         t.setScreenName(null);
     }
+
 }

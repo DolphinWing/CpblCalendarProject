@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -273,6 +274,11 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     protected abstract int getLayoutResId(Game game);
 
     protected abstract boolean supportLongName(Game game);
+
+    public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
+                                                 boolean bIsTablet, boolean bShowLogo) {
+        //TODO: update NotifyDialog match up layout
+    }
 
     /**
      * check if the day is within a week

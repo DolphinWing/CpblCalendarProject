@@ -34,6 +34,40 @@
         <item name="colorPrimary">@color/holo_green_dark</item>
     </style>
 
+    <style name="Theme.Holo_green.Dialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog.WindowTitle" parent="@style/TextAppearance.AppCompat.Title.Inverse">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@color/holo_green_dark</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog.ButtonBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog.Button" parent="@style/TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:textColor">@color/holo_green_dark</item>
+        <item name="android:background">@drawable/selectable_background_holo_green</item>
+        <item name="android:minWidth">80dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- Match row style -->
     <style name="Theme.Holo_green.TextLarge" parent="@style/TextAppearance.AppCompat.Large" />
 
