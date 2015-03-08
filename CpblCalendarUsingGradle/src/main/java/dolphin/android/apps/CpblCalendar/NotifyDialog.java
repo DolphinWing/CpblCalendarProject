@@ -114,6 +114,10 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+
+        //send update message to main activity if exists
+        sendBroadcast(new Intent(NotifyReceiver.ACTION_DELETE_NOTIFICATION));
+
         super.onDestroy();
     }
 
