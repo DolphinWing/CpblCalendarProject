@@ -70,6 +70,11 @@
             android:defaultValue="@bool/def_enable_notify_song"
             android:dependency="enable_notify_dialog" />
 
+        <Preference
+            android:key="test_notify_song"
+            android:title="@string/title_test_song"
+            android:dependency="enable_notify_song" />
+
         <CheckBoxPreference
             android:key="enable_notify_vibrate"
             android:title="@string/title_vibrate"

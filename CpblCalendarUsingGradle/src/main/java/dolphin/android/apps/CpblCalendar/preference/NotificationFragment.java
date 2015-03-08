@@ -2,19 +2,29 @@ package dolphin.android.apps.CpblCalendar.preference;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 
 import dolphin.android.apps.CpblCalendar.NotifyReceiver;
 import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.util.FileUtils;
+import dolphin.android.util.PackageUtils;
 
 /**
  * Created by dolphin on 2013/8/31.
@@ -23,14 +33,16 @@ import dolphin.android.apps.CpblCalendar.R;
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class NotificationFragment extends PreferenceFragment
-        implements Preference.OnPreferenceChangeListener {
+        implements Preference.OnPreferenceChangeListener, DialogInterface.OnDismissListener {
     private boolean mNotifyTeams;
     private String[] mPendingActions;
     private String[] mNotifyAlarms;
     private String[] mNotifyAlarmValues;//[54]dolphin++
     private AlarmHelper mHelper;
+    private CheckBoxPreference mEnableNotifySong;
 
     private String KEY_DEBUG_LIST = "debug_alarm_list";
+    private String KEY_TEST_SONG = "test_notify_song";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,8 +94,10 @@ public class NotificationFragment extends PreferenceFragment
         if (p4 != null) {
             if (getResources().getBoolean(R.bool.feature_enable_song)) {
                 p4.setOnPreferenceChangeListener(this);
+                mEnableNotifySong = (CheckBoxPreference) p4;
             } else {
                 group.removePreference(p4);
+                group.removePreference(findPreference(KEY_TEST_SONG));
             }
         }
 
@@ -116,10 +130,9 @@ public class NotificationFragment extends PreferenceFragment
             File f = PreferenceUtils.getNotifySong(getActivity());
             if (Boolean.parseBoolean(o.toString()) && !f.exists()) {
                 Log.d(PreferenceUtils.TAG, "download the theme");
-                new DownloadFileDialog.Builder(getActivity())
-                        .setMessage(R.string.title_download_song)
-                        .setDownloadTask("0B-oMP4622t0hbFlrZTlpaXN4SUk", f, 2775540)
-                        .show();
+                DownloadFileDialog dialog = getDownloadCpblThemeDialog(getActivity());
+                dialog.setOnDismissListener(this);
+                dialog.show();
             }
         }
         return true;
@@ -137,9 +150,69 @@ public class NotificationFragment extends PreferenceFragment
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
                                          Preference preference) {
+        if (preference == null) {
+            return false;
+        }
         if (preference.getKey().equalsIgnoreCase(KEY_DEBUG_LIST)) {
             return true;
         }
+        if (preference.getKey().equalsIgnoreCase(KEY_TEST_SONG)) {
+            File song = PreferenceUtils.getNotifySong(getActivity());
+            if (song.exists()) {
+                startMusicPlayer();
+            } else {
+                DownloadFileDialog dialog = getDownloadCpblThemeDialog(getActivity());
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        startMusicPlayer();
+                    }
+                });
+                dialog.show();
+            }
+            return true;
+        }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        File f = PreferenceUtils.getNotifySong(getActivity());
+        if (!f.exists() && mEnableNotifySong != null) {
+            SharedPreferences preferences = mEnableNotifySong.getSharedPreferences();
+            preferences.edit().putBoolean(PreferenceUtils.KEY_NOTIFY_SONG, false).apply();
+        }
+    }
+
+    public static DownloadFileDialog getDownloadCpblThemeDialog(Activity activity) {
+        return new DownloadFileDialog.Builder(activity)
+                .setMessage(R.string.title_download_song)
+                .setDownloadTask("0B-oMP4622t0hbFlrZTlpaXN4SUk",
+                        PreferenceUtils.getNotifySong(activity), 2775540)
+                .build();
+    }
+
+    private void startMusicPlayer() {
+        File song = PreferenceUtils.getNotifySong(getActivity());
+//        File testFile = new File(Environment.getExternalStorageDirectory(), "cpbl_theme.ogg");
+//        Log.d(PreferenceUtils.TAG, testFile.getAbsolutePath());
+//        boolean r = testFile.exists();
+//        if (!r) {
+//            r = FileUtils.copyFile(song, testFile);
+//        }
+//        if (r && testFile.exists()) {
+        if (song.exists()) {
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+            Uri uri = Uri.parse(song.getAbsolutePath());
+            intent.setDataAndType(uri, "audio/*");
+            if (PackageUtils.isCallable(getActivity(), intent)) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(getActivity(), R.string.title_test_song_no_support,
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getActivity(), R.string.title_test_song_fail, Toast.LENGTH_SHORT).show();
+        }
     }
 }

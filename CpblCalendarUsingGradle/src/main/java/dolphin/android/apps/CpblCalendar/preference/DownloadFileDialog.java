@@ -82,6 +82,7 @@ public class DownloadFileDialog extends ProgressDialog implements Runnable, Http
 
         public Builder(Context context) {
             mDialog = new DownloadFileDialog(context);
+            mDialog.setCancelable(false);
         }
 
         public Builder setDownloadTask(String url, File dst) {
@@ -97,6 +98,15 @@ public class DownloadFileDialog extends ProgressDialog implements Runnable, Http
         public Builder setMessage(int resId) {
             mDialog.setMessage(resId);
             return this;
+        }
+
+        public Builder setOnDismissListener(OnDismissListener listener) {
+            mDialog.setOnDismissListener(listener);
+            return this;
+        }
+
+        public DownloadFileDialog build() {
+            return mDialog;
         }
 
         public DownloadFileDialog show() {
