@@ -176,14 +176,15 @@ public class NotifyReceiver extends BroadcastReceiver {
                     contentText += context.getString(R.string.msg_content_text2,
                             nextGame.AwayTeam.getName(), nextGame.HomeTeam.getName());
                     bigMsgText += "\n";
-                    if (nextGame.Channel != null)
+                    if (nextGame.Channel != null) {
                         bigMsgText += context.getString(R.string.msg_big_text_content,
                                 nextGame.AwayTeam.getName(), nextGame.HomeTeam.getName(),
                                 nextGame.Field, nextGame.Channel);
-                    else //[51]dolphin++ some games have no broadcasts
+                    } else {//[51]dolphin++ some games have no broadcasts
                         bigMsgText = context.getString(R.string.msg_big_text_content_no_broadcast,
                                 nextGame.AwayTeam.getName(),
                                 nextGame.HomeTeam.getName(), nextGame.Field);
+                    }
                     //remove from the alarm list
                     helper.removeGame(nextGame);//list.remove(0);
                 }

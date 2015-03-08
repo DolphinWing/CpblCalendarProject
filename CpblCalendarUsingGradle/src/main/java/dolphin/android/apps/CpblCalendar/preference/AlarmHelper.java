@@ -166,7 +166,7 @@ public class AlarmHelper {
         Calendar now = CpblCalendarHelper.getNowTime();//Calendar.getInstance();
         for (String key : keys) {
             Game g = Game.fromPrefString(mContext, pHelper.getString(getAlarmDataKey(key)));
-            Log.d(TAG, " " + g.Id + " " + g.StartTime.getTime().toString());
+            Log.d(TAG, " " + g.Id + " @ " + g.StartTime.getTimeInMillis());
             //mAlarmArray.put(g.Id, g);//put to memory
             if (g.StartTime.after(now)) {
                 list.add(g);
