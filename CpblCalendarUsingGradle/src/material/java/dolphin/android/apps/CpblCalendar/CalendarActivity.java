@@ -19,6 +19,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -144,10 +145,11 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         mSpinnerMonth = (Spinner) findViewById(R.id.spinner4);
 
         mProgressView = findViewById(android.R.id.progress);
-        mProgressView.setOnClickListener(new View.OnClickListener() {
+        mProgressView.setOnTouchListener(new View.OnTouchListener() {
+            //[123]++ use touch to replace click, capture all events
             @Override
-            public void onClick(View view) {
-                //do nothing
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;//do nothing
             }
         });
         mProgressText = (TextView) findViewById(android.R.id.message);

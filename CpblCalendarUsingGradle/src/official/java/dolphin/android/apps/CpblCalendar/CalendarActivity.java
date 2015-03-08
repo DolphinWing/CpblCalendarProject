@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -165,6 +166,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mSpinnerMonth = (Spinner) findViewById(R.id.spinner4);
 
         mProgressView = findViewById(android.R.id.progress);
+        mProgressView.setOnTouchListener(new View.OnTouchListener() {//[123]++ capture all events
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;//do nothing
+            }
+        });
         mProgressText = (TextView) findViewById(android.R.id.message);
 
         final Calendar now = CpblCalendarHelper.getNowTime();
