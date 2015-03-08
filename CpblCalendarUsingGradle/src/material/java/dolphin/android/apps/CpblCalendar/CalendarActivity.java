@@ -205,7 +205,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         switch (item.getItemId()) {
             case R.id.action_settings: {
                 Intent i = new Intent();
-                i.setClass(this, PreferenceActivity.class);
+                i.setClass(this, SettingsActivity.class);
                 startActivityForResult(i, 0);
             }
             return true;

@@ -9,7 +9,7 @@
         android:theme="@style/Theme.Holo_green">
 
         <activity
-            android:name=".preference.PreferenceActivity"
+            android:name=".SettingsActivity"
             android:screenOrientation="locked"
             android:theme="@style/Theme.Holo_green.Settings" />
 
