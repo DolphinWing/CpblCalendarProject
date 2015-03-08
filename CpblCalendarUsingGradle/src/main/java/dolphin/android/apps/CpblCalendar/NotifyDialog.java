@@ -2,6 +2,8 @@ package dolphin.android.apps.CpblCalendar;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -16,15 +18,17 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.File;
 import java.io.IOException;
 
+import dolphin.android.apps.CpblCalendar.preference.DownloadFileDialog;
+import dolphin.android.apps.CpblCalendar.preference.NotificationFragment;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/9/1.
- *
+ * <p/>
  * Notification Dialog-style Activity
  */
-public class NotifyDialog extends Activity {
+public class NotifyDialog extends Activity implements DialogInterface.OnDismissListener {
     private final static String TAG = "NotifyDialog";
 
     public final static String EXTRA_GAME1 = "game1";
@@ -69,21 +73,43 @@ public class NotifyDialog extends Activity {
         }
 
         if (PreferenceUtils.isEnableNotifySong(this)) {//[122]++
-            mMediaPlayer = new MediaPlayer();
-            try {
-                mMediaPlayer.setDataSource(PreferenceUtils.getNotifySong(this).getAbsolutePath());
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
-            } catch (IOException e) {
-                Log.e(TAG, "MediaPlayer: " + e.getMessage());
-                e.printStackTrace();
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startMusic();
+                }
+            }, 1000);
+        }
+    }
+
+    private void startMusic() {
+        File song = PreferenceUtils.getNotifySong(this);
+        if (!song.exists()) {
+            DownloadFileDialog dialog = NotificationFragment.getDownloadCpblThemeDialog(this);
+            dialog.setOnDismissListener(this);
+            dialog.show();
+            return;
+        }
+
+        mMediaPlayer = new MediaPlayer();
+        try {
+            mMediaPlayer.setDataSource(song.getAbsolutePath());
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (IOException e) {
+            Log.e(TAG, "MediaPlayer: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        startMusic();
+    }
+
+    @Override
     protected void onDestroy() {
-        if (mMediaPlayer !=null) {//[122]++
+        if (mMediaPlayer != null) {//[122]++
             mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
