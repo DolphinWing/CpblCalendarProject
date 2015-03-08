@@ -19,6 +19,15 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[123/124] @ 2015-03-08
+    fix using android:process=":remote" in NotifyReceiver
+        http://stackoverflow.com/a/10770175  [SharedPreferences in BroadcastReceiver not update]
+        http://stackoverflow.com/a/4413816 [Should I use android: process =“:remote”?]
+    fix material Settings has no title
+        http://stackoverflow.com/a/27455363 [No ActionBar in PreferenceActivity after v21]
+    fix progress view capture event listener
+    add test song (FIXME: still need to test OGG on native player)
+
 [122] @ 2015-03-07
     CPBL main theme
     https://www.youtube.com/watch?v=nRcg78rxeBQ

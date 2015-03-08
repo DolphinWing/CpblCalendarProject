@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 21
-        versionCode 122
+        versionCode 124
     }
 
 //    //http://stackoverflow.com/a/19210105/2673859
@@ -39,7 +39,7 @@ android {
     }
     productFlavors {
         material {
-            minSdkVersion 14
+            minSdkVersion 16
             targetSdkVersion 21
             versionName '2.0'
         }
