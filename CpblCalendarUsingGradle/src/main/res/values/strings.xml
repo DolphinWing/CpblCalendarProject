@@ -80,7 +80,7 @@
     <string name="title_enable_song_on">顯示對話框時，一並播放中華職棒主題曲</string>
     <string name="title_enable_song_off">顯示對話框時，不播放中華職棒主題曲</string>
     <string name="title_test_song">試聽中華職棒主題曲</string>
-    <string name="title_test_song_no_support">音樂檔為 ogg 格式，</string>
+    <string name="title_test_song_no_support">音樂檔格式不正確或檔案有問題</string>
     <string name="title_test_song_fail">音樂似乎有問題，請稍後再試！</string>
     <string name="title_vibrate">震動通知</string>
     <string name="title_vibrate_on">時間到時會輔以震動提醒</string>

@@ -294,7 +294,7 @@ public class PreferenceUtils {
     }
 
     public static File getNotifySong(Context context) {
-        return new File(context.getCacheDir(), "theme.ogg");
+        return new File(context.getCacheDir(), "theme.mp3");
     }
 
     public static boolean isEnableNotifyVibrate(Context context) {

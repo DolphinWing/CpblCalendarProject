@@ -187,14 +187,15 @@ public class NotificationFragment extends PreferenceFragment
     public static DownloadFileDialog getDownloadCpblThemeDialog(Activity activity) {
         return new DownloadFileDialog.Builder(activity)
                 .setMessage(R.string.title_download_song)
-                .setDownloadTask("0B-oMP4622t0hbFlrZTlpaXN4SUk",
-                        PreferenceUtils.getNotifySong(activity), 2775540)
+                //0B-oMP4622t0hbFlrZTlpaXN4SUk 2775540
+                .setDownloadTask("0B-oMP4622t0hVlhhNHlNamlvM1k",
+                        PreferenceUtils.getNotifySong(activity), 3331472)
                 .build();
     }
 
     private void startMusicPlayer() {
         File song = PreferenceUtils.getNotifySong(getActivity());
-//        File testFile = new File(Environment.getExternalStorageDirectory(), "cpbl_theme.ogg");
+//        File testFile = new File(Environment.getExternalStorageDirectory(), "cpbl-theme.mp3");
 //        Log.d(PreferenceUtils.TAG, testFile.getAbsolutePath());
 //        boolean r = testFile.exists();
 //        if (!r) {
@@ -202,9 +203,9 @@ public class NotificationFragment extends PreferenceFragment
 //        }
 //        if (r && testFile.exists()) {
         if (song.exists()) {
-            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-            Uri uri = Uri.parse(song.getAbsolutePath());
-            intent.setDataAndType(uri, "audio/*");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(song), "audio/*");
+            //intent = Intent.createChooser(intent, null);
             if (PackageUtils.isCallable(getActivity(), intent)) {
                 startActivity(intent);
             } else {
