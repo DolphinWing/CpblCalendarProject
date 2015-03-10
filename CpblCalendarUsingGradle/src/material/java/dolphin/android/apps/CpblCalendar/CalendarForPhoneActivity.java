@@ -36,7 +36,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     private View mDrawerList;
 
-    private ArrayList<Game> mGameList = null;
+    //private ArrayList<Game> mGameList = null;
 
     private AdView mAdView;
 
@@ -162,7 +162,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void updateGameListFragment(ArrayList<Game> gameArrayList) {
-        mGameList = gameArrayList;//as a temp storage
+        //mGameList = gameArrayList;//as a temp storage
 
         FragmentManager fmgr = getFragmentManager();
         //if (fmgr != null) {//update the fragment
@@ -226,6 +226,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         // because the favorite team preference may remove some teams
         //onQuerySuccess(mGameList);//reload the fragment when possible preferences change
         mButtonQuery.performClick();//[22]dolphin++
+        //query_to_update(true);//[126]dolphin++ quick refresh
     }
 
     @Override

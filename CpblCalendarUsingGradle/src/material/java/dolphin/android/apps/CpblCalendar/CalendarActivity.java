@@ -245,58 +245,64 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     private Button.OnClickListener onQueryClick = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onLoading(true);
-            mIsQuery = true;//Log.d(TAG, "onQueryClick");
-            setSupportProgressBarIndeterminateVisibility(true);
-
-            final ActionBar actionBar = getSupportActionBar();
-            final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
-
-            String kind = mSpinnerKind.getSelectedItem().toString();
-            actionBar.setTitle(kind);
-
-            String gameYear = mSpinnerYear.getSelectedItem().toString();
-            int year = Integer.parseInt(gameYear.split(" ")[0]);
-            //Log.d(TAG, String.format("  mSpinnerYear: %d", year));
-            int month = mSpinnerMonth.getSelectedItemPosition() + 1;
-            //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
-            String time_str = String.format("%s %s", gameYear,
-                    mSpinnerMonth.getSelectedItem().toString());
-
-            int fieldIndex = mSpinnerField.getSelectedItemPosition();
-            String fieldId = mGameField[fieldIndex];
-            if (fieldIndex > 0) {
-                String field = String.format("%s%s", getString(R.string.title_at),
-                        mSpinnerField.getSelectedItem().toString());
-                if (isTablet) {
-                    actionBar.setSubtitle(field);
-                } else {
-                    actionBar.setTitle(String.format("%s%s", kind, field));
-                }
-            } else {//clear ActionBar subtitle first
-                actionBar.setSubtitle("");
-            }
-            //set time string and kind to ActionBar
-            if (isTablet) {
-                actionBar.setTitle(time_str + " " + kind);
-            } else {
-                actionBar.setSubtitle(time_str);
-            }
-
-            final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
-            final Activity activity = getActivity();
-            if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
-                doCacheModeQuery(activity, year, month, getOnQueryCallback());
-            } else if (HttpHelper.checkNetworkAvailable(activity)/* && !bDemoCache*/) {
-                doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
-                        year, month, fieldId, getOnQueryCallback());
-            } else {//[35]dolphin++ check network
-                Toast.makeText(activity, R.string.no_available_network,
-                        Toast.LENGTH_LONG).show();//[47] change SHORT to LONG
-                doQueryCallback(null);//[47]++ do callback to return
-            }
+            query_to_update(false);
         }
     };
+
+    protected void query_to_update(boolean quick_refresh) {
+        onLoading(true);
+        mIsQuery = true;//Log.d(TAG, "onQueryClick");
+        setSupportProgressBarIndeterminateVisibility(true);
+
+        final ActionBar actionBar = getSupportActionBar();
+        final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
+
+        String kind = mSpinnerKind.getSelectedItem().toString();
+        actionBar.setTitle(kind);
+
+        String gameYear = mSpinnerYear.getSelectedItem().toString();
+        int year = Integer.parseInt(gameYear.split(" ")[0]);
+        //Log.d(TAG, String.format("  mSpinnerYear: %d", year));
+        int month = mSpinnerMonth.getSelectedItemPosition() + 1;
+        //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
+        String time_str = String.format("%s %s", gameYear,
+                mSpinnerMonth.getSelectedItem().toString());
+
+        int fieldIndex = mSpinnerField.getSelectedItemPosition();
+        String fieldId = mGameField[fieldIndex];
+        if (fieldIndex > 0) {
+            String field = String.format("%s%s", getString(R.string.title_at),
+                    mSpinnerField.getSelectedItem().toString());
+            if (isTablet) {
+                actionBar.setSubtitle(field);
+            } else {
+                actionBar.setTitle(String.format("%s%s", kind, field));
+            }
+        } else {//clear ActionBar subtitle first
+            actionBar.setSubtitle("");
+        }
+        //set time string and kind to ActionBar
+        if (isTablet) {
+            actionBar.setTitle(time_str + " " + kind);
+        } else {
+            actionBar.setSubtitle(time_str);
+        }
+
+        final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
+        final Activity activity = getActivity();
+        if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
+            doCacheModeQuery(activity, year, month, getOnQueryCallback());
+        } else if (quick_refresh) {//do a quick refresh from local variable
+            doQueryCallback(mGameList, false);//[126]dolphin++
+        } else if (HttpHelper.checkNetworkAvailable(activity)/* && !bDemoCache*/) {
+            doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
+                    year, month, fieldId, getOnQueryCallback());
+        } else {//[35]dolphin++ check network
+            Toast.makeText(activity, R.string.no_available_network,
+                    Toast.LENGTH_LONG).show();//[47] change SHORT to LONG
+            doQueryCallback(null, false);//[47]++ do callback to return
+        }
+    }
 
     /**
      * get OnQueryCallback interface implementation
@@ -430,7 +436,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                     }
 
                     if (gameList != null) {
-                        doQueryCallback(gameList);
+                        doQueryCallback(gameList, true);
                     } else {
                         throw new Exception("no data");
                     }
@@ -443,12 +449,13 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
                                 mYear, mMonth));
                         gameList = mHelper.getCache(mYear, mMonth);//try to read from cache
+                        doQueryCallback(gameList, false);
                     } else {//try to get from web again
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                 mYear, mMonth));
                         gameList = mHelper.query2014zxc(mMonth);
+                        doQueryCallback(gameList, true);
                     }
-                    doQueryCallback(gameList);
                 }
             }
         }).start();
@@ -469,15 +476,19 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         }
     }
 
+    private ArrayList<Game> mGameList;
     /**
      * callback of Query action
      */
-    private void doQueryCallback(final ArrayList<Game> list) {
+    private void doQueryCallback(ArrayList<Game> list, boolean bFromWeb) {
         mIsQuery = false;
+        mGameList = list;
 
-        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
-                String.format("%04d/%02d:%s", mYear, mMonth,
-                        GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
+        if (bFromWeb) {//[126]++ only send message to Analytics when data is from web
+            mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
+                    String.format("%04d/%02d:%s", mYear, mMonth,
+                            GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
+        }
 
         if (list != null && mHelper != null && mHelper.canUseCache()
                 && !PreferenceUtils.isCacheMode(this)) {
@@ -655,7 +666,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                         doQueryStateUpdateCallback(getString(R.string.title_download_complete));
                     }
                 }
-                doQueryCallback(gameList);
+                doQueryCallback(gameList, true);
             }
         }).start();
     }
@@ -669,9 +680,12 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action != null && action.equals(NotifyReceiver.ACTION_DELETE_NOTIFICATION)) {
-                AlarmHelper helper = new AlarmHelper(context);
-                helper.getAlarmList();
-                mButtonQuery.performClick();
+                //AlarmHelper helper = new AlarmHelper(context);
+                //helper.getAlarmList();
+                //mButtonQuery.performClick();
+                if (mGameList != null) {//only update the list when we have data in memory
+                    query_to_update(true);//[126]dolphin++ quick refresh
+                }
             }
         }
     };

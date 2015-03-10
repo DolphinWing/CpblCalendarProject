@@ -171,7 +171,7 @@ public class NotifyReceiver extends BroadcastReceiver {
             //check if the next alarm is around this time
             if (list.size() > 1) {
                 Game nextGame = list.get(1);
-                Log.d(TAG, nextGame.StartTime.getTime().toString());
+                //Log.d(TAG, nextGame.StartTime.getTime().toString());
                 if (nextGame.StartTime.compareTo(game.StartTime) == 0) {
                     contentText += context.getString(R.string.msg_content_text2,
                             nextGame.AwayTeam.getName(), nextGame.HomeTeam.getName());
