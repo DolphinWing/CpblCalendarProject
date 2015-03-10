@@ -195,16 +195,16 @@ public class NotificationFragment extends PreferenceFragment
 
     private void startMusicPlayer() {
         File song = PreferenceUtils.getNotifySong(getActivity());
-//        File testFile = new File(Environment.getExternalStorageDirectory(), "cpbl-theme.mp3");
-//        Log.d(PreferenceUtils.TAG, testFile.getAbsolutePath());
-//        boolean r = testFile.exists();
-//        if (!r) {
-//            r = FileUtils.copyFile(song, testFile);
-//        }
-//        if (r && testFile.exists()) {
-        if (song.exists()) {
+        //copy to somewhere else accessible to other apps
+        File testFile = new File(Environment.getExternalStorageDirectory(), "cpbl-theme.mp3");
+        Log.v(PreferenceUtils.TAG, testFile.getAbsolutePath());
+        boolean r = testFile.exists();
+        if (!r) {
+            r = FileUtils.copyFile(song, testFile);
+        }
+        if (r && testFile.exists()) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(song), "audio/*");
+            intent.setDataAndType(Uri.fromFile(testFile), "audio/*");
             //intent = Intent.createChooser(intent, null);
             if (PackageUtils.isCallable(getActivity(), intent)) {
                 startActivity(intent);
