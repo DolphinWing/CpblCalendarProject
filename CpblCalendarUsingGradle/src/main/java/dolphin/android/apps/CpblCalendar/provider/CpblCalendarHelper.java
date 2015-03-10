@@ -537,6 +537,8 @@ public class CpblCalendarHelper extends HttpHelper {
             game.StartTime.set(Calendar.MONTH, month - 1);
         }
         game.StartTime.set(Calendar.DAY_OF_MONTH, day);
+        game.StartTime.set(Calendar.SECOND, 0);//[126]++ avoid seconds difference
+        game.StartTime.set(Calendar.MILLISECOND, 0);//[126]++ avoid ms difference
 
 //        <!--兩個對戰組合的分隔線-->
 //        <tr class="team">
