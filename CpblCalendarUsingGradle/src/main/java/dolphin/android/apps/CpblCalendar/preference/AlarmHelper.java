@@ -150,12 +150,22 @@ public class AlarmHelper {
         Collections.sort(keys, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
-                //Log.d(TAG, s1 + " " + s2);
+                //compare game start time first
+                Game g1 = Game.fromPrefString(mContext, pHelper.getString(getAlarmDataKey(s1)));
+                Game g2 = Game.fromPrefString(mContext, pHelper.getString(getAlarmDataKey(s2)));
+                if (g1 != null && g2 != null) {
+                    if (g1.StartTime.compareTo(g2.StartTime) != 0) {//different day game
+                        return g1.StartTime.compareTo(g2.StartTime);
+                    }
+                    return Integer.compare(g1.Id, g2.Id);//same day game
+                }
+                //compare id
                 String[] str1 = s1.split("-");
                 String[] str2 = s2.split("-");
-                if (str1[0].compareTo(str2[0]) == 0) {
+                if (str1[0].compareTo(str2[0]) == 0) {//same year
                     return Integer.decode(str1[1]).compareTo(Integer.decode(str2[1]));
                 }
+                //not possible to get here, we should remove last year's game
                 return Long.decode(str1[0]).compareTo(Long.decode(str2[0]));
             }
         });
