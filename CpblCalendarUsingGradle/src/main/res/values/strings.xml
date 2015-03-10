@@ -91,6 +91,7 @@
     <string name="msg_content_text2"> &amp; %1$s 對 %2$s</string>
     <string name="msg_big_text_content">%1$s 對 %2$s\n%3$s 在%4$s直播</string>
     <string name="msg_big_text_content_no_broadcast">%1$s 對 %2$s %3$s</string>
+    <string name="action_open_app">開啟程式</string>
     <!-- ListView Empty view -->
     <string name="action_go_to_website">前往中華職棒網站</string>
     <!-- live message -->

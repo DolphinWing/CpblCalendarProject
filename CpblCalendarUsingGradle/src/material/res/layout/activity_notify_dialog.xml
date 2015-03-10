@@ -15,7 +15,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/holo_green_light" />
+        android:background="@color/holo_green_dark" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -46,7 +46,10 @@
 
     <LinearLayout
         style="@style/Theme.Holo_green.Dialog.ButtonBar">
-
+        <TextView
+            style="@style/Theme.Holo_green.Dialog.Button"
+            android:text="@string/action_open_app"
+            android:id="@android:id/button2" />
         <TextView
             style="@style/Theme.Holo_green.Dialog.Button"
             android:text="@android:string/ok"

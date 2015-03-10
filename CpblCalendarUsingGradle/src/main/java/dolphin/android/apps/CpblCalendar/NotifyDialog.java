@@ -2,6 +2,7 @@ package dolphin.android.apps.CpblCalendar;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -57,6 +58,14 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
             }
         });
 
+        View button2 = findViewById(android.R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMainApp();
+            }
+        });
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             final Game game1 = bundle.containsKey(EXTRA_GAME1)
@@ -80,6 +89,15 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
                 }
             }, 1000);
         }
+    }
+
+    private void startMainApp() {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(this, SplashActivity.class));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void startMusic() {
