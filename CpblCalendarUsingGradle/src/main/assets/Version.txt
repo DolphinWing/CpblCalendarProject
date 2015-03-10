@@ -4,7 +4,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 本程式目前提供以下功能
 ● 檢視模式: 快速取得 CPBL 中華職棒今年例行賽賽程表，也可以很快的查詢 2013 年之前的歷史對戰資料。
 ● 離線模式: 可以將所有賽程下載到本機端。請在下拉式選單中啟用。啟用離線模式將不會顯示今年的對戰成績。
-● 通知功能: 開放測試中，請到設定中啟用。啟用後，點擊時間旁邊的小鬧鐘圖示，紅色表示啟動該場通知；灰色表示未啟動。
+● 通知功能: 請到設定中啟用。啟用後，點擊時間旁邊的小鬧鐘圖示，紅色表示啟動該場通知；灰色表示未啟動。
+新功能！可以在通知對話框開啟的時候，同時播放中華職棒主題曲唷~ 可以到通知設定裡面修改開啟。
+歌曲全長約3分40秒，關閉對話框時會自動關閉音樂。
 
 資料來源：
 ● CPBL 中華職棒官網賽程 http://www.cpbl.com.tw/
@@ -24,6 +26,15 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[127/128] @ 2015-03-11
+    fix preference may change favorite, need to get the list from web again
+[126] @ 2015-03-11
+    add open main app button in notify dialog
+    fix test music in NotificationFragment (need to copy to external storage)
+    fix game start time second and millisecond not align
+    fix game sorting not consider the delay games
+    add query from memory for better performance
+
 [125] @ 2015-03-09
     use http://mp3cut.net/ to cut mp3 version for testing
     http://stackoverflow.com/a/3367231
