@@ -22,9 +22,10 @@
         <ImageView
             android:id="@+id/icon_alarm"
             android:src="@drawable/ic_device_access_alarm"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:padding="4dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
             android:background="@drawable/item_background_holo_light" />
 
         <ImageView
