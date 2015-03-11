@@ -83,6 +83,9 @@ public class GeneralFragment extends PreferenceFragment {
         } else if (key.equals(PreferenceUtils.KEY_ZXC22)) {
             PreferenceUtils.startBrowserActivity(getActivity(),
                     PreferenceUtils.URL_ZXC22);
+        } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
+            PreferenceUtils.startBrowserActivity(getActivity(),
+                    PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
         } else if (key.equals(PreferenceUtils.KEY_LIB_ABS_WEB)) {
             PreferenceUtils.startBrowserActivity(getActivity(),
                     PreferenceUtils.URL_ACTIONBAR_SHERLOCK);

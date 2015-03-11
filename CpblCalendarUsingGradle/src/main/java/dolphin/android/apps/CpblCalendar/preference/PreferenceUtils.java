@@ -34,6 +34,7 @@ public class PreferenceUtils {
     public static final String KEY_RES_ICONIC = "res_iconic_set";//[13]++
     public static final String KEY_LIB_SHOWCASE = "lib_showcaseview";//[18]++
     public static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
+    public static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
     //DisplayFragment
     public final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
     public final static String KEY_UPCOMING_ON = "upcoming_game";
@@ -78,6 +79,9 @@ public class PreferenceUtils {
             "http://espiandev.github.io/ShowcaseView/";
     //[18]dolphin++ NineOldAndroids
     public final static String URL_NINEOLD_ANDROID = "http://nineoldandroids.com/";
+    //[129]dolphin++ FloatingActionButton
+    public final static String URL_FLOATING_ACTION_BUTTON =
+            "https://github.com/makovkastar/FloatingActionButton";
 
     /**
      * start a browser activity

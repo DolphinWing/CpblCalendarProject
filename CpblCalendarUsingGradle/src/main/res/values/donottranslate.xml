@@ -193,5 +193,7 @@
     <string name="summary_showcaseview">Copyright Alex Curran © 2012.</string>
     <string name="title_nine_old_android">NineOldAndroids</string>
     <string name="summary_nine_old_android">Copyright 2012 Jake Wharton</string>
+    <string name="title_floating_action_button">FloatingActionButton</string>
+    <string name="summary_floating_action_button">Copyright (c) 2014 Oleksandr Melnykov</string>
 
 </resources>

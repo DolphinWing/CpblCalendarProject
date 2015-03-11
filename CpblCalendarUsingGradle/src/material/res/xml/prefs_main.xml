@@ -5,25 +5,21 @@
     <PreferenceCategory android:title="@string/app_build_info">
         <Preference
             android:key="app_version"
-            android:title="@string/app_version">
-        </Preference>
+            android:title="@string/app_version" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/title_data_source">
         <Preference
             android:key="data_from_cpbl"
             android:title="@string/title_cpbl_offical"
-            android:summary="@string/summary_cpbl_offical">
-        </Preference>
+            android:summary="@string/summary_cpbl_offical" />
         <Preference
             android:key="data_from_twbsball"
             android:title="@string/title_twbsball_wiki"
-            android:summary="@string/summary_twbsball_wiki">
-        </Preference>
+            android:summary="@string/summary_twbsball_wiki" />
         <Preference
             android:key="data_from_zxc22"
             android:title="@string/title_zxc22"
-            android:summary="@string/summary_zxc22">
-        </Preference>
+            android:summary="@string/summary_zxc22" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/title_open_source">
         <!--<Preference
@@ -56,6 +52,10 @@
             android:title="@string/title_nine_old_android"
             android:summary="@string/summary_nine_old_android">
         </Preference>-->
+        <Preference
+            android:key="lib_floating_action_button"
+            android:title="@string/title_floating_action_button"
+            android:summary="@string/summary_floating_action_button" />
     </PreferenceCategory>
 
 </PreferenceScreen>
