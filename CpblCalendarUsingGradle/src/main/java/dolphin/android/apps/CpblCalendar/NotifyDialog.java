@@ -3,15 +3,18 @@ package dolphin.android.apps.CpblCalendar;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -101,6 +104,15 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
     }
 
     private void startMusic() {
+        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        if (am != null && am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+            Log.v(TAG, String.format("music volume: %d",
+                am.getStreamVolume(AudioManager.STREAM_MUSIC)));
+        } else {
+            Toast.makeText(this, R.string.title_in_silent_mode, Toast.LENGTH_LONG).show();
+            Log.w(TAG, "silent mode, don't play music");
+            return;
+        }
         File song = PreferenceUtils.getNotifySong(this);
         if (!song.exists()) {
             DownloadFileDialog dialog = NotificationFragment.getDownloadCpblThemeDialog(this);
@@ -117,6 +129,7 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
         } catch (IOException e) {
             Log.e(TAG, "MediaPlayer: " + e.getMessage());
             e.printStackTrace();
+            Toast.makeText(this, R.string.title_test_song_fail, Toast.LENGTH_SHORT).show();
         }
     }
 
