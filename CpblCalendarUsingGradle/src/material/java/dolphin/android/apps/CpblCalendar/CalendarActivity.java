@@ -294,7 +294,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
             doCacheModeQuery(activity, year, month, getOnQueryCallback());
         } else if (quick_refresh) {//do a quick refresh from local variable
             doQueryCallback(mGameList, false);//[126]dolphin++
-        } else if (HttpHelper.checkNetworkAvailable(activity)/* && !bDemoCache*/) {
+        } else if (HttpHelper.checkNetworkConnected(activity)/* && !bDemoCache*/) {
             doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
                     year, month, fieldId, getOnQueryCallback());
         } else {//[35]dolphin++ check network
