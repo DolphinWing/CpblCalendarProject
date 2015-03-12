@@ -26,8 +26,9 @@ public class GoogleDriveHelper {
 
     public static boolean download(Context context, String id, File dst,
                                    HttpProgressListener listener) {
-        if (!HttpHelper.checkNetworkAvailable(context))
+        if (!HttpHelper.checkNetworkConnected(context)) {
             return false;
+        }
         //http://stackoverflow.com/a/11855448
         //https://drive.google.com/uc?export=download&id={fileId}
         String url = getUrl(id);
