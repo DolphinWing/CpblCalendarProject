@@ -128,7 +128,7 @@
         <item name="android:layout_gravity">right|center_vertical</item>
         <item name="android:text">@string/empty_data</item>
         <item name="android:autoText">false</item>
-        <item name="android:textStyle">bold</item>
+        <!--<item name="android:textStyle">bold</item>-->
     </style>
 
     <style name="Theme.Holo_green.Match.Field" parent="Theme.Holo_green.Match.Extra">
