@@ -153,6 +153,42 @@ public class Utils {
         return dialog;
     }
 
+    public static AlertDialog buildLeaderBoard2014Dialog(Context context, String html, String title) {
+        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+        //change the style like the entire theme
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.leader_board, null);
+        TextView textView = (TextView) view.findViewById(android.R.id.title);
+        if (textView != null && title != null) {
+            textView.setText(title);
+        }
+
+        // android from html cannot recognize all HTML tag
+        // http://stackoverflow.com/a/8632338
+        WebView webView = (WebView) view.findViewById(R.id.webView);//new WebView(this);
+        // http://pop1030123.iteye.com/blog/1399305
+        //webView.getSettings().setDefaultTextEncodingName(CpblCalendarHelper.ENCODE_UTF8);
+        webView.getSettings().setJavaScriptEnabled(false);
+        webView.getSettings().setSupportZoom(false);
+        // Encoding issue with WebView's loadData
+        // http://stackoverflow.com/a/9402988
+        webView.loadData(html, "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
+
+        View btOk = view.findViewById(android.R.id.button1);
+        if (btOk != null) {
+            btOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
+        dialog.setView(view);//webView
+        dialog.show();
+        return dialog;
+    }
+
     public static AlertDialog buildEnableCacheModeDialog(Context context,
                                                          DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setCancelable(true)

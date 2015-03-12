@@ -31,4 +31,7 @@
     <dimen name="activity_horizontal_margin">0dp</dimen>
     <dimen name="toolbar_height">48dp</dimen>
     <dimen name="floating_action_button_margin">16dp</dimen>
+
+    <dimen name="min_lead_team_board_height">320dp</dimen>
+    <dimen name="min_notify_dialog_width">240dp</dimen>
 </resources>

@@ -539,8 +539,8 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     public void showLeaderBoard(String html) {
         try {//[42]dolphin++ add a try-catch //[43]catch all dialog
             //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
-            Utils.buildLeaderBoardDialog(CalendarActivity.this, html,
-                    mSpinnerKind.getItemAtPosition(1).toString());
+            Utils.buildLeaderBoard2014Dialog(CalendarActivity.this, html,
+                    mSpinnerKind.getItemAtPosition(0).toString());
         } catch (Exception e) {
             Log.e(TAG, "showLeaderBoard: " + e.getMessage());
         }
