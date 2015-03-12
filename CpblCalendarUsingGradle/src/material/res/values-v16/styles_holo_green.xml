@@ -32,7 +32,7 @@
     </style>
 
     <style name="Theme.Holo_green.Match.Extra" parent="Theme.Holo_green.TextSmall">
-        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="Theme.Holo_green.Match.Base">
