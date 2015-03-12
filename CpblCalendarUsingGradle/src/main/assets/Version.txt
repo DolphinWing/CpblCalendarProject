@@ -26,6 +26,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[133] @ 2015-03-12
+    fix download data before 2013
+    update leader board dialog for 2014
+    update option menu
+    update v22 support library
+
 [131/132] @ 2015-03-12
     incorrect notification feature flag
 [129/130] @ 2015-03-12
