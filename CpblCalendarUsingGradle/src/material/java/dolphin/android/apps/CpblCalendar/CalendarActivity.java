@@ -210,7 +210,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                 i.setClass(this, SettingsActivity.class);
                 startActivityForResult(i, 0);
             }
-            return true;
+                return true;
             case R.id.action_refresh://[13]dolphin++
                 if (PreferenceUtils.isCacheMode(this)) {
                     runDownloadCache();

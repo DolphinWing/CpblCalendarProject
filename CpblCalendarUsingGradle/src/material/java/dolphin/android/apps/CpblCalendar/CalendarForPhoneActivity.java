@@ -129,6 +129,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search://[133]dolphin++
+                mDrawerLayout.openDrawer(mDrawerList);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected ActionBarActivity getActivity() {
         return this;
     }
