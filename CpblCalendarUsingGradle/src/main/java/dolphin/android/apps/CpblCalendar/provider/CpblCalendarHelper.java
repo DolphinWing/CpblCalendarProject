@@ -369,7 +369,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public ArrayList<Game> query2014(int year, int month, String kind) {
-        return query2014(year, month, kind, /*queryDelayGames2014(year)*/null);
+        return query2014(year, month, kind, null);
     }
 
     public ArrayList<Game> query2014(int year, int month, String kind, SparseArray<Game> delayGames) {

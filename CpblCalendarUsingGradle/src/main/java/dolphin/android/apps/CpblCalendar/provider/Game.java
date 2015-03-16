@@ -77,7 +77,7 @@ public class Game {
         game.Channel = (gInfo[4].equals("null") || gInfo[4].trim().isEmpty()) ? null : gInfo[4];
         game.StartTime = Calendar.getInstance();
         game.StartTime.setTimeInMillis(Long.decode(gInfo[5]));
-        game.Kind = gInfo.length < 6 ? "01" : gInfo[6];//[122]dolphin++ add Kind
+        game.Kind = gInfo.length < 7 ? "01" : gInfo[6];//[122]dolphin++ add Kind
         return game;
     }
 
