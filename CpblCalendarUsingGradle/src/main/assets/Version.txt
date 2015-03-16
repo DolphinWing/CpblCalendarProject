@@ -26,6 +26,13 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[135/136] @ 2015-03-15
+    fix notification parsing error
+        java.lang.ArrayIndexOutOfBoundsException: length=6; index=6
+    fix official version download cache
+    fix sw720-land dimens
+    change material cache mode display
+
 [134] @ 2015-03-13
     add new elephant 2015 logo
     fix check network connected, not available

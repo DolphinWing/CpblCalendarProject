@@ -7,7 +7,6 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 134
     }
 
 //    //http://stackoverflow.com/a/19210105/2673859
@@ -41,12 +40,14 @@ android {
         material {
             minSdkVersion 14
             targetSdkVersion 22
-            versionName '2.0'
+            versionName '2.0.2'
+            versionCode 136
         }
         official {
             minSdkVersion 9
             targetSdkVersion 21
-            versionName '1.4.7'
+            versionName '1.4.8'
+            versionCode 135
         }
     }
 }
