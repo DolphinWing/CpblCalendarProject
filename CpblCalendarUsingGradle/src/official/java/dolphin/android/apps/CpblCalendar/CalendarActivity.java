@@ -101,10 +101,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             Utils.enableStrictMode();
         }
 
-//        //[72]dolphin++ https://code.google.com/p/android-query/wiki/Service
-//        MarketService ms = new MarketService(this);
-//        ms.level(MarketService.REVISION).checkVersion();
-
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.cancelAll();//[51]dolphin++ clear all notifications
@@ -180,23 +176,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mMonth = now.get(Calendar.MONTH) + 1;//[78]dolphin++ add initial value
 
         mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
-
-//        //[87]dolphin++ hide spinner when not applicable
-//        final View layout1 = findViewById(R.id.layout1);
-//        final View layout2 = findViewById(R.id.layout2);
-//        mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                //layout1.setVisibility(i == 0 ? View.INVISIBLE : View.VISIBLE);
-//                layout2.setVisibility(i < (now.get(Calendar.YEAR) - 2013) ? View.INVISIBLE : View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
-
         mSpinnerYear.setEnabled(!mCacheMode);
 
         mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
@@ -385,9 +364,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             mProgressView.setVisibility(is_load ? View.VISIBLE : View.GONE);
         }
         if (mProgressText != null) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-//                mProgressText.animate().alpha(is_load ? 0 : 1).setDuration(500).start();
-//            else
             mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
             mProgressText.setText(is_load ? getString(R.string.title_download) : "");
         }
@@ -422,7 +398,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             @Override
             public void run() {
                 //[118]dolphin++ add check delay games
-                if (mDelayGames2014.get(mYear) == null) {
+                if (mYear >= 2014 && mDelayGames2014.get(mYear) == null) {
                     doQueryStateUpdateCallback(R.string.title_download_delay_games);
                     mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
                 }
@@ -436,7 +412,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         gameList = new ArrayList<Game>();//null;//[74]++
                     } else {//try local cache
                         //query from Internet
-//                        if (now.get(Calendar.YEAR) < 2014)
                         if (mYear < 2014) {
                             gameList = mHelper.query(gameKind, mYear, mMonth, mField);
                         } else if (resources.getBoolean(R.bool.demo_zxc22)) {
@@ -447,19 +422,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
                             gameList = mHelper.query2014(mYear, mMonth, gameKind, mDelayGames2014.get(mYear));
-//                            ArrayList<Game> tmpList = mHelper.query2014();
-                            //.query(gameKind, mYear, mMonth, mField);
-//                            if (gameList == null || gameList.size() <= 0) {//backup plan
-                            //doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                            //        mYear, mMonth));
-//                            gameList = mHelper.query2014zxc(mMonth);
-                            //ArrayList<Game> tmpList = mHelper.query2014zxc(mMonth);
-//                            }
-//                            try {//update the data from CPBL website
                             doQueryStateUpdateCallback(R.string.title_download_complete);
-//                                //mergeGameList(gameList, tmpList, mHelper.getDelayGameList());
-//                            } catch (Exception e) {
-//                            }
                         }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
@@ -504,44 +467,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 }
             }
         }).start();
-    }
-
-    private ArrayList<Game> mergeGameList(ArrayList<Game> mainList, ArrayList<Game> refList,
-                                          SparseArray<Game> delayList) {
-        if (refList != null) {
-            if (mainList != null) {
-                for (Game g : mainList) {
-                    //[95]dolphin++ check delay game first
-                    Game d = delayList.get(g.Id);
-                    if (g.IsDelay && d != null) {
-                        //g.StartTime = delayList.get(g.Id).StartTime;
-                        g.StartTime.set(Calendar.HOUR_OF_DAY,
-                                d.StartTime.get(Calendar.HOUR_OF_DAY));
-                        g.StartTime.set(Calendar.MINUTE,
-                                d.StartTime.get(Calendar.MINUTE));
-                    }
-                    //[93]dolphin--
-                    //if (g.IsFinal) {//no need to check time
-                    //    continue;
-                    //}
-                    //Log.d(TAG, String.format("g=%d @ %d", g.Id,
-                    //        g.StartTime.get(Calendar.DAY_OF_MONTH)));
-                    for (Game t : refList) {
-                        if (g.Id == t.Id) {
-                            g.StartTime = t.StartTime;
-                            g.Field = t.Field;
-                            //Log.d(TAG, String.format("===> %02d:%02d",
-                            //        g.StartTime.get(Calendar.HOUR_OF_DAY),
-                            //        g.StartTime.get(Calendar.MINUTE)));
-                            break;
-                        }
-                    }
-                }
-            } else {
-                return refList;//gameList = tmpList;
-            }
-        }
-        return mainList;
     }
 
     private void doQueryStateUpdateCallback(int resId) {
@@ -634,7 +559,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, true);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -644,7 +569,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         try {//[42]dolphin++ add a try-catch //[43]catch all dialog
             //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
             Utils.buildLeaderBoardDialog(CalendarActivity.this, html,
-                    mSpinnerKind.getItemAtPosition(1).toString());
+                    mSpinnerKind.getItemAtPosition(0).toString());
         } catch (Exception e) {
             Log.e(TAG, "showLeaderBoard: " + e.getMessage());
         }
@@ -718,40 +643,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
-                    ArrayList<Game> list = mHelper.query("01", mYear, m, "F00");
-//                    if (list == null) {
-                    //doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                    //        mYear, m));
-//                        list = mHelper.query2014zxc(m);
-//                    }
-                    //ArrayList<Game> list2 = mHelper.query2014zxc(m);
-
-//                    Log.v(TAG, "delayList.size() = " + delayList.size());
-//                    for (int i = 0; i < delayList.size(); i++) {
-//                        //check if the game is in this month
-//                        Game d = delayList.get(delayList.keyAt(i));
-//                        Log.v(TAG, " ID = " + d.Id + " " + d.StartTime.getTime().toString());
-//                        if (d.StartTime.get(Calendar.MONTH) == m - 1) {
-//                            boolean alreadyIn = false;
-//                            //check if the game is already in the list
-//                            for (Game g : list) {//[98]dolphin++ add check delay list
-//                                if (g.Id == d.Id /*&& g.IsDelay*/) {
-//                                    //g.StartTime = delayList.get(g.Id).StartTime;
-//                                    g.StartTime.set(Calendar.HOUR_OF_DAY,
-//                                            d.StartTime.get(Calendar.HOUR_OF_DAY));
-//                                    g.StartTime.set(Calendar.MINUTE,
-//                                            d.StartTime.get(Calendar.MINUTE));
-//                                    alreadyIn = true;
-//                                }
-//                            }
-//
-//                            if (!alreadyIn) {//add the game to the list
-//                                list.add(d);
-//                            }
-//                        }
-//                    }
-                    //list = mergeGameList2(list, list2, delayList);
-
+                    ArrayList<Game> list = mHelper.query2014(mYear, m, "01");
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));
@@ -808,39 +700,6 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }).start();
     }
 
-    private ArrayList<Game> mergeGameList2(ArrayList<Game> mainList, ArrayList<Game> refList,
-                                           SparseArray<Game> delayList) {
-        //assume main list is refList as zxc22.idv.tw
-        if (refList != null) {
-            //assume refList is cpbl old website
-            if (mainList != null) {
-                for (Game game : mainList) {
-                    if (refList.contains(game)) {//ok, the game stays
-                        for (Game rg : refList) {
-                            if (rg.Id == game.Id
-                                    && rg.StartTime.get(Calendar.DAY_OF_YEAR) == game.StartTime
-                                    .get(Calendar.DAY_OF_YEAR)) {
-                                game.StartTime = rg.StartTime;
-                                game.Field = rg.Field;
-                            }
-                        }
-                    }//no in refList
-                    Game d = delayList.get(game.Id);
-                    if (game.IsDelay && d != null) {
-                        //g.StartTime = delayList.get(g.Id).StartTime;
-                        game.StartTime.set(Calendar.HOUR_OF_DAY,
-                                d.StartTime.get(Calendar.HOUR_OF_DAY));
-                        game.StartTime.set(Calendar.MINUTE,
-                                d.StartTime.get(Calendar.MINUTE));
-                    }
-                }
-            } else {//no main list
-                return refList;
-            }
-        }
-        return mainList;
-    }
-
     protected void sendTrackerException(String action, String label, long evtValue) {
         mAnalytics.sendTrackerException(action, label, evtValue);
     }
@@ -850,9 +709,11 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action != null && action.equals(NotifyReceiver.ACTION_DELETE_NOTIFICATION)) {
-                AlarmHelper helper = new AlarmHelper(context);
-                helper.getAlarmList();
-                mButtonQuery.performClick();
+                //AlarmHelper helper = new AlarmHelper(context);
+                //helper.getAlarmList();
+                if (mButtonQuery != null) {
+                    mButtonQuery.performClick();
+                }
             }
         }
     };
