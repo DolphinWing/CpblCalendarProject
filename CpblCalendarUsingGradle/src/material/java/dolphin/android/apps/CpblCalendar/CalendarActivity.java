@@ -194,8 +194,10 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         //Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
         android.view.MenuItem item = menu.findItem(R.id.action_cache_mode);
         if (item != null) {
-            item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
-                    : R.drawable.holo_green_btn_check_off_holo_dark);
+            //item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
+            //        : R.drawable.holo_green_btn_check_off_holo_dark);
+            item.setTitle(mCacheMode ? R.string.action_leave_cache_mode
+                    : R.string.action_cache_mode);
             //item.setCheckable(mCacheMode);
             item.setVisible(!mIsQuery && getResources().getBoolean(R.bool.feature_cache_mode));
         }
@@ -401,7 +403,6 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                         gameList = new ArrayList<Game>();//null;//[74]++
                     } else {//try local cache
                         //query from Internet
-//                        if (now.get(Calendar.YEAR) < 2014)
                         if (mYear < 2014) {
                             gameList = mHelper.query(gameKind, mYear, mMonth, mField);
                         } else if (resources.getBoolean(R.bool.demo_zxc22)) {

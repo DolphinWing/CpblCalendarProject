@@ -8,6 +8,7 @@
     <string name="action_more">更多</string>
     <string name="action_leader_board">戰績</string>
     <string name="action_cache_mode">離線模式</string>
+    <string name="action_leave_cache_mode">離開離線模式</string>
 
     <!-- general string -->
     <string name="title_game_field">比賽球場</string>
