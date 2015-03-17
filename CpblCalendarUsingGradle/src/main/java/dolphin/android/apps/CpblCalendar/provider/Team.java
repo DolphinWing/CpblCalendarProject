@@ -152,7 +152,7 @@ public class Team {
             case ID_TIME_EAGLES:
                 return R.drawable.eagle_1993_1997;
             case ID_CT_WHALES:
-                return R.drawable.whale_2002_2008;
+                return (year >= 1991) ? R.drawable.whale_2002_2008 : R.drawable.whale_1997_2001;
             case ID_KG_WHALES:
                 return R.drawable.whale_1997_2001;
             case ID_MKT_SUNS:

@@ -1,6 +1,15 @@
 CPBL 中華職棒賽程表
 https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 
+全新球季，全新排版，配合新的 Android Lollipop 的 Material Design。
+
+用更流暢的操作風格與動線，將過往的成績一覽無遺。
+同時改進了許多過去已經提供的功能，變得更快更順暢。
+另外還增加了新的提醒功能，在比賽開始前的對話框還會有中華職棒的主題曲同步播放！
+只要到通知設定中做修改，你也可以馬上聽到歌曲唷！
+
+即刻更新至2.0版，馬上體驗看看~~
+
 本程式目前提供以下功能
 ● 檢視模式: 快速取得 CPBL 中華職棒今年例行賽賽程表，也可以很快的查詢 2013 年之前的歷史對戰資料。
 ● 離線模式: 可以將所有賽程下載到本機端。請在下拉式選單中啟用。啟用離線模式將不會顯示今年的對戰成績。
@@ -26,6 +35,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[137] @ 2015-03-17
+    fix CT Whales logo
+
 [135/136] @ 2015-03-15
     fix notification parsing error
         java.lang.ArrayIndexOutOfBoundsException: length=6; index=6
