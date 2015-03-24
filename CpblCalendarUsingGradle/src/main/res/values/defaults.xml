@@ -34,6 +34,7 @@
     <bool name="def_enable_notify_dialog">false</bool>
     <bool name="def_enable_notify_song">false</bool>
     <bool name="def_notify_vibrate">false</bool>
+    <string name="def_notify_song">theme.mp3</string>
 
     <!-- enable cache mode -->
     <bool name="def_cache_mode">false</bool>

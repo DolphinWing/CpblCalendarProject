@@ -35,6 +35,19 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[140] @ 2015-03-24
+    fix use AspNetHelper may have NullPointerException
+    fix choose song may not play correct at the first time
+    update Play Service SDK to 7.0, build tool to 22.0.1
+
+[139] @ 2015-03-23
+    https://www.youtube.com/watch?v=o-r70ueurVc
+    add selector for different songs
+
+[138] @ 2015-03-22
+    set dalay games color red
+    make drawer close on query success
+
 [137] @ 2015-03-17
     fix CT Whales logo
 

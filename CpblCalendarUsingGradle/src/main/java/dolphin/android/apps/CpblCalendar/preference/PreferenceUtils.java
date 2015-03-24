@@ -60,6 +60,7 @@ public class PreferenceUtils {
     public final static String KEY_NOTIFY_PENDING_ACTION = "notify_pending_action";
     public final static String KEY_NOTIFY_DIALOG = "enable_notify_dialog";//[51]++
     public final static String KEY_NOTIFY_SONG = "enable_notify_song";//[122]++
+    public final static String KEY_NOTIFY_SONG_LIST = "notify_song_list";//[139]++
     public final static String KEY_NOTIFY_VIBRATE = "enable_notify_vibrate";//[62]++
 
     //to start some key website
@@ -298,7 +299,9 @@ public class PreferenceUtils {
     }
 
     public static File getNotifySong(Context context) {
-        return new File(context.getCacheDir(), "theme.mp3");
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return new File(context.getCacheDir(), pref.getString(PreferenceUtils.KEY_NOTIFY_SONG_LIST,
+                context.getString(R.string.def_notify_song)));
     }
 
     public static boolean isEnableNotifyVibrate(Context context) {

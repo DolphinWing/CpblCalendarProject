@@ -100,6 +100,11 @@ public class DownloadFileDialog extends ProgressDialog implements Runnable, Http
             return this;
         }
 
+        public Builder setMessage(String message) {
+            mDialog.setMessage(message);
+            return this;
+        }
+
         public Builder setOnDismissListener(OnDismissListener listener) {
             mDialog.setOnDismissListener(listener);
             return this;

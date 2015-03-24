@@ -16,4 +16,9 @@
         <item>打開主程式</item>
     </string-array>
 
+    <string-array name="notify_music">
+        <item>中華職棒之歌</item>
+        <item>20150321 空軍樂儀隊與台北愛樂男高音鮑恆毅版</item>
+    </string-array>
+
 </resources>

@@ -114,6 +114,7 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
             return;
         }
         File song = PreferenceUtils.getNotifySong(this);
+        //Log.d(TAG, song.getAbsolutePath());
         if (!song.exists()) {
             DownloadFileDialog dialog = NotificationFragment.getDownloadCpblThemeDialog(this);
             dialog.setOnDismissListener(this);

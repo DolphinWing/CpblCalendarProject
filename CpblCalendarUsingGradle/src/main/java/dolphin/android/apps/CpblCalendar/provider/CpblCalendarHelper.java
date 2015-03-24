@@ -102,18 +102,18 @@ public class CpblCalendarHelper extends HttpHelper {
                 rawData = rawData.substring("Cal_Score".length() + 1, rawData.indexOf("</table>"));
                 //Log.d(TAG, String.format("rawData %d", rawData.length()));
 
-                //href="javascript:__doPostBack('Cal_Score','4880')" 
+                //href="javascript:__doPostBack('Cal_Score','4880')"
                 //style="color:#FFFFFF" title="5月12日">12</a>
                 //<div align=right>68<br>犀牛 <font color=ffff00>2:3</font> 象<br>花蓮
-                //<br>13:05<br>緯來體育台<br><font color=red>補 2013/5/11</font><br> 
-                //<a href=http://www.cpbl.com.tw/GResult/Result.aspx?gameno=01&pbyear=2013&game=68 
+                //<br>13:05<br>緯來體育台<br><font color=red>補 2013/5/11</font><br>
+                //<a href=http://www.cpbl.com.tw/GResult/Result.aspx?gameno=01&pbyear=2013&game=68
                 //target="new"><img src="../images/ico/final.gif" border=0></a><br>
                 //<img src="../images/ico/ScoreqryLine.gif">
                 //<br>71<br>獅 <font color=ffff00>11:3</font> 桃猿<br>桃園
-                //<br>17:05<br>緯來體育台<br> 
-                //<a href=http://www.cpbl.com.tw/GResult/Result.aspx?gameno=01&pbyear=2013&game=71 
+                //<br>17:05<br>緯來體育台<br>
+                //<a href=http://www.cpbl.com.tw/GResult/Result.aspx?gameno=01&pbyear=2013&game=71
                 //target="new"><img src="../images/ico/final.gif" border=0></a><br>
-                //</div</td></tr><tr><td align="left" valign="top" 
+                //</div</td></tr><tr><td align="left" valign="top"
                 //style="color:#FEFFAB;border-color:White;width:14%;">
                 String[] days = rawData.split("__doPostBack");
                 //Log.d(TAG, String.format("total days: %d", days.length));
@@ -387,7 +387,7 @@ public class CpblCalendarHelper extends HttpHelper {
             }
 
             //Log.d(TAG, "query2014 " + html.length());
-            if (html.contains("<tr class=\"game\">")) {//have games
+            if (html != null && html.contains("<tr class=\"game\">")) {//have games
                 String[] days = html.split("<table class=\"day\">");
                 //Log.d(TAG, "days " + days.length);
                 for (String day : days) {
@@ -609,15 +609,19 @@ public class CpblCalendarHelper extends HttpHelper {
             }
             if (!matchID.group(1).isEmpty()) {
                 //game.DelayMessage += String.format("(%s)", matchID.group(1));
-                game.DelayMessage = game.DelayMessage == null ? matchID.group(1)
-                        : String.format("%s (%s)", game.DelayMessage, matchID.group(1));//[115]++
+                game.DelayMessage = game.DelayMessage == null //[138]+color
+                        ? String.format("<font color='red'>(%s)</font>", matchID.group(1))
+                        : String.format("%s <font color='red'>(%s)</font>",//[138]+color
+                        game.DelayMessage, matchID.group(1));//[115]++
             }
             //[118]jimmy++ add delay games list, needs about 10 seconds to generate the list
             if (delayGames != null && delayGames.get(game.Id) != null) {
                 String d_date = new SimpleDateFormat("yyyy/MM/dd", Locale.TAIWAN).format(
                         delayGames.get(game.Id).StartTime.getTime());
-                game.DelayMessage = game.DelayMessage == null ? d_date
-                        : String.format("%s (%s)", game.DelayMessage, d_date);
+                game.DelayMessage = game.DelayMessage == null
+                        ? String.format("<font color='red'>(%s)</font>", d_date)//[138]+color
+                        : String.format("%s <font color='red'>(%s)</font>",//[138]+color
+                        game.DelayMessage, d_date);
             }
         }
         //Log.d(TAG, "  game.Id = " + game.Id);
@@ -959,13 +963,17 @@ public class CpblCalendarHelper extends HttpHelper {
         int m1 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 3;
         int m2 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 10;
         for (int month = m1; month <= m2; month++) {
-            String html;// = getUrlContent(URL_SCHEDULE_2014);
-            AspNetHelper helper = new AspNetHelper("http://www.cpbl.com.tw/schedule.aspx");
-            html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
-            html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+            String html = null;// = getUrlContent(URL_SCHEDULE_2014);
+            try {
+                AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+                html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+                html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+            } catch (Exception e) {
+                Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
+            }
 
             //Log.d(TAG, "query2014 " + html.length());
-            if (html.contains("<tr class=\"game\">")) {//have games
+            if (html != null && html.contains("<tr class=\"game\">")) {//have games
                 String[] days = html.split("<table class=\"day\">");
                 //Log.d(TAG, "days " + days.length);
                 for (String day : days) {
@@ -1024,8 +1032,9 @@ public class CpblCalendarHelper extends HttpHelper {
         long endTime = System.currentTimeMillis();
         Log.v(TAG, String.format("delay game query wasted %d ms", ((endTime - startTime))));
 
-        //store all data to local cache
-        storeDelayGames2014(context, year, delayedGames);
+        if (delayedGames.size() > 0) {//store all data to local cache
+            storeDelayGames2014(context, year, delayedGames);
+        }
 
         return delayedGames;
     }

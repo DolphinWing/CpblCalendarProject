@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:key="preference_screen">
+    android:key="preference_screen">
 
     <CheckBoxPreference
         android:key="enable_notification"
@@ -11,8 +11,7 @@
 
     <Preference
         android:key="debug_alarm_list"
-        android:title="Alarm list">
-    </Preference>
+        android:title="Alarm list"></Preference>
 
     <PreferenceCategory
         android:key="notification_group"
@@ -24,7 +23,7 @@
             android:title="@string/title_notify_teams"
             android:entries="@array/cpbl_team_name"
             android:entryValues="@array/cpbl_team_id"
-            android:dependency="enable_notification"/>
+            android:dependency="enable_notification" />
         <!--
             MultiSelectListPreference example
             http://stackoverflow.com/a/11777632
@@ -44,7 +43,7 @@
             android:entries="@array/notify_time"
             android:entryValues="@array/notify_time_value"
             android:defaultValue="@string/def_notify_alarm"
-            android:dependency="enable_notification"/>
+            android:dependency="enable_notification" />
 
         <ListPreference
             android:key="notify_pending_action"
@@ -52,7 +51,7 @@
             android:entries="@array/notify_pending_action"
             android:entryValues="@array/notify_pending_action_value"
             android:defaultValue="@string/def_notify_pending_action"
-            android:dependency="enable_notification"/>
+            android:dependency="enable_notification" />
 
         <CheckBoxPreference
             android:key="enable_notify_dialog"
@@ -69,6 +68,14 @@
             android:summaryOff="@string/title_enable_song_off"
             android:defaultValue="@bool/def_enable_notify_song"
             android:dependency="enable_notify_dialog" />
+
+        <ListPreference
+            android:key="notify_song_list"
+            android:title="@string/title_notify_song_list"
+            android:entries="@array/notify_music"
+            android:entryValues="@array/notify_music_value"
+            android:defaultValue="@string/def_notify_song"
+            android:dependency="enable_notify_song" />
 
         <Preference
             android:key="test_notify_song"

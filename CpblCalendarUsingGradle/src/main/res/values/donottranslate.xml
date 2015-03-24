@@ -194,6 +194,19 @@
     <string name="title_nine_old_android">NineOldAndroids</string>
     <string name="summary_nine_old_android">Copyright 2012 Jake Wharton</string>
     <string name="title_floating_action_button">FloatingActionButton</string>
-    <string name="summary_floating_action_button">Copyright (c) 2014 Oleksandr Melnykov</string>
+    <string name="summary_floating_action_button">Copyright &#169; 2014 Oleksandr Melnykov</string>
+
+    <string-array name="notify_music_value">
+        <item>theme.mp3</item>
+        <item>20150321.mp3</item>
+    </string-array>
+    <string-array name="notify_music_google_drive_id">
+        <item>0B-oMP4622t0hVlhhNHlNamlvM1k</item>
+        <item>0B-oMP4622t0hWGo4QlM5ZklycTQ</item>
+    </string-array>
+    <integer-array name="notify_music_size">
+        <item>3331472</item>
+        <item>4018397</item>
+    </integer-array>
 
 </resources>

@@ -165,7 +165,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     @Override
     public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList) {
-        //mDrawerLayout.closeDrawer(mDrawerList);//[87]dolphin++ put to success?
+        mDrawerLayout.closeDrawer(mDrawerList);//[138]++ close it//[87]dolphin++ put to success?
         //Log.d(TAG, "onSuccess");
         updateGameListFragment(gameArrayList);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
