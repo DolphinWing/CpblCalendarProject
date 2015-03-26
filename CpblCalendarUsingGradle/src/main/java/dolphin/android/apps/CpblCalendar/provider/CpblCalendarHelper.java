@@ -380,10 +380,10 @@ public class CpblCalendarHelper extends HttpHelper {
         try {//
             String html;// = getUrlContent(URL_SCHEDULE_2014);
             AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
-            html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
-            html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+            html = helper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+            html = helper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
             if (kind != null && !kind.isEmpty()) {//choose game kind
-                html = helper.makeRequest("ctl00$cphBox$ddl_gameno", kind);
+                html = helper.makeUrlRequest("ctl00$cphBox$ddl_gameno", kind);
             }
 
             //Log.d(TAG, "query2014 " + html.length());
@@ -966,10 +966,11 @@ public class CpblCalendarHelper extends HttpHelper {
             String html = null;// = getUrlContent(URL_SCHEDULE_2014);
             try {
                 AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
-                html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
-                html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                html = helper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+                html = helper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
             } catch (Exception e) {
                 Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
+                html = null;//bypass parsing if exception happens
             }
 
             //Log.d(TAG, "query2014 " + html.length());
@@ -1040,7 +1041,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     private void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
-        //TODO: store all data to local cache
+        //store all data to local cache
         String delay_str = "";
         for (int i = 0; i < games.size(); i++) {
             Game g = games.valueAt(i);
@@ -1053,7 +1054,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
-        //TODO: restore data from cache
+        //restore data from cache
         File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
         String delay_str = FileUtils.readFileToString(f);
         if (delay_str != null && !delay_str.isEmpty()) {

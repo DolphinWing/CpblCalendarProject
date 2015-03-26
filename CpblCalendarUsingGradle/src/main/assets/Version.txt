@@ -8,7 +8,7 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 另外還增加了新的提醒功能，在比賽開始前的對話框還會有中華職棒的主題曲同步播放！
 只要到通知設定中做修改，你也可以馬上聽到歌曲唷！
 
-即刻更新至2.0版，馬上體驗看看~~
+即刻更新至 2.0 版，馬上體驗看看~~
 
 本程式目前提供以下功能
 ● 檢視模式: 快速取得 CPBL 中華職棒今年例行賽賽程表，也可以很快的查詢 2013 年之前的歷史對戰資料。
@@ -35,6 +35,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[142] @ 2015-03-26
+    add connection time in AspNetHelper
+        add UrlConnection implementation
+        use UrlConnection to replace HttpGet & HttpPost
+
 [141] @ 2015-03-25
     change translation
 [140] @ 2015-03-24
