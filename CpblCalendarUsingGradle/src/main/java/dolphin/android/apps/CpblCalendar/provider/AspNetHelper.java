@@ -20,13 +20,17 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jimmyhu on 2015/1/5.
@@ -136,6 +140,14 @@ public class AspNetHelper {
         }
     }
 
+    /**
+     * make POST/GET request by UrlConnection
+     * http://www.cnblogs.com/menlsh/archive/2013/05/22/3091983.html
+     *
+     * @param name  changed field
+     * @param value changed data
+     * @return html content
+     */
     public String makeUrlRequest(String name, String value) {
         URL url;
         try {
@@ -148,6 +160,7 @@ public class AspNetHelper {
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(3000);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "openConnection: " + e.getMessage());
@@ -155,54 +168,114 @@ public class AspNetHelper {
         }
 
         String response = null;
-        boolean isPost = !mValidation.isEmpty() && !mViewState.isEmpty();
-        if (isPost) {//add POST header
+        if (!mValidation.isEmpty() && !mViewState.isEmpty()) {//add POST header
+            Map<String, String> params = new HashMap<>();
+
+            if (name != null && !name.isEmpty()) {
+                params.put(name, value);
+                params.put("__EVENTTARGET", name);
+                params.put("__EVENTARGUMENT", "");
+            } else {
+                params.put("__EVENTTARGET", "");
+                params.put("__EVENTARGUMENT", "");
+            }
+            params.put("__EVENTVALIDATION", mValidation);
+            params.put("__LASTFOCUS", "");
+            params.put("__VIEWSTATE", mViewState);
+
             try {
                 conn.setRequestMethod("POST");
+                //Log.d(TAG, "post " + name + ", " + value);
             } catch (ProtocolException e) {
                 e.printStackTrace();
             }
 
-            if (name != null && !name.isEmpty()) {
-                conn.setRequestProperty(name, value);
-                conn.setRequestProperty("__EVENTTARGET", name);
-                conn.setRequestProperty("__EVENTARGUMENT", "");
-            } else {
-                conn.setRequestProperty("__EVENTTARGET", "");
-                conn.setRequestProperty("__EVENTARGUMENT", "");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);//set enable output for POST
+            conn.setUseCaches(false);//don't use cache for POST
+
+            byte[] data = getRequestData(params, mEncoding).toString().getBytes();
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Length", String.valueOf(data.length));
+
+            int responseCode = 0;
+            OutputStream outputStream = null;
+            try {//write POST data
+                outputStream = conn.getOutputStream();
+                outputStream.write(data);
+                responseCode = conn.getResponseCode();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "write IOException: " + e.getMessage());
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "close out stream exception");
+                }
             }
-            conn.setRequestProperty("__EVENTVALIDATION", mValidation);
-            conn.setRequestProperty("__LASTFOCUS", "");
-            conn.setRequestProperty("__VIEWSTATE", mViewState);
+
+            //Log.d(TAG, "response code = " + responseCode);
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e(TAG, String.format("POST failed (%d)", responseCode));
+                return null;
+            }
         }
 
-        InputStream in = null;
-        try {
-            conn.setReadTimeout(10000);
-            in = new BufferedInputStream(conn.getInputStream());
+        InputStream inputStream = null;
+        try {//read POST response
+            conn.setReadTimeout(5000);
+            inputStream = new BufferedInputStream(conn.getInputStream());
             ByteArrayOutputStream content = new ByteArrayOutputStream();
 
             // Read response into a buffered stream
             byte[] sBuffer = new byte[512];
             int readBytes = 0;
-            while ((readBytes = in.read(sBuffer)) != -1) {
+            while ((readBytes = inputStream.read(sBuffer)) != -1) {
                 content.write(sBuffer, 0, readBytes);
             }
             response = new String(content.toByteArray(), mEncoding);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG, "IOException: " + e.getMessage());
+            Log.e(TAG, "read IOException: " + e.getMessage());
         } finally {
             try {
-                if (in != null) {
-                    in.close();
+                if (inputStream != null) {
+                    inputStream.close();
                 }
             } catch (IOException e) {
-                Log.e(TAG, "close stream exception");
+                Log.e(TAG, "close in stream exception");
             }
         }
 
+        //Log.d(TAG, String.format("response length = %d", response.length()));
         parseResponseForNextUse(response);
         return response;
+    }
+
+    /**
+     * encode POST request data
+     *
+     * @param params post field
+     * @param encode text encoding
+     * @return encoded request data
+     */
+    public static StringBuffer getRequestData(Map<String, String> params, String encode) {
+        StringBuffer stringBuffer = new StringBuffer();        //store the request
+        try {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                stringBuffer.append(entry.getKey())
+                        .append("=")
+                        .append(URLEncoder.encode(entry.getValue(), encode))
+                        .append("&");
+            }
+            stringBuffer.deleteCharAt(stringBuffer.length() - 1);    //delete last "&"
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stringBuffer;
     }
 }
