@@ -283,4 +283,13 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
         super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+            return;//[146]++
+        }
+        super.onBackPressed();
+    }
 }

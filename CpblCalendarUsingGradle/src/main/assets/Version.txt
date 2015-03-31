@@ -35,6 +35,18 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[146] @ 2015-03-31
+    close the drawer first if opened when pressing BACK
+    add read all year data
+
+    TODO: add preference to clear all, change cache file name (add game kind in)
+
+[145] @ 2015-03-28
+    change FloatingActionBar size
+[144] @ 2015-03-28
+    use new AspNetHelper
+[143] @ 2015-03-27
+    change back to HttpGet & HttpPost
 [142] @ 2015-03-26
     add connection time in AspNetHelper
         add UrlConnection implementation
@@ -492,10 +504,10 @@ TODO FIX something wrong
 		http://www.cnblogs.com/tara/archive/2011/06/09/2076043.html
 		http://aswang.iteye.com/blog/875863
 	fix change NotifyTime set summary will ArrayOutOfBound
-	
+
 TO DO: fixed TimeZone for Taiwan time
 http://developer.android.com/reference/java/util/Calendar.html#setTimeZone(java.util.TimeZone)
-	
+
 [53] @ 2013-09-02
     only tablets get day offset string
     DAY_OF_WEEK now applies to all devices
@@ -548,7 +560,7 @@ http://developer.android.com/reference/java/util/Calendar.html#setTimeZone(java.
     change android:screenOrientation="locked" (SDK=18)
 
 [42] @ 2013-07-24
-	android.view.WindowManager$BadTokenException: 
+	android.view.WindowManager$BadTokenException:
 	Unable to add window -- token null is not valid; is your activity running?
 		http://stackoverflow.com/a/16911709
 		http://www.cnblogs.com/kaima/archive/2011/08/04/2127813.html
@@ -560,7 +572,7 @@ http://developer.android.com/reference/java/util/Calendar.html#setTimeZone(java.
     prepare for public release of 0.7.0
 	fix java.lang.NullPointerException
 		at CpblCalendarHelper.getScoreBoardHtml(CpblCalendarHelper.java:258)
-		
+
 [39] @ 2013-07-19
     add onSaveInstanceState in CalendarActivity
         restore the selection when rotation

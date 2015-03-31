@@ -30,8 +30,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
-import dolphin.android.apps.CpblCalendar.preference.PreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -81,6 +79,8 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
 
     private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
 
+    private SparseArray<ArrayList<Game>> mAllGamesCache;//[146]++
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -110,6 +110,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(),
                 GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_BASE);
         mDelayGames2014 = new SparseArray<>();
+        mAllGamesCache = new SparseArray<>();//[146]++
     }
 
     @Override
@@ -212,7 +213,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                 i.setClass(this, SettingsActivity.class);
                 startActivityForResult(i, 0);
             }
-                return true;
+            return true;
             case R.id.action_refresh://[13]dolphin++
                 if (PreferenceUtils.isCacheMode(this)) {
                     runDownloadCache();
@@ -269,6 +270,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
         String time_str = String.format("%s %s", gameYear,
                 mSpinnerMonth.getSelectedItem().toString());
+        time_str = mSpinnerMonth.getSelectedItemPosition() >= 12 ? gameYear : time_str;//[146]++
 
         int fieldIndex = mSpinnerField.getSelectedItemPosition();
         String fieldId = mGameField[fieldIndex];
@@ -395,13 +397,54 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                 }
 
                 ArrayList<Game> gameList = null;
+                Calendar now = CpblCalendarHelper.getNowTime();
+                boolean thisYear = (mYear == now.get(Calendar.YEAR));
+
+                if (mMonth > 12) {//read all
+                    gameList = new ArrayList<Game>();
+                    for (int i = 1; i <= 12; i++) {
+                        int key = mYear * 12 + i;
+                        doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
+                                mYear, i));
+                        ArrayList<Game> list = mAllGamesCache.get(key);
+                        if ((mKind == 0 && list == null) || mKind > 0) {//query from Internet
+                            if (mYear < 2014) {
+                                list = mHelper.query(gameKind, mYear, i, mField);
+                            } else {//do real job
+                                list = mHelper.query2014(mYear, i, gameKind,
+                                        mDelayGames2014.get(mYear));
+                            }
+                            boolean hasData = (list != null && list.size() > 0);
+                            if (mField.equals("F00") && mKind == 0) {//put to local cache
+                                mAllGamesCache.put(key, hasData ? list : new ArrayList<Game>());
+                                if (!thisYear && hasData) {
+                                    mHelper.putCache(mYear, i, list);
+                                }
+                            }
+                        }
+                        if (list != null) {
+                            gameList.addAll(list);
+                        }
+                    }
+                    doQueryStateUpdateCallback(R.string.title_download_complete);
+                    doQueryCallback(gameList, true);
+                    return;
+                }
+
                 try {
-                    Calendar now = CpblCalendarHelper.getNowTime();
+//                    int key = mYear * 12 + mMonth;
+//                    gameList = mAllFieldGamesCache.get(key);
                     if (OFFLINE_DEBUG) {//offline debug
                         gameList = Utils.get_debug_list(getActivity(), mYear, mMonth);
                     } else if (resources.getBoolean(R.bool.demo_no_data)) {
                         gameList = new ArrayList<Game>();//null;//[74]++
                     } else {//try local cache
+//                        if (mYear < now.get(Calendar.YEAR) && mHelper.hasCache(mYear, mMonth)) {
+//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
+//                                    mYear, mMonth));
+//                            //they won't change again
+//                            gameList = mHelper.getCache(mYear, mMonth);//try to read from cache
+//                        } else
                         //query from Internet
                         if (mYear < 2014) {
                             gameList = mHelper.query(gameKind, mYear, mMonth, mField);
@@ -418,6 +461,11 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                         }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
+//                    //put to local cache
+//                    if (mField.equals("F00") && mKind == 0
+//                            && (gameList != null && gameList.size() > 0)) {
+//                        mAllFieldGamesCache.put(key, gameList);
+//                    }
 
                     if (resources.getBoolean(R.bool.feature_auto_load_next)) {
                         //auto load next month games
@@ -478,6 +526,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     }
 
     private ArrayList<Game> mGameList;
+
     /**
      * callback of Query action
      */
@@ -491,8 +540,11 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                             GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
         }
 
+        Calendar now = CpblCalendarHelper.getNowTime();
+        boolean thisYear = (mYear == now.get(Calendar.YEAR));
+        boolean beforeThisMonth = !thisYear || (mMonth < (now.get(Calendar.MONTH) + 1));
         if (list != null && mHelper != null && mHelper.canUseCache()
-                && !PreferenceUtils.isCacheMode(this)) {
+                && !PreferenceUtils.isCacheMode(this) && beforeThisMonth && mField.equals("F00")) {
             //Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
             boolean r = mHelper.putCache(mYear, mMonth, list);
             Log.v(TAG, String.format("%04d-%02d.json result: %s", mYear, mMonth,

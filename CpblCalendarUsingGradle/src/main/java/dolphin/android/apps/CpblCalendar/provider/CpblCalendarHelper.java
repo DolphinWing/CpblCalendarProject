@@ -17,6 +17,7 @@ import java.io.File;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -920,6 +921,14 @@ public class CpblCalendarHelper extends HttpHelper {
         return mUseCache;
     }
 
+    public boolean hasCache(int year, int month) {
+        return (getCache(year, month) != null);
+    }
+
+    public static boolean hasCache(Context context, int year, int month) {
+        return  (getCache(context, year, month) != null);
+    }
+
     public static Calendar getNowTime() {
         //Log.d(TAG, Locale.TAIWAN.toString());
         //return Calendar.getInstance(Locale.TAIWAN);
@@ -939,9 +948,13 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static ArrayAdapter<String> buildMonthAdapter(Context context) {
+        ArrayList<String> months = new ArrayList<String>(Arrays.asList(
+                new DateFormatSymbols(Locale.TAIWAN).getMonths()));
+        if (context.getResources().getBoolean(R.bool.feature_enable_all_months)) {
+            months.add(context.getString(R.string.title_game_year_all_months));//[146]++
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item,
-                new DateFormatSymbols(Locale.TAIWAN).getMonths());
+                android.R.layout.simple_spinner_item, months);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return adapter;
     }
