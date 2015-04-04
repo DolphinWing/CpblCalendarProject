@@ -218,6 +218,11 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                 if (PreferenceUtils.isCacheMode(this)) {
                     runDownloadCache();
                 } else {
+                    if (mYear >= 2014) {//remove cache
+                        mHelper.removeDelayGames2014(this, mYear);//delete cache file
+                        mDelayGames2014.remove(mYear);//remove from memory
+                    }
+                    mAllGamesCache.clear();//clear game cache in memory
                     mButtonQuery.performClick();
                 }
                 return true;//break;
@@ -380,6 +385,9 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
             mQueryCallback.onQueryStart();
         }
         mKind = kind;//[22]dolphin++
+        if (year != mYear) {//remove all data
+            mAllGamesCache.clear();
+        }
         mYear = year;//[22]dolphin++
         mMonth = month;//[22]dolphin++
         mField = field;//[44]dolphin++
@@ -418,7 +426,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                             if (mField.equals("F00") && mKind == 0) {//put to local cache
                                 mAllGamesCache.put(key, hasData ? list : new ArrayList<Game>());
                                 if (!thisYear && hasData) {
-                                    mHelper.putCache(mYear, i, list);
+                                    mHelper.putLocalCache(mYear, i,mKind, list);
                                 }
                             }
                         }
@@ -443,7 +451,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
 //                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
 //                                    mYear, mMonth));
 //                            //they won't change again
-//                            gameList = mHelper.getCache(mYear, mMonth);//try to read from cache
+//                            gameList = mHelper.getLocalCache(mYear, mMonth);//try to read from cache
 //                        } else
                         //query from Internet
                         if (mYear < 2014) {
@@ -546,8 +554,8 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         if (list != null && mHelper != null && mHelper.canUseCache()
                 && !PreferenceUtils.isCacheMode(this) && beforeThisMonth && mField.equals("F00")) {
             //Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
-            boolean r = mHelper.putCache(mYear, mMonth, list);
-            Log.v(TAG, String.format("%04d-%02d.json result: %s", mYear, mMonth,
+            boolean r = mHelper.putLocalCache(mYear, mMonth, mKind, list);
+            Log.v(TAG, String.format("%04d-%02d-%d.json result: %s", mYear, mMonth, mKind,
                     (r ? "success" : "failed")));
         }
 
@@ -663,11 +671,12 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
             @Override
             public void run() {
                 //[98]dolphin++ add check delay list
-                SparseArray<Game> delayList = mHelper.getDelayGameList();
+                SparseArray<Game> delayList = //mHelper.getDelayGameList();
+                    mHelper.queryDelayGames2014(getActivity(), mYear);
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
-                    ArrayList<Game> list = mHelper.query2014(mYear, m);
+                    ArrayList<Game> list = mHelper.query2014(mYear, m, null, delayList);
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));

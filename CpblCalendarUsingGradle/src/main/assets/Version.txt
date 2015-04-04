@@ -35,6 +35,14 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[148] @ 2015-04-04
+    add clear cache when refresh to get data
+    change Dragon and Tiger logo from http://www.cpbl.com.tw/history.aspx
+    speed up by using same AspNetHelper object
+
+[147] @ 2015-04-03
+    fix CT whales logo for 2002~2004
+
 [146] @ 2015-03-31
     close the drawer first if opened when pressing BACK
     add read all year data

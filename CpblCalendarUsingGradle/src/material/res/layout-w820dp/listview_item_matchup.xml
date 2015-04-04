@@ -154,7 +154,8 @@
         <TextView
             style="@style/Theme.Holo_green.Match.Channel"
             android:id="@+id/textView6"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:layout_marginRight="@dimen/padding_small" />
 
         <TextView
             style="@style/Theme.Holo_green.Match.Field"

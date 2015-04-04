@@ -59,9 +59,9 @@ public class Team {
     /**
      * get the team id from raw data
      *
-     * @param c
-     * @param name
-     * @return
+     * @param c context
+     * @param name team name
+     * @return team id
      */
     public static int getTeamId(Context c, String name) {
         return getTeamId(c, name, CpblCalendarHelper.getNowTime().get(Calendar.YEAR));
@@ -70,10 +70,10 @@ public class Team {
     /**
      * get the team id from raw data
      *
-     * @param c
-     * @param name
-     * @param year
-     * @return
+     * @param c context
+     * @param name team name
+     * @param year year
+     * @return team id
      */
     public static int getTeamId(Context c, String name, int year) {
         if (name.equalsIgnoreCase(c.getString(R.string.team_elephants_short)))
@@ -117,9 +117,9 @@ public class Team {
     /**
      * get team logo resource id from team id
      *
-     * @param id
-     * @param year
-     * @return
+     * @param id team id
+     * @param year year
+     * @return logo drawable of that year
      */
     public static int getTeamLogo(int id, int year) {
         switch (id) {
@@ -152,7 +152,7 @@ public class Team {
             case ID_TIME_EAGLES:
                 return R.drawable.eagle_1993_1997;
             case ID_CT_WHALES:
-                return (year >= 1991) ? R.drawable.whale_2002_2008 : R.drawable.whale_1997_2001;
+                return (year > 2004) ? R.drawable.whale_2002_2008 : R.drawable.whale_1997_2001;
             case ID_KG_WHALES:
                 return R.drawable.whale_1997_2001;
             case ID_MKT_SUNS:
@@ -174,9 +174,9 @@ public class Team {
     /**
      * get full team name
      *
-     * @param context
-     * @param id
-     * @return
+     * @param context context
+     * @param id team id
+     * @return team name
      */
     public static String getTeamName(Context context, int id) {
         int string_id = R.string.empty_data;
@@ -239,9 +239,9 @@ public class Team {
     /**
      * get short team name
      *
-     * @param context
-     * @param id
-     * @return
+     * @param context context
+     * @param id team id
+     * @return team name
      */
     public static String getTeamNameShort(Context context, int id) {
         int string_id = R.string.empty_data;
@@ -318,7 +318,7 @@ public class Team {
     /**
      * get team id
      *
-     * @return
+     * @return team id
      */
     public int getId() {
         return mId;
@@ -327,7 +327,7 @@ public class Team {
     /**
      * get team name
      *
-     * @return
+     * @return team name
      */
     public String getName() {
         if (getId() != ID_UNKNOWN)
@@ -338,7 +338,7 @@ public class Team {
     /**
      * get short team name
      *
-     * @return
+     * @return team name
      */
     public String getShortName() {
         if (getId() != ID_UNKNOWN)
@@ -349,8 +349,8 @@ public class Team {
     /**
      * get team logo resource id
      *
-     * @param year
-     * @return
+     * @param year year
+     * @return logo drawable
      */
     public int getLogo(int year) {
         if (getId() != ID_UNKNOWN)

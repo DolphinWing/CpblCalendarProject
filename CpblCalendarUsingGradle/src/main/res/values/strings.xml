@@ -87,6 +87,15 @@
     <string name="title_vibrate">震動通知</string>
     <string name="title_vibrate_on">時間到時會輔以震動提醒</string>
     <string name="title_vibrate_off">時間到時不以震動提醒</string>
+    <!-- AdvancedFragment -->
+    <string name="title_advanced_settings">進階設定</string>
+    <string name="title_clear_cache">清除快取</string>
+    <string name="summary_clear_cache">清除暫存在本機端的資料</string>
+    <string name="summary_clear_cache_off">開啟離線模式的時候，不支援此功能</string>
+    <string name="summary_clear_cache_null">沒有暫存在本機端的資料</string>
+    <string name="title_clear_cache_complete">清除完畢!</string>
+    <string name="title_restart_app">重新啟動程式</string>
+
     <!-- Notificaitons -->
     <string name="title_notification">比賽要開打囉!</string>
     <string name="msg_content_text">%1$s 對 %2$s</string>

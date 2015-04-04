@@ -8,6 +8,7 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     public final static long ONE_WEEK = ONE_DAY * 7;
 
-    public final static long LONGEST_GAME = 60 * 60 * 7;
+    public final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
 
     private LayoutInflater mInflater;
 
@@ -181,9 +182,9 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         //[84]dolphin++//live channel
         boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));
         bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
-        //Log.d(TAG, c.toString() + " live=" + bLiveNow);
-        bLiveNow &= (mNow.getTimeInMillis() - game.StartTime.getTimeInMillis() < LONGEST_GAME);
-        //Log.d(TAG, game.StartTime.getTime().toString());
+        //Log.d("GameAdapter", c.toString() + " live=" + bLiveNow);
+        bLiveNow &= ((mNow.getTimeInMillis() - game.StartTime.getTimeInMillis()) < LONGEST_GAME);
+        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
         TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
         if (mNow.get(Calendar.YEAR) >= 2014) {//CPBL TV live!
             tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);

@@ -56,9 +56,14 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private boolean mUseCache = false;
 
+    private AspNetHelper mAspNetHelper;
+    private int mYear;
+    private String mKind;
+
     public CpblCalendarHelper(Context context) {
         mContext = context;
         mUseCache = mContext.getResources().getBoolean(R.bool.feature_cache);
+        mAspNetHelper = new AspNetHelper(URL_SCHEDULE_2014);
     }
 
     /**
@@ -380,11 +385,29 @@ public class CpblCalendarHelper extends HttpHelper {
         ArrayList<Game> gameList = new ArrayList<Game>();
         try {//
             String html;// = getUrlContent(URL_SCHEDULE_2014);
-            AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
-            html = helper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
-            html = helper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
-            if (kind != null && !kind.isEmpty()) {//choose game kind
-                html = helper.makeUrlRequest("ctl00$cphBox$ddl_gameno", kind);
+            try {
+                //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+                if (mYear != year) {
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+                    if (html == null) {
+                        throw new Exception("can't switch year");
+                    }
+                    mYear = year;
+                }
+                html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                if (html == null) {
+                    throw new Exception("can't switch month");
+                }
+                if (kind != null && !kind.isEmpty() && !mKind.equals(kind)) {//choose game kind
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", kind);
+                    if (html == null) {
+                        throw new Exception("can't switch kind");
+                    }
+                    mKind = kind;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "exception: " + e.getMessage());
+                html = null;
             }
 
             //Log.d(TAG, "query2014 " + html.length());
@@ -898,6 +921,9 @@ public class CpblCalendarHelper extends HttpHelper {
     public static boolean putCache(Context context, String fileName, ArrayList<Game> list) {
         //String fileName = String.format("%04d-%02d.json", year, month);
         File f = new File(context.getExternalCacheDir(), fileName);
+        if (list == null) {
+            return f.delete();
+        }
         //convert ArrayList<Game> object to JSON string
         //Log.d(TAG, "putCache " + f.getAbsolutePath());
         boolean r = FileUtils.writeStringToFile(f, Game.listToJson(context, list));
@@ -926,7 +952,22 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static boolean hasCache(Context context, int year, int month) {
-        return  (getCache(context, year, month) != null);
+        return (getCache(context, year, month) != null);
+    }
+
+    public boolean putLocalCache(int year, int month, int kind, ArrayList<Game> list) {
+        return putCache(mContext, String.format("%04d-%02d-%d.json", year, month, kind), list);
+    }
+
+    public boolean removeLocalCache(int year, int month, int kind) {
+        return putLocalCache(year, month, kind, null);
+    }
+
+    public ArrayList<Game> getLocalCache(int year, int month, int kind) {
+        if (canUseCache()) {
+            return getCache(mContext, String.format("%04d-%02d-%d.json", year, month, kind));
+        }
+        return null;
     }
 
     public static Calendar getNowTime() {
@@ -978,9 +1019,24 @@ public class CpblCalendarHelper extends HttpHelper {
         for (int month = m1; month <= m2; month++) {
             String html = null;// = getUrlContent(URL_SCHEDULE_2014);
             try {
-                AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
-                html = helper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
-                html = helper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+                if (mYear != year) {
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+                    if (html == null) {
+                        throw new Exception("can't switch year");
+                    }
+                    mYear = year;
+                    //switch back to game kind 01
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", "01");
+                    if (html == null) {
+                        throw new Exception("can't switch kind");
+                    }
+                    mKind = "01";
+                }
+                html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                if (html == null) {
+                    throw new Exception("can't switch month");
+                }
             } catch (Exception e) {
                 Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
                 html = null;//bypass parsing if exception happens
@@ -1065,6 +1121,11 @@ public class CpblCalendarHelper extends HttpHelper {
         FileUtils.writeStringToFile(f, delay_str);
     }
 
+    public boolean removeDelayGames2014(Context context, int year) {
+        File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+        return f.delete();
+    }
+
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
         //restore data from cache
@@ -1072,7 +1133,7 @@ public class CpblCalendarHelper extends HttpHelper {
         String delay_str = FileUtils.readFileToString(f);
         if (delay_str != null && !delay_str.isEmpty()) {
             for (String delay : delay_str.split(";")) {
-                Log.d(TAG, delay);
+                //Log.d(TAG, delay);
                 if (!delay.isEmpty()) {
                     String[] d = delay.split("/");
                     Game g = new Game();
