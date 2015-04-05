@@ -149,6 +149,14 @@
         <!--<item name="android:textColor">?android:attr/textColorSecondary</item>-->
     </style>
 
+    <style name="Theme.Holo_green.Match.Channel" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:text">@string/empty_data</item>
+    </style>
+
     <!-- Query Panel style -->
     <style name="Theme.Holo_green.QueryPane" />
 

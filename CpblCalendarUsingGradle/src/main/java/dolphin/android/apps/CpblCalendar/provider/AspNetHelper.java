@@ -42,6 +42,7 @@ public class AspNetHelper {
     private String mViewState;
     private String mValidation;
     private String mEncoding = HTTP.UTF_8;
+    private String mLastResponse;
 
     public AspNetHelper(String url) {
         this(url, HTTP.UTF_8);
@@ -119,6 +120,7 @@ public class AspNetHelper {
     private void parseResponseForNextUse(String response) {
         if (response != null && !response.isEmpty()) {
             //Log.d(TAG, "response " + response.length());
+            mLastResponse = response;
 
             //save the validation for next request
             if (response.contains("__EVENTVALIDATION")) {
@@ -204,7 +206,6 @@ public class AspNetHelper {
                 outputStream = conn.getOutputStream();
                 outputStream.write(data);
                 responseCode = conn.getResponseCode();
-
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG, "write IOException: " + e.getMessage());
@@ -277,5 +278,14 @@ public class AspNetHelper {
             e.printStackTrace();
         }
         return stringBuffer;
+    }
+
+    /**
+     * get last response data
+     *
+     * @return response HTML
+     */
+    public String getLastResponse() {
+        return mLastResponse;
     }
 }

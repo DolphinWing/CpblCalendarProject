@@ -212,6 +212,9 @@
         <item name="android:textColor">@android:color/secondary_text_light</item>
         <item name="android:text">@string/title_game_field</item>
         <item name="android:textSize">@dimen/match_field_textSize</item>
+        <item name="android:lines">1</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
     </style>
 
     <style name="Theme.Holo_green.Match.Channel" parent="Theme.Holo_green.TextSmall">

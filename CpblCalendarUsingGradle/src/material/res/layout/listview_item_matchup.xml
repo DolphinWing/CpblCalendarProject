@@ -136,18 +136,21 @@
         android:paddingLeft="16dp"
         android:paddingRight="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
-        android:gravity="right|top">
+        android:gravity="right|center_vertical">
 
         <TextView
             style="@style/Theme.Holo_green.Match.ExtraMsg"
             android:id="@+id/textView8"
-            android:paddingRight="@dimen/padding_large" />
+            android:paddingRight="@dimen/padding_large"/>
 
         <TextView
             style="@style/Theme.Holo_green.Match.Channel"
             android:id="@+id/textView6"
-            android:visibility="gone"
-            android:layout_marginRight="@dimen/padding_small" />
+            android:visibility="gone" />
+
+        <View
+            android:layout_height="@dimen/padding_small"
+            android:layout_width="@dimen/padding_small" />
 
         <TextView
             style="@style/Theme.Holo_green.Match.Field"

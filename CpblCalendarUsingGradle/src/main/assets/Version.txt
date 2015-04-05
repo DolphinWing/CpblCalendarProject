@@ -35,6 +35,13 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[149] @ 2015-04-05
+    fix restore delay games parse error
+    fix KitKat preference open failed (AdvancedFragment)
+    fix change month get no AspNetHelper data
+    fix open app load slow
+    add game channel back to calendar
+
 [148] @ 2015-04-04
     add clear cache when refresh to get data
     change Dragon and Tiger logo from http://www.cpbl.com.tw/history.aspx

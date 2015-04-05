@@ -58,6 +58,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private AspNetHelper mAspNetHelper;
     private int mYear;
+    private int mMonth;
     private String mKind;
 
     public CpblCalendarHelper(Context context) {
@@ -199,12 +200,8 @@ public class CpblCalendarHelper extends HttpHelper {
         game.Source = Game.SOURCE_CPBL_2013;
         //Log.d(TAG, str);
 
-        game.StartTime = getNowTime();
-        game.StartTime.set(Calendar.YEAR, year);
-        game.StartTime.set(Calendar.MONTH, month - 1);
-        game.StartTime.set(Calendar.DAY_OF_MONTH, day);
-        game.StartTime.set(Calendar.SECOND, 0);
-        game.StartTime.set(Calendar.MILLISECOND, 0);//[51]dolphin++ fix alarm key floating
+        game.StartTime = getGameTime(year, month, day);
+        //[51]dolphin++ fix alarm key floating
         //game.StartTime.setTimeZone(TimeZone.getTimeZone("GMT+0800"));//[55]dolphin++
 
         boolean bLive = kind.equalsIgnoreCase("01") && (year >= 2006 && year < 2014);
@@ -384,9 +381,10 @@ public class CpblCalendarHelper extends HttpHelper {
         //Log.d(TAG, "query2014");
         ArrayList<Game> gameList = new ArrayList<Game>();
         try {//
-            String html;// = getUrlContent(URL_SCHEDULE_2014);
+            String html = mAspNetHelper.getLastResponse();// = getUrlContent(URL_SCHEDULE_2014);
             try {
                 //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+                //Log.d(TAG, String.format("mYear=%d, year=%d", mYear, year));
                 if (mYear != year) {
                     html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
                     if (html == null) {
@@ -394,11 +392,16 @@ public class CpblCalendarHelper extends HttpHelper {
                     }
                     mYear = year;
                 }
-                html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
-                if (html == null) {
-                    throw new Exception("can't switch month");
+                //Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
+                if (mMonth != month) {
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                    if (html == null) {
+                        throw new Exception("can't switch month");
+                    }
+                    mMonth = month;
                 }
-                if (kind != null && !kind.isEmpty() && !mKind.equals(kind)) {//choose game kind
+                //Log.d(TAG, String.format("mKind=%s, kind=%s", mKind, kind));
+                if (kind != null && !kind.isEmpty() && !kind.equals(mKind)) {//choose game kind
                     html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", kind);
                     if (html == null) {
                         throw new Exception("can't switch kind");
@@ -406,7 +409,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     mKind = kind;
                 }
             } catch (Exception e) {
-                Log.e(TAG, "exception: " + e.getMessage());
+                Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
                 html = null;
             }
 
@@ -434,7 +437,7 @@ public class CpblCalendarHelper extends HttpHelper {
                         //Log.d(TAG, String.format(" day=%d games=%d", d, games.length));
                         for (int g = 0; g < games.length; g++) {
                             //[92]dolphin++
-                            if (games[g].contains("<tr class='suspend'>")) {
+                            if (games[g].contains("<tr class='suspend'>")) {//delay games
 //      <table><tr class='suspend'><td>
 //      <table><tr><th></th><th>51</th><th></th></tr></table>
 //      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
@@ -462,7 +465,7 @@ public class CpblCalendarHelper extends HttpHelper {
                                     gameList.add(g2);
                                 }
                             }
-                        }
+                        }//check every games
                     }
                 }
             }
@@ -484,7 +487,7 @@ public class CpblCalendarHelper extends HttpHelper {
         context.startActivity(intent);
     }
 
-    //                <div class="topinfo">
+//                <div class="topinfo">
 //                    <ul>
 //                        <li><img src="assets/images/logo/L01_logo_07.png"></li>
 //                        <li>4</li>
@@ -553,16 +556,7 @@ public class CpblCalendarHelper extends HttpHelper {
         Game game = new Game();
         game.Source = Game.SOURCE_CPBL;
         game.Kind = kind;
-        game.StartTime = getNowTime();
-        if (year > 0) {
-            game.StartTime.set(Calendar.YEAR, year);
-        }
-        if (month > 0) {
-            game.StartTime.set(Calendar.MONTH, month - 1);
-        }
-        game.StartTime.set(Calendar.DAY_OF_MONTH, day);
-        game.StartTime.set(Calendar.SECOND, 0);//[126]++ avoid seconds difference
-        game.StartTime.set(Calendar.MILLISECOND, 0);//[126]++ avoid ms difference
+        game.StartTime = getGameTime(year, month, day);
 
 //        <!--兩個對戰組合的分隔線-->
 //        <tr class="team">
@@ -703,8 +697,20 @@ public class CpblCalendarHelper extends HttpHelper {
 //            //[76]dolphin++
 //            game.Url = String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
 //                    URL_BASE, game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
-            game.Url = "http://www.cpbltv.com/channel/1.html";//[80]dolphin++
-            game.Url = "http://www.cpbltv.com/";//[84]dolphin++
+//            game.Url = "http://www.cpbltv.com/channel/1.html";//[80]dolphin++
+//            game.Url = "http://www.cpbltv.com/";//[84]dolphin++
+
+            try {//[149]dolphin++
+                if (str.contains("assets/images/c_tv.png")) {//show game live channel
+                    String channel = str.substring(str.indexOf("<td class='info' title"));
+                    channel = channel.substring(channel.indexOf("title="));
+                    channel = channel.substring(channel.indexOf("'") + 1, channel.indexOf("'>"));
+                    //Log.d(TAG, channel);
+                    game.Channel = channel;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return game;
@@ -751,14 +757,14 @@ public class CpblCalendarHelper extends HttpHelper {
                                 //e.printStackTrace();
 
                                 //Log.d(TAG, "==> " + data.length + ", g=" + g);
-                                String extra;
+                                String extra;//having extra message
                                 if (g < data.length - 1) {
                                     extra = data[g + 1];
                                 } else {
                                     extra = data[g];
                                 }
                                 //Log.d(TAG, extra);
-                                if (extra.startsWith("<font color=red>")) {
+                                if (extra.startsWith("<font color=red>")) {//delay games
                                     g--;
                                     gameList.remove(gameList.size() - 1);
                                 } else {//[93]dolphin++ fix delay message after game final
@@ -780,7 +786,7 @@ public class CpblCalendarHelper extends HttpHelper {
                                     }
                                 }
                             }
-                        }
+                        }//find games
                         if (false && g > 1) {//more than one game
                             for (int j = 1; j < g; j++) {
                                 Game g1 = gameList.get(gameList.size() - j);
@@ -789,8 +795,8 @@ public class CpblCalendarHelper extends HttpHelper {
                                 //Log.d(TAG, String.format("%d: %s", g1.Id, g1.Url));
                             }
                         }
-                    }
-                }
+                    }//if having games
+                }//for possible days
             } else {
                 Log.e(TAG, "no data: " + html);
             }
@@ -809,10 +815,7 @@ public class CpblCalendarHelper extends HttpHelper {
         Game game = new Game();
         game.Source = Game.SOURCE_ZXC22;
         game.Kind = "01";
-        game.StartTime = getNowTime();
-        game.StartTime.set(Calendar.YEAR, 2014);
-        game.StartTime.set(Calendar.MONTH, month - 1);
-        game.StartTime.set(Calendar.DAY_OF_MONTH, day);
+        game.StartTime = getGameTime(0, month - 1, day);
 
         int dayOfWeek = game.StartTime.get(Calendar.DAY_OF_WEEK);
         boolean isWeekend = (dayOfWeek == Calendar.SATURDAY ||
@@ -970,12 +973,62 @@ public class CpblCalendarHelper extends HttpHelper {
         return null;
     }
 
+    /**
+     * Always get Taipei time (GMT+8)
+     *
+     * @return Calendar
+     */
     public static Calendar getNowTime() {
         //Log.d(TAG, Locale.TAIWAN.toString());
         //return Calendar.getInstance(Locale.TAIWAN);
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
     }
 
+    /**
+     * get game time
+     *
+     * @param year  year
+     * @param month month
+     * @param day   day of month
+     * @return Calendar
+     */
+    public static Calendar getGameTime(int year, int month, int day) {
+        return getGameTime(year, month, day, 0, 0);
+    }
+
+    /**
+     * get game time
+     *
+     * @param year   year
+     * @param month  month
+     * @param day    day of month
+     * @param hour   hour of day (24HR)
+     * @param minute minute
+     * @return Calendar
+     */
+    public static Calendar getGameTime(int year, int month, int day, int hour, int minute) {
+        Calendar now = getNowTime();
+        if (year > 0) {
+            now.set(Calendar.YEAR, year);
+        }
+        if (month > 0) {
+            now.set(Calendar.MONTH, month - 1);
+        }
+        now.set(Calendar.DAY_OF_MONTH, day);
+        now.set(Calendar.HOUR_OF_DAY, hour);
+        now.set(Calendar.MINUTE, minute);
+        now.set(Calendar.SECOND, 0);
+        now.set(Calendar.MILLISECOND, 0);
+        return now;
+    }
+
+    /**
+     * build year array adapter
+     *
+     * @param context Context
+     * @param nowYear current year
+     * @return ArrayAdapter
+     */
     public static ArrayAdapter<String> buildYearAdapter(Context context, int nowYear) {
         String[] years = new String[nowYear - 1990 + 1];
         for (int i = 1990; i <= nowYear; i++) {
@@ -988,6 +1041,12 @@ public class CpblCalendarHelper extends HttpHelper {
         return adapter;
     }
 
+    /**
+     * build month array adapter
+     *
+     * @param context Context
+     * @return ArrayAdapter
+     */
     public static ArrayAdapter<String> buildMonthAdapter(Context context) {
         ArrayList<String> months = new ArrayList<String>(Arrays.asList(
                 new DateFormatSymbols(Locale.TAIWAN).getMonths()));
@@ -1000,6 +1059,13 @@ public class CpblCalendarHelper extends HttpHelper {
         return adapter;
     }
 
+    /**
+     * query delay games from CPBL website (using ASP.NET), costs more time
+     *
+     * @param context Context
+     * @param year    year
+     * @return delay game list
+     */
     public SparseArray<Game> queryDelayGames2014(Context context, int year) {
         long startTime = System.currentTimeMillis();
 
@@ -1020,6 +1086,12 @@ public class CpblCalendarHelper extends HttpHelper {
             String html = null;// = getUrlContent(URL_SCHEDULE_2014);
             try {
                 //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+                mKind = "01";
+                html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", mKind);
+                if (html == null) {
+                    throw new Exception("can't switch kind");
+                }
+                //Log.d(TAG, String.format("mYear=%d, year=%d", mYear, year));
                 if (mYear != year) {
                     html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
                     if (html == null) {
@@ -1027,15 +1099,14 @@ public class CpblCalendarHelper extends HttpHelper {
                     }
                     mYear = year;
                     //switch back to game kind 01
-                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", "01");
-                    if (html == null) {
-                        throw new Exception("can't switch kind");
-                    }
-                    mKind = "01";
                 }
-                html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
-                if (html == null) {
-                    throw new Exception("can't switch month");
+                //Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
+                if (mMonth != month) {
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                    if (html == null) {
+                        throw new Exception("can't switch month");
+                    }
+                    mMonth = month;
                 }
             } catch (Exception e) {
                 Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
@@ -1070,21 +1141,13 @@ public class CpblCalendarHelper extends HttpHelper {
 //      <table><tr><th></th><th>51</th><th></th></tr></table>
 //      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
                                 if (game1.contains("<td colspan='3' class='suspend'>")) {
-                                    //Log.d(TAG, String.format("suspend month=%d day=%d", month, d));
-                                    //continue;//don't add to list
-                                    //TODO: we need these games
-
+                                    //we need these games
                                     Matcher m = Pattern.compile("<th>([0-9]+)</th>").matcher(game1);
                                     if (m.find()) {
                                         //Log.d(TAG, "  id = " + m.group(1));
                                         Game game = new Game();
                                         game.Id = Integer.parseInt(m.group(1));
-                                        game.StartTime = CpblCalendarHelper.getNowTime();
-                                        game.StartTime.set(Calendar.YEAR, year);
-                                        game.StartTime.set(Calendar.MONTH, month - 1);
-                                        game.StartTime.set(Calendar.DAY_OF_MONTH, d);
-                                        game.StartTime.set(Calendar.HOUR_OF_DAY, 0);
-
+                                        game.StartTime = getGameTime(year, month, d);
                                         if (delayedGames.get(game.Id) != null) {
                                             //Log.d(TAG, "bypass " + game.toString());
                                             continue;
@@ -1092,12 +1155,14 @@ public class CpblCalendarHelper extends HttpHelper {
                                         delayedGames.put(game.Id, game);
                                     }
                                 }
-                                //normal games
+                                //else: normal games
                             }
-                        }
+                        }//check every games
                     }
-                }
+                }//for possible days
             }
+            Log.v(TAG, String.format("%d query wasted %d ms", month,
+                    ((System.currentTimeMillis() - startTime))));
         }
         long endTime = System.currentTimeMillis();
         Log.v(TAG, String.format("delay game query wasted %d ms", ((endTime - startTime))));
@@ -1121,6 +1186,13 @@ public class CpblCalendarHelper extends HttpHelper {
         FileUtils.writeStringToFile(f, delay_str);
     }
 
+    /**
+     * remove stored delay games
+     *
+     * @param context Context
+     * @param year    year
+     * @return true if deleted
+     */
     public boolean removeDelayGames2014(Context context, int year) {
         File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
         return f.delete();
@@ -1141,7 +1213,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     g.StartTime = getNowTime();
                     g.StartTime.set(Calendar.YEAR, year);
                     g.StartTime.set(Calendar.MONTH, Integer.parseInt(d[1]) - 1);
-                    g.StartTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(d[1]));
+                    g.StartTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(d[2]));
                     g.StartTime.set(Calendar.HOUR_OF_DAY, 0);
                     delayedGames.put(g.Id, g);
                 }

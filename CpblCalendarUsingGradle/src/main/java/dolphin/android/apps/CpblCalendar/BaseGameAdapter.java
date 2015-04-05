@@ -186,13 +186,15 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         bLiveNow &= ((mNow.getTimeInMillis() - game.StartTime.getTimeInMillis()) < LONGEST_GAME);
         //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
         TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
-        if (mNow.get(Calendar.YEAR) >= 2014) {//CPBL TV live!
+        if (mNow.get(Calendar.YEAR) >= 2014 && game.Channel == null) {//CPBL TV live!
             tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);
             tv6.setText(bLiveNow ? mContext.getString(R.string.title_live_on_cpbltv) : "");
-            tv6.setTextColor(Color.RED);
+            if (bLiveNow) {
+                tv6.setTextColor(Color.RED);
+            }
         } else if (game.Channel != null) {
             tv6.setVisibility(View.VISIBLE);
-            tv6.setText(mContext.getString(R.string.title_live_now, game.Channel));
+            tv6.setText(bLiveNow ? mContext.getString(R.string.title_live_now, game.Channel) : game.Channel);
         } else {
             tv6.setVisibility(View.GONE);
         }

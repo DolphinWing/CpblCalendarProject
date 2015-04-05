@@ -19,7 +19,7 @@
     <string name="tab_title_upcoming">即將到來</string>
     <string name="tab_title_previous">歷史賽事</string>
     <string name="title_cpbl_year">職棒 %d 年</string>
-    <string name="no_games_this_month">本月份沒有比賽，或出現其他問題</string>
+    <string name="no_games_this_month">沒有相關的比賽資料</string>
     <string name="query_error">查詢出現問題</string>
     <string name="no_favorite_teams">沒有球隊比賽可顯示</string>
     <string name="no_available_network">沒有網路連線</string>

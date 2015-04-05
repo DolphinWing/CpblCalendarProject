@@ -384,20 +384,24 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         if (mQueryCallback != null) {//call before start
             mQueryCallback.onQueryStart();
         }
+        final boolean clearCache = year != mYear;
         mKind = kind;//[22]dolphin++
-        if (year != mYear) {//remove all data
-            mAllGamesCache.clear();
-        }
         mYear = year;//[22]dolphin++
         mMonth = month;//[22]dolphin++
         mField = field;//[44]dolphin++
 
-        mHelper = new CpblCalendarHelper(mActivity);
         final String gameKind = getGameKind(mKind);
         final Resources resources = mActivity.getResources();
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (mHelper == null) {//new object to start get data
+                    //we now query for ASP.NET, so reuse the same object
+                    mHelper = new CpblCalendarHelper(mActivity);
+                }
+                if (clearCache) {//remove all data
+                    mAllGamesCache.clear();
+                }
                 //[118]dolphin++ add check delay games
                 if (mYear >= 2014 && mDelayGames2014.get(mYear) == null) {
                     doQueryStateUpdateCallback(R.string.title_download_delay_games);
