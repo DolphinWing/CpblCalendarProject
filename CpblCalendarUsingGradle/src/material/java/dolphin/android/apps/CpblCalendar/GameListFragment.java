@@ -6,6 +6,7 @@ import android.app.ListFragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +123,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         final ListView listView = getListView();
         listView.setOnItemLongClickListener(this);
 
-        final ActionBarActivity activity = (ActionBarActivity) getActivity();
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
         //https://github.com/makovkastar/FloatingActionButton
         FloatingActionButton floatingActionButton =
                 (FloatingActionButton) activity.findViewById(R.id.button_floating_action);

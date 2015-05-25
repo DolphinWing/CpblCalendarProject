@@ -14,7 +14,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -42,7 +42,7 @@ import dolphin.android.net.HttpHelper;
  * Base implementation of CalendarActivity for different style
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public abstract class CalendarActivity extends ActionBarActivity//Activity
+public abstract class CalendarActivity extends AppCompatActivity//ActionBarActivity//Activity
         implements EmptyFragmentWithCallbackOnResume.OnFragmentAttachedListener {
 
     protected final static String TAG = "CalendarActivity";
@@ -134,7 +134,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
         super.onPause();
     }
 
-    protected abstract ActionBarActivity getActivity();
+    protected abstract AppCompatActivity getActivity();
 
     /**
      * initial the query pane
@@ -260,13 +260,15 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
     protected void query_to_update(boolean quick_refresh) {
         onLoading(true);
         mIsQuery = true;//Log.d(TAG, "onQueryClick");
-        setSupportProgressBarIndeterminateVisibility(true);
+        setProgressBarIndeterminateVisibility(true);
 
         final ActionBar actionBar = getSupportActionBar();
         final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
 
         String kind = mSpinnerKind.getSelectedItem().toString();
-        actionBar.setTitle(kind);
+        if (actionBar != null) {
+            actionBar.setTitle(kind);
+        }
 
         String gameYear = mSpinnerYear.getSelectedItem().toString();
         int year = Integer.parseInt(gameYear.split(" ")[0]);
@@ -279,22 +281,24 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
 
         int fieldIndex = mSpinnerField.getSelectedItemPosition();
         String fieldId = mGameField[fieldIndex];
-        if (fieldIndex > 0) {
-            String field = String.format("%s%s", getString(R.string.title_at),
-                    mSpinnerField.getSelectedItem().toString());
-            if (isTablet) {
-                actionBar.setSubtitle(field);
-            } else {
-                actionBar.setTitle(String.format("%s%s", kind, field));
+        if (actionBar != null) {
+            if (fieldIndex > 0) {
+                String field = String.format("%s%s", getString(R.string.title_at),
+                        mSpinnerField.getSelectedItem().toString());
+                if (isTablet) {
+                    actionBar.setSubtitle(field);
+                } else {
+                    actionBar.setTitle(String.format("%s%s", kind, field));
+                }
+            } else {//clear ActionBar subtitle first
+                actionBar.setSubtitle("");
             }
-        } else {//clear ActionBar subtitle first
-            actionBar.setSubtitle("");
-        }
-        //set time string and kind to ActionBar
-        if (isTablet) {
-            actionBar.setTitle(time_str + " " + kind);
-        } else {
-            actionBar.setSubtitle(time_str);
+            //set time string and kind to ActionBar
+            if (isTablet) {
+                actionBar.setTitle(time_str + " " + kind);
+            } else {
+                actionBar.setSubtitle(time_str);
+            }
         }
 
         final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
@@ -366,7 +370,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
             mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
             mProgressText.setText(is_load ? getString(R.string.title_download) : "");
         }
-        setSupportProgressBarIndeterminateVisibility(is_load);
+        setProgressBarIndeterminateVisibility(is_load);
     }
 
     public void onLoading(boolean is_load) {
@@ -408,12 +412,12 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                     mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
                 }
 
-                ArrayList<Game> gameList = null;
+                ArrayList<Game> gameList;
                 Calendar now = CpblCalendarHelper.getNowTime();
                 boolean thisYear = (mYear == now.get(Calendar.YEAR));
 
                 if (mMonth > 12) {//read all
-                    gameList = new ArrayList<Game>();
+                    gameList = new ArrayList<>();
                     for (int i = 1; i <= 12; i++) {
                         int key = mYear * 12 + i;
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
@@ -449,7 +453,7 @@ public abstract class CalendarActivity extends ActionBarActivity//Activity
                     if (OFFLINE_DEBUG) {//offline debug
                         gameList = Utils.get_debug_list(getActivity(), mYear, mMonth);
                     } else if (resources.getBoolean(R.bool.demo_no_data)) {
-                        gameList = new ArrayList<Game>();//null;//[74]++
+                        gameList = new ArrayList<>();//null;//[74]++
                     } else {//try local cache
 //                        if (mYear < now.get(Calendar.YEAR) && mHelper.hasCache(mYear, mMonth)) {
 //                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
