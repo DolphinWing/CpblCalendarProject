@@ -441,15 +441,16 @@ public class CpblCalendarHelper extends HttpHelper {
 //      <table><tr class='suspend'><td>
 //      <table><tr><th></th><th>51</th><th></th></tr></table>
 //      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
-                                if (games[g].contains("<td colspan='3' class='suspend'>")) {
-                                    //Log.v(TAG, String.format("suspend day=%d", d));
-                                    continue;//don't add to list
-                                }
+
                                 //use <tr class="game"> to get games
                                 String[] gamesHack = games[g].split("<tr class=\"game\">");
                                 //Log.d(TAG, String.format("gamesHack %d", gamesHack.length));
                                 for (int h = 1; h < gamesHack.length; h++) {
                                     String gameStr = gamesHack[0] + gamesHack[h];
+                                    if (gameStr.contains("<td colspan='3' class='suspend'>")) {
+                                        //Log.v(TAG, String.format("suspend day=%d", d));
+                                        continue;//don't add to list
+                                    }
                                     //Log.d(TAG, gameStr);
                                     Game g1 = parseOneGameHtml2014(year, month, d, kind, gameStr,
                                             delayGames);
@@ -1140,22 +1141,42 @@ public class CpblCalendarHelper extends HttpHelper {
 //      <table><tr class='suspend'><td>
 //      <table><tr><th></th><th>51</th><th></th></tr></table>
 //      </td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2014/04/27</td></tr>
-                                if (game1.contains("<td colspan='3' class='suspend'>")) {
-                                    //we need these games
-                                    Matcher m = Pattern.compile("<th>([0-9]+)</th>").matcher(game1);
-                                    if (m.find()) {
-                                        //Log.d(TAG, "  id = " + m.group(1));
-                                        Game game = new Game();
-                                        game.Id = Integer.parseInt(m.group(1));
-                                        game.StartTime = getGameTime(year, month, d);
-                                        if (delayedGames.get(game.Id) != null) {
-                                            //Log.d(TAG, "bypass " + game.toString());
-                                            continue;
+
+// @2015/05/24 another example that one has final but another can't play
+//		<table><tr class='suspend'><td>
+//		<table><tr><th>補賽</th><th>87</th><th></th></tr></table>
+//		</td></tr><tr><td>
+//		<table><tr><td class='no'>1</td>
+//        <td><a href='game/box.aspx?gameno=01&year=2015&game=87'>
+//        <img src='http://cpbl-elta.cdn.hinet.net/assets/images/c_final.png'></a></td>
+//        <td class='info'>2</td></tr></table>
+//		</td></tr></table>
+//		</td></tr>
+//		<tr class="game">
+//                 				<td class="score">
+//			<table><tr class='suspend'><td>
+//			<table><tr><th></th><th>89</th><th></th></tr></table>
+//			</td></tr><tr><td><table><tr><td colspan='3' class='suspend'>延賽至2015/06/20</td>
+
+                                String[] gamesHack = game1.split("<tr class=\"game\">");
+                                for (int h = 1; h < gamesHack.length; h++) {
+                                    String gameStr = gamesHack[0] + gamesHack[h];
+                                    if (gameStr.contains("<td colspan='3' class='suspend'>")) {
+                                        //we need these games
+                                        Matcher m = Pattern.compile("<th>([0-9]+)</th>").matcher(gameStr);
+                                        if (m.find()) {
+                                            //Log.d(TAG, "  id = " + m.group(1));
+                                            Game game = new Game();
+                                            game.Id = Integer.parseInt(m.group(1));
+                                            game.StartTime = getGameTime(year, month, d);
+                                            if (delayedGames.get(game.Id) != null) {
+                                                //Log.d(TAG, "bypass " + game.toString());
+                                                continue;
+                                            }
+                                            delayedGames.put(game.Id, game);
                                         }
-                                        delayedGames.put(game.Id, game);
-                                    }
+                                    }//else: normal games
                                 }
-                                //else: normal games
                             }
                         }//check every games
                     }
