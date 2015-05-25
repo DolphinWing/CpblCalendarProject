@@ -29,7 +29,7 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
-    <style name="Theme.Holo_green.Settings" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Holo_green.Settings" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">true</item>
         <item name="colorPrimary">@color/holo_green_dark</item>
     </style>

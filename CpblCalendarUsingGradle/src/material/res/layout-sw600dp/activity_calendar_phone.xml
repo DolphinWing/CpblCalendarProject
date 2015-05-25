@@ -45,6 +45,7 @@
         </FrameLayout>
 
         <android.support.v7.widget.Toolbar
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
@@ -63,7 +64,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginBottom="@dimen/padding_large"
             android:layout_marginRight="@dimen/floating_action_button_margin"
-            android:src="@drawable/ic_action_action_search"
+            android:src="@drawable/ic_action_action_event"
             app:fab_colorNormal="@color/holo_green_light"
             app:fab_colorPressed="@color/holo_green_dark"
             app:fab_type="normal"

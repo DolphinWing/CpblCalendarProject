@@ -11,7 +11,7 @@
         android:id="@+id/action_search"
         app:showAsAction="ifRoom|withText"
         android:title="@string/title_query"
-        android:icon="@drawable/ic_action_action_search" />
+        android:icon="@drawable/ic_action_action_event" />
 
     <item
         android:id="@+id/action_refresh"
