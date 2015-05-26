@@ -35,7 +35,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
-[150] @ 2015-04-05
+[151] @ 2015-05-27
+    fix delay game parsing of this year
+        don't just restore from cache, some may not use the app before
+
+[150] @ 2015-05-25
     fix delay games parsing
         針對補賽的時候，遇到一場有比一場沒比的時候處理出了問題(sample: 2015/05/24)
     fix team name

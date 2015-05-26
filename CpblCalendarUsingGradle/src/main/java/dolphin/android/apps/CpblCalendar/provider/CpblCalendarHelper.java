@@ -1081,7 +1081,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
         //if year == this year, do to current month
         //if year == last year, do all
-        int m1 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 3;
+        int m1 = 3;//now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 3;
         int m2 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 10;
         for (int month = m1; month <= m2; month++) {
             String html = null;// = getUrlContent(URL_SCHEDULE_2014);
