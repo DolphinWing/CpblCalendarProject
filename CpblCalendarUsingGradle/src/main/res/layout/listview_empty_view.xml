@@ -9,20 +9,28 @@
     tools:context=".SplashActivity">
 
     <TextView
+        android:id="@android:id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/no_games_this_month"
         android:layout_centerInParent="true"
-        android:id="@android:id/text1"
-        android:paddingBottom="@dimen/padding_very_large" />
+        android:paddingBottom="@dimen/padding_very_large"
+        android:text="@string/no_games_this_month" />
 
     <Button
+        android:id="@android:id/button1"
+        style="@style/ButtonHolo_green"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/action_go_to_website"
-        android:id="@android:id/button1"
         android:layout_below="@android:id/text1"
         android:layout_centerHorizontal="true"
-        style="@style/ButtonHolo_green" />
+        android:text="@string/action_go_to_website" />
+
+    <TextView
+        android:id="@android:id/text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@android:id/text1"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="@dimen/padding_very_large" />
 
 </RelativeLayout>

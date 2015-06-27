@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
@@ -37,7 +38,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
      *
      * @param gameArrayList game list
      */
-    public void updateAdapter(ArrayList<Game> gameArrayList) {
+    public void updateAdapter(ArrayList<Game> gameArrayList, String year, String month) {
         final Activity activity = getActivity();
         //http://stackoverflow.com/a/11621405
         //this.setListShown(false);
@@ -71,16 +72,17 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         }
 
         if (PreferenceUtils.getFavoriteTeams(activity).size() > 0) {
-            this.getListView().setEmptyView(getEmptyView());
+            this.getListView().setEmptyView(getEmptyView(year, month));
         } else {
-            this.setEmptyText(getString(R.string.no_favorite_teams));
+            this.setEmptyText(String.format("%s %s\n%s", year, month,
+                    getString(R.string.no_favorite_teams)));
         }
         this.setListShown(true);
     }
 
     private View mEmptyView = null;
 
-    private View getEmptyView() {
+    private View getEmptyView(String year, String month) {
         //http://stackoverflow.com/a/15990955/2673859
         if (mEmptyView == null) {
             mEmptyView = getActivity().getLayoutInflater().inflate(R.layout.listview_empty_view, null);
@@ -96,6 +98,10 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
                         CpblCalendarHelper.startActivityToCpblSchedule(getActivity());
                     }
                 });
+            }
+            TextView text2 = (TextView) mEmptyView.findViewById(android.R.id.text2);
+            if (text2 != null) {
+                text2.setText(String.format("%s %s", year, month));
             }
         }
         return mEmptyView;

@@ -35,6 +35,14 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[156] @ 2015-06-27
+    add year/month to empty text
+[155] @ 2015-06-25
+    change icon drawable for month selector
+    set enable/disable leader board item for maintaining the menu item order
+[154] @ 2015-06-23
+    add quick month selector
+
 [153] @ 2015-06-10
 [152] @ 2015-06-10
     merge the latest code to Gingerbread build
