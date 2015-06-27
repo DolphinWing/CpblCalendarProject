@@ -106,11 +106,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.splash, menu);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//[29]dolphin++
-            if (menu.findItem(R.id.action_leader_board) != null) {
-                menu.removeItem(R.id.action_leader_board);
-            }
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -121,10 +116,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         boolean visible = !drawerOpen & !IsQuery();
         menu.findItem(R.id.action_settings).setVisible(visible);
         menu.findItem(R.id.action_refresh).setVisible(visible);
-        MenuItem item = menu.findItem(R.id.action_leader_board);//[26]dolphin++
-        if (item != null) {
-            item.setVisible(visible);//[87]dolphin++
-        }
+        menu.findItem(R.id.action_leader_board).setVisible(true);
+        menu.findItem(R.id.action_leader_board).setEnabled(visible);//keep the menu order
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -180,7 +173,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         GameListFragment frag1 =
                 (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
         if (frag1 != null) {
-            frag1.updateAdapter(gameArrayList);
+            frag1.updateAdapter(gameArrayList, mSpinnerYear.getSelectedItem().toString(),
+                    mSpinnerMonth.getSelectedItem().toString());
             try {
                 trans.commitAllowingStateLoss();//[30]dolphin++
             } catch (IllegalStateException e) {

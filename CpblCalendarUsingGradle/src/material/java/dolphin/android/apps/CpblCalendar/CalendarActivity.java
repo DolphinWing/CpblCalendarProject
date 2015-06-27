@@ -193,7 +193,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     public boolean onPrepareOptionsMenu(Menu menu) {
         mCacheMode = PreferenceUtils.isCacheMode(this);
         //Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
-        android.view.MenuItem item = menu.findItem(R.id.action_cache_mode);
+        MenuItem item = menu.findItem(R.id.action_cache_mode);
         if (item != null) {
             //item.setIcon(mCacheMode ? R.drawable.holo_green_btn_check_on_holo_dark
             //        : R.drawable.holo_green_btn_check_off_holo_dark);
@@ -201,6 +201,17 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     : R.string.action_cache_mode);
             //item.setCheckable(mCacheMode);
             item.setVisible(!mIsQuery && getResources().getBoolean(R.bool.feature_cache_mode));
+        }
+
+        //[154]dolphin++ add check if to show quick month chooser
+        int month = mSpinnerMonth.getSelectedItemPosition() + 1;
+        item = menu.findItem(R.id.action_fast_rewind);
+        if (item != null) {
+            item.setVisible(month > 1 && month <= 12);
+        }
+        item = menu.findItem(R.id.action_fast_forward);
+        if (item != null) {
+            item.setVisible(month < 12);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -246,6 +257,20 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     showCacheModeEnableDialog(item);
                 }
                 return true;
+            case R.id.action_fast_rewind://[154]dolphin++
+                //FIXME: select previous one, and do query
+                if (mSpinnerMonth.getSelectedItemPosition() > 0) {
+                    mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() - 1);
+                    mButtonQuery.performClick();
+                }
+                break;
+            case R.id.action_fast_forward://[154]dolphin++
+                //FIXME: select preceeding one, and do query
+                if (mSpinnerMonth.getSelectedItemPosition() < 12) {
+                    mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() + 1);
+                    mButtonQuery.performClick();
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -275,8 +300,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         //Log.d(TAG, String.format("  mSpinnerYear: %d", year));
         int month = mSpinnerMonth.getSelectedItemPosition() + 1;
         //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
-        String time_str = String.format("%s %s", gameYear,
-                mSpinnerMonth.getSelectedItem().toString());
+        String time_str = gameYear;//[154]-- String.format("%s %s", gameYear,
+                //mSpinnerMonth.getSelectedItem().toString());
         time_str = mSpinnerMonth.getSelectedItemPosition() >= 12 ? gameYear : time_str;//[146]++
 
         int fieldIndex = mSpinnerField.getSelectedItemPosition();

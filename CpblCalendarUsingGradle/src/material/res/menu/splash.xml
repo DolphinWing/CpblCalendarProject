@@ -8,6 +8,18 @@
         android:visible="false" />
 
     <item
+        android:id="@+id/action_fast_rewind"
+        app:showAsAction="withText"
+        android:title="@string/title_fast_rewind"
+        android:icon="@drawable/ic_action_navigation_arrow_back" />
+
+    <item
+        android:id="@+id/action_fast_forward"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/title_fast_forward"
+        android:icon="@drawable/ic_action_navigation_arrow_forward" />
+
+    <item
         android:id="@+id/action_search"
         app:showAsAction="ifRoom|withText"
         android:title="@string/title_query"
