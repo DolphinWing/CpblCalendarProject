@@ -109,8 +109,8 @@
     <!-- ListView Empty view -->
     <string name="action_go_to_website">前往中華職棒網站</string>
     <!-- live message -->
-    <string name="title_live_on_cpbltv">Live! on CPBL TV</string>
-    <string name="title_live_now">Live! on %s</string>
+    <string name="title_live_on_cpbltv">Live! CPBL TV</string>
+    <string name="title_live_now">Live!</string>
     <!-- download message -->
     <string name="title_download">載入中</string>
     <string name="title_download_delay_games">更新補賽資料中</string>

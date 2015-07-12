@@ -1,8 +1,8 @@
 /**
- *  Created by dolphin on 2013/6/1.
- *
- *  Date provider.
- *  Implements the download HTML source and transform to our data structure.
+ * Created by dolphin on 2013/6/1.
+ * <p/>
+ * Date provider.
+ * Implements the download HTML source and transform to our data structure.
  */
 package dolphin.android.apps.CpblCalendar.provider;
 
@@ -488,35 +488,42 @@ public class CpblCalendarHelper extends HttpHelper {
         context.startActivity(intent);
     }
 
-//                <div class="topinfo">
-//                    <ul>
-//                        <li><img src="assets/images/logo/L01_logo_07.png"></li>
-//                        <li>4</li>
-//                        <li>4</li>
-//                        <li>1</li>
-//                        <li>0.500</li>
-//                        <li>1</li>
-//                    </ul>
-//                </div>
+//    <div class="topinfo">
+//          <ul>
+//              <li>
+//                  <!-- team_rank: 1 -->
+//                  <a href="/team_brief_L01.aspx"><img src="http://cpbl-elta.cdn.hinet.net/assets/images/logo/L01_logo_07.png"></a></li>
+//              <li>4</li>
+//              <li>1</li>
+//              <li>0</li>
+//              <li>0.800</li>
+//              <li>-</li>
+//          </ul>
+
     private final static String PATTERN_BOARD_TEAM_2014 =
-            "<div class=\"topinfo\">[^<]*<ul>[^<]*<li><a[^<]*<img src=\"([^\"]+)\"></a></li>[^<]*" +
-                    "<li>([^<]+)</li>[^<]*<li>([^<]+)</li>[^<]*<li>([^<]+)</li>[^<]*" +
-                    "<li>([^<]+)</li>[^<]*<li>([^<]*)</li>*";
+            "<div class=\"topinfo\">[^<]*" +
+                    "<ul>[^<]*<li>[^<]*<[^<]*" +
+                    "<a[^<]*<img src=\"([^\"]+)\"></a></li>[^<]*" +
+                    "<li>([^<]+)</li>[^<]*" +
+                    "<li>([^<]+)</li>[^<]*" +
+                    "<li>([^<]+)</li>[^<]*" +
+                    "<li>([^<]+)</li>[^<]*" +
+                    "<li>([^<]*)</li>*";
 
     public ArrayList<Stand> query2014LeaderBoard() {
         long startTime = System.currentTimeMillis();
-        ArrayList<Stand> list = new ArrayList<Stand>();
+        ArrayList<Stand> list = new ArrayList<>();
         try {
             String html = getUrlContent(URL_BASE);
-            if (html != null && html.contains("<!--standing-->")
-                    && html.contains("<!--top5-->")) {
+            if (html != null && html.contains("<!--standing-->") && html.contains("<!--top5-->")) {
                 String boardHtml = html.substring(html.indexOf("<!--standing-->"),
                         html.indexOf("<!--top5-->"));
                 //Log.d(TAG, mScoreBoardHtml);
                 Matcher matchTeams = Pattern.compile(PATTERN_BOARD_TEAM_2014).matcher(boardHtml);
-                while (/*matchTeams != null && */matchTeams.find()) {
+                while (matchTeams.find()) {
                     Log.d(TAG, matchTeams.group(1));
-                    Team team = Team.getTeam2014(mContext, matchTeams.group(1));
+                    Team team = Team.getTeam2014(mContext, matchTeams.group(1),
+                            CpblCalendarHelper.getNowTime().get(Calendar.YEAR));
                     int win = Integer.parseInt(matchTeams.group(2));
                     int lose = Integer.parseInt(matchTeams.group(3));
                     int tie = Integer.parseInt(matchTeams.group(4));
@@ -613,8 +620,8 @@ public class CpblCalendarHelper extends HttpHelper {
             //Log.d(TAG, "  AWAY: " + matchTeams.group(1));
             game.Field = matchTeams.group(2);
             //Log.d(TAG, "  HOME: " + matchTeams.group(3));
-            game.AwayTeam = Team.getTeam2014(mContext, matchTeams.group(1));
-            game.HomeTeam = Team.getTeam2014(mContext, matchTeams.group(3));
+            game.AwayTeam = Team.getTeam2014(mContext, matchTeams.group(1), year);
+            game.HomeTeam = Team.getTeam2014(mContext, matchTeams.group(3), year);
         } else {
             game.AwayTeam = new Team(mContext, Team.ID_UNKNOWN);
             game.HomeTeam = new Team(mContext, Team.ID_UNKNOWN);
@@ -1078,6 +1085,8 @@ public class CpblCalendarHelper extends HttpHelper {
             Log.v(TAG, String.format("use cached data, delay games = %d", delayedGames.size()));
             return delayedGames;
         }
+
+        //TODO: read from Google Drive
 
         //if year == this year, do to current month
         //if year == last year, do all

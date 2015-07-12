@@ -24,4 +24,6 @@
     <color name="holo_green_dark">#FF669900</color>
 
     <color name="shadow_background">#20000000</color>
+
+    <color name="circle_image_border">#66cccccc</color>
 </resources>

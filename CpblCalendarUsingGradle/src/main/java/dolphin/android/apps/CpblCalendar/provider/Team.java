@@ -358,16 +358,42 @@ public class Team {
         return R.drawable.no_logo;
     }
 
-    public static Team getTeam2014(Context context, String png) {
+    public static Team getTeam2014(Context context, String png, int year) {
         int id = ID_UNKNOWN;
         if (png.contains("E02")) {
             id = ID_CT_ELEPHANTS;
         } else if (png.contains("L01")) {
             id = ID_UNI_LIONS;
         } else if (png.contains("A02")) {
-            id = ID_LAMIGO_MONKEYS;
+            if (year <= 2003) {
+                id = ID_FIRST_KINGO;
+            } else if (year <= 2010){
+                id = ID_LANEW_BEARS;
+            } else {
+                id = ID_LAMIGO_MONKEYS;
+            }
         } else if (png.contains("B03")) {
             id = ID_EDA_RHINOS;
+        } else if (png.contains("E01")) {
+            id = ID_ELEPHANTS;
+        } else if (png.contains("B02")) {
+            id = ID_SINON_BULLS;
+        } else if (png.contains("W01")) {
+            id = (year <= 2001) ? ID_CT_WHALES : ID_KG_WHALES;
+        } else if (png.contains("G02")) {
+            id = ID_MEDIA_T_REX;
+        } else if (png.contains("G01")) {
+            id = (year <= 2003) ? ID_MKT_COBRAS : ID_MKT_SUNS;
+        } else if (png.contains("A01")) {
+            id = ID_FIRST_KINGO;
+        } else if (png.contains("T01")) {
+            id = ID_SS_TIGERS;
+        } else if (png.contains("D01")) {
+            id = ID_W_DRAGONS;
+        } else if (png.contains("C01")) {
+            id = ID_TIME_EAGLES;
+        } else if (png.contains("B01")) {
+            id = ID_JUNGO_BEARS;
         }
         return new Team(context, id);
     }

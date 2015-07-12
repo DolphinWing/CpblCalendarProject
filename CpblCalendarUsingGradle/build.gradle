@@ -40,8 +40,8 @@ android {
         material {
             minSdkVersion 14
             targetSdkVersion 22
-            versionName '2.0.8'
-            versionCode 156
+            versionName '2.1.0'
+            versionCode 157
         }
         official {
             minSdkVersion 9

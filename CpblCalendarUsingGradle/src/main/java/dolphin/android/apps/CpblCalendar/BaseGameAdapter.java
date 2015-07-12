@@ -194,7 +194,8 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             }
         } else if (game.Channel != null) {
             tv6.setVisibility(View.VISIBLE);
-            tv6.setText(bLiveNow ? mContext.getString(R.string.title_live_now, game.Channel) : game.Channel);
+            tv6.setText(bLiveNow ? Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
+                    mContext.getString(R.string.title_live_now), game.Channel)) : game.Channel);
         } else {
             tv6.setVisibility(View.GONE);
         }

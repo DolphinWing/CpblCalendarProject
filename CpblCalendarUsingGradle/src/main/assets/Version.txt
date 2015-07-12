@@ -35,6 +35,15 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[157] @ 2015-07-11
+    fix query cannot get data anymore, use query2014 for all
+    soften CircleImageView border
+    fix leader board no data
+        source html has new comments: <!-- team_rank: 1 -->
+    adjust layout to expand matchup title and extra message
+    fix Live text not in red color
+    fix Live Now game cannot navigate to web page
+
 [156] @ 2015-06-27
     add year/month to empty text
 [155] @ 2015-06-25

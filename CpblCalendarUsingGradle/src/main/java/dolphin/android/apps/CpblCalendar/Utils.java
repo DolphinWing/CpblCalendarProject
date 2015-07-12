@@ -276,6 +276,10 @@ public class Utils {
         } else {
             url = game.Url;//default is live url
             //Log.d(TAG, game.StartTime.getTime().toString());
+            //http://www.cpbl.com.tw/game/playbyplay.aspx?gameno=01&year=2015&game=133
+            url = String.format("%s/game/playbyplay.aspx?gameno=%s&year=%d&game=%d",
+                    CpblCalendarHelper.URL_BASE,
+                    game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
         }
 
         if (/*game != null && */url != null) {//[78]-- game.IsFinal) {
