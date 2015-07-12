@@ -398,7 +398,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             @Override
             public void run() {
                 //[118]dolphin++ add check delay games
-                if (mYear >= 2014 && mDelayGames2014.get(mYear) == null) {
+                //[158]dolphin++ only 2005 and after has delay games record in web page
+                if (mYear >= 2005 && mDelayGames2014.get(mYear) == null) {
                     doQueryStateUpdateCallback(R.string.title_download_delay_games);
                     mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
                 }
@@ -412,18 +413,18 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                         gameList = new ArrayList<Game>();//null;//[74]++
                     } else {//try local cache
                         //query from Internet
-                        if (mYear < 2014) {
-                            gameList = mHelper.query(gameKind, mYear, mMonth, mField);
-                        } else if (resources.getBoolean(R.bool.demo_zxc22)) {
-                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-                                    mYear, mMonth));
-                            gameList = mHelper.query2014zxc(mMonth);
-                        } else {//do real job
+//                        if (mYear < 2014) {
+//                            gameList = mHelper.query(gameKind, mYear, mMonth, mField);
+//                        } else if (resources.getBoolean(R.bool.demo_zxc22)) {
+//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
+//                                    mYear, mMonth));
+//                            gameList = mHelper.query2014zxc(mMonth);
+//                        } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
                             gameList = mHelper.query2014(mYear, mMonth, gameKind, mDelayGames2014.get(mYear));
                             doQueryStateUpdateCallback(R.string.title_download_complete);
-                        }
+//                        }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
 

@@ -209,4 +209,17 @@
         <item>4018397</item>
     </integer-array>
 
+    <string-array name="year_delay_game_2014">
+        <item>0B-oMP4622t0hMWk2WVBGLVdvalk</item><!-- 2005 -->
+        <item>0B-oMP4622t0hb3lPdmF5Xzhkc0k</item><!-- 2006 -->
+        <item>0B-oMP4622t0helFVUm5EcjhJM0E</item><!-- 2007 -->
+        <item>0B-oMP4622t0hcWdVQi1KY3p0WTQ</item><!-- 2008 -->
+        <item>0B-oMP4622t0hd2V2TGY5eW90Ym8</item><!-- 2009 -->
+        <item>0B-oMP4622t0hWEN3V0dxcDJlaDQ</item><!-- 2010 -->
+        <item>0B-oMP4622t0hUmx1anIxTThKbUk</item><!-- 2011 -->
+        <item>0B-oMP4622t0hWUJoMHp4bUFrZTA</item><!-- 2012 -->
+        <item>0B-oMP4622t0hdHhjR2FKZS1kV2c</item><!-- 2013 -->
+        <item>0B-oMP4622t0hbWsxblF2NGd3V00</item><!-- 2014 -->
+    </string-array>
+
 </resources>

@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpHelper;
 import dolphin.android.util.FileUtils;
 
@@ -1076,6 +1077,10 @@ public class CpblCalendarHelper extends HttpHelper {
      */
     public SparseArray<Game> queryDelayGames2014(Context context, int year) {
         long startTime = System.currentTimeMillis();
+        if (year < 2005) {
+            Log.w(TAG, String.format("no %d delay game info in www.cpbl.com.tw", year));
+            return null;
+        }
 
         //read current month
         Calendar now = getNowTime();
@@ -1086,7 +1091,19 @@ public class CpblCalendarHelper extends HttpHelper {
             return delayedGames;
         }
 
-        //TODO: read from Google Drive
+        //read from Google Drive
+        String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
+        int index = year - 2005;
+        if (index < driveIds.length) {//already have cached data in Google Drive
+            String driveId = driveIds[year - 2005];
+            File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+            GoogleDriveHelper.download(context, driveId, f);
+            delayedGames = restoreDelayGames2014(context, year);//read again
+            if (delayedGames.size() > 0) {//use cache directly
+                Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
+                return delayedGames;
+            }
+        }
 
         //if year == this year, do to current month
         //if year == last year, do all
@@ -1212,6 +1229,10 @@ public class CpblCalendarHelper extends HttpHelper {
             delay_str += String.format("%d/%s;", g.Id,
                     new SimpleDateFormat("MM/dd", Locale.TAIWAN).format(g.StartTime.getTime()));
         }
+        storeDelayGames2014(context, year, delay_str);
+    }
+
+    private void storeDelayGames2014(Context context, int year, String delay_str) {
         File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
         FileUtils.writeStringToFile(f, delay_str);
     }

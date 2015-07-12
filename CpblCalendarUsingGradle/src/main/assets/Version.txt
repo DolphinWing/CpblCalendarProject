@@ -35,6 +35,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[158/159] @ 2015-07-12
+    use Google Drive to do delay game cache for past years (only to 2005)
+        old schedules didn't report the delay games
+
 [157] @ 2015-07-11
     fix query cannot get data anymore, use query2014 for all
     soften CircleImageView border

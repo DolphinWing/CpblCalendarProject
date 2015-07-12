@@ -432,10 +432,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     mAllGamesCache.clear();
                 }
                 //[118]dolphin++ add check delay games
-//                if (mYear >= 2014 && mDelayGames2014.get(mYear) == null) {
-                doQueryStateUpdateCallback(R.string.title_download_delay_games);
-                mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
-//                }
+                //[158]dolphin++ only 2005 and after has delay games record in web page
+                if (mYear >= 2005 && mDelayGames2014.get(mYear) == null) {
+                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
+                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
+                }
 
                 ArrayList<Game> gameList;
                 Calendar now = CpblCalendarHelper.getNowTime();
