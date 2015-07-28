@@ -17,6 +17,7 @@ import java.util.Calendar;
 import dolphin.android.apps.CpblCalendar.R;
 
 /**
+ * Team object
  * Created by dolphin on 2013/6/8.
  */
 public class Team {
@@ -55,6 +56,11 @@ public class Team {
     public final static int ID_MKT_SUNS = 16;
     //ID_ELEPHANTS -> ID_CT_ELEPHANTS
     public final static int ID_CT_ELEPHANTS = 17;
+
+    public final static int ID_ALL_STAR_RED = 101;
+    public final static int ID_ALL_STAR_WHITE = 102;
+    public final static int ID_ALL_STAR_SPEED_WHITE = 103;
+    public final static int ID_ALL_STAR_POWER_RED = 104;
 
     /**
      * get the team id from raw data
@@ -167,6 +173,14 @@ public class Team {
                 return R.drawable.lanew_2004_2010;
             case ID_LAMIGO_MONKEYS:
                 return R.drawable.lamigo_2011_2013;
+            case ID_ALL_STAR_RED://[161]++
+                return R.drawable.allstar_red;
+            case ID_ALL_STAR_WHITE://[161]++
+                return R.drawable.allstar_white;
+            case ID_ALL_STAR_POWER_RED://[161]++
+                return R.drawable.allstar_power_red;
+            case ID_ALL_STAR_SPEED_WHITE://[161]++
+                return R.drawable.allstar_speed_white;
         }
         return R.drawable.ic_launcher;
     }
@@ -232,6 +246,18 @@ public class Team {
             case ID_CT_ELEPHANTS://[69]dolphin++
                 string_id = R.string.team_ct_elephants;
                 break;
+            case ID_ALL_STAR_RED://[161]++
+                string_id = R.string.team_all_star_red;
+                break;
+            case ID_ALL_STAR_WHITE://[161]++
+                string_id = R.string.team_all_star_white;
+                break;
+            case ID_ALL_STAR_POWER_RED://[161]++
+                string_id = R.string.team_all_star_power_red;
+                break;
+            case ID_ALL_STAR_SPEED_WHITE://[161]++
+                string_id = R.string.team_all_star_speed_white;
+                break;
         }
         return context.getString(string_id);
     }
@@ -296,6 +322,14 @@ public class Team {
                 break;
             case ID_CT_ELEPHANTS://[69]dolphin++
                 string_id = R.string.team_ct_elephants_short;
+                break;
+            case ID_ALL_STAR_RED://[161]++
+            case ID_ALL_STAR_POWER_RED://[161]++
+                string_id = R.string.team_all_star_red_short;
+                break;
+            case ID_ALL_STAR_WHITE://[161]++
+            case ID_ALL_STAR_SPEED_WHITE://[161]++
+                string_id = R.string.team_ct_whales_short;
                 break;
         }
         return context.getString(string_id);
@@ -394,6 +428,14 @@ public class Team {
             id = ID_TIME_EAGLES;
         } else if (png.contains("B01")) {
             id = ID_JUNGO_BEARS;
+        } else if (png.contains("S01")) {
+            id = ID_ALL_STAR_RED;
+        } else if (png.contains("S02")) {
+            id = ID_ALL_STAR_WHITE;
+        } else if (png.contains("S04")) {
+            id = ID_ALL_STAR_SPEED_WHITE;
+        } else if (png.contains("S05")) {
+            id = ID_ALL_STAR_POWER_RED;
         }
         return new Team(context, id);
     }

@@ -157,6 +157,13 @@
     <string name="team_eda_rhinos_short2">義大</string>
     <string name="team_711_lions_short2">統一</string>
     <string name="team_ct_elephants_short2">中信兄弟</string>
+    <!-- 2015-07-29++ ALL STAR GAMES -->
+    <string name="team_all_star_red">明星紅</string>
+    <string name="team_all_star_white">明星白</string>
+    <string name="team_all_star_power_red">臺銀力量紅</string>
+    <string name="team_all_star_speed_white">台啤速度白</string>
+    <string name="team_all_star_red_short">紅</string>
+    <string name="team_all_star_white_short">白</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">
