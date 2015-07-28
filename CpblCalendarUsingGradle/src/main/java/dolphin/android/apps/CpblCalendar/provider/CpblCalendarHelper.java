@@ -1251,6 +1251,9 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
+        if (context == null || context.getExternalCacheDir() == null) {
+            return delayedGames;//[160]++ avoid use NullPointer to File constructor
+        }
         //restore data from cache
         File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
         String delay_str = FileUtils.readFileToString(f);
