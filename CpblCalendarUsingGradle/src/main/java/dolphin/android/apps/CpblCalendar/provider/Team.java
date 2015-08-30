@@ -413,11 +413,11 @@ public class Team {
         } else if (png.contains("B02")) {
             id = ID_SINON_BULLS;
         } else if (png.contains("W01")) {
-            id = (year <= 2001) ? ID_CT_WHALES : ID_KG_WHALES;
+            id = (year <= 2001) ? ID_KG_WHALES : ID_CT_WHALES;
         } else if (png.contains("G02")) {
             id = ID_MEDIA_T_REX;
         } else if (png.contains("G01")) {
-            id = (year <= 2003) ? ID_MKT_COBRAS : ID_MKT_SUNS;
+            id = (year <= 2003) ? ID_MKT_SUNS : ID_MKT_COBRAS;
         } else if (png.contains("A01")) {
             id = ID_FIRST_KINGO;
         } else if (png.contains("T01")) {
