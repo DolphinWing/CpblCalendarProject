@@ -1,11 +1,17 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +36,8 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * <p/>
  * CalendarActivity for phone version, with a ActionBarDrawer pane.
  */
-public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback {
+public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private DrawerLayout mDrawerLayout;
 
@@ -67,6 +74,36 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         mAdView = (AdView) findViewById(R.id.adView);
 
+        findViewById(R.id.button_floating_action).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mDrawerLayout.openDrawer(mDrawerList);
+                    }
+                }
+        );
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                loadAds();//load ads in the background
+            }
+        });
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            autoLoadGames(savedInstanceState);
+        } else {//ask user to grant permission
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                showRequestStorageRationale();
+            } else {
+                requestStoragePermission();
+            }
+        }
+    }
+
+    private void autoLoadGames(Bundle savedInstanceState) {
         //[39]dolphin++ for rotation
         final int kind = (savedInstanceState != null)
                 ? savedInstanceState.getInt(KEY_GAME_KIND)
@@ -90,16 +127,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 loadAds();//load ads in the background
             }
         });
-
-
-        findViewById(R.id.button_floating_action).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mDrawerLayout.openDrawer(mDrawerList);
-                    }
-                }
-        );
     }
 
     @Override
@@ -285,5 +312,44 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             return;//[146]++
         }
         super.onBackPressed();
+    }
+
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(this, new String[] {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        boolean result;
+        for (int i = 0; i < permissions.length; i++) {
+            result = (grantResults[i] == PackageManager.PERMISSION_GRANTED);
+            Log.v(TAG, "permission " + permissions[i] + (result ? " granted" : " denied"));
+        }
+
+        autoLoadGames(null);
+    }
+
+    private void showRequestStorageRationale() {
+        //FIXME: show dialog to ask user to give permission
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.app_name)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        requestStoragePermission();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        autoLoadGames(null);
+                    }
+                });
+        builder.show();
     }
 }

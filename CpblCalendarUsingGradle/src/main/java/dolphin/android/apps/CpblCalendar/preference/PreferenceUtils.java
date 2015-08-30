@@ -320,6 +320,6 @@ public class PreferenceUtils {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(KEY_CACHE_MODE, enabled);
-        editor.commit();
+        editor.apply();
     }
 }

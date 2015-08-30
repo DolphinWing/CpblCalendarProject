@@ -15,6 +15,7 @@ import java.io.File;
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity;
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.SplashActivity;
+import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class AdvancedFragment extends PreferenceFragment {
@@ -35,7 +36,7 @@ public class AdvancedFragment extends PreferenceFragment {
                 p1.setEnabled(false);
                 p1.setSummary(R.string.summary_clear_cache_off);
             }
-            if ((getActivity() == null || getActivity().getExternalCacheDir() == null)) {
+            if ((getActivity() == null || CpblCalendarHelper.getCacheDir(getActivity()) == null)) {
                 p1.setEnabled(false);
                 p1.setSummary(R.string.summary_clear_cache_null);
             }
@@ -51,15 +52,16 @@ public class AdvancedFragment extends PreferenceFragment {
         } else if (key.equals(KEY_CLEAR_CACHE)) {
             boolean r = true;
             File[] caches = null;
-            if (getActivity() != null && getActivity().getExternalCacheDir() != null) {
-                caches = getActivity().getExternalCacheDir().listFiles();
-            }
-            if (caches != null && caches.length > 0) {
-                for (File f : caches) {//delete every file
-                    r &= f.delete();
-                }
-            }
             if (getActivity() != null) {
+                File cacheDir = CpblCalendarHelper.getCacheDir(getActivity());
+                if (cacheDir != null) {
+                    caches = cacheDir.listFiles();
+                }
+                if (caches != null && caches.length > 0) {
+                    for (File f : caches) {//delete every file
+                        r &= f.delete();
+                    }
+                }
                 Toast.makeText(getActivity(), R.string.title_clear_cache_complete,
                         Toast.LENGTH_SHORT).show();
             }

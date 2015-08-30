@@ -6,9 +6,12 @@
  */
 package dolphin.android.apps.CpblCalendar.provider;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ArrayAdapter;
@@ -904,7 +907,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public static ArrayList<Game> getCache(Context context, String fileName) {
         //String fileName = String.format("%04d-%02d.json", year, month);
-        File f = new File(context.getExternalCacheDir(), fileName);
+        File f = new File(getCacheDir(context), fileName);
         //Log.d(TAG, "getCache " + f.getAbsolutePath());
         if (f.exists()) {
             //convert JSON string to ArrayList<Game> object
@@ -932,7 +935,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public static boolean putCache(Context context, String fileName, ArrayList<Game> list) {
         //String fileName = String.format("%04d-%02d.json", year, month);
-        File f = new File(context.getExternalCacheDir(), fileName);
+        File f = new File(getCacheDir(context), fileName);
         if (list == null) {
             return f.delete();
         }
@@ -1096,7 +1099,7 @@ public class CpblCalendarHelper extends HttpHelper {
         int index = year - 2005;
         if (index < driveIds.length) {//already have cached data in Google Drive
             String driveId = driveIds[year - 2005];
-            File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+            File f = new File(getCacheDir(context), String.format("%d.delay", year));
             GoogleDriveHelper.download(context, driveId, f);
             delayedGames = restoreDelayGames2014(context, year);//read again
             if (delayedGames.size() > 0) {//use cache directly
@@ -1233,7 +1236,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     private void storeDelayGames2014(Context context, int year, String delay_str) {
-        File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+        File f = new File(getCacheDir(context), String.format("%d.delay", year));
         FileUtils.writeStringToFile(f, delay_str);
     }
 
@@ -1245,17 +1248,17 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return true if deleted
      */
     public boolean removeDelayGames2014(Context context, int year) {
-        File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+        File f = new File(getCacheDir(context), String.format("%d.delay", year));
         return f.delete();
     }
 
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
-        if (context == null || context.getExternalCacheDir() == null) {
+        if (context == null || getCacheDir(context) == null) {
             return delayedGames;//[160]++ avoid use NullPointer to File constructor
         }
         //restore data from cache
-        File f = new File(context.getExternalCacheDir(), String.format("%d.delay", year));
+        File f = new File(getCacheDir(context), String.format("%d.delay", year));
         String delay_str = FileUtils.readFileToString(f);
         if (delay_str != null && !delay_str.isEmpty()) {
             for (String delay : delay_str.split(";")) {
@@ -1274,5 +1277,11 @@ public class CpblCalendarHelper extends HttpHelper {
             }
         }
         return delayedGames;
+    }
+
+    public static File getCacheDir(Context context) {
+        return (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                ? context.getExternalCacheDir() : context.getCacheDir();
     }
 }
