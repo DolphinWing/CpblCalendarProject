@@ -333,18 +333,18 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void showRequestStorageRationale() {
-        //FIXME: show dialog to ask user to give permission
+        //show dialog to ask user to give permission
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.app_name)
+                .setTitle(R.string.title_ask_permission)
+                .setMessage(R.string.message_ask_permission)
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok_ask_permission, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         requestStoragePermission();
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel_ask_permission, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         autoLoadGames(null);

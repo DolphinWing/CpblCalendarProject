@@ -133,4 +133,10 @@
     <string name="title_win_rate">勝率</string>
     <string name="title_game_behind">場差</string>
 
+    <!-- Permissions -->
+    <string name="title_ask_permission">需要儲存權限</string>
+    <string name="message_ask_permission">建議您授予寫入至外部儲存空間權限，以免暫存的快取占用寶貴的內部儲存空間</string>
+    <string name="ok_ask_permission">我知道了</string>
+    <string name="cancel_ask_permission">不了，謝謝</string>
+
 </resources>

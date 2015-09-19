@@ -35,6 +35,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[163] @ 2015-09-19
+    add v23 support
+[162] @ 2015-09-01
+    fix incorrect icons and team name
+        because the team id is incorrect
+
 [161] @ 2015-07-29
     add All-Star games
 [160] @ 2015-07-22
