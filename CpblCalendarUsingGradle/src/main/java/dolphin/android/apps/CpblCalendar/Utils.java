@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -261,6 +263,11 @@ public class Utils {
         return ((c.getTimeInMillis() - System.currentTimeMillis()) <= GameAdapter.ONE_DAY * 2);
     }
 
+    //https://developer.chrome.com/multidevice/android/customtabs
+    //https://github.com/GoogleChrome/custom-tabs-client
+    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
+
     public static void startGameActivity(Context context, Game game) {
         Calendar now = CpblCalendarHelper.getNowTime();
         String url = null;
@@ -283,9 +290,18 @@ public class Utils {
         }
 
         if (/*game != null && */url != null) {//[78]-- game.IsFinal) {
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+
+            //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //[164]dolphin++ add Chrome Custom Tabs
+                Bundle extras = new Bundle();
+                extras.putBinder(EXTRA_CUSTOM_TABS_SESSION, null);
+                extras.putInt(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+                        context.getResources().getColor(R.color.holo_green_dark));
+                i.putExtras(extras);
+            }
+
             if (PreferenceUtils.isEngineerMode(context)) {
                 //Log.d(TAG, "Url=" + url.substring(url.lastIndexOf("/")));
             } else {

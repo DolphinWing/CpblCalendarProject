@@ -40,8 +40,8 @@ android {
         material {
             minSdkVersion 16
             targetSdkVersion 23
-            versionName '2.2.0'
-            versionCode 163
+            versionName '2.2.2'
+            versionCode 165
         }
         official {
             minSdkVersion 9
@@ -54,8 +54,9 @@ android {
 
 dependencies {
     //compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.google.android.gms:play-services-base:7.8.0'
-    compile 'com.google.android.gms:play-services-ads:7.8.0'
+    compile 'com.google.android.gms:play-services-base:8.1.0'
+    compile 'com.google.android.gms:play-services-ads:8.1.0'
+    compile 'com.google.android.gms:play-services-analytics:8.1.0'
 
     compile 'com.android.support:support-v4:23.0.1'
 

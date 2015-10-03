@@ -1094,17 +1094,19 @@ public class CpblCalendarHelper extends HttpHelper {
             return delayedGames;
         }
 
-        //read from Google Drive
-        String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
-        int index = year - 2005;
-        if (index < driveIds.length) {//already have cached data in Google Drive
-            String driveId = driveIds[year - 2005];
-            File f = new File(getCacheDir(context), String.format("%d.delay", year));
-            GoogleDriveHelper.download(context, driveId, f);
-            delayedGames = restoreDelayGames2014(context, year);//read again
-            if (delayedGames.size() > 0) {//use cache directly
-                Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
-                return delayedGames;
+        if (context != null) {
+            //read from Google Drive
+            String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
+            int index = year - 2005;
+            if (index < driveIds.length) {//already have cached data in Google Drive
+                String driveId = driveIds[year - 2005];
+                File f = new File(getCacheDir(context), String.format("%d.delay", year));
+                GoogleDriveHelper.download(context, driveId, f);
+                delayedGames = restoreDelayGames2014(context, year);//read again
+                if (delayedGames.size() > 0) {//use cache directly
+                    Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
+                    return delayedGames;
+                }
             }
         }
 
@@ -1236,6 +1238,9 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     private void storeDelayGames2014(Context context, int year, String delay_str) {
+        if (context == null) {
+            return;//cannot store, no context
+        }
         File f = new File(getCacheDir(context), String.format("%d.delay", year));
         FileUtils.writeStringToFile(f, delay_str);
     }
