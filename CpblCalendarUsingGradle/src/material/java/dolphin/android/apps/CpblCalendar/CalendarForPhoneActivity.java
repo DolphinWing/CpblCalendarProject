@@ -124,7 +124,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 mSpinnerYear.setSelection(debugMode ? 1 : year);
                 mSpinnerMonth.setSelection(debugMode ? 5 : month);
                 mButtonQuery.performClick();//load at beginning
-                loadAds();//load ads in the background
             }
         });
     }
@@ -315,7 +314,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, new String[] {
+        ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
     }
@@ -324,11 +323,12 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         boolean result;
-        for (int i = 0; i < permissions.length; i++) {
-            result = (grantResults[i] == PackageManager.PERMISSION_GRANTED);
-            Log.v(TAG, "permission " + permissions[i] + (result ? " granted" : " denied"));
+        if (permissions.length > 0) {
+            for (int i = 0; i < permissions.length; i++) {
+                result = (grantResults[i] == PackageManager.PERMISSION_GRANTED);
+                Log.v(TAG, "permission " + permissions[i] + (result ? " granted" : " denied"));
+            }
         }
-
         autoLoadGames(null);
     }
 
