@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -288,6 +290,25 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     @Override
     protected void onResume() {
         super.onResume();
+
+        //https://developers.google.com/android/guides/setup
+        GoogleApiAvailability availability = GoogleApiAvailability.getInstance();
+        int result = availability.isGooglePlayServicesAvailable(this);
+        if (result != ConnectionResult.SUCCESS) {
+            if (availability.isUserResolvableError(result)) {
+                availability.getErrorDialog(this, result, 0, new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        CalendarForPhoneActivity.this.finish();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Google API unavailable", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "This device is not supported.");
+                finish();
+            }
+        }
+
         if (mAdView != null/* && mAdView.getVisibility() == View.VISIBLE*/) {
             mAdView.resume();
         }
