@@ -35,6 +35,13 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[167] @ 2015-10-04
+    update hdodenhof/CircleImageView to 2.0.0
+    add send Google Analytics Timing
+    fix some url open don't apply Custom Chrome Tabs
+    add save local html cache for delay games in this year
+        this will greatly improve the load speed
+
 [166] @ 2015-10-03
     add Google Play Services check
     add FAB disabled when loading

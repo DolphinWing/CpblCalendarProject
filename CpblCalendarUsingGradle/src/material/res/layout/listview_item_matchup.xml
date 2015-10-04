@@ -79,8 +79,8 @@
                 android:layout_height="48dp"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                app:border_width="1dp"
-                app:border_color="@android:color/secondary_text_light_nodisable" />
+                app:civ_border_width="1dp"
+                app:civ_border_color="@android:color/secondary_text_light_nodisable" />
 
             <TextView
                 style="@style/Theme.Holo_green.Match.Team"
@@ -110,8 +110,8 @@
                 android:layout_height="48dp"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                app:border_width="1dp"
-                app:border_color="@color/circle_image_border" />
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/circle_image_border" />
 
             <TextView
                 style="@style/Theme.Holo_green.Match.Team"

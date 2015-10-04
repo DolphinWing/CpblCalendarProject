@@ -242,10 +242,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             sendTrackerException();
         }
         //}
-        View fab = findViewById(R.id.button_floating_action);
-        if (fab != null) {
-            fab.setEnabled(!is_load);
-        }
+//        View fab = findViewById(R.id.button_floating_action);
+//        if (fab != null) {
+//            fab.setEnabled(!is_load);
+//        }
         super.onLoading(is_load);
     }
 

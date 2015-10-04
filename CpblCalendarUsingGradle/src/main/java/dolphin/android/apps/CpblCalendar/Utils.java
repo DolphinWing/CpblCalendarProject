@@ -79,6 +79,13 @@ public class Utils {
                     "<td style='width:15%;text-align:center'>@tie</td>" +
                     "<td style='width:15%;text-align:center'>@behind</td></tr>";
 
+    /**
+     * prepare leader board html
+     *
+     * @param context  Context
+     * @param standing output data
+     * @return html
+     */
     public static String prepareLeaderBoard2014(Context context, ArrayList<Stand> standing) {
         if (standing == null)
             return "";
@@ -109,6 +116,14 @@ public class Utils {
         return standingHtml;
     }
 
+    /**
+     * build a leader board dialog
+     *
+     * @param context Context
+     * @param html    html content
+     * @param title   dialog title
+     * @return a leader board dialog
+     */
     public static AlertDialog buildLeaderBoardDialog(Context context, String html, String title) {
         //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
         AlertDialog dialog = new AlertDialog.Builder(context).create();
@@ -156,6 +171,14 @@ public class Utils {
         return dialog;
     }
 
+    /**
+     * build a leader board dialog for 2014 data
+     *
+     * @param context Context
+     * @param html    html content
+     * @param title   dialog title
+     * @return leader board dialog
+     */
     public static AlertDialog buildLeaderBoard2014Dialog(Context context, String html, String title) {
         final AlertDialog dialog = new AlertDialog.Builder(context).create();
         //change the style like the entire theme
@@ -192,6 +215,13 @@ public class Utils {
         return dialog;
     }
 
+    /**
+     * build cache mode dialog
+     *
+     * @param context  Context
+     * @param listener positive button click listener
+     * @return cache mode dialog
+     */
     public static AlertDialog buildEnableCacheModeDialog(Context context,
                                                          DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setCancelable(true)
