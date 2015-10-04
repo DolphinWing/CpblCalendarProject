@@ -49,6 +49,11 @@ public class CpblApplication extends Application {
                     : (trackerId == TrackerName.GLOBAL_TRACKER)
                             ? analytics.newTracker(R.xml.global_tracker)
                             : analytics.newTracker(R.xml.ecommerce_tracker);
+            if (trackerId == TrackerName.APP_TRACKER) {
+                t.enableAutoActivityTracking(true);
+                t.enableExceptionReporting(true);
+                t.enableAdvertisingIdCollection(true);
+            }
             mTrackers.put(trackerId, t);
 
         }

@@ -42,7 +42,7 @@ public class GoogleAnalyticsHelper {
     }
 
     public void sendTrackerException(String action, String label, long evtValue) {
-        sendGmsGoogleAnalyticsReport(mScreenName, "Exception", action, label);
+        sendGmsGoogleAnalyticsReport(mScreenName, "Exception", action, label, evtValue);
     }
 
     public void sendTrackerException(String path, String action, String label) {
@@ -55,6 +55,11 @@ public class GoogleAnalyticsHelper {
 
     public void sendGmsGoogleAnalyticsReport(String path, String category, String action,
                                              String label) {
+        sendGmsGoogleAnalyticsReport(path, category, action, label, -1);
+    }
+
+    public void sendGmsGoogleAnalyticsReport(String path, String category, String action,
+                                             String label, long evtValue) {
         // Get tracker.
         Tracker t = mApplication.getTracker(CpblApplication.TrackerName.APP_TRACKER);
 
@@ -62,16 +67,60 @@ public class GoogleAnalyticsHelper {
         // Where path is a String representing the screen name.
         t.setScreenName(path);
 
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
+//        // Send a screen view.
+//        t.send(new HitBuilders.AppViewBuilder().build());
 
         // This event will also be sent with &cd=Home%20Screen.
         // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder()
+
+        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder()
                 .setCategory(category)
-                .setAction(action)
-                .setLabel(label)
-                .build());
+                .setAction(action);
+        if (label != null && !label.isEmpty()) {
+            builder.setLabel(label);
+        }
+        if (evtValue > 0) {
+            builder.setValue(evtValue);
+        }
+        t.send(builder.build());
+
+        // Clear the screen name field when we're done.
+        t.setScreenName(null);
+    }
+
+    public void sendGmsGoogleAnalyticsTiming(String category, long value, String timingName) {
+        sendGmsGoogleAnalyticsTiming(mScreenName, category, value, timingName);
+    }
+
+    public void sendGmsGoogleAnalyticsTiming(String path, String category, long value,
+                                             String timingName) {
+        sendGmsGoogleAnalyticsTiming(path, category, value, timingName, null);
+    }
+
+    public void sendGmsGoogleAnalyticsTiming(String path, String category, long value,
+                                             String timingName, String label) {
+        // Get tracker.
+        Tracker t = mApplication.getTracker(CpblApplication.TrackerName.APP_TRACKER);
+
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName(path);
+
+//        // Send a screen view.
+//        t.send(new HitBuilders.ScreenViewBuilder().build());
+
+        // This event will also be sent with &cd=Home%20Screen.
+        // Build and send an Event.
+        HitBuilders.TimingBuilder builder = new HitBuilders.TimingBuilder()
+                .setCategory(category)
+                .setValue(value);
+        if (timingName != null && !timingName.isEmpty()) {
+            builder.setVariable(timingName);
+        }
+        if (label != null && !label.isEmpty()) {
+            builder.setLabel(label);
+        }
+        t.send(builder.build());
 
         // Clear the screen name field when we're done.
         t.setScreenName(null);

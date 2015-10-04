@@ -424,6 +424,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         new Thread(new Runnable() {
             @Override
             public void run() {
+                long startTime = System.currentTimeMillis();
                 if (mHelper == null) {//new object to start get data
                     //we now query for ASP.NET, so reuse the same object
                     mHelper = new CpblCalendarHelper(mActivity);
@@ -469,6 +470,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
+                    long endTime = System.currentTimeMillis() - startTime;
+                    mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
+                            String.format("%d-%d", mYear, mMonth));
                     doQueryCallback(gameList, true);
                     return;
                 }
@@ -527,6 +531,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     }
 
                     if (gameList != null) {
+                        long endTime = System.currentTimeMillis() - startTime;
+                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
+                                String.format("%d-%d", mYear, mMonth));
                         doQueryCallback(gameList, true);
                     } else {
                         throw new Exception("no data");
@@ -545,6 +552,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                 mYear, mMonth));
                         gameList = mHelper.query2014zxc(mMonth);
+
+                        long endTime = System.currentTimeMillis() - startTime;
+                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
+                                String.format("%d-%d", mYear, mMonth));
+
                         doQueryCallback(gameList, true);
                     }
                 }
