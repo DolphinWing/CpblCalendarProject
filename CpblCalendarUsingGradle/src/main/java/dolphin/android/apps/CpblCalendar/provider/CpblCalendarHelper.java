@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
@@ -28,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpHelper;
 import dolphin.android.util.FileUtils;
@@ -488,7 +491,17 @@ public class CpblCalendarHelper extends HttpHelper {
     public static void startActivityToCpblSchedule(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(URL_SCHEDULE_2014));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //[167]++
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //[164]dolphin++ add Chrome Custom Tabs
+            Bundle extras = new Bundle();
+            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
+            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+                    context.getResources().getColor(R.color.holo_green_dark));
+            intent.putExtras(extras);
+        } else {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         context.startActivity(intent);
     }
 

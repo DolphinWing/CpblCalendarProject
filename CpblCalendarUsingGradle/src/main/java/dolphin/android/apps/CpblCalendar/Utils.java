@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -265,9 +266,15 @@ public class Utils {
 
     //https://developer.chrome.com/multidevice/android/customtabs
     //https://github.com/GoogleChrome/custom-tabs-client
-    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
-    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
+    public static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+    public static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
 
+    /**
+     * start browser activity
+     *
+     * @param context Context
+     * @param game    target game
+     */
     public static void startGameActivity(Context context, Game game) {
         Calendar now = CpblCalendarHelper.getNowTime();
         String url = null;
@@ -281,7 +288,7 @@ public class Utils {
                     CpblCalendarHelper.URL_BASE,
                     game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
         } else {
-            url = game.Url;//default is live url
+            //url = game.Url;//default is live url
             //Log.d(TAG, game.StartTime.getTime().toString());
             //http://www.cpbl.com.tw/game/playbyplay.aspx?gameno=01&year=2015&game=133
             url = String.format("%s/game/playbyplay.aspx?gameno=%s&year=%d&game=%d",
@@ -292,7 +299,7 @@ public class Utils {
         if (/*game != null && */url != null) {//[78]-- game.IsFinal) {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 
-            //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //[164]++
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 //[164]dolphin++ add Chrome Custom Tabs
                 Bundle extras = new Bundle();
@@ -300,10 +307,12 @@ public class Utils {
                 extras.putInt(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
                         context.getResources().getColor(R.color.holo_green_dark));
                 i.putExtras(extras);
+            } else {
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             }
 
             if (PreferenceUtils.isEngineerMode(context)) {
-                //Log.d(TAG, "Url=" + url.substring(url.lastIndexOf("/")));
+                Log.d("CpblCalendarHelper", "Url=" + url.substring(url.lastIndexOf("/")));
             } else {
                 try {//[97]dolphin++
                     context.startActivity(i);
