@@ -1100,9 +1100,10 @@ public class CpblCalendarHelper extends HttpHelper {
 
         //read current month
         Calendar now = getNowTime();
+        boolean isThisYear = now.get(Calendar.YEAR) == year;
 
         SparseArray<Game> delayedGames = restoreDelayGames2014(context, year);//new SparseArray<>();
-        if (now.get(Calendar.YEAR) != year && delayedGames.size() > 0) {//use cache directly
+        if (!isThisYear && delayedGames.size() > 0) {//use cache directly
             Log.v(TAG, String.format("use cached data, delay games = %d", delayedGames.size()));
             return delayedGames;
         }
@@ -1125,41 +1126,49 @@ public class CpblCalendarHelper extends HttpHelper {
 
         //if year == this year, do to current month
         //if year == last year, do all
-        int m1 = 3;//now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 3;
-        int m2 = now.get(Calendar.YEAR) == year ? now.get(Calendar.MONTH) + 1 : 10;
-        for (int month = m1; month <= m2; month++) {
+        int m1 = isThisYear ? now.get(Calendar.MONTH) + 1 : 3;
+        int m2 = isThisYear ? now.get(Calendar.MONTH) + 1 : 10;
+        for (int month = 3; month <= m2; month++) {
             String html = null;// = getUrlContent(URL_SCHEDULE_2014);
-            try {
-                //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
-                mKind = "01";
-                html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", mKind);
-                if (html == null) {
-                    throw new Exception("can't switch kind");
-                }
-                //Log.d(TAG, String.format("mYear=%d, year=%d", mYear, year));
-                if (mYear != year) {
-                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+            if (month < m1) {//are we in the same month?
+                //use old cache since the data won't changed anymore
+                html = readDelayGamesCache2014(context, year, month);
+            }
+
+            if (html == null || html.isEmpty()) {//no previous data, try it from web
+                try {
+                    //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
+                    mKind = "01";
+                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", mKind);
                     if (html == null) {
-                        throw new Exception("can't switch year");
+                        throw new Exception("can't switch kind");
                     }
-                    mYear = year;
-                    //switch back to game kind 01
-                }
-                //Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
-                if (mMonth != month) {
-                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
-                    if (html == null) {
-                        throw new Exception("can't switch month");
+                    //Log.d(TAG, String.format("mYear=%d, year=%d", mYear, year));
+                    if (mYear != year) {
+                        html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+                        if (html == null) {
+                            throw new Exception("can't switch year");
+                        }
+                        mYear = year;
+                        //switch back to game kind 01
                     }
-                    mMonth = month;
+                    //Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
+                    if (mMonth != month) {
+                        html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                        if (html == null) {
+                            throw new Exception("can't switch month");
+                        }
+                        mMonth = month;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
+                    html = null;//bypass parsing if exception happens
                 }
-            } catch (Exception e) {
-                Log.e(TAG, "unable to get ASP.NET data: " + e.getMessage());
-                html = null;//bypass parsing if exception happens
             }
 
             //Log.d(TAG, "query2014 " + html.length());
             if (html != null && html.contains("<tr class=\"game\">")) {//have games
+                writeDelayGamesCache2014(context, year, month, html);//write to cache
                 String[] days = html.split("<table class=\"day\">");
                 //Log.d(TAG, "days " + days.length);
                 for (String day : days) {
@@ -1258,6 +1267,20 @@ public class CpblCalendarHelper extends HttpHelper {
         FileUtils.writeStringToFile(f, delay_str);
     }
 
+    private void writeDelayGamesCache2014(Context context, int year, int month, String html) {
+        File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
+        FileUtils.writeStringToFile(f, html);
+    }
+
+    private String readDelayGamesCache2014(Context context, int year, int month) {
+        //restore data from cache
+        File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
+        if (f.exists()) {
+            return FileUtils.readFileToString(f);
+        }
+        return null;
+    }
+
     /**
      * remove stored delay games
      *
@@ -1297,6 +1320,12 @@ public class CpblCalendarHelper extends HttpHelper {
         return delayedGames;
     }
 
+    /**
+     * Get cache dir for app
+     *
+     * @param context Context
+     * @return cache dir
+     */
     public static File getCacheDir(Context context) {
         return (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
