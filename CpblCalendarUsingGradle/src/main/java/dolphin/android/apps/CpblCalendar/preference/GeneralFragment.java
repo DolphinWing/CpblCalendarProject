@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -41,14 +42,16 @@ public class GeneralFragment extends PreferenceFragment {
         //getResources().getBoolean(R.bool.pref_engineer_mode);
 
         PackageInfo pinfo = PackageUtils.getPackageInfo(context, PreferenceActivity.class);
-        findPreference(KEY_APP_VERSION).setSummary(String.format(Locale.US,
-                mIsEngineerMode ? "%s  r%d (eng)" : "%s (r%d)",
-                pinfo.versionName, pinfo.versionCode));
+        if (pinfo != null) {
+            findPreference(KEY_APP_VERSION).setSummary(String.format(Locale.US,
+                    mIsEngineerMode ? "%s  r%d (eng)" : "%s (r%d)",
+                    pinfo.versionName, pinfo.versionCode));
+        }
     }
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
-                                         Preference preference) {
+                                         @NonNull Preference preference) {
         String key = preference.getKey();
         if (key == null) {
             Log.wtf(TAG, "onPreferenceTreeClick key == null");//should not happen
@@ -75,35 +78,27 @@ public class GeneralFragment extends PreferenceFragment {
             textView.setTextSize(12);
             return true;
         } else if (key.equals(PreferenceUtils.KEY_CPBL_WEB)) {
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_CPBL_OFFICAL_WEBSITE);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CPBL_OFFICAL_WEBSITE);
         } else if (key.equals(PreferenceUtils.KEY_TWBALL_WIKI)) {
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_TW_BASEBALL_WIKI);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_TW_BASEBALL_WIKI);
         } else if (key.equals(PreferenceUtils.KEY_ZXC22)) {
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_ZXC22);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ZXC22);
         } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
+        } else if (key.equals(PreferenceUtils.KEY_LIB_CIRCLE_IMAGE_VIEW)) {//[168]dolphin++
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CIRCLE_IMAGE_VIEW);
         } else if (key.equals(PreferenceUtils.KEY_LIB_ABS_WEB)) {
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
         } else if (key.equals(PreferenceUtils.KEY_LIB_ABDT_GIT)) {
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
         } else if (key.equals(PreferenceUtils.KEY_RES_AAS)) {//[13]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_ANDROID_ASSET_STUDIO);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ANDROID_ASSET_STUDIO);
         } else if (key.equals(PreferenceUtils.KEY_RES_ICONIC)) {//[13]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_ICONIC_ICON_SET);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ICONIC_ICON_SET);
         } else if (key.equals(PreferenceUtils.KEY_LIB_SHOWCASE)) {//[18]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_SHOWCASE_VIEW);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_SHOWCASE_VIEW);
         } else if (key.equals(PreferenceUtils.KEY_LIB_NINEOLD)) {//[18]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(),
-                    PreferenceUtils.URL_NINEOLD_ANDROID);
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_NINEOLD_ANDROID);
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }

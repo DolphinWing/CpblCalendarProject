@@ -35,6 +35,7 @@ public class PreferenceUtils {
     public static final String KEY_LIB_SHOWCASE = "lib_showcaseview";//[18]++
     public static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
     public static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
+    public static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
     //DisplayFragment
     public final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
     public final static String KEY_UPCOMING_ON = "upcoming_game";
@@ -83,6 +84,9 @@ public class PreferenceUtils {
     //[129]dolphin++ FloatingActionButton
     public final static String URL_FLOATING_ACTION_BUTTON =
             "https://github.com/makovkastar/FloatingActionButton";
+    //[129]dolphin++ FloatingActionButton
+    public final static String URL_CIRCLE_IMAGE_VIEW =
+            "https://github.com/hdodenhof/CircleImageView";
 
     /**
      * start a browser activity

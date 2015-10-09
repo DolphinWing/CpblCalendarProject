@@ -202,6 +202,8 @@
     <string name="summary_nine_old_android">Copyright 2012 Jake Wharton</string>
     <string name="title_floating_action_button">FloatingActionButton</string>
     <string name="summary_floating_action_button">Copyright &#169; 2014 Oleksandr Melnykov</string>
+    <string name="title_circle_image_view">CircleImageView</string>
+    <string name="summary_circle_image_view">Copyright 2014 &#8211; 2015 Henning Dodenhof</string>
 
     <string-array name="notify_music_value">
         <item>theme.mp3</item>
