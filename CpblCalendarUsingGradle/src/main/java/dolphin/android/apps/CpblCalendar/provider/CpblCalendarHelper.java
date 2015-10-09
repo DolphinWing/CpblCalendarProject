@@ -919,18 +919,20 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static ArrayList<Game> getCache(Context context, String fileName) {
-        //String fileName = String.format("%04d-%02d.json", year, month);
-        File f = new File(getCacheDir(context), fileName);
-        //Log.d(TAG, "getCache " + f.getAbsolutePath());
-        if (f.exists()) {
-            //convert JSON string to ArrayList<Game> object
-            return Game.listFromJson(context, FileUtils.readFileToString(f));
-        }
-        f = new File(context.getCacheDir(), fileName);
-        //Log.d(TAG, "getCache " + f.getAbsolutePath());
-        if (f.exists()) {
-            //convert JSON string to ArrayList<Game> object
-            return Game.listFromJson(context, FileUtils.readFileToString(f));
+        if (context != null) {
+            //String fileName = String.format("%04d-%02d.json", year, month);
+            File f = new File(getCacheDir(context), fileName);
+            //Log.d(TAG, "getCache " + f.getAbsolutePath());
+            if (f.exists()) {
+                //convert JSON string to ArrayList<Game> object
+                return Game.listFromJson(context, FileUtils.readFileToString(f));
+            }
+            f = new File(context.getCacheDir(), fileName);
+            //Log.d(TAG, "getCache " + f.getAbsolutePath());
+            if (f.exists()) {
+                //convert JSON string to ArrayList<Game> object
+                return Game.listFromJson(context, FileUtils.readFileToString(f));
+            }
         }
         return null;
     }
@@ -947,6 +949,9 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static boolean putCache(Context context, String fileName, ArrayList<Game> list) {
+        if (context == null) {
+            return false;
+        }
         //String fileName = String.format("%04d-%02d.json", year, month);
         File f = new File(getCacheDir(context), fileName);
         if (list == null) {
@@ -1093,7 +1098,7 @@ public class CpblCalendarHelper extends HttpHelper {
      */
     public SparseArray<Game> queryDelayGames2014(Context context, int year) {
         long startTime = System.currentTimeMillis();
-        if (year < 2005) {
+        if (year < 2005 || context == null) {
             Log.w(TAG, String.format("no %d delay game info in www.cpbl.com.tw", year));
             return null;
         }
@@ -1108,19 +1113,17 @@ public class CpblCalendarHelper extends HttpHelper {
             return delayedGames;
         }
 
-        if (context != null) {
-            //read from Google Drive
-            String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
-            int index = year - 2005;
-            if (index < driveIds.length) {//already have cached data in Google Drive
-                String driveId = driveIds[year - 2005];
-                File f = new File(getCacheDir(context), String.format("%d.delay", year));
-                GoogleDriveHelper.download(context, driveId, f);
-                delayedGames = restoreDelayGames2014(context, year);//read again
-                if (delayedGames.size() > 0) {//use cache directly
-                    Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
-                    return delayedGames;
-                }
+        //read from Google Drive
+        String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
+        int index = year - 2005;
+        if (index < driveIds.length) {//already have cached data in Google Drive
+            String driveId = driveIds[year - 2005];
+            File f = new File(getCacheDir(context), String.format("%d.delay", year));
+            GoogleDriveHelper.download(context, driveId, f);
+            delayedGames = restoreDelayGames2014(context, year);//read again
+            if (delayedGames.size() > 0) {//use cache directly
+                Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
+                return delayedGames;
             }
         }
 
@@ -1268,15 +1271,20 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     private void writeDelayGamesCache2014(Context context, int year, int month, String html) {
+        if (context == null) {
+            return;//cannot store, no context
+        }
         File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
         FileUtils.writeStringToFile(f, html);
     }
 
     private String readDelayGamesCache2014(Context context, int year, int month) {
-        //restore data from cache
-        File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
-        if (f.exists()) {
-            return FileUtils.readFileToString(f);
+        if (context != null) {
+            //restore data from cache
+            File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
+            if (f.exists()) {
+                return FileUtils.readFileToString(f);
+            }
         }
         return null;
     }
@@ -1289,8 +1297,11 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return true if deleted
      */
     public boolean removeDelayGames2014(Context context, int year) {
-        File f = new File(getCacheDir(context), String.format("%d.delay", year));
-        return f.delete();
+        if (context != null) {
+            File f = new File(getCacheDir(context), String.format("%d.delay", year));
+            return f.delete();
+        }
+        return false;
     }
 
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {

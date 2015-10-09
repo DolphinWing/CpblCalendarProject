@@ -439,6 +439,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
                 }
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                    Log.w(TAG, "activity destroyed");
+                    return;
+                }
+
                 ArrayList<Game> gameList;
                 Calendar now = CpblCalendarHelper.getNowTime();
                 boolean thisYear = (mYear == now.get(Calendar.YEAR));
@@ -457,6 +462,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                             list = mHelper.query2014(mYear, i, gameKind,
                                     mDelayGames2014.get(mYear));
 //                            }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                                Log.w(TAG, "activity destroyed");
+                                return;
+                            }
                             boolean hasData = (list != null && list.size() > 0);
                             if (mField.equals("F00") && mKind == 0) {//put to local cache
                                 mAllGamesCache.put(key, hasData ? list : new ArrayList<Game>());
@@ -512,7 +521,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 //                            && (gameList != null && gameList.size() > 0)) {
 //                        mAllFieldGamesCache.put(key, gameList);
 //                    }
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                        Log.w(TAG, "activity destroyed");
+                        return;
+                    }
                     if (resources.getBoolean(R.bool.feature_auto_load_next)) {
                         //auto load next month games
                         if (mMonth >= 3 && mMonth < 10 && now.get(Calendar.DAY_OF_MONTH) > 15) {
@@ -552,7 +564,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                 mYear, mMonth));
                         gameList = mHelper.query2014zxc(mMonth);
-
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                            Log.w(TAG, "activity destroyed");
+                            return;
+                        }
                         long endTime = System.currentTimeMillis() - startTime;
                         mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
                                 String.format("%d-%d", mYear, mMonth));
