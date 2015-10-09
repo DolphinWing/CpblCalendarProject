@@ -35,6 +35,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[168] @ 2015-10-09
+    add different alarm wake mode
+    fix leave app when loading crush NullPointerException
+
 [167] @ 2015-10-04
     update hdodenhof/CircleImageView to 2.0.0
     add send Google Analytics Timing
