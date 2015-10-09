@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -22,7 +23,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/8/31.
- *
+ * <p/>
  * Notification receiver and some helper methods
  */
 public class NotifyReceiver extends BroadcastReceiver {
@@ -60,7 +61,7 @@ public class NotifyReceiver extends BroadcastReceiver {
      * get PendingIntent for AlarmManager
      *
      * @param context Context
-     * @param key game key
+     * @param key     game key
      * @return alarm intent
      */
     public static PendingIntent getAlarmIntent(Context context, String key) {
@@ -75,14 +76,23 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * set alarm
      *
-     * @param context Context
+     * @param context   Context
      * @param alarmTime alarm time
-     * @param key game key
+     * @param key       game key
      */
     public static void setAlarm(Context context, Calendar alarmTime, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                getAlarmIntent(context, key));
+        //[168]++ add different alarm wake mode
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
+                    getAlarmIntent(context, key));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            am.setExact(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
+                    getAlarmIntent(context, key));
+        } else {
+            am.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
+                    getAlarmIntent(context, key));
+        }
         Log.v(TAG, "Alarm set! " + alarmTime.getTime().toString());
     }
 
@@ -90,7 +100,7 @@ public class NotifyReceiver extends BroadcastReceiver {
      * cancel alarm
      *
      * @param context Context
-     * @param key game key
+     * @param key     game key
      */
     public static void cancelAlarm(Context context, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -128,7 +138,7 @@ public class NotifyReceiver extends BroadcastReceiver {
      * show alarm when time arrived
      *
      * @param context Context
-     * @param key game key
+     * @param key     game key
      */
     public static void showAlarm(Context context, String key) {
         //Log.v(TAG, "showAlarm " + Calendar.getInstance().getTime().toString());
@@ -226,6 +236,7 @@ public class NotifyReceiver extends BroadcastReceiver {
 
     /**
      * get PendingIntent for Notification dismiss
+     *
      * @param context Context
      * @return dismiss intent
      */
@@ -238,9 +249,9 @@ public class NotifyReceiver extends BroadcastReceiver {
     /**
      * show Notifications
      *
-     * @param context Context
+     * @param context     Context
      * @param contentText content
-     * @param bigMsgText big message text for rich notification
+     * @param bigMsgText  big message text for rich notification
      */
     private static void showNotification(Context context,
                                          String contentText, String bigMsgText) {
@@ -314,7 +325,7 @@ public class NotifyReceiver extends BroadcastReceiver {
      * show notification dialog
      *
      * @param context Content
-     * @param list game list
+     * @param list    game list
      */
     private static void showNotifyDialog(Context context, ArrayList<Game> list) {
         //Log.v(TAG, "showNotifyDialog");
