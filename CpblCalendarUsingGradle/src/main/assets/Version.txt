@@ -35,6 +35,14 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[170] @ 2015-10-10
+    fix start from option menu cannot start normal chrome custom tabs
+        android.util.AndroidRuntimeException:
+        Calling startActivity() from outside of an Activity
+        context requires the FLAG_ACTIVITY_NEW_TASK flag.
+
+[169] @ 2015-10-09
+    fix Settings open browser using Chrome
 [168] @ 2015-10-09
     add different alarm wake mode
     fix leave app when loading crush NullPointerException

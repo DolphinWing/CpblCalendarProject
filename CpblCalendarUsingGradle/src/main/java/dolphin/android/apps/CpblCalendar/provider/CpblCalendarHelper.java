@@ -489,18 +489,21 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static void startActivityToCpblSchedule(Context context) {
+        startActivityToCpblSchedule(context, false);
+    }
+
+    public static void startActivityToCpblSchedule(Context context, boolean newTask) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(URL_SCHEDULE_2014));
-        //[167]++
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (newTask) {//[170]++
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {//[167]++
             //[164]dolphin++ add Chrome Custom Tabs
             Bundle extras = new Bundle();
             extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
             extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
                     context.getResources().getColor(R.color.holo_green_dark));
             intent.putExtras(extras);
-        } else {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         context.startActivity(intent);
     }

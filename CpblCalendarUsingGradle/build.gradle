@@ -9,25 +9,6 @@ android {
         targetSdkVersion 23
     }
 
-//    //http://stackoverflow.com/a/19210105/2673859
-//    final Console console = System.console();
-//    if (console != null) {
-//        signingConfigs {
-//            release {
-//                storeFile file('dolphin-release-key.keystore')
-//                storePassword new String(console.readPassword("\n\$ Enter keystore password: "))
-//                keyAlias "dolphin_key"
-//                keyPassword new String(console.readPassword("\$ Enter key password: "))
-//            }
-//        }
-//    } else {
-//        // Building from IDE's "Run" button
-//        signingConfigs {
-//            release {
-//
-//            }
-//        }
-//    }
     buildTypes {
         release {
             minifyEnabled false
@@ -40,8 +21,8 @@ android {
         material {
             minSdkVersion 16
             targetSdkVersion 23
-            versionName '2.2.5'
-            versionCode 168
+            versionName '2.2.6'
+            versionCode 170
         }
         official {
             minSdkVersion 9
@@ -53,7 +34,6 @@ android {
 }
 
 dependencies {
-    //compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.google.android.gms:play-services-base:8.1.0'
     compile 'com.google.android.gms:play-services-ads:8.1.0'
     compile 'com.google.android.gms:play-services-analytics:8.1.0'

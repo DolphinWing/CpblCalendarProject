@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -351,5 +354,25 @@ public class Utils {
                 }
             }
         }
+    }
+
+    /**
+     * Check if Google Chrome is installed.
+     *
+     * @param context Context
+     * @return true if installed
+     */
+    public static boolean isGoogleChromeInstalled(Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(CpblCalendarHelper.URL_BASE));
+        List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, 0);
+        if (list != null && list.size() > 0) {
+            for (ResolveInfo resolveInfo : list) {
+                Log.d("CpblCalendarHelper", resolveInfo.activityInfo.packageName);
+                if (resolveInfo.activityInfo.packageName.startsWith("com.android.chrome")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
