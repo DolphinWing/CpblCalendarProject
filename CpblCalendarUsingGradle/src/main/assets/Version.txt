@@ -35,6 +35,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[171] @ 2015-10-11
+    fix Settings Toolbar text color on 5.0+
+    fix FloatingActionButton elevation on 5.0+
+
 [170] @ 2015-10-10
     fix start from option menu cannot start normal chrome custom tabs
         android.util.AndroidRuntimeException:
