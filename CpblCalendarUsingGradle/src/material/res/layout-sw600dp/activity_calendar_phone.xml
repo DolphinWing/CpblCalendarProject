@@ -72,13 +72,6 @@
 
         <include layout="@layout/include_loading_frame" />
 
-        <TextView
-            android:id="@android:id/message"
-            style="@style/Theme.Holo_green.LoadingText"
-            android:layout_marginBottom="8dp"
-            android:layout_alignBottom="@+id/button_floating_action"
-            android:layout_alignParentBottom="false" />
-
     </RelativeLayout>
 
     <!-- The navigation drawer -->
