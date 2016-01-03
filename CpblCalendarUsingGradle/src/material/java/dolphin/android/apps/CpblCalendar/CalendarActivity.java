@@ -432,12 +432,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 if (clearCache) {//remove all data
                     mAllGamesCache.clear();
                 }
-                //[118]dolphin++ add check delay games
-                //[158]dolphin++ only 2005 and after has delay games record in web page
-                if (mYear >= 2005 && mDelayGames2014.get(mYear) == null) {
-                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
-                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
-                }
+//                //[118]dolphin++ add check delay games
+//                //[158]dolphin++ only 2005 and after has delay games record in web page
+//                if (mYear >= 2005 && mDelayGames2014.get(mYear) == null) {
+//                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
+//                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
+//                }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
                     Log.w(TAG, "activity destroyed");
@@ -456,12 +456,13 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                                 mYear, i));
                         ArrayList<Game> list = mAllGamesCache.get(key);
                         if ((mKind == 0 && list == null) || mKind > 0) {//query from Internet
-//                            if (mYear < 2014) {
-//                                list = mHelper.query(gameKind, mYear, i, mField);
-//                            } else {//do real job
-                            list = mHelper.query2014(mYear, i, gameKind,
-                                    mDelayGames2014.get(mYear));
-//                            }
+////                            if (mYear < 2014) {
+////                                list = mHelper.query(gameKind, mYear, i, mField);
+////                            } else {//do real job
+//                            list = mHelper.query2014(mYear, i, gameKind,
+//                                    mDelayGames2014.get(mYear));
+////                            }
+                            list = mHelper.query2016(mYear, i, gameKind, mField);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
                                 Log.w(TAG, "activity destroyed");
                                 return;
@@ -487,40 +488,18 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 }
 
                 try {
-//                    int key = mYear * 12 + mMonth;
-//                    gameList = mAllFieldGamesCache.get(key);
                     if (OFFLINE_DEBUG) {//offline debug
                         gameList = Utils.get_debug_list(getActivity(), mYear, mMonth);
                     } else if (resources.getBoolean(R.bool.demo_no_data)) {
                         gameList = new ArrayList<>();//null;//[74]++
-                    } else {//try local cache
-//                        if (mYear < now.get(Calendar.YEAR) && mHelper.hasCache(mYear, mMonth)) {
-//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_cache,
-//                                    mYear, mMonth));
-//                            //they won't change again
-//                            gameList = mHelper.getLocalCache(mYear, mMonth);//try to read from cache
-//                        } else
-                        //query from Internet
-//                        if (mYear < 2014) {
-//                            gameList = mHelper.query(gameKind, mYear, mMonth, mField);
-//                        } else if (resources.getBoolean(R.bool.demo_zxc22)) {
-//                            doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
-//                                    mYear, mMonth));
-//                            gameList = mHelper.query2014zxc(mMonth);
-//                        } else {//do real job
+                    } else {//read from internet
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                 mYear, mMonth));
-                        gameList = mHelper.query2014(mYear, mMonth, gameKind,
-                                mDelayGames2014.get(mYear));
+                        gameList = mHelper.query2016(mYear, mMonth, gameKind, mField);
                         doQueryStateUpdateCallback(R.string.title_download_complete);
-//                        }
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
-//                    //put to local cache
-//                    if (mField.equals("F00") && mKind == 0
-//                            && (gameList != null && gameList.size() > 0)) {
-//                        mAllFieldGamesCache.put(key, gameList);
-//                    }
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
                         Log.w(TAG, "activity destroyed");
                         return;
@@ -737,7 +716,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
-                    ArrayList<Game> list = mHelper.query2014(mYear, m, null, delayList);
+                    ArrayList<Game> list = //mHelper.query2014(mYear, m, null, delayList);
+                        mHelper.query2016(mYear, m, "01", "");
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));

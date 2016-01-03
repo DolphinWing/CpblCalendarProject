@@ -54,7 +54,14 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public final static String URL_SCHEDULE_2014 = URL_BASE + "/schedule.aspx";
 
+    public final static String URL_SCHEDULE_2016 = URL_BASE +
+            "/schedule/index/@year-@month-01.html?&date=@year-@month-01&gameno=01&sfieldsub=@field&sgameno=@kind";
+
     private Context mContext;
+
+    private Context getContext() {
+        return mContext;
+    }
 
     //[26}++
     private ArrayList<Game> mGameList = null;
@@ -74,6 +81,7 @@ public class CpblCalendarHelper extends HttpHelper {
         mAspNetHelper = new AspNetHelper(URL_SCHEDULE_2014);
     }
 
+    @Deprecated
     /**
      * do the web query
      *
@@ -86,6 +94,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return query(kind, year, month, "F00");
     }
 
+    @Deprecated
     public ArrayList<Game> query(String kind, int year, int month, String field) {
         ArrayList<Game> gameList = new ArrayList<Game>();
 
@@ -191,6 +200,7 @@ public class CpblCalendarHelper extends HttpHelper {
             //<div?|<br> #  <br> match      field <br> time
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>";
 
+    @Deprecated
     /**
      * convert a game info to Game object
      *
@@ -370,18 +380,22 @@ public class CpblCalendarHelper extends HttpHelper {
         return 0;
     }
 
+    @Deprecated
     public ArrayList<Game> query2014() {
         return query2014(0, 0, null);
     }
 
+    @Deprecated
     public ArrayList<Game> query2014(int year, int month) {
         return query2014(year, month, null);
     }
 
+    @Deprecated
     public ArrayList<Game> query2014(int year, int month, String kind) {
         return query2014(year, month, kind, null);
     }
 
+    @Deprecated
     public ArrayList<Game> query2014(int year, int month, String kind, SparseArray<Game> delayGames) {
         long startTime = System.currentTimeMillis();
 
@@ -391,25 +405,25 @@ public class CpblCalendarHelper extends HttpHelper {
             String html = mAspNetHelper.getLastResponse();// = getUrlContent(URL_SCHEDULE_2014);
             try {
                 //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
-                //Log.d(TAG, String.format("mYear=%d, year=%d", mYear, year));
+                Log.d(TAG, String.format("mYear=%d, year=%d", mYear, year));
                 if (mYear != year) {
-                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+                    html = mAspNetHelper.makeUrlRequest("syear", String.valueOf(year));
                     if (html == null) {
                         throw new Exception("can't switch year");
                     }
                     mYear = year;
                 }
-                //Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
+                Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
                 if (mMonth != month) {
-                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                    html = mAspNetHelper.makeUrlRequest("smonth", String.format("%d月 ", month));
                     if (html == null) {
                         throw new Exception("can't switch month");
                     }
                     mMonth = month;
                 }
-                //Log.d(TAG, String.format("mKind=%s, kind=%s", mKind, kind));
+                Log.d(TAG, String.format("mKind=%s, kind=%s", mKind, kind));
                 if (kind != null && !kind.isEmpty() && !kind.equals(mKind)) {//choose game kind
-                    html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_gameno", kind);
+                    html = mAspNetHelper.makeUrlRequest("sgameno", kind);
                     if (html == null) {
                         throw new Exception("can't switch kind");
                     }
@@ -423,7 +437,7 @@ public class CpblCalendarHelper extends HttpHelper {
             //Log.d(TAG, "query2014 " + html.length());
             if (html != null && html.contains("<tr class=\"game\">")) {//have games
                 String[] days = html.split("<table class=\"day\">");
-                //Log.d(TAG, "days " + days.length);
+                Log.d(TAG, "days " + days.length);
                 for (String day : days) {
                     //check those days with games
                     String data = day.substring(day.indexOf("<tr"));
@@ -579,6 +593,7 @@ public class CpblCalendarHelper extends HttpHelper {
             //
             "<[^>]*>([0-9]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)<br>([^<]+)";
 
+    @Deprecated
     private Game parseOneGameHtml2014(int year, int month, int day, String kind, String str,
                                       SparseArray<Game> delayGames) {
         Game game = new Game();
@@ -1344,5 +1359,157 @@ public class CpblCalendarHelper extends HttpHelper {
         return (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 ? context.getExternalCacheDir() : context.getCacheDir();
+    }
+
+    public ArrayList<Game> query2016(int year, int month, String kind, String field) {
+        long start = System.currentTimeMillis();
+        year = 2015;
+        month = 10;
+        ArrayList<Game> gameList = new ArrayList<>();
+        String url = URL_SCHEDULE_2016.replace("@year", String.valueOf(year))
+                .replace("@month", String.valueOf(month))
+                .replace("@kind", kind).replace("@field", field.equals("F00") ? "" : field);
+        //Log.d(TAG, "url: " + url);
+        String html = getUrlContent(url);
+        if (html != null && html.contains("<div class=\"one_block\"")) {
+            //Log.d(TAG, "check game list");
+            html = html.substring(0, html.indexOf("<div class=\"footer\">"));
+            String[] one_block = html.split("<div class=\"one_block\"");
+            //Log.d(TAG, "one_block = " + one_block.length);
+            int games = one_block.length;
+            for (int i = 1; i < games; i++) {
+                Game game = parseOneGameHtml2016(one_block[i], year);
+                if (game != null) {
+                    if (game.IsDelay && !game.IsFinal) {
+                        continue;//don't add to game list
+                    }
+                    gameList.add(game);
+                }
+            }
+        }
+        long cost = System.currentTimeMillis() - start;
+        Log.d(TAG, String.format("cost %d ms", cost));
+        return gameList;
+    }
+
+    private Team getTeamByPng(String png, int year) {
+        return Team.getTeam2014(getContext(), png, year);
+    }
+
+    private Game parseOneGameHtml2016(String html, int year) {
+        Game game = new Game();
+        //onClick="location.href='/games/box.html?&game_type=01&game_id=158&game_date=2015-08-01&pbyear=2015';"
+        game.StartTime = getNowTime();
+        game.StartTime.set(Calendar.YEAR, year);
+        game.StartTime.set(Calendar.SECOND, 0);
+        game.StartTime.set(Calendar.MILLISECOND, 0);
+
+        final String patternGameId = "game_id=([0-9]+)";
+        Matcher matchId = Pattern.compile(patternGameId).matcher(html);
+        if (matchId.find()) {
+            game.Id = Integer.parseInt(matchId.group(1));
+        }
+
+        if (html.contains("schedule_info")) {
+            String[] info = html.split("schedule_info");
+            //schedule_info[1] contains game id and if this is delayed game or not
+            if (info.length > 1 && info[1].contains("class=\"sp\"")) {
+                String[] extra = info[1].split("<th");
+                if (extra.length > 2 && game.Id <= 0) {
+                    String id = extra[2];
+                    id = id.substring(id.indexOf(">") + 1, id.indexOf("</th"));
+                    game.Id = Integer.parseInt(id);
+                }
+                if (extra.length > 1) {//check delay game
+                    String extraTitle = extra[1];
+                    extraTitle = extraTitle.substring(extraTitle.indexOf(">") + 1,
+                            extraTitle.indexOf("</th"));
+                    extraTitle = extraTitle.replace("\r", "").replace("\n", "").trim();
+                    game.IsDelay = !extraTitle.isEmpty();
+                    Log.d(TAG, String.format("I am a delayed game %d", game.Id));
+                    game.DelayMessage = String.format("<font color='red'>%s</font>", extraTitle);
+                }
+            }
+            //schedule_info[2] contains results
+            if (info.length > 2 && info[2].contains("schedule_score")) {//we have results
+                game.IsFinal = true;
+                //<span class="schedule_score">7</span>
+                final String patternScore = "schedule_score[^>]*>([\\d]+)";
+                Matcher matchScore = Pattern.compile(patternScore).matcher(html);
+                if (matchScore.find()) {//find the first
+                    game.AwayScore = Integer.parseInt(matchScore.group(1));
+                }
+                if (matchScore.find()) {//find the second
+                    game.HomeScore = Integer.parseInt(matchScore.group(1));
+                }
+                //Log.d(TAG, String.format("  score = %d:%d", game.AwayScore, game.HomeScore));
+            }
+            //schedule_info[3] contains delay messages
+            if (info.length > 3 && info[3].contains("<td")) {
+                String message = info[3].trim();
+                message = message.substring(message.indexOf("<tr") + 4, message.indexOf("</tr>"));
+                message = message.replace("\r", "").replace("\n", "").trim();
+                if (!message.isEmpty()) {
+                    game.DelayMessage = message.replaceAll("<[^>]*>", "").replaceAll("[ ]+", " ");
+                    Log.d(TAG, "message: " + game.DelayMessage);
+                }
+            }
+        }
+
+        if (html.contains("onClick")) {
+            //Log.d(TAG, "complete " + game.Id);
+            game.IsFinal = true;
+        } else {
+            //Log.d(TAG, "delayed " + game.Id);
+            game.IsDelay = true;
+        }
+
+        final String patternGameDate = "game_date=([\\d]+)-([\\d]+)-([\\d]+)";
+        Matcher matchDate = Pattern.compile(patternGameDate).matcher(html);
+        if (matchDate.find()) {
+            year = Integer.parseInt(matchDate.group(1));
+            int month = Integer.parseInt(matchDate.group(2));
+            int day = Integer.parseInt(matchDate.group(3));
+            //Log.d(TAG, String.format("%04d/%02d/%02d", year, month, day));
+            game.StartTime.set(Calendar.YEAR, year);
+            game.StartTime.set(Calendar.MONTH, month - 1);
+            game.StartTime.set(Calendar.DAY_OF_MONTH, day);
+        }
+
+        if (html.contains("class=\"schedule_team")) {
+            String matchUpPlace = html.substring(html.indexOf("class=\"schedule_team"));
+            matchUpPlace = matchUpPlace.substring(0, matchUpPlace.indexOf("</table"));
+            String[] tds = matchUpPlace.split("<td");
+            //Log.d(TAG, "tds = " + tds.length);
+            if (tds.length > 3) {
+                String awayTeam = tds[1];//                     0123456789012345
+                //Log.d(TAG, "  away = " + awayTeam);
+                awayTeam = awayTeam.substring(awayTeam.indexOf("images/team/"));
+                awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
+                //Log.d(TAG, "  away = " + awayTeam);
+                game.AwayTeam = getTeamByPng(awayTeam, year);
+                String place = tds[2];
+                //Log.d(TAG, "  place = " + place);
+                place = place.substring(place.indexOf(">") + 1, place.indexOf("</td>"));
+                //Log.d(TAG, "  place = " + place);
+                game.Field = place.trim();
+                String homeTeam = tds[3];//                     0123456789012345
+                //Log.d(TAG, "  home = " + homeTeam);
+                homeTeam = homeTeam.substring(homeTeam.indexOf("images/team/"));
+                homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
+                //Log.d(TAG, "  home = " + homeTeam);
+                game.HomeTeam = getTeamByPng(homeTeam, year);
+            } else {
+                Log.d(TAG, "no match up");
+            }
+        }
+
+        //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/B03_logo_01.png"
+        //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/E02_logo_01.png"
+        //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/L01_logo_01.png"
+        //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/A02_logo_01.png"
+        //Matcher matchTeams = Pattern.compile("").matcher(html);
+
+        return game;
     }
 }

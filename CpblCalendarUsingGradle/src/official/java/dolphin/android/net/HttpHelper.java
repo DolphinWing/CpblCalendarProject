@@ -28,7 +28,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -37,13 +36,15 @@ import java.util.regex.Pattern;
 
 /**
  * Created by dolphin on 2013/6/3.
+ * Android 6.0 (SDK=23) remove org.apache.http support
  */
+@Deprecated
 public class HttpHelper {
     private static final String TAG = "HttpHelper";
 
     private final static int DEFAULT_NETWORK_TIMEOUT = 20000;
 
-    public final static String ENCODE_UTF8 = HTTP.UTF_8;//"utf-8";
+    public final static String ENCODE_UTF8 = "utf-8";
     public final static String ENCODE_BIG5 = "big5";
 
     /**
@@ -56,29 +57,6 @@ public class HttpHelper {
      * from an API request.
      */
     private static byte[] sBuffer = new byte[512];
-
-    /**
-     * User-agent string to use when making requests. Should be filled using
-     * {@link #prepareUserAgent(Context)} before making any other calls.
-     */
-    private static String sUserAgent = null;
-
-    /**
-     * Prepare the internal User-Agent string for use. This requires a
-     * {@link Context} to pull the package name and version number for this
-     * application.
-     */
-    public static void prepareUserAgent(Context context) {
-        try {
-            // Read package name and version number from manifest
-            PackageManager manager = context.getPackageManager();
-            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
-            sUserAgent = String.format("%s/%s (Linux; Android)", info.packageName, info.versionName);
-
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Couldn't find package information in PackageManager", e);
-        }
-    }
 
     /**
      * Pull the raw text content of the given URL. This call blocks until the
