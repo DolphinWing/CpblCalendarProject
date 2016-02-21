@@ -21,7 +21,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpProgressListener;
 
-
+@Deprecated
 public class DelayGameActivity extends Activity {
     private final static String TAG = "DelayGame";
 
@@ -33,13 +33,13 @@ public class DelayGameActivity extends Activity {
         Utils.enableStrictMode();
 
         View button1 = findViewById(android.R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SparseArray<Game> games = queryDelayGame();
-                Log.d(TAG, "total delay games: " + games.size());
-            }
-        });
+//        button1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                SparseArray<Game> games = queryDelayGame();
+//                Log.d(TAG, "total delay games: " + games.size());
+//            }
+//        });
 
         View button2 = findViewById(android.R.id.button2);
         button2.setOnClickListener(new View.OnClickListener() {
@@ -56,13 +56,13 @@ public class DelayGameActivity extends Activity {
         SparseArray<Game> delayedGames = new SparseArray<>();
         int year = 2014;
         for (int month = 3; month <= 10; month++) {
-            String html;// = getUrlContent(URL_SCHEDULE_2014);
+            String html = null;// = getUrlContent(URL_SCHEDULE_2014);
             AspNetHelper helper = new AspNetHelper("http://www.cpbl.com.tw/schedule.aspx");
-            html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
-            html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+//            html = helper.makeRequest("ctl00$cphBox$ddl_year", String.valueOf(year));
+//            html = helper.makeRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
 
             //Log.d(TAG, "query2014 " + html.length());
-            if (html.contains("<tr class=\"game\">")) {//have games
+            if (html != null && html.contains("<tr class=\"game\">")) {//have games
                 String[] days = html.split("<table class=\"day\">");
                 //Log.d(TAG, "days " + days.length);
                 for (String day : days) {

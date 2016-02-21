@@ -422,7 +422,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 //                        } else {//do real job
                             doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                     mYear, mMonth));
-                            gameList = mHelper.query2014(mYear, mMonth, gameKind, mDelayGames2014.get(mYear));
+                            //gameList = mHelper.query2014(mYear, mMonth, gameKind, mDelayGames2014.get(mYear));
+                        gameList = mHelper.query2016(mYear, mMonth, gameKind, mField);
                             doQueryStateUpdateCallback(R.string.title_download_complete);
 //                        }
                     }
@@ -644,7 +645,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
-                    ArrayList<Game> list = mHelper.query2014(mYear, m, "01");
+                    ArrayList<Game> list = //mHelper.query2014(mYear, m, "01");
+                        mHelper.query2016(mYear, m, "01", "");
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));

@@ -38,7 +38,7 @@ public class GameAdapter extends BaseGameAdapter {
 
     @Override
     protected int getLayoutResId(Game game) {
-        boolean bIsLongName = game.Kind.equalsIgnoreCase("09");
+        boolean bIsLongName = game.Kind != null && game.Kind.equalsIgnoreCase("09");
         return bIsLongName ? R.layout.listview_item_matchup_09 : R.layout.listview_item_matchup;
     }
 
