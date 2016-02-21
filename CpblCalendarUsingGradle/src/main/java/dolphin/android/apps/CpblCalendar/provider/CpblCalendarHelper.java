@@ -1355,10 +1355,7 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return cache dir
      */
     public static File getCacheDir(Context context) {
-//        return (ContextCompat.checkSelfPermission(context,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-//                ? context.getExternalCacheDir() : context.getCacheDir();
-        return context.getExternalCacheDir();
+        return SupprtV4Utils.getCacheDir(context);
     }
 
     public ArrayList<Game> query2016(int year, int month, String kind, String field) {
@@ -1376,6 +1373,7 @@ public class CpblCalendarHelper extends HttpHelper {
             //Log.d(TAG, "check game list");
             html = html.substring(0, html.indexOf("<div class=\"footer\">"));
 
+            //http://stackoverflow.com/a/7860836/2673859
             TreeMap<String, String> dayMap = new TreeMap<>();
             String[] tdDays = html.split("<td valign=\"top\">");
             Log.d(TAG, "td days = " + tdDays.length);
