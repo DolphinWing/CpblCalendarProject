@@ -1394,12 +1394,11 @@ public class CpblCalendarHelper extends HttpHelper {
             int games = one_block.length;
             for (int i = 1; i < games; i++) {
                 int d = parseGame2016TestGameDay(dayMap, one_block[i]);
-                Game game = parseOneGameHtml2016(one_block[i], year, month, d);
+                Game game = parseOneGameHtml2016(one_block[i], year, month, d, kind);
                 if (game != null) {
                     if (game.IsDelay && !game.IsFinal) {
                         continue;//don't add to game list
                     }
-                    game.Kind = kind;
                     gameList.add(game);
                 }
             }
@@ -1428,7 +1427,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return Team.getTeam2014(getContext(), png, year);
     }
 
-    private Game parseOneGameHtml2016(String html, int year, int month, int day) {
+    private Game parseOneGameHtml2016(String html, int year, int month, int day, String kind) {
         Game game = new Game();
         //onClick="location.href='/games/box.html?&game_type=01&game_id=158&game_date=2015-08-01&pbyear=2015';"
         game.StartTime = getNowTime();
@@ -1437,6 +1436,7 @@ public class CpblCalendarHelper extends HttpHelper {
         game.StartTime.set(Calendar.DAY_OF_MONTH, day);//dolphin++@2016.02.21
         game.StartTime.set(Calendar.SECOND, 0);
         game.StartTime.set(Calendar.MILLISECOND, 0);
+        game.Kind = kind;//dolphin++@2016.02.21
 
         final String patternGameId = "game_id=([0-9]+)";
         Matcher matchId = Pattern.compile(patternGameId).matcher(html);
@@ -1593,6 +1593,10 @@ public class CpblCalendarHelper extends HttpHelper {
         //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/L01_logo_01.png"
         //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/A02_logo_01.png"
         //Matcher matchTeams = Pattern.compile("").matcher(html);
+
+        //http://www.cpbl.com.tw/games/box.html?&game_type=01&game_id=198&game_date=2015-10-01&pbyear=2015
+        game.Url = String.format("%s/games/box.html?game_date=%04d-%02d-%02d&game_id=%d&pbyear=%04d&game_type=%s",
+                URL_BASE, year, month, day, game.Id, year, kind);
 
         return game;
     }

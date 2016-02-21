@@ -310,23 +310,24 @@ public class Utils {
      */
     public static void startGameActivity(Context context, Game game) {
         Calendar now = CpblCalendarHelper.getNowTime();
-        String url = null;
+        String url = game.Url;//null;
+//        int year = game.StartTime.get(Calendar.YEAR);
+//        if (game.StartTime.after(now)) {
+//            url = within3Days(game.StartTime) ?
+//                    String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
+//                            CpblCalendarHelper.URL_BASE, game.Kind, year, game.Id) : null;
+//        } else if (game.IsFinal || PreferenceUtils.isCacheMode(context)) {
+//            url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
+//                    CpblCalendarHelper.URL_BASE, game.Kind, year, game.Id);
+//        } else {
+//            //url = game.Url;//default is live url
+//            //Log.d(TAG, game.StartTime.getTime().toString());
+//            //http://www.cpbl.com.tw/game/playbyplay.aspx?gameno=01&year=2015&game=133
+//            url = String.format("%s/game/playbyplay.aspx?gameno=%s&year=%d&game=%d",
+//                    CpblCalendarHelper.URL_BASE, game.Kind, year, game.Id);
+//        }
         if (game.StartTime.after(now)) {
-            url = within3Days(game.StartTime) ?
-                    String.format("%s/game/starters.aspx?gameno=%s&year=%d&game=%d",
-                            CpblCalendarHelper.URL_BASE,
-                            game.Kind, game.StartTime.get(Calendar.YEAR), game.Id) : null;
-        } else if (game.IsFinal || PreferenceUtils.isCacheMode(context)) {
-            url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
-                    CpblCalendarHelper.URL_BASE,
-                    game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
-        } else {
-            //url = game.Url;//default is live url
-            //Log.d(TAG, game.StartTime.getTime().toString());
-            //http://www.cpbl.com.tw/game/playbyplay.aspx?gameno=01&year=2015&game=133
-            url = String.format("%s/game/playbyplay.aspx?gameno=%s&year=%d&game=%d",
-                    CpblCalendarHelper.URL_BASE,
-                    game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
+            url = null;
         }
 
         if (/*game != null && */url != null) {//[78]-- game.IsFinal) {
