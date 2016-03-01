@@ -92,10 +92,12 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         if (mEmptyView != null) {
             View button1 = mEmptyView.findViewById(android.R.id.button1);
             if (button1 != null) {
+                final int y = Integer.parseInt(year.split(" ")[0]);
+                final int m = Integer.decode(month.substring(0, month.length() - 1));
                 button1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        CpblCalendarHelper.startActivityToCpblSchedule(getActivity());
+                        CpblCalendarHelper.startActivityToCpblSchedule(getActivity(), y, m, "01", "F00");
                     }
                 });
             }

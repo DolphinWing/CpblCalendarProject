@@ -4,10 +4,11 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
 
-//    defaultConfig {
+    defaultConfig {
 //        minSdkVersion 9
 //        targetSdkVersion 23
-//    }
+        resConfigs "zh"
+    }
 
     buildTypes {
         release {
@@ -21,8 +22,8 @@ android {
         material {
             minSdkVersion 16
             targetSdkVersion 23
-            versionName '2.3.1'
-            versionCode 176
+            versionName '2.3.2'
+            versionCode 178
         }
         official {
             minSdkVersion 9

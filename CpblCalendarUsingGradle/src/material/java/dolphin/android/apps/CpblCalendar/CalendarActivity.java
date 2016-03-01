@@ -244,7 +244,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 return true;//break;
             case R.id.action_go_to_cpbl:
                 mAnalytics.sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
-                CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext(), true);
+                CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext(), mYear, mMonth,
+                        getGameKind(mKind), mField, true);
                 return true;
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel
@@ -621,9 +622,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                             actionBar.setSubtitle(R.string.action_cache_mode);
                         }
 
-                        mQueryCallback.onQuerySuccess(mHelper, gameList);
+                        mQueryCallback.onQuerySuccess(mHelper, gameList, mYear, mMonth);
                     } else {
-                        mQueryCallback.onQueryError();
+                        mQueryCallback.onQueryError(mYear, mMonth);
                     }
 
                     //internalLoading(false);//[87]dolphin++ but no need

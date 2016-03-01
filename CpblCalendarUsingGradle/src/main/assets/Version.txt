@@ -35,6 +35,21 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[178] @ 2016-03-02
+    fix game date when we are really in this month
+    fix website open url
+    fix official build has improper option menu background
+    remove non-use resources
+
+[176] @ 2016-02-20
+    fix data source for both official and material version
+    fix some build paths
+    and some other more
+
+[174] @ 2016-01-03
+    fix data source
+    and other more
+
 [171] @ 2015-10-11
     fix Settings Toolbar text color on 5.0+
     fix FloatingActionButton elevation on 5.0+

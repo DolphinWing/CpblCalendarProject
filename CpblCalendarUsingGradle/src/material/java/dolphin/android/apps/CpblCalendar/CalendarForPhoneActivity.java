@@ -185,21 +185,20 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
-    public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList) {
+    public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList, int year, int month) {
         mDrawerLayout.closeDrawer(mDrawerList);//[138]++ close it//[87]dolphin++ put to success?
         //Log.d(TAG, "onSuccess");
-        updateGameListFragment(gameArrayList);
+        updateGameListFragment(gameArrayList, year, month);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
     }
 
-    private void updateGameListFragment(ArrayList<Game> gameArrayList) {
+    private void updateGameListFragment(ArrayList<Game> gameArrayList, int year, int month) {
         //mGameList = gameArrayList;//as a temp storage
 
         FragmentManager fmgr = getFragmentManager();
         //if (fmgr != null) {//update the fragment
         FragmentTransaction trans = fmgr.beginTransaction();
-        GameListFragment frag1 =
-                (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
+        GameListFragment frag1 = (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
         if (frag1 != null) {
             frag1.updateAdapter(gameArrayList, mSpinnerYear.getSelectedItem().toString(),
                     mSpinnerMonth.getSelectedItem().toString());
@@ -216,10 +215,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
-    public void onQueryError() {
+    public void onQueryError(int year, int month) {
         //Log.e(TAG, "onError");
         onLoading(false);//[30]dolphin++
-        updateGameListFragment(new ArrayList<Game>());//[59]++ no data
+        updateGameListFragment(new ArrayList<Game>(), year, month);//[59]++ no data
         Toast.makeText(getActivity(), R.string.query_error,
                 Toast.LENGTH_SHORT).show();//[31]dolphin++
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -309,6 +308,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 Toast.makeText(this, "Google API unavailable", Toast.LENGTH_LONG).show();
                 Log.e(TAG, "This device is not supported.");
                 finish();
+                return;
             }
         }
 
