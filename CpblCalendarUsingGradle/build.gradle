@@ -26,9 +26,9 @@ android {
         }
         official {
             minSdkVersion 9
-            targetSdkVersion 19
-            versionName '1.6.0'
-            versionCode 175
+            targetSdkVersion 15
+            versionName '1.6.1'
+            versionCode 177
         }
     }
 }

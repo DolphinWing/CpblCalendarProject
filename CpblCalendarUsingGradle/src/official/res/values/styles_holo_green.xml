@@ -63,7 +63,8 @@
     </style>
 
     <style name="PopupMenu.Holo_green" parent="@style/Widget.Sherlock.ListPopupWindow">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>
+        <!--<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>-->
+        <item name="android:popupBackground">@drawable/abs__menu_dropdown_panel_holo_light</item>
     </style>
 
     <style name="DropDownListView.Holo_green" parent="@style/Widget.Sherlock.ListView.DropDown">

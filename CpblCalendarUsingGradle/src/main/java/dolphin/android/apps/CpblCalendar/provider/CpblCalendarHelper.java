@@ -501,13 +501,37 @@ public class CpblCalendarHelper extends HttpHelper {
         return gameList;
     }
 
-    public static void startActivityToCpblSchedule(Context context) {
-        startActivityToCpblSchedule(context, false);
+    /**
+     * start CPBL website in browser
+     *
+     * @param context Context
+     * @param year    year
+     * @param month   month
+     * @param kind    game kind
+     * @param field   game field
+     */
+    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
+                                                   String field) {
+        startActivityToCpblSchedule(context, year, month, kind, field, false);
     }
 
-    public static void startActivityToCpblSchedule(Context context, boolean newTask) {
+    /**
+     * start CPBL website in browser
+     *
+     * @param context Context
+     * @param year    year
+     * @param month   month
+     * @param kind    game kind
+     * @param field   game field
+     * @param newTask true if in a new task
+     */
+    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
+                                                   String field, boolean newTask) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(URL_SCHEDULE_2014));
+        String url = URL_SCHEDULE_2016.replace("@year", String.valueOf(year))
+                .replace("@month", String.valueOf(month))
+                .replace("@kind", kind).replace("@field", field.equals("F00") ? "" : field);
+        intent.setData(Uri.parse(url));//URL_SCHEDULE_2014
         if (newTask) {//[170]++
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {//[167]++
@@ -1378,7 +1402,9 @@ public class CpblCalendarHelper extends HttpHelper {
             String[] tdDays = html.split("<td valign=\"top\">");
             Log.d(TAG, "td days = " + tdDays.length);
             //<th class="past">29</th>
-            Matcher matchGameDay = Pattern.compile("<th class=\"past\">([0-9]+)</th>").matcher(html);
+            //<th class="today">01</th>
+            //<th class="future">02</th>
+            Matcher matchGameDay = Pattern.compile("<th class=\"[^\"]*\">([0-9]+)</th>").matcher(html);
             int days = 0;
             while (matchGameDay.find()) {//find the first
                 days++;

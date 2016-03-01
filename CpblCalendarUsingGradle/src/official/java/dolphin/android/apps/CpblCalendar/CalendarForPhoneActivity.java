@@ -218,14 +218,14 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
-    public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList) {
+    public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList, int year, int month) {
         //mDrawerLayout.closeDrawer(mDrawerList);//[87]dolphin++ put to success?
         //Log.d(TAG, "onSuccess");
-        updateGameListFragment(gameArrayList);
+        updateGameListFragment(gameArrayList, year, month);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
     }
 
-    private void updateGameListFragment(ArrayList<Game> gameArrayList) {
+    private void updateGameListFragment(ArrayList<Game> gameArrayList, int year, int month) {
         mGameList = gameArrayList;//as a temp storage
 
         FragmentManager fmgr = getSupportFragmentManager();
@@ -234,7 +234,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             GameListFragment frag1 =
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
             if (frag1 != null) {
-                frag1.updateAdapter(gameArrayList);
+                frag1.updateAdapter(gameArrayList, year, month);
                 try {
                     trans.commitAllowingStateLoss();//[30]dolphin++
                 } catch (IllegalStateException e) {
@@ -248,10 +248,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
-    public void onQueryError() {
+    public void onQueryError(int year, int month) {
         //Log.e(TAG, "onError");
         onLoading(false);//[30]dolphin++
-        updateGameListFragment(new ArrayList<Game>());//[59]++ no data
+        updateGameListFragment(new ArrayList<Game>(), year, month);//[59]++ no data
         Toast.makeText(getSFActivity(), R.string.query_error,
                 Toast.LENGTH_SHORT).show();//[31]dolphin++
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()

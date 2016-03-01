@@ -1,15 +1,11 @@
 package dolphin.android.apps.CpblCalendar;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -34,7 +30,7 @@ public class GameListFragment extends SherlockListFragment
      *
      * @param gameArrayList
      */
-    public void updateAdapter(ArrayList<Game> gameArrayList) {
+    public void updateAdapter(ArrayList<Game> gameArrayList, int year, int month) {
         final SherlockFragmentActivity activity = getSherlockActivity();
         //http://stackoverflow.com/a/11621405
         //this.setListShown(false);
@@ -70,7 +66,7 @@ public class GameListFragment extends SherlockListFragment
 //                ? getString(R.string.no_games_this_month)
 //                : getString(R.string.no_favorite_teams));//[31]dolphin++
         if (PreferenceUtils.getFavoriteTeams(activity).size() > 0) {
-            this.getListView().setEmptyView(getEmptyView());
+            this.getListView().setEmptyView(getEmptyView(year, month));
         } else {
             this.setEmptyText(getString(R.string.no_favorite_teams));
         }
@@ -79,7 +75,7 @@ public class GameListFragment extends SherlockListFragment
 
     private View mEmptyView = null;
 
-    private View getEmptyView() {
+    private View getEmptyView(final int year, final int month) {
         //http://stackoverflow.com/a/15990955/2673859
         if (mEmptyView == null) {
             mEmptyView = getLayoutInflater(null).inflate(R.layout.listview_empty_view, null);
@@ -94,7 +90,8 @@ public class GameListFragment extends SherlockListFragment
                 button1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        CpblCalendarHelper.startActivityToCpblSchedule(getActivity());
+                        CpblCalendarHelper.startActivityToCpblSchedule(getActivity(), year, month,
+                                "01", "F00");
                     }
                 });
             }

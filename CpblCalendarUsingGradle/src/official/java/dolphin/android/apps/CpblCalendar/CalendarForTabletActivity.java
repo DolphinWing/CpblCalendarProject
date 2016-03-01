@@ -205,8 +205,8 @@ public class CalendarForTabletActivity extends CalendarActivity {
             }
 
             @Override
-            public void onQuerySuccess(CpblCalendarHelper helper,
-                                       ArrayList<Game> gameArrayList) {
+            public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList,
+                                       int year, int month) {
                 if (mLeaderBoardContent != null) {//[27]dolphin++
                     //Log.d(TAG, html);
                     // Encoding issue with WebView's loadData
@@ -215,14 +215,14 @@ public class CalendarForTabletActivity extends CalendarActivity {
                             "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
                 }
 
-                updateGameListFragment(gameArrayList);
+                updateGameListFragment(gameArrayList, year, month);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             @Override
-            public void onQueryError() {
+            public void onQueryError(int year, int month) {
                 onLoading(false);//[47]dolphin++
-                updateGameListFragment(new ArrayList<Game>());//[59]++ no data
+                updateGameListFragment(new ArrayList<Game>(), year, month);//[59]++ no data
                 Toast.makeText(getSFActivity(), R.string.query_error,
                         Toast.LENGTH_SHORT).show();//[31]dolphin++
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -230,7 +230,7 @@ public class CalendarForTabletActivity extends CalendarActivity {
         };
     }
 
-    private void updateGameListFragment(ArrayList<Game> gameArrayList) {
+    private void updateGameListFragment(ArrayList<Game> gameArrayList, int year, int month) {
         mGameList = gameArrayList;//as a temp storage
 
         FragmentManager fmgr = getSupportFragmentManager();
@@ -239,7 +239,7 @@ public class CalendarForTabletActivity extends CalendarActivity {
             GameListFragment frag1 =
                     (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
             if (frag1 != null) {
-                frag1.updateAdapter(gameArrayList);
+                frag1.updateAdapter(gameArrayList, year, month);
                 try {
                     trans.commitAllowingStateLoss();//[30]dolphin++
                 } catch (IllegalStateException e) {
