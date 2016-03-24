@@ -35,11 +35,15 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[179] @ 2016-03-25
+    fix java.lang.NumberFormatException in GameListFragment.getEmptyView()
+    update support-v4 and v7 to 23.2.0
+
 [178] @ 2016-03-02
     fix game date when we are really in this month
     fix website open url
     fix official build has improper option menu background
-    remove non-use resources
+    remove non-use resources (leave zh only)
 
 [176] @ 2016-02-20
     fix data source for both official and material version

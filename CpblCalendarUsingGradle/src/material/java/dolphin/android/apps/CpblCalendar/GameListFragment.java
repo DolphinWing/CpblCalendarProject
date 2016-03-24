@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -92,8 +91,21 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         if (mEmptyView != null) {
             View button1 = mEmptyView.findViewById(android.R.id.button1);
             if (button1 != null) {
-                final int y = Integer.parseInt(year.split(" ")[0]);
-                final int m = Integer.decode(month.substring(0, month.length() - 1));
+                int y1 = CpblCalendarHelper.getNowTime().get(Calendar.YEAR);
+                try {
+                    y1 = Integer.parseInt(year.split(" ")[0]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                int m1 = 3;
+                try {
+                    m1 = month.equals(getString(R.string.title_game_year_all_months))
+                            ? 3 : Integer.parseInt(month.substring(0, month.length() - 1).trim());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                final int y = y1;
+                final int m = m1;
                 button1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
