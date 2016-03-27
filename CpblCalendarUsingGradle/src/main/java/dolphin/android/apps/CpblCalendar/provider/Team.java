@@ -62,6 +62,9 @@ public class Team {
     public final static int ID_ALL_STAR_SPEED_WHITE = 103;
     public final static int ID_ALL_STAR_POWER_RED = 104;
 
+    public final static int ID_SOUTH_KOREA = 203;
+    public final static int ID_CHINESE_TAIPEI = 204;
+
     /**
      * get the team id from raw data
      *
@@ -181,8 +184,10 @@ public class Team {
                 return R.drawable.allstar_power_red;
             case ID_ALL_STAR_SPEED_WHITE://[161]++
                 return R.drawable.allstar_speed_white;
+            case ID_CHINESE_TAIPEI://[181]++
+                return R.drawable.z04_logo_01;
         }
-        return R.drawable.ic_launcher;
+        return R.drawable.no_logo;
     }
 
     /**
@@ -258,6 +263,12 @@ public class Team {
             case ID_ALL_STAR_SPEED_WHITE://[161]++
                 string_id = R.string.team_all_star_speed_white;
                 break;
+            case ID_SOUTH_KOREA://[181]++
+                string_id = R.string.team_south_korea;
+                break;
+            case ID_CHINESE_TAIPEI://[181]++
+                string_id = R.string.team_chinese_taipei;
+                break;
         }
         return context.getString(string_id);
     }
@@ -329,7 +340,13 @@ public class Team {
                 break;
             case ID_ALL_STAR_WHITE://[161]++
             case ID_ALL_STAR_SPEED_WHITE://[161]++
-                string_id = R.string.team_ct_whales_short;
+                string_id = R.string.team_all_star_white_short;
+                break;
+            case ID_SOUTH_KOREA://[181]++
+                string_id = R.string.team_south_korea;
+                break;
+            case ID_CHINESE_TAIPEI://[181]++
+                string_id = R.string.team_chinese_taipei;
                 break;
         }
         return context.getString(string_id);
@@ -436,6 +453,10 @@ public class Team {
             id = ID_ALL_STAR_SPEED_WHITE;
         } else if (png.contains("S05")) {
             id = ID_ALL_STAR_POWER_RED;
+        } else if (png.contains("z03")) {//[181]++
+            id = ID_SOUTH_KOREA;
+        } else if (png.contains("z04")) {//[181]++
+            id = ID_CHINESE_TAIPEI;
         }
         return new Team(context, id);
     }

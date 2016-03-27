@@ -164,6 +164,9 @@
     <string name="team_all_star_speed_white">台啤速度白</string>
     <string name="team_all_star_red_short">紅</string>
     <string name="team_all_star_white_short">白</string>
+    <!-- 2016-03-27++ warm up games -->
+    <string name="team_south_korea">韓國隊</string>
+    <string name="team_chinese_taipei">中華隊</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">
