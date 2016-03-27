@@ -144,7 +144,7 @@
         <TextView
             style="@style/Theme.Holo_green.Match.Channel"
             android:id="@+id/textView6"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
         <View
             android:layout_height="@dimen/padding_small"

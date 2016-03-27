@@ -227,7 +227,8 @@
     </style>
 
     <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.TextSmall">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">left|center_vertical</item>
         <item name="android:textColor">@android:color/secondary_text_light</item>

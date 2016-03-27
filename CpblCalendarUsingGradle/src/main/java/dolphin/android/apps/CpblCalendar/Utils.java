@@ -13,8 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -218,6 +220,45 @@ public class Utils {
         return dialog;
     }
 
+    public static AlertDialog buildLeaderBoardZxc22(Context context) {
+        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+        //change the style like the entire theme
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.leader_board, null);
+        TextView textView = (TextView) view.findViewById(android.R.id.title);
+        if (textView != null) {
+            textView.setText(String.format("%s %s", context.getString(R.string.title_zxc22),
+                    context.getString(R.string.summary_zxc22)));
+        }
+
+        WebView webView = (WebView) view.findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(false);
+        webView.getSettings().setSupportZoom(false);
+        webView.loadUrl("http://zxc22.idv.tw/rank_up.asp");
+
+        View btOk = view.findViewById(android.R.id.button1);
+        if (btOk != null) {
+            btOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
+        dialog.setView(view);//webView
+        dialog.show();
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int width = (int) (display.getWidth() * .9);
+        width = width > 1600 ? 1600 : width;
+        int height = (int) (display.getHeight() * .9);
+        Log.d("CpblCalendarHelper", String.format("w=%d, h=%d", width, height));
+        dialog.getWindow().setLayout(width, height);
+        return dialog;
+    }
+
     /**
      * build cache mode dialog
      *
@@ -326,7 +367,7 @@ public class Utils {
 //            url = String.format("%s/game/playbyplay.aspx?gameno=%s&year=%d&game=%d",
 //                    CpblCalendarHelper.URL_BASE, game.Kind, year, game.Id);
 //        }
-        if (game.StartTime.after(now)) {
+        if (game.StartTime.after(now) && url.contains("box.html")) {
             url = null;
         }
 

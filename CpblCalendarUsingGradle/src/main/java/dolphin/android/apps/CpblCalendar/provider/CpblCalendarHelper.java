@@ -567,6 +567,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     "<li>([^<]+)</li>[^<]*" +
                     "<li>([^<]*)</li>*";
 
+    @Deprecated
     public ArrayList<Stand> query2014LeaderBoard() {
         long startTime = System.currentTimeMillis();
         ArrayList<Stand> list = new ArrayList<>();
@@ -1130,6 +1131,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return adapter;
     }
 
+    @Deprecated
     /**
      * query delay games from CPBL website (using ASP.NET), costs more time
      *
@@ -1292,6 +1294,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return delayedGames;
     }
 
+    @Deprecated
     private void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
         //store all data to local cache
         String delay_str = "";
@@ -1303,6 +1306,7 @@ public class CpblCalendarHelper extends HttpHelper {
         storeDelayGames2014(context, year, delay_str);
     }
 
+    @Deprecated
     private void storeDelayGames2014(Context context, int year, String delay_str) {
         if (context == null) {
             return;//cannot store, no context
@@ -1311,6 +1315,7 @@ public class CpblCalendarHelper extends HttpHelper {
         FileUtils.writeStringToFile(f, delay_str);
     }
 
+    @Deprecated
     private void writeDelayGamesCache2014(Context context, int year, int month, String html) {
         if (context == null) {
             return;//cannot store, no context
@@ -1319,6 +1324,7 @@ public class CpblCalendarHelper extends HttpHelper {
         FileUtils.writeStringToFile(f, html);
     }
 
+    @Deprecated
     private String readDelayGamesCache2014(Context context, int year, int month) {
         if (context != null) {
             //restore data from cache
@@ -1330,6 +1336,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return null;
     }
 
+    @Deprecated
     /**
      * remove stored delay games
      *
@@ -1345,6 +1352,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return false;
     }
 
+    @Deprecated
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
         if (context == null || getCacheDir(context) == null) {
@@ -1382,6 +1390,15 @@ public class CpblCalendarHelper extends HttpHelper {
         return SupprtV4Utils.getCacheDir(context);
     }
 
+    /**
+     * New query game for new 2016 web pages
+     *
+     * @param year  year
+     * @param month month
+     * @param kind  game kind
+     * @param field field
+     * @return list of games
+     */
     public ArrayList<Game> query2016(int year, int month, String kind, String field) {
         long start = System.currentTimeMillis();
 //        year = 2016;
@@ -1400,7 +1417,8 @@ public class CpblCalendarHelper extends HttpHelper {
             //http://stackoverflow.com/a/7860836/2673859
             TreeMap<String, String> dayMap = new TreeMap<>();
             String[] tdDays = html.split("<td valign=\"top\">");
-            Log.d(TAG, "td days = " + tdDays.length);
+            //Log.d(TAG, "td days = " + tdDays.length);
+
             //<th class="past">29</th>
             //<th class="today">01</th>
             //<th class="future">02</th>
@@ -1418,11 +1436,13 @@ public class CpblCalendarHelper extends HttpHelper {
             String[] one_block = html.split("<div class=\"one_block\"");
             //Log.d(TAG, "one_block = " + one_block.length);
             int games = one_block.length;
+            Calendar now = CpblCalendarHelper.getNowTime();
             for (int i = 1; i < games; i++) {
                 int d = parseGame2016TestGameDay(dayMap, one_block[i]);
                 Game game = parseOneGameHtml2016(one_block[i], year, month, d, kind);
                 if (game != null) {
-                    if (game.IsDelay && !game.IsFinal) {
+                    if (game.IsDelay && !game.IsFinal && game.StartTime.before(now)) {
+                        Log.w(TAG, String.format("bypass %d @ %s", game.Id, game.StartTime.getTime().toString()));
                         continue;//don't add to game list
                     }
                     gameList.add(game);
@@ -1442,7 +1462,7 @@ public class CpblCalendarHelper extends HttpHelper {
             //System.out.println(pair.getKey() + " = " + pair.getValue());
             //it.remove(); // avoids a ConcurrentModificationException
             if (pair.getValue().contains(block)) {
-                Log.d(TAG, "day: " + pair.getKey());
+                //Log.d(TAG, "day: " + pair.getKey());
                 return Integer.parseInt(pair.getKey());
             }
         }
@@ -1479,7 +1499,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     String id = extra[2];
                     id = id.substring(id.indexOf(">") + 1, id.indexOf("</th"));
                     game.Id = Integer.parseInt(id);
-                    Log.d(TAG, "not coming, no result " + game.Id);
+                    //Log.w(TAG, "not coming, no result " + game.Id);
                 }
                 if (info[1].contains("class=\"sp\"")) {
                     if (extra.length > 1) {//check delay game
@@ -1488,7 +1508,7 @@ public class CpblCalendarHelper extends HttpHelper {
                                 extraTitle.indexOf("</th"));
                         extraTitle = extraTitle.replace("\r", "").replace("\n", "").trim();
                         //game.IsDelay = !extraTitle.isEmpty();
-                        Log.d(TAG, String.format("I am a delayed game %d", game.Id));
+                        //Log.d(TAG, String.format("I am a delayed game %d", game.Id));
                         game.DelayMessage = String.format("<font color='red'>%s</font>", extraTitle);
                     }
                     game.IsDelay = true;
@@ -1497,7 +1517,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     String data = extra[3];
                     data = data.substring(data.indexOf(">") + 1, data.indexOf("</th"));
                     if (!data.isEmpty()) {
-                        String msg = String.format("&nbsp;%s", data);
+                        String msg = String.format("&nbsp;%s", data).trim();
                         if (game.DelayMessage != null) {
                             game.DelayMessage += msg;
                         } else {
@@ -1528,48 +1548,47 @@ public class CpblCalendarHelper extends HttpHelper {
                 String message = info[3].trim();
 //                message = message.substring(message.indexOf("<tr") + 4, message.indexOf("</tr>"));
 //                message = message.replace("\r", "").replace("\n", "").trim();
-                if (game.IsDelay && message.contains("schedule_sp_txt")) {
-                    message = message.substring(message.indexOf("schedule_sp_txt"));
-                    message = message.substring(message.indexOf(">") + 1, message.indexOf("<"));
-                } else if (!game.IsDelay && message.contains("schedule_icon_tv.png")) {
-                    String[] msg = message.split("</td>");
-                    if (msg.length > 1) {
-                        String time = msg[1];
+                //jimmy--@2016-03-26, maybe some game don't have live channel
+                //if (message.contains("schedule_icon_tv.png")) {
+                //Log.d(TAG, "try to check time: " + game.Id);
+                String[] msg = message.split("</td>");
+                //Log.d(TAG, "  msg.length: " + msg.length);
+                if (msg.length > 1) {
+                    String time = msg[1];
+                    try {
                         time = time.substring(time.indexOf(">") + 1);
-                        Log.d(TAG, "time: " + time);
+                        //Log.d(TAG, "time: " + time);
                         if (time.contains(":") && (time.indexOf(":") == 2 || time.indexOf(":") == 1)) {
                             String[] t = time.split(":");
                             game.StartTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(t[0]));
                             game.StartTime.set(Calendar.MINUTE, Integer.parseInt(t[1]));
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    if (msg.length > 2) {
-                        String channel = msg[2];
-                        if (channel.contains("title=")) {//             01234567
-                            channel = channel.substring(channel.indexOf("title=") + 7);
-                            channel = channel.substring(0, channel.indexOf("\""));
-                            Log.d(TAG, "channel: " + channel);
-                            game.Channel = channel;
-                        }
+                }
+                if (msg.length > 2) {
+                    String channel = msg[2];
+                    if (channel.contains("title=")) {//             01234567
+                        channel = channel.substring(channel.indexOf("title=") + 7);
+                        channel = channel.substring(0, channel.indexOf("\""));
+                        //Log.d(TAG, "channel: " + channel);
+                        game.Channel = channel;
                     }
-                    message = null;
+                }
+                //}
+
+                if (game.IsDelay && message.contains("schedule_sp_txt")) {
+                    message = message.substring(message.indexOf("schedule_sp_txt"));
+                    message = message.substring(message.indexOf(">") + 1, message.indexOf("<"));
                 } else {
                     message = null;
                 }
                 if (message != null && !message.isEmpty()) {
                     game.DelayMessage = message.replaceAll("<[^>]*>", "").replaceAll("[ ]+", " ");
-                    Log.d(TAG, "message: " + game.DelayMessage);
+                    //Log.d(TAG, "message: " + game.DelayMessage);
                 }
             }
-        }
-
-        if (html.contains("onClick")) {
-            //Log.d(TAG, "complete " + game.Id);
-            game.IsFinal = true;
-//        } else {
-//            //Log.d(TAG, "delayed " + game.Id);
-//            //Log.d(TAG, "  " + game.StartTime.getTime().toString());
-//            game.IsDelay = true;
         }
 
         final String patternGameDate = "game_date=([\\d]+)-([\\d]+)-([\\d]+)";
@@ -1582,8 +1601,8 @@ public class CpblCalendarHelper extends HttpHelper {
             game.StartTime.set(Calendar.YEAR, year);
             game.StartTime.set(Calendar.MONTH, m - 1);
             game.StartTime.set(Calendar.DAY_OF_MONTH, d);
-        } else {
-            Log.d(TAG, "need to calculate new game time");
+        //} else {
+        //    Log.w(TAG, "need to calculate new game time");
         }
 
         if (html.contains("class=\"schedule_team")) {
@@ -1610,7 +1629,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 //Log.d(TAG, "  home = " + homeTeam);
                 game.HomeTeam = getTeamByPng(homeTeam, year);
             } else {
-                Log.d(TAG, "no match up");
+                Log.w(TAG, "no match up");
             }
         }
 
@@ -1623,6 +1642,50 @@ public class CpblCalendarHelper extends HttpHelper {
         //http://www.cpbl.com.tw/games/box.html?&game_type=01&game_id=198&game_date=2015-10-01&pbyear=2015
         game.Url = String.format("%s/games/box.html?game_date=%04d-%02d-%02d&game_id=%d&pbyear=%04d&game_type=%s",
                 URL_BASE, year, month, day, game.Id, year, kind);
+
+        if (html.contains("game_playing")) {
+            int splitIndex = html.indexOf("game_playing");
+            game.IsFinal = false;
+            String msg = html.substring(splitIndex);
+            msg = msg.substring(msg.indexOf(">") + 1);
+            msg = msg.substring(0, msg.indexOf("<"));
+            msg = String.format("<b><font color='red'>LIVE</font></b>&nbsp;&nbsp;%s", msg);
+            game.DelayMessage = game.DelayMessage == null ? msg : game.DelayMessage.concat(msg);
+            //play_by_play.html?&game_type=01&game_id=10&game_date=2016-03-26&pbyear=2016
+            String url = null;
+            try {
+                url = html.substring(0, splitIndex - 9);
+                url = url.substring(url.lastIndexOf("href=") + 6);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //Log.d(TAG, "url = " + url);
+            game.Url = url != null ? URL_BASE.concat(url) : game.Url;
+            //Log.d(TAG, "live url = " + game.Url);
+        } else if (html.contains("schedule_icon_starter.png")) {
+            game.IsFinal = false;
+            //                       9876543210
+            //<a href="/games/starters.html?&game_type=01&game_id=9&game_date=2016-03-27&pbyear=2016">
+            //<img src="http://cpbl-elta.cdn.hinet.net/web/images/schedule_icon_starter.png" width="20" height="18" /></a>
+            String url = null;
+            try {
+                url = html.substring(0, html.indexOf("schedule_icon_starter.png"));
+                url = url.substring(url.lastIndexOf("href=") + 6);
+                url = url.substring(0, url.indexOf(">") - 1);
+                //Log.d(TAG, "url = " + url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            game.Url = url != null ? URL_BASE.concat(url) : game.Url;
+            //Log.d(TAG, "next url = " + game.Url);
+        } else if (html.contains("onClick")) {//no playing
+            //Log.d(TAG, "complete " + game.Id);
+            game.IsFinal = true;
+//        } else {
+//            //Log.d(TAG, "delayed " + game.Id);
+//            //Log.d(TAG, "  " + game.StartTime.getTime().toString());
+//            game.IsDelay = true;
+        }
 
         return game;
     }

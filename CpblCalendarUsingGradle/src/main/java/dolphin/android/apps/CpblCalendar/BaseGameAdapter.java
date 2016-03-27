@@ -1,6 +1,5 @@
 package dolphin.android.apps.CpblCalendar;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -8,7 +7,6 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +91,12 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         Calendar c = game.StartTime;
         boolean bNoScoreNoLive = (game.Source == Game.SOURCE_CPBL_2013
                 && c.get(Calendar.YEAR) >= 2014);
+        //[84]dolphin++//live channel
+        boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));
+        bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
+        //Log.d("GameAdapter", c.toString() + " live=" + bLiveNow);
+        bLiveNow &= ((mNow.getTimeInMillis() - game.StartTime.getTimeInMillis()) < LONGEST_GAME);
+        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
 
         TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
         String date_str = String.format("%s, %02d:%02d",
@@ -110,7 +114,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                         System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS)
         )
                 : date_str;
-        date_str = game.IsFinal ? new SimpleDateFormat("MMM dd (E)",
+        date_str = game.IsFinal || bLiveNow ? new SimpleDateFormat("MMM dd (E)",
                 Locale.TAIWAN).format(c.getTime()) : date_str;//[70]++
         tv1.setText(date_str);
 
@@ -138,7 +142,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv3.setText(String.valueOf(game.AwayScore));
             tv3.setBackgroundResource(android.R.color.transparent);//[45]++ reset back
         }
-        tv3.setTextColor(mContext.getResources().getColor(game.IsFinal
+        tv3.setTextColor(mContext.getResources().getColor(game.IsFinal || bLiveNow
                 ? android.R.color.primary_text_light
                 : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
@@ -170,7 +174,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                     : game.HomeTeam.getShortName());
             tv5.setBackgroundResource(android.R.color.transparent);//reset back
         }
-        tv4.setTextColor(mContext.getResources().getColor(game.IsFinal
+        tv4.setTextColor(mContext.getResources().getColor(game.IsFinal || bLiveNow
                 ? android.R.color.primary_text_light
                 : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
@@ -179,25 +183,20 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv4.setText("-");//no score
         }
 
-        //[84]dolphin++//live channel
-        boolean bLiveNow = (!game.IsFinal && game.StartTime.before(mNow));
-        bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
-        //Log.d("GameAdapter", c.toString() + " live=" + bLiveNow);
-        bLiveNow &= ((mNow.getTimeInMillis() - game.StartTime.getTimeInMillis()) < LONGEST_GAME);
-        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
         TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
-        if (mNow.get(Calendar.YEAR) >= 2014 && game.Channel == null) {//CPBL TV live!
-            tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);
-            tv6.setText(bLiveNow ? mContext.getString(R.string.title_live_on_cpbltv) : "");
-            if (bLiveNow) {
-                tv6.setTextColor(Color.RED);
-            }
-        } else if (game.Channel != null) {
+//        if (mNow.get(Calendar.YEAR) >= 2014 && game.Channel == null) {//CPBL TV live!
+//            tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);
+//            tv6.setText(bLiveNow ? mContext.getString(R.string.title_live_on_cpbltv) : "");
+//            if (bLiveNow) {
+//                tv6.setTextColor(Color.RED);
+//            }
+//        } else
+        if (game.Channel != null) {
             tv6.setVisibility(View.VISIBLE);
             tv6.setText(bLiveNow ? Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
                     mContext.getString(R.string.title_live_now), game.Channel)) : game.Channel);
         } else {
-            tv6.setVisibility(View.GONE);
+            tv6.setVisibility(View.INVISIBLE);
         }
 
         //game field
@@ -233,8 +232,8 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
         //[23]dolphin++ add a background layer id
         View bg = convertView.findViewById(R.id.match_title);
-        if (bg != null && bShowToday) {//[22]dolphin++
-            convertView.setBackgroundResource(DateUtils.isToday(c.getTimeInMillis())
+        if (bg != null) {//[22]dolphin++
+            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && bShowToday) || bLiveNow
                     ? R.drawable.item_highlight_background_holo_light
                     : android.R.color.transparent);
         }

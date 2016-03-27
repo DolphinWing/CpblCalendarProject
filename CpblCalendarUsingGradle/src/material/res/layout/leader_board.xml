@@ -2,8 +2,7 @@
     android:id="@+id/team_board"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:minHeight="@dimen/min_lead_team_board_height">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -21,8 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/webView"
-        android:minHeight="@dimen/min_lead_team_board_height" />
+        android:id="@+id/webView" />
     <!--<TextView
         android:id="@android:id/message"
         android:layout_width="match_parent"

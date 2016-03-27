@@ -1,109 +1,116 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@android:id/background"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:context=".SplashActivity"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/padding_medium"
-                android:paddingTop="@dimen/padding_small">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding_medium"
+    android:paddingTop="@dimen/padding_small"
+    tools:context=".SplashActivity">
 
     <ImageView
-        style="@style/Theme.Holo_green.Match.Drawer"
-        android:id="@android:id/icon"/>
+        android:id="@android:id/icon"
+        style="@style/Theme.Holo_green.Match.Drawer" />
 
     <LinearLayout
-        style="@style/Theme.Holo_green.Match.Title"
         android:id="@+id/match_title"
+        style="@style/Theme.Holo_green.Match.Title"
         android:layout_toLeftOf="@android:id/icon">
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Time"
-            android:id="@+id/textView1"/>
+            android:id="@+id/textView1"
+            style="@style/Theme.Holo_green.Match.Time" />
 
         <ImageView
             android:id="@+id/icon_alarm"
-            style="@style/Theme.Holo_green.AlarmIcon"/>
+            style="@style/Theme.Holo_green.AlarmIcon" />
 
         <TextView
+            android:id="@+id/textView9"
             style="@style/Theme.Holo_green.Match.GameId"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textView9"
-            android:gravity="center_vertical|right"/>
+            android:layout_weight="1"
+            android:gravity="center_vertical|right" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/match_up"
-        android:layout_below="@+id/match_title"
-        android:layout_toLeftOf="@android:id/icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/match_title"
         android:layout_gravity="left|center_vertical"
+        android:layout_toLeftOf="@android:id/icon"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium">
 
         <ImageView
-            style="@style/Theme.Holo_green.Match.Logo"
-            android:id="@android:id/icon1"/>
+            android:id="@android:id/icon1"
+            style="@style/Theme.Holo_green.Match.Logo" />
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Team"
-            android:id="@+id/textView2"/>
+            android:id="@+id/textView2"
+            style="@style/Theme.Holo_green.Match.Team" />
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Score"
-            android:id="@+id/textView3"/>
+            android:id="@+id/textView3"
+            style="@style/Theme.Holo_green.Match.Score" />
 
         <View
             android:layout_width="@dimen/padding_small"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Score"
-            android:id="@+id/textView4"/>
+            android:id="@+id/textView4"
+            style="@style/Theme.Holo_green.Match.Score" />
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Team"
-            android:id="@+id/textView5"/>
+            android:id="@+id/textView5"
+            style="@style/Theme.Holo_green.Match.Team" />
 
         <ImageView
-            style="@style/Theme.Holo_green.Match.Logo"
-            android:id="@android:id/icon2"/>
+            android:id="@android:id/icon2"
+            style="@style/Theme.Holo_green.Match.Logo" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/more_info"
-        android:layout_below="@+id/match_up"
-        android:layout_toLeftOf="@android:id/icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/match_up"
         android:layout_gravity="left|center_vertical"
+        android:layout_toLeftOf="@android:id/icon"
+        android:gravity="center_vertical"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_small"
-        android:gravity="center_vertical"
         android:paddingTop="@dimen/padding_small">
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Channel"
-            android:id="@+id/textView6"/>
+            android:id="@+id/textView6"
+            style="@style/Theme.Holo_green.Match.Channel" />
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Field"
-            android:id="@+id/textView7"/>
+            android:id="@+id/textView7"
+            style="@style/Theme.Holo_green.Match.Field" />
 
     </LinearLayout>
 
-    <TextView
-        style="@style/Theme.Holo_green.Match.ExtraMsg"
-        android:layout_below="@+id/more_info"
-        android:id="@+id/textView8"
-        android:paddingLeft="@dimen/padding_medium"
-        android:paddingRight="@dimen/padding_huge"
-        android:layout_marginRight="@dimen/padding_huge"
-        android:paddingTop="@dimen/padding_small"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/more_info">
+
+        <TextView
+            android:id="@+id/textView8"
+
+            style="@style/Theme.Holo_green.Match.ExtraMsg"
+            android:layout_marginRight="@dimen/padding_huge"
+            android:paddingLeft="@dimen/padding_medium"
+            android:paddingRight="@dimen/padding_huge"
+            android:paddingTop="@dimen/padding_small" />
+
+    </LinearLayout>
 
 </RelativeLayout>

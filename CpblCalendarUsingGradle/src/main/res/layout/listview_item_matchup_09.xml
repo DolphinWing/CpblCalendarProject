@@ -1,46 +1,46 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@android:id/background"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:context=".SplashActivity"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/padding_medium"
-                android:paddingTop="@dimen/padding_small">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding_medium"
+    android:paddingTop="@dimen/padding_small"
+    tools:context=".SplashActivity">
 
     <ImageView
-        style="@style/Theme.Holo_green.Match.Drawer"
-        android:id="@android:id/icon"/>
+        android:id="@android:id/icon"
+        style="@style/Theme.Holo_green.Match.Drawer" />
 
     <LinearLayout
-        style="@style/Theme.Holo_green.Match.Title"
         android:id="@+id/match_title"
+        style="@style/Theme.Holo_green.Match.Title"
         android:layout_toLeftOf="@android:id/icon">
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Time"
-            android:id="@+id/textView1"/>
+            android:id="@+id/textView1"
+            style="@style/Theme.Holo_green.Match.Time" />
 
         <ImageView
             android:id="@+id/icon_alarm"
-            style="@style/Theme.Holo_green.AlarmIcon"/>
+            style="@style/Theme.Holo_green.AlarmIcon" />
 
         <TextView
+            android:id="@+id/textView9"
             style="@style/Theme.Holo_green.Match.GameId"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textView9"
-            android:gravity="center_vertical|right"/>
+            android:layout_weight="1"
+            android:gravity="center_vertical|right" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/match_up"
-        android:layout_below="@+id/match_title"
-        android:layout_toLeftOf="@android:id/icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/match_title"
+        android:layout_toLeftOf="@android:id/icon"
         android:orientation="vertical"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium">
@@ -52,21 +52,21 @@
             android:orientation="horizontal">
 
             <ImageView
-                style="@style/Theme.Holo_green.Match.Logo"
-                android:id="@android:id/icon1"/>
+                android:id="@android:id/icon1"
+                style="@style/Theme.Holo_green.Match.Logo" />
 
             <TextView
-                style="@style/Theme.Holo_green.Match.Team09"
-                android:id="@+id/textView2"/>
+                android:id="@+id/textView2"
+                style="@style/Theme.Holo_green.Match.Team09" />
 
             <TextView
-                style="@style/Theme.Holo_green.Match.Score"
-                android:id="@+id/textView3"/>
+                android:id="@+id/textView3"
+                style="@style/Theme.Holo_green.Match.Score" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small"/>
+            android:layout_height="@dimen/padding_small" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,55 +75,61 @@
             android:orientation="horizontal">
 
             <ImageView
-                style="@style/Theme.Holo_green.Match.Logo"
-                android:id="@android:id/icon2"/>
+                android:id="@android:id/icon2"
+                style="@style/Theme.Holo_green.Match.Logo" />
 
             <TextView
-                style="@style/Theme.Holo_green.Match.Team09"
-                android:id="@+id/textView5"/>
+                android:id="@+id/textView5"
+                style="@style/Theme.Holo_green.Match.Team09" />
 
             <TextView
-                style="@style/Theme.Holo_green.Match.Score"
-                android:id="@+id/textView4"/>
+                android:id="@+id/textView4"
+                style="@style/Theme.Holo_green.Match.Score" />
 
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/more_info"
-        android:layout_below="@+id/match_up"
-        android:layout_toLeftOf="@android:id/icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/match_up"
         android:layout_gravity="left|center_vertical"
+        android:layout_toLeftOf="@android:id/icon"
+        android:gravity="center_vertical"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_small"
-        android:gravity="center_vertical"
         android:paddingTop="@dimen/padding_small">
 
         <TextView
-            style="@style/Theme.Holo_green.Match.Channel"
-            android:id="@+id/textView6"/>
+            android:id="@+id/textView6"
+            style="@style/Theme.Holo_green.Match.Channel" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/title_game_field"
             android:id="@+id/textView7"
-            android:textColor="@android:color/secondary_text_light"
-            android:gravity="center_vertical|right"/>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
+            android:text="@string/title_game_field"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/secondary_text_light" />
 
     </LinearLayout>
 
-    <TextView
-        style="@style/Theme.Holo_green.Match.ExtraMsg"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/more_info"
-        android:id="@+id/textView8"
-        android:paddingLeft="@dimen/padding_medium"
-        android:paddingRight="@dimen/padding_huge"
-        android:layout_marginRight="@dimen/padding_huge"
-        android:paddingTop="@dimen/padding_small"/>
+        android:layout_marginRight="@dimen/padding_huge">
+
+        <TextView
+            android:id="@+id/textView8"
+            style="@style/Theme.Holo_green.Match.ExtraMsg"
+            android:paddingLeft="@dimen/padding_medium"
+            android:paddingRight="@dimen/padding_huge"
+            android:paddingTop="@dimen/padding_small" />
+    </LinearLayout>
+
 
 </RelativeLayout>

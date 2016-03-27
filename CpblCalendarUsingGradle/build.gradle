@@ -7,7 +7,7 @@ android {
     defaultConfig {
 //        minSdkVersion 9
 //        targetSdkVersion 23
-        resConfigs "zh"
+        resConfigs "zh", "zh_TW"
     }
 
     buildTypes {
@@ -22,8 +22,8 @@ android {
         material {
             minSdkVersion 16
             targetSdkVersion 23
-            versionName '2.3.3'
-            versionCode 179
+            versionName '2.3.4'
+            versionCode 180
         }
         official {
             minSdkVersion 9

@@ -240,7 +240,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             case R.id.action_leader_board://[26]dolphin++
                 //[87]dolphin-- showLeaderBoard(mHelper.getScoreBoardHtml());
                 item.setVisible(false);
-                showLeaderBoard2014();//[87]dolphin++
+                //showLeaderBoard2014();//[87]dolphin++
+                showLeaderBoard2016();
                 return true;//break;
             case R.id.action_go_to_cpbl:
                 mAnalytics.sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
@@ -259,14 +260,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 }
                 return true;
             case R.id.action_fast_rewind://[154]dolphin++
-                //FIXME: select previous one, and do query
+                //select previous one, and do query
                 if (mSpinnerMonth.getSelectedItemPosition() > 0) {
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() - 1);
                     mButtonQuery.performClick();
                 }
                 break;
             case R.id.action_fast_forward://[154]dolphin++
-                //FIXME: select preceeding one, and do query
+                //select preceeding one, and do query
                 if (mSpinnerMonth.getSelectedItemPosition() < 12) {
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() + 1);
                     mButtonQuery.performClick();
@@ -652,6 +653,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     ArrayList<Stand> mStanding = null;
 
+    @Deprecated
     public void showLeaderBoard2014() {
         if (mStanding != null) {
             doShowLeaderBoard2014();
@@ -677,8 +679,21 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }).start();
     }
 
+    @Deprecated
     private void doShowLeaderBoard2014() {
         showLeaderBoard(Utils.prepareLeaderBoard2014(getActivity(), mStanding));
+        internalLoading(false);
+        mIsQuery = false;
+        invalidateOptionsMenu();
+    }
+
+    private void showLeaderBoard2016() {
+        try {
+            Utils.buildLeaderBoardZxc22(CalendarActivity.this);
+        } catch (Exception e) {
+            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+        }
+        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
         internalLoading(false);
         mIsQuery = false;
         invalidateOptionsMenu();
@@ -718,7 +733,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
                     ArrayList<Game> list = //mHelper.query2014(mYear, m, null, delayList);
-                        mHelper.query2016(mYear, m, "01", "");
+                            mHelper.query2016(mYear, m, "01", "");
                     boolean r = mHelper.putCache(mYear, m, list);
                     Log.v(TAG, String.format("write %04d/%02d result: %s", mYear, m,
                             (r ? "success" : "failed")));
