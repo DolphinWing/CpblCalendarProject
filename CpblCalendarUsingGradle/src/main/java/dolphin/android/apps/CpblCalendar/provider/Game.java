@@ -48,6 +48,9 @@ public class Game {
 
     public int People = 0;
 
+    public boolean IsLive = false;//[181]++
+    public String LiveMessage = null;//[181]++
+
     /**
      * convert from Game object to string
      *

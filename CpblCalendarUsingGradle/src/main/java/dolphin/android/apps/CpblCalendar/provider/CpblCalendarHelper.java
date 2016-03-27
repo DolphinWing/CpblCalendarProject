@@ -1445,6 +1445,7 @@ public class CpblCalendarHelper extends HttpHelper {
                         Log.w(TAG, String.format("bypass %d @ %s", game.Id, game.StartTime.getTime().toString()));
                         continue;//don't add to game list
                     }
+                    game.Source = Game.SOURCE_CPBL;
                     gameList.add(game);
                 }
             }
@@ -1650,7 +1651,8 @@ public class CpblCalendarHelper extends HttpHelper {
             msg = msg.substring(msg.indexOf(">") + 1);
             msg = msg.substring(0, msg.indexOf("<"));
             msg = String.format("<b><font color='red'>LIVE</font></b>&nbsp;&nbsp;%s", msg);
-            game.DelayMessage = game.DelayMessage == null ? msg : game.DelayMessage.concat(msg);
+            game.LiveMessage = msg;
+            game.IsLive = true;
             //play_by_play.html?&game_type=01&game_id=10&game_date=2016-03-26&pbyear=2016
             String url = null;
             try {

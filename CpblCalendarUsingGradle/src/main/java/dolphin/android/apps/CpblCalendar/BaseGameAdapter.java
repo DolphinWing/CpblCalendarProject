@@ -111,14 +111,19 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 ? String.format("%s (%s)", date_str,
                 //relative time span to have better date idea
                 DateUtils.getRelativeTimeSpanString(c.getTimeInMillis(),
-                        System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS)
-        )
+                        System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS))
                 : date_str;
         date_str = game.IsFinal || bLiveNow ? new SimpleDateFormat("MMM dd (E)",
                 Locale.TAIWAN).format(c.getTime()) : date_str;//[70]++
-        tv1.setText(date_str);
+        if (game.IsLive) {//[181]++
+            date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
+            tv1.setText(Html.fromHtml(date_str));
+        } else {
+            tv1.setText(date_str);
+        }
 
-        //matchup
+
+        //match up
         TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
         TextView tv3 = (TextView) convertView.findViewById(R.id.textView3);
         //[13]++ add highlight winning team
@@ -147,7 +152,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
         //[87]dolphin++ CPBL_2013 source no score
-        if (bNoScoreNoLive) {
+        if (bNoScoreNoLive || (!game.IsFinal && !game.IsLive)) {
             tv3.setText("-");//no score
         }
 
@@ -179,7 +184,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
         //[87]dolphin++ CPBL_2013 source no score
-        if (bNoScoreNoLive) {
+        if (bNoScoreNoLive || (!game.IsFinal && !game.IsLive)) {
             tv4.setText("-");//no score
         }
 
@@ -233,7 +238,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         //[23]dolphin++ add a background layer id
         View bg = convertView.findViewById(R.id.match_title);
         if (bg != null) {//[22]dolphin++
-            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && bShowToday) || bLiveNow
+            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && bShowToday)
                     ? R.drawable.item_highlight_background_holo_light
                     : android.R.color.transparent);
         }
