@@ -35,6 +35,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[181] @ 2016-03-27
+    fix 2008 warm up games with 中華隊&韓國隊
+    change layout of live games
+
 [180] @ 2016-03-26
     update build file, add dump flavor for delay game test
     fix game live info and time parsing
