@@ -9,6 +9,10 @@
         android:theme="@style/Theme.Holo_green">
 
         <activity
+            android:name=".CalendarForPhoneActivity"
+            android:screenOrientation="locked" />
+
+        <activity
             android:name=".CalendarForTabletActivity"
             android:screenOrientation="locked" />
 
@@ -20,6 +24,24 @@
             android:name=".preference.PreferenceActivity"
             android:screenOrientation="locked" />
 
+        <!-- android:process=":remote" -->
+        <receiver
+            android:name=".NotifyReceiver"
+            android:enabled="@bool/feature_notify">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="dolphin.android.apps.CpblCalendar.ALARM" />
+                <action android:name="dolphin.android.apps.CpblCalendar.DELETE_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".NotifyDialog"
+            android:enabled="@bool/feature_notify"
+            android:excludeFromRecents="true"
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.Holo_green.Dialog" />
+
         <activity
             android:name=".DelayGameActivity"
             android:label="@string/title_activity_delay_game"
@@ -29,6 +51,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:enabled="@bool/feature_admob"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

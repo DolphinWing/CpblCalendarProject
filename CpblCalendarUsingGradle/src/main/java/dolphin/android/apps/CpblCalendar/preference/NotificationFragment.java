@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import dolphin.android.apps.CpblCalendar.NotifyReceiver;
+import dolphin.android.apps.CpblCalendar.BaseNotifyReceiver;
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.util.FileUtils;
 import dolphin.android.util.PackageUtils;
@@ -100,7 +100,7 @@ public class NotificationFragment extends PreferenceFragment
             if (getResources().getBoolean(R.bool.feature_enable_song)) {
                 p4.setOnPreferenceChangeListener(this);
                 mEnableNotifySong = (CheckBoxPreference) p4;
-            } else {
+            } else if (group != null) {
                 group.removePreference(p4);
                 group.removePreference(findPreference(KEY_TEST_SONG));
             }
@@ -116,7 +116,7 @@ public class NotificationFragment extends PreferenceFragment
                         break;
                     }
                 }
-            } else {
+            } else if (group != null) {
                 group.removePreference(p5);
             }
         }
@@ -143,7 +143,7 @@ public class NotificationFragment extends PreferenceFragment
             if (!Boolean.parseBoolean(o.toString())) {//[57]dolphin++
                 Log.w(AlarmHelper.TAG, "clear all alarms");
                 mHelper.clear();
-                NotifyReceiver.cancelAlarm(getActivity(), null);
+                BaseNotifyReceiver.cancelAlarm(getActivity(), null);
             }
         } else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_SONG)) {
             //check if we have the song on disk, if not, download it

@@ -4,13 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.SparseIntArray;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +24,7 @@ public class DelayGameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_delay_game);
+        setContentView(R.layout.activity_test);
 
         Utils.enableStrictMode();
 

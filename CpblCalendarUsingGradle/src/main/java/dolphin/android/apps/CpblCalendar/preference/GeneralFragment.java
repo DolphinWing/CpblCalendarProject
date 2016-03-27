@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar.SplashActivity;
 import dolphin.android.util.AssetUtils;
 import dolphin.android.util.PackageUtils;
 
@@ -41,7 +42,7 @@ public class GeneralFragment extends PreferenceFragment {
         mIsEngineerMode = PreferenceUtils.isEngineerMode(context);
         //getResources().getBoolean(R.bool.pref_engineer_mode);
 
-        PackageInfo pinfo = PackageUtils.getPackageInfo(context, PreferenceActivity.class);
+        PackageInfo pinfo = PackageUtils.getPackageInfo(context, SplashActivity.class);
         if (pinfo != null) {
             findPreference(KEY_APP_VERSION).setSummary(String.format(Locale.US,
                     mIsEngineerMode ? "%s  r%d (eng)" : "%s (r%d)",

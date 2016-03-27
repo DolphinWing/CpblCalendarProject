@@ -262,7 +262,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                             img.setImageResource(R.drawable.ic_device_access_alarmed);
                         }
 
-                        NotifyReceiver.setNextAlarm(mContext);
+                        BaseNotifyReceiver.setNextAlarm(mContext);
                     }
                 });
 

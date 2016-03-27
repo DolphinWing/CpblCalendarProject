@@ -294,7 +294,7 @@ public class Utils {
     }
 
     private static boolean within3Days(Calendar c) {
-        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= GameAdapter.ONE_DAY * 2);
+        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= BaseGameAdapter.ONE_DAY * 2);
     }
 
     //https://developer.chrome.com/multidevice/android/customtabs
