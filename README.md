@@ -6,7 +6,7 @@
 
 資料來源：
 
-* [CPBL中華職棒官網賽程](http://www.cpbl.com.tw/)
+* [CPBL中華職棒官網](http://www.cpbl.com.tw/)
 * [中華職棒觀眾人數分析](http://zxc22.idv.tw) (感謝站長carhow)
 
 圖片來源：
@@ -15,7 +15,9 @@
 
 開源函式庫：
 
-* ActionBarSherlock
+* ActionBarSherlock (only in pre-JB builds)
+* [CircleImageView](https://github.com/hdodenhof/CircleImageView)
+* [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton)
 
 相關連結
 
