@@ -241,7 +241,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
             case R.id.action_leader_board://[26]dolphin++
                 //[87]dolphin-- showLeaderBoard(mHelper.getScoreBoardHtml());
                 item.setVisible(false);
-                showLeaderBoard2014();//[87]dolphin++
+                //showLeaderBoard2014();//[87]dolphin++
+                showLeaderBoard2016();//[182]++
                 return true;//break;
             case R.id.action_go_to_cpbl:
                 mAnalytics.sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
@@ -582,6 +583,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     ArrayList<Stand> mStanding = null;
 
+    @Deprecated
     public void showLeaderBoard2014() {
         if (mStanding != null) {
             doShowLeaderBoard2014();
@@ -605,6 +607,18 @@ public abstract class CalendarActivity extends ABSFragmentActivity
                 }
             }
         }).start();
+    }
+
+    private void showLeaderBoard2016() {
+        try {
+            Utils.buildLeaderBoardZxc22(CalendarActivity.this);
+        } catch (Exception e) {
+            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+        }
+        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
+        internalLoading(false);
+        mIsQuery = false;
+        invalidateOptionsMenu();
     }
 
     private void doShowLeaderBoard2014() {

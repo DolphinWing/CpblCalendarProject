@@ -103,7 +103,7 @@
     <string name="title_notification">比賽要開打囉!</string>
     <string name="msg_content_text">%1$s 對 %2$s</string>
     <string name="msg_content_text2"> &amp; %1$s 對 %2$s</string>
-    <string name="msg_big_text_content">%1$s 對 %2$s\n%3$s 在%4$s直播</string>
+    <string name="msg_big_text_content">%1$s 對 %2$s ＠%3$s\n在%4$s直播</string>
     <string name="msg_big_text_content_no_broadcast">%1$s 對 %2$s %3$s</string>
     <string name="action_open_app">開啟程式</string>
     <string name="title_in_silent_mode">靜音模式</string>

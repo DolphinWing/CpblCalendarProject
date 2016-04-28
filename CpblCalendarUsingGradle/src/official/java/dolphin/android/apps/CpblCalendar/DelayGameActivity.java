@@ -24,7 +24,7 @@ public class DelayGameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_delay_game);
 
         Utils.enableStrictMode();
 

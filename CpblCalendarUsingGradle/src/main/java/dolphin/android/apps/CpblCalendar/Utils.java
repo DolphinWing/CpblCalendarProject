@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -249,11 +250,13 @@ public class Utils {
         dialog.setView(view);//webView
         dialog.show();
 
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        int width = (int) (display.getWidth() * .9);
+        //WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        //Display display = wm.getDefaultDisplay();
+        DisplayMetrics display = context.getResources().getDisplayMetrics();
+        int width = (int) (display.widthPixels * (display.widthPixels > 1000 ? .8 : .95));
         width = width > 1600 ? 1600 : width;
-        int height = (int) (display.getHeight() * .9);
+        int height = (int) (display.heightPixels * .9);
+        //height = height < 480 ? 480 : height;
         Log.d("CpblCalendarHelper", String.format("w=%d, h=%d", width, height));
         dialog.getWindow().setLayout(width, height);
         return dialog;

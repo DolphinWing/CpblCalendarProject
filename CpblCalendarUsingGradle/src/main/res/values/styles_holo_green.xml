@@ -97,7 +97,7 @@
     </style>
 
     <!-- Holo AlertDialog-->
-    <style name="WindowTitleHolo_green" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle">
+    <style name="WindowTitleHolo_green" parent="android:TextAppearance.DialogWindowTitle">
         <item name="android:textColor">@color/holo_green_dark</item>
         <item name="android:background">@drawable/ab_transparent_holo_green</item>
         <item name="android:gravity">center_vertical</item>

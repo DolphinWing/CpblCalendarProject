@@ -35,6 +35,15 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[183] @ 2016-04-28
+    fix NotifyReceiver don't use correct class name
+        this is because we add a new base class
+    update new notification icon and style
+[182] @ 2016-04-29
+    fix official layout
+    fix popup menu background
+    FIXME: need to find a better way to adjust the dialog
+
 [181] @ 2016-03-27
     fix 2008 warm up games with 中華隊&韓國隊
     change layout of live games

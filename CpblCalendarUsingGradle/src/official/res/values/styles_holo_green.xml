@@ -64,7 +64,8 @@
 
     <style name="PopupMenu.Holo_green" parent="@style/Widget.Sherlock.ListPopupWindow">
         <!--<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_green</item>-->
-        <item name="android:popupBackground">@drawable/abs__menu_dropdown_panel_holo_light</item>
+        <!--<item name="android:popupBackground">@drawable/abs__menu_dropdown_panel_holo_light</item>-->
+        <item name="android:popupBackground">@color/holo_green_light</item>
     </style>
 
     <style name="DropDownListView.Holo_green" parent="@style/Widget.Sherlock.ListView.DropDown">
@@ -168,7 +169,7 @@
     </style>-->
 
     <!-- Holo AlertDialog-->
-    <style name="WindowTitleHolo_green" parent="android:TextAppearance.DeviceDefault.DialogWindowTitle">
+    <style name="WindowTitleHolo_green" parent="android:TextAppearance.DialogWindowTitle">
         <item name="android:textColor">@color/holo_green_dark</item>
         <item name="android:background">@drawable/ab_transparent_holo_green</item>
         <item name="android:gravity">center_vertical</item>
