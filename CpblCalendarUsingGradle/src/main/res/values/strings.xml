@@ -73,6 +73,7 @@
     <string name="title_enable_notification_off">停用通知</string>
     <string name="title_notify_teams">接收通知的球隊</string>
     <string name="title_notify_alarm">接收通知的時間</string>
+    <string name="title_notify_ringtone">通知音效</string>
     <string name="title_manual_game_notify">手動選擇比賽</string>
     <string name="title_manual_game_notify_on">點擊鬧鐘圖示可加入通知排程</string>
     <string name="title_manual_game_notify_off">只接收球隊的通知</string>

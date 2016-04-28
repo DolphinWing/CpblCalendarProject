@@ -12,6 +12,7 @@ import java.util.Calendar;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
@@ -61,13 +62,16 @@ public abstract class BaseNotifyReceiver extends BroadcastReceiver {
      * @param key     game key
      * @return alarm intent
      */
-    public static PendingIntent getAlarmIntent(Context context, String key) {
-        Intent intent = new Intent(context, BaseNotifyReceiver.class);
-        intent.setAction(ACTION_ALARM);
-        if (key != null) {
-            intent.putExtra(KEY_GAME, key);
+    private static PendingIntent getAlarmIntent(Context context, String key) {
+        Intent intent = AlarmProvider.getIntent(context);
+        if (intent != null) {
+            intent.setAction(ACTION_ALARM);
+            if (key != null) {
+                intent.putExtra(KEY_GAME, key);
+            }
+            return PendingIntent.getBroadcast(context, 2001, intent, 0);
         }
-        return PendingIntent.getBroadcast(context, 2001, intent, 0);
+        return null;
     }
 
     /**
@@ -79,18 +83,21 @@ public abstract class BaseNotifyReceiver extends BroadcastReceiver {
      */
     public static void setAlarm(Context context, Calendar alarmTime, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        //[168]++ add different alarm wake mode
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                    getAlarmIntent(context, key));
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            am.setExact(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                    getAlarmIntent(context, key));
-        } else {
-            am.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                    getAlarmIntent(context, key));
+        PendingIntent alermIntent = getAlarmIntent(context, key);
+        if (alermIntent != null) {
+            //[168]++ add different alarm wake mode
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
+                        alermIntent);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
+                        alermIntent);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
+                        alermIntent);
+            }
+            Log.v(TAG, "Alarm set! " + alarmTime.getTime().toString());
         }
-        Log.v(TAG, "Alarm set! " + alarmTime.getTime().toString());
     }
 
     /**
@@ -101,7 +108,10 @@ public abstract class BaseNotifyReceiver extends BroadcastReceiver {
      */
     public static void cancelAlarm(Context context, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.cancel(getAlarmIntent(context, key));
-        //Log.v(TAG, "Alarm cancel!");
+        PendingIntent alermIntent = getAlarmIntent(context, key);
+        if (alermIntent != null) {
+            am.cancel(alermIntent);
+            //Log.v(TAG, "Alarm cancel!");
+        }
     }
 }

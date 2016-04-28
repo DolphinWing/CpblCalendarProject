@@ -157,7 +157,8 @@ public class AlarmHelper {
                     if (g1.StartTime.compareTo(g2.StartTime) != 0) {//different day game
                         return g1.StartTime.compareTo(g2.StartTime);
                     }
-                    return Integer.compare(g1.Id, g2.Id);//same day game
+                    //return Integer.compare(g1.Id, g2.Id);//same day game
+                    return g1.Id - g2.Id;
                 }
                 //compare id
                 String[] str1 = s1.split("-");

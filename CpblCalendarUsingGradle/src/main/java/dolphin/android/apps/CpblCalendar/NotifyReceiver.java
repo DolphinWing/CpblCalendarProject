@@ -6,7 +6,11 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -26,6 +30,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 public class NotifyReceiver extends BaseNotifyReceiver {
     private final static String TAG = "NotifyReceiver";
 
+    @Override
     public void onReceive(Context context, Intent intent) {
         //check notification config
         if (!PreferenceUtils.isEnableNotification(context)) {
@@ -35,10 +40,10 @@ public class NotifyReceiver extends BaseNotifyReceiver {
 
         String action = intent.getAction();
         if (action.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
-            //TODO register next alarm on boot complete
+            //register next alarm on boot complete
             Log.i(TAG, Intent.ACTION_BOOT_COMPLETED);
         } else if (action.equals(ACTION_DELETE_NOTIFICATION)) {
-            Log.d(TAG, action);
+            //Log.d(TAG, action);
             return;
         } else {
             String key = intent.getStringExtra(KEY_GAME);
@@ -65,7 +70,7 @@ public class NotifyReceiver extends BaseNotifyReceiver {
             String bigMsgText = "";
             //get data from the list and show notification
             Game game = list.get(0);
-            Log.d(TAG, "game " + game.Id + " @ " + game.StartTime.getTime().toString());
+            //Log.d(TAG, "game " + game.Id + " @ " + game.StartTime.getTime().toString());
             //if this game is not the game we want
             if (!AlarmHelper.getAlarmIdKey(game).equalsIgnoreCase(key)) {
                 //Log.w(TAG, " first game is " + AlarmHelper.getAlarmIdKey(game));
@@ -138,8 +143,11 @@ public class NotifyReceiver extends BaseNotifyReceiver {
         Intent notifyIntent = new Intent();
         notifyIntent.setComponent(new ComponentName(context, SplashActivity.class));
         // Sets the Activity to start in a new, empty task
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        } else {
+            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         // Creates the PendingIntent
         return PendingIntent.getActivity(
                 context,
@@ -175,9 +183,14 @@ public class NotifyReceiver extends BaseNotifyReceiver {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        int notifyFlags = Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS;
-        if (PreferenceUtils.isEnableNotifyVibrate(context))
+        int notifyFlags = /*Notification.DEFAULT_SOUND | */Notification.DEFAULT_LIGHTS;
+        if (PreferenceUtils.isEnableNotifyVibrate(context)) {
             notifyFlags |= Notification.DEFAULT_VIBRATE;
+        }
+        Uri sound = PreferenceUtils.getNotificationUri(context);
+        if (sound == null) {//[183]++
+            notifyFlags |= Notification.DEFAULT_SOUND;
+        }
 //[63]--        //Rich Notifications
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            //http://developer.android.com/design/patterns/notifications.html
@@ -213,7 +226,7 @@ public class NotifyReceiver extends BaseNotifyReceiver {
 //        } else {//Android 2.3 and before
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_stat_notify)
                         .setContentTitle(context.getString(R.string.title_notification))
                         .setContentText(contentText);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(bigMsgText));
@@ -221,6 +234,12 @@ public class NotifyReceiver extends BaseNotifyReceiver {
         builder.setLights(Color.GREEN, 1000, 3000);//[59]++ custom LED color if possible
         builder.setTicker(bigMsgText);//[63]dolphin++
         builder.setDeleteIntent(getDeleteIntent(context));//[122]dolphin++
+        //http://stackoverflow.com/a/30865087/2673859
+        if (sound != null) {//[183]++
+            builder.setSound(sound);
+        }
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+        builder.setLargeIcon(bm);
 
         switch (PreferenceUtils.getNotifyPendingAction(context)) {
             case PreferenceUtils.PENDING_ACTION_DISMISS:

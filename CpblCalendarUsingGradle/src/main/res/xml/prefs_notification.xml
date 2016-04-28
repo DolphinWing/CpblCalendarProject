@@ -7,11 +7,11 @@
         android:title="@string/title_notification_settings"
         android:summaryOn="@string/title_enable_notification_on"
         android:summaryOff="@string/title_enable_notification_off"
-        android:defaultValue="@bool/def_enable_notification"></CheckBoxPreference>
+        android:defaultValue="@bool/def_enable_notification" />
 
     <Preference
         android:key="debug_alarm_list"
-        android:title="Alarm list"></Preference>
+        android:title="Alarm list" />
 
     <PreferenceCategory
         android:key="notification_group"
@@ -44,6 +44,15 @@
             android:entryValues="@array/notify_time_value"
             android:defaultValue="@string/def_notify_alarm"
             android:dependency="enable_notification" />
+
+        <!-- http://stackoverflow.com/a/8314270/2673859 -->
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="notify_ringtone"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:title="@string/title_notify_ringtone" />
 
         <ListPreference
             android:key="notify_pending_action"

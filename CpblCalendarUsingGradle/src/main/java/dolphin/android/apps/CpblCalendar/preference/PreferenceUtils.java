@@ -60,6 +60,7 @@ public class PreferenceUtils {
     public final static String KEY_NOTIFY_TEAMS = "notify_teams";
     public final static String KEY_MANUAL_GAME_NOTIFY = "manual_game_notify";
     public final static String KEY_NOTIFY_ALARM = "notify_alarm";
+    public final static String KEY_NOTIFY_RINGTONE = "notify_ringtone";//[183]++
     public final static String KEY_NOTIFY_PENDING_ACTION = "notify_pending_action";
     public final static String KEY_NOTIFY_DIALOG = "enable_notify_dialog";//[51]++
     public final static String KEY_NOTIFY_SONG = "enable_notify_song";//[122]++
@@ -337,5 +338,11 @@ public class PreferenceUtils {
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(KEY_CACHE_MODE, enabled);
         editor.apply();
+    }
+
+    public static Uri getNotificationUri(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String path = pref.getString(KEY_NOTIFY_RINGTONE, null);
+        return path != null ? Uri.parse(path) : null;
     }
 }

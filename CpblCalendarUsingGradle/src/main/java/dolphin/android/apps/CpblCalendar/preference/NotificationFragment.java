@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -121,6 +123,18 @@ public class NotificationFragment extends PreferenceFragment
             }
         }
 
+        Preference p6 = findPreference(PreferenceUtils.KEY_NOTIFY_RINGTONE);
+        if (p6 != null) {
+            p6.setOnPreferenceChangeListener(this);
+            //http://stackoverflow.com/a/5017279/2673859
+            Uri ringtoneUri = PreferenceUtils.getNotificationUri(getActivity());
+            if (ringtoneUri != null) {
+                Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), ringtoneUri);
+                String name = ringtone.getTitle(getActivity());
+                p6.setSummary(name);
+            }
+        }
+
         //for debug version, add show existing alarms
         Preference pList = findPreference(KEY_DEBUG_LIST);
         if (pList != null && !PreferenceUtils.isEngineerMode(getActivity())) {
@@ -169,6 +183,13 @@ public class NotificationFragment extends PreferenceFragment
                     preference.setSummary(mNotifySongList[i]);
                     break;
                 }
+            }
+        } else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_RINGTONE)) {
+            Uri ringtoneUri = Uri.parse(o.toString());
+            if (ringtoneUri != null) {
+                Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), ringtoneUri);
+                String name = ringtone.getTitle(getActivity());
+                preference.setSummary(name);
             }
         }
         return true;
