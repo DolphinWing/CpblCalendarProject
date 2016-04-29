@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class PreferenceUtils {
 
-    private SharedPreferences mSharedPreferences;
+    private final SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
 
     public PreferenceUtils(Context context) {

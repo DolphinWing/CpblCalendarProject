@@ -1,5 +1,6 @@
 package dolphin.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,8 +16,8 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable
 	private CheckedTextView _checkview;
 	private CheckBox _checkbox;
 
-	public CheckableLinearLayout(Context context, AttributeSet attrs,
-			int defStyle)
+	@SuppressLint("NewApi")
+	public CheckableLinearLayout(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
 	}

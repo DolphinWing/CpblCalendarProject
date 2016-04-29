@@ -19,7 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileUtils {
-    public final static String TAG = "FileUtils";
+    private final static String TAG = "FileUtils";
 
     public static boolean copyFile(File source, File dest) {
         if (source == null || !source.exists()) {

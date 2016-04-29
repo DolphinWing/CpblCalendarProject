@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity;
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.SplashActivity;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;

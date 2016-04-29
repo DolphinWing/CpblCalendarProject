@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -45,7 +46,7 @@ import dolphin.android.net.HttpHelper;
 public abstract class CalendarActivity extends AppCompatActivity//ActionBarActivity//Activity
         implements EmptyFragmentWithCallbackOnResume.OnFragmentAttachedListener {
 
-    protected final static String TAG = "CalendarActivity";
+    final static String TAG = "CalendarActivity";
 
     private final static boolean OFFLINE_DEBUG = false;
 
@@ -53,23 +54,23 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     private String[] mGameKind;
 
-    public final static String KEY_GAME_KIND = "kind";
+    final static String KEY_GAME_KIND = "kind";
 
-    public final static String KEY_GAME_FIELD = "field";
+    final static String KEY_GAME_FIELD = "field";
 
-    public final static String KEY_GAME_YEAR = "year";
+    final static String KEY_GAME_YEAR = "year";
 
-    public final static String KEY_GAME_MONTH = "month";
+    final static String KEY_GAME_MONTH = "month";
 
-    public Spinner mSpinnerKind;
+    Spinner mSpinnerKind;
 
-    public Spinner mSpinnerField;
+    Spinner mSpinnerField;
 
-    public Spinner mSpinnerYear;
+    Spinner mSpinnerYear;
 
-    public Spinner mSpinnerMonth;
+    Spinner mSpinnerMonth;
 
-    public Button mButtonQuery;
+    Button mButtonQuery;
 
     private View mProgressView;
 
@@ -139,7 +140,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     /**
      * initial the query pane
      */
-    public void initQueryPane() {
+    void initQueryPane() {
         mSpinnerField = (Spinner) findViewById(R.id.spinner1);
         mSpinnerKind = (Spinner) findViewById(R.id.spinner2);
         mSpinnerYear = (Spinner) findViewById(R.id.spinner3);
@@ -277,14 +278,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         return super.onOptionsItemSelected(item);
     }
 
-    private Button.OnClickListener onQueryClick = new Button.OnClickListener() {
+    private final Button.OnClickListener onQueryClick = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
             query_to_update(false);
         }
     };
 
-    protected void query_to_update(boolean quick_refresh) {
+    private void query_to_update(boolean quick_refresh) {
         onLoading(true);
         mIsQuery = true;//Log.d(TAG, "onQueryClick");
         setProgressBarIndeterminateVisibility(true);
@@ -347,9 +348,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     /**
      * get OnQueryCallback interface implementation
      */
-    public abstract OnQueryCallback getOnQueryCallback();
+    protected abstract OnQueryCallback getOnQueryCallback();
 
-    public String getGameKind(int index) {
+    private String getGameKind(int index) {
         return mGameKind[index];
     }
 
@@ -371,11 +372,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     private boolean mCacheMode = false;
 
-    public boolean IsQuery() {
+    boolean IsQuery() {
         return mIsQuery;
     }
 
-    public TextView getProgressText() {
+    TextView getProgressText() {
         return mProgressText;
     }
 
@@ -400,16 +401,16 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         setProgressBarIndeterminateVisibility(is_load);
     }
 
-    public void onLoading(boolean is_load) {
+    void onLoading(boolean is_load) {
         internalLoading(is_load);
     }
 
     /**
      * do query action to the web
      */
-    public void doWebQuery(Activity activity,
-                           int kind, int year, int month, String field,
-                           OnQueryCallback callback) {
+    private void doWebQuery(Activity activity,
+                            int kind, int year, int month, String field,
+                            OnQueryCallback callback) {
         mActivity = activity;
         mQueryCallback = callback;
         if (mQueryCallback != null) {//call before start
@@ -484,7 +485,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     doQueryStateUpdateCallback(R.string.title_download_complete);
                     long endTime = System.currentTimeMillis() - startTime;
                     mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-                            String.format("%d-%d", mYear, mMonth));
+                            String.format(Locale.US, "%d-%d", mYear, mMonth));
                     doQueryCallback(gameList, true);
                     return;
                 }
@@ -526,7 +527,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     if (gameList != null) {
                         long endTime = System.currentTimeMillis() - startTime;
                         mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-                                String.format("%d-%d", mYear, mMonth));
+                                String.format(Locale.US, "%d-%d", mYear, mMonth));
                         doQueryCallback(gameList, true);
                     } else {
                         throw new Exception("no data");
@@ -551,7 +552,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         }
                         long endTime = System.currentTimeMillis() - startTime;
                         mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-                                String.format("%d-%d", mYear, mMonth));
+                                String.format(Locale.US, "%d-%d", mYear, mMonth));
 
                         doQueryCallback(gameList, true);
                     }
@@ -586,7 +587,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         if (bFromWeb) {//[126]++ only send message to Analytics when data is from web
             mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
-                    String.format("%04d/%02d:%s", mYear, mMonth,
+                    String.format(Locale.US, "%04d/%02d:%s", mYear, mMonth,
                             GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
         }
 
@@ -639,7 +640,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     /**
      * show leader team board dialog
      */
-    public void showLeaderBoard(String html) {
+    private void showLeaderBoard(String html) {
         try {//[42]dolphin++ add a try-catch //[43]catch all dialog
             //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
             Utils.buildLeaderBoard2014Dialog(CalendarActivity.this, html,
@@ -651,7 +652,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
     }
 
-    ArrayList<Stand> mStanding = null;
+    private ArrayList<Stand> mStanding = null;
 
     @Deprecated
     public void showLeaderBoard2014() {
@@ -790,11 +791,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }).start();
     }
 
-    protected void sendTrackerException(String action, String label, long evtValue) {
+    void sendTrackerException(String action, String label, long evtValue) {
         mAnalytics.sendTrackerException(action, label, evtValue);
     }
 
-    protected BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();

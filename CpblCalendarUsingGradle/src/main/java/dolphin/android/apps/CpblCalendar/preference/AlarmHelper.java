@@ -8,9 +8,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -23,8 +23,8 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  */
 public class AlarmHelper {
     public final static String TAG = "AlarmHelper";
-    private Context mContext;
-    private dolphin.android.preference.PreferenceUtils pHelper;
+    private final Context mContext;
+    private final dolphin.android.preference.PreferenceUtils pHelper;
     //private SparseArray<Game> mAlarmArray = null;
 
     private final static String KEY_ALARM_LIST = "_alarm_list";
@@ -37,7 +37,8 @@ public class AlarmHelper {
      */
     public static String getAlarmIdKey(Game game) {
         //[122]dolphin++ new ker pair for better mapping
-        return String.format("%d-%d-%s", game.StartTime.get(Calendar.YEAR), game.Id, game.Kind);
+        return String.format(Locale.US, "%d-%d-%s", game.StartTime.get(Calendar.YEAR),
+                game.Id, game.Kind);
     }
 
     /**

@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -14,10 +13,9 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -250,10 +248,9 @@ public class Utils {
         dialog.setView(view);//webView
         dialog.show();
 
-        //WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        //Display display = wm.getDefaultDisplay();
+		//http://stackoverflow.com/a/15847580/2673859
         DisplayMetrics display = context.getResources().getDisplayMetrics();
-        int width = (int) (display.widthPixels * (display.widthPixels > 1000 ? .8 : .95));
+        int width = (int) (display.widthPixels * (display.widthPixels > 1200 ? .8 : .95));
         width = width > 1600 ? 1600 : width;
         int height = (int) (display.heightPixels * .9);
         //height = height < 480 ? 480 : height;
@@ -309,15 +306,17 @@ public class Utils {
         String fieldName = resources.getStringArray(R.array.cpbl_game_field_name)[fieldIndex];
         String fieldId = resources.getStringArray(R.array.cpbl_game_field_id)[fieldIndex];
         //[22]dolphin++ add check the favorite teams
-        HashMap<Integer, Team> teams = PreferenceUtils.getFavoriteTeams(context);
+        SparseArray<Team> teams = PreferenceUtils.getFavoriteTeams(context);
         //2013 has 4 teams only, should I check this?
         //[89]dolphin++ only filter out this year, check array size
         if (teams.size() < resources.getStringArray(R.array.cpbl_team_id).length
                 && year >= CpblCalendarHelper.getNowTime().get(Calendar.YEAR)) {
             for (Iterator<Game> i = gameList.iterator(); i.hasNext(); ) {
                 Game game = i.next();
-                if (!teams.containsKey(game.HomeTeam.getId())
-                        && !teams.containsKey(game.AwayTeam.getId())) {
+                if (teams.get(game.HomeTeam.getId()) == null
+                        && teams.get(game.AwayTeam.getId()) == null) {
+                //if (!teams.containsKey(game.HomeTeam.getId())
+                //        && !teams.containsKey(game.AwayTeam.getId())) {
                     i.remove();//remove from the list
                 }
             }

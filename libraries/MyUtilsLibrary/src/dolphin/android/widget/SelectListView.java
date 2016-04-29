@@ -1,6 +1,7 @@
 package dolphin.android.widget;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -117,9 +118,14 @@ public class SelectListView extends ListView
 		super.setItemChecked(position, value);
 		((CheckableLinearLayout) getChildAt(position)).setChecked(value);
 		// boolean r = getAdapter().hasStableIds();
-		int checkedCount = getCheckedItemCount();//getCheckItemIds().length;
+		int checkedCount;//http://stackoverflow.com/a/14193921/2673859
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            checkedCount = getCheckedItemCount();//getCheckItemIds().length;
+        } else {
+            checkedCount = getCheckItemIds().length;
+        }
 
-		if (checkedCount == 0) {
+        if (checkedCount == 0) {
 			if (mActionMode != null)
 				mActionMode.finish();
 			return;

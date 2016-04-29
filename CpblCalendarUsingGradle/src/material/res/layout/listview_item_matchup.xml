@@ -7,7 +7,8 @@
     tools:context=".SplashActivity"
     android:orientation="vertical"
     android:paddingBottom="@dimen/padding_medium"
-    android:paddingTop="@dimen/padding_small">
+    android:paddingTop="@dimen/padding_small"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
 
     <FrameLayout
         android:id="@+id/item_control_pane"

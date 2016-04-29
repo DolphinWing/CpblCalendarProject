@@ -40,7 +40,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public final static String URL_BASE = "http://www.cpbl.com.tw";
 
-    public final static String URL_BASE_2013 = "http://cpblweb.ksi.com.tw";
+    private final static String URL_BASE_2013 = "http://cpblweb.ksi.com.tw";
 
     private final static String SCORE_QUERY_STRING =
             "?gamekind=@kind&myfield=@field&mon=@month&qyear=@year";
@@ -51,12 +51,12 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private final static String RESULT_QUERY_STRING = "?gameno=@kind&pbyear=@year&game=@id";
 
-    public final static String URL_SCHEDULE_2014 = URL_BASE + "/schedule.aspx";
+    private final static String URL_SCHEDULE_2014 = URL_BASE + "/schedule.aspx";
 
-    public final static String URL_SCHEDULE_2016 = URL_BASE +
+    private final static String URL_SCHEDULE_2016 = URL_BASE +
             "/schedule/index/@year-@month-01.html?&date=@year-@month-01&gameno=01&sfieldsub=@field&sgameno=@kind";
 
-    private Context mContext;
+    private final Context mContext;
 
     private Context getContext() {
         return mContext;
@@ -77,7 +77,7 @@ public class CpblCalendarHelper extends HttpHelper {
     public CpblCalendarHelper(Context context) {
         mContext = context;
         mUseCache = mContext.getResources().getBoolean(R.bool.feature_cache);
-        mAspNetHelper = new AspNetHelper(URL_SCHEDULE_2014);
+        //mAspNetHelper = new AspNetHelper(URL_SCHEDULE_2014);
     }
 
     @Deprecated
@@ -401,6 +401,9 @@ public class CpblCalendarHelper extends HttpHelper {
         //Log.d(TAG, "query2014");
         ArrayList<Game> gameList = new ArrayList<Game>();
         try {//
+            if (mAspNetHelper == null) {
+                mAspNetHelper = new AspNetHelper(URL_SCHEDULE_2014);
+            }
             String html = mAspNetHelper.getLastResponse();// = getUrlContent(URL_SCHEDULE_2014);
             try {
                 //AspNetHelper helper = new AspNetHelper(URL_SCHEDULE_2014);
@@ -414,7 +417,8 @@ public class CpblCalendarHelper extends HttpHelper {
                 }
                 Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
                 if (mMonth != month) {
-                    html = mAspNetHelper.makeUrlRequest("smonth", String.format("%d月 ", month));
+                    html = mAspNetHelper.makeUrlRequest("smonth",
+                            getContext().getString(R.string.aspnet_month_template, month));
                     if (html == null) {
                         throw new Exception("can't switch month");
                     }
@@ -754,7 +758,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 boolean isWeekend = (dayOfWeek == Calendar.SATURDAY ||
                         dayOfWeek == Calendar.SUNDAY);
                 hour = isWeekend ? 17 : 18;
-                minute = isWeekend ? 05 : 35;
+                minute = isWeekend ? 5 : 35;
             }
 
             //Log.d(TAG, String.format("    time = %02d:%02d", hour, minute));
@@ -858,7 +862,7 @@ public class CpblCalendarHelper extends HttpHelper {
                             for (int j = 1; j < g; j++) {
                                 Game g1 = gameList.get(gameList.size() - j);
                                 g1.Url = g1.IsFinal ? g1.Url : g1.Url.replace("1.html",
-                                        String.format("%d.html", (g - j + 1)));
+                                        String.format(Locale.US, "%d.html", (g - j + 1)));
                                 //Log.d(TAG, String.format("%d: %s", g1.Id, g1.Url));
                             }
                         }
@@ -904,7 +908,7 @@ public class CpblCalendarHelper extends HttpHelper {
             if (str.contains("<font color='#547425'>")) {
                 game.IsFinal = true;
                 //http://www.cpbl.com.tw/game/box.aspx?gameno=07&year=2014&game=4
-                game.Url = String.format("%s/game/box.aspx?gameno=%s&year=%d&game=%d",
+                game.Url = String.format(Locale.US, "%s/game/box.aspx?gameno=%s&year=%d&game=%d",
                         URL_BASE, game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
                 String result = str.substring(str.indexOf("<font color='#547425'>"));
                 result = result.substring(result.indexOf("<B>") + 3);
@@ -980,12 +984,12 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static ArrayList<Game> getCache(Context context, int year, int month) {
-        return getCache(context, String.format("%04d-%02d.json", year, month));
+        return getCache(context, String.format(Locale.US, "%04d-%02d.json", year, month));
     }
 
     public ArrayList<Game> getCache(int year, int month) {
         if (canUseCache()) {
-            return getCache(mContext, String.format("%04d-%02d.json", year, month));
+            return getCache(mContext, String.format(Locale.US, "%04d-%02d.json", year, month));
         }
         return null;
     }
@@ -1011,11 +1015,11 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public static boolean putCache(Context context, int year, int month, ArrayList<Game> list) {
-        return putCache(context, String.format("%04d-%02d.json", year, month), list);
+        return putCache(context, String.format(Locale.US, "%04d-%02d.json", year, month), list);
     }
 
     public boolean putCache(int year, int month, ArrayList<Game> list) {
-        return canUseCache() && putCache(mContext, String.format("%04d-%02d.json", year, month), list);
+        return canUseCache() && putCache(mContext, String.format(Locale.US, "%04d-%02d.json", year, month), list);
     }
 
     public boolean canUseCache() {
@@ -1031,7 +1035,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     public boolean putLocalCache(int year, int month, int kind, ArrayList<Game> list) {
-        return putCache(mContext, String.format("%04d-%02d-%d.json", year, month, kind), list);
+        return putCache(mContext, String.format(Locale.US, "%04d-%02d-%d.json", year, month, kind), list);
     }
 
     public boolean removeLocalCache(int year, int month, int kind) {
@@ -1040,7 +1044,7 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public ArrayList<Game> getLocalCache(int year, int month, int kind) {
         if (canUseCache()) {
-            return getCache(mContext, String.format("%04d-%02d-%d.json", year, month, kind));
+            return getCache(mContext, String.format(Locale.US, "%04d-%02d-%d.json", year, month, kind));
         }
         return null;
     }
@@ -1105,7 +1109,7 @@ public class CpblCalendarHelper extends HttpHelper {
         String[] years = new String[nowYear - 1990 + 1];
         for (int i = 1990; i <= nowYear; i++) {
             String y = context.getString(R.string.title_cpbl_year, (i - 1989));
-            years[nowYear - i] = String.format("%d (%s)", i, y);
+            years[nowYear - i] = String.format(Locale.US, "%d (%s)", i, y);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item, years);
@@ -1161,7 +1165,7 @@ public class CpblCalendarHelper extends HttpHelper {
         int index = year - 2005;
         if (index < driveIds.length) {//already have cached data in Google Drive
             String driveId = driveIds[year - 2005];
-            File f = new File(getCacheDir(context), String.format("%d.delay", year));
+            File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
             GoogleDriveHelper.download(context, driveId, f);
             delayedGames = restoreDelayGames2014(context, year);//read again
             if (delayedGames.size() > 0) {//use cache directly
@@ -1200,7 +1204,8 @@ public class CpblCalendarHelper extends HttpHelper {
                     }
                     //Log.d(TAG, String.format("mMonth=%d, month=%d", mMonth, month));
                     if (mMonth != month) {
-                        html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month", String.format("/%d/1", month));
+                        html = mAspNetHelper.makeUrlRequest("ctl00$cphBox$ddl_month",
+                                String.format(Locale.US, "/%d/1", month));
                         if (html == null) {
                             throw new Exception("can't switch month");
                         }
@@ -1300,7 +1305,7 @@ public class CpblCalendarHelper extends HttpHelper {
         String delay_str = "";
         for (int i = 0; i < games.size(); i++) {
             Game g = games.valueAt(i);
-            delay_str += String.format("%d/%s;", g.Id,
+            delay_str += String.format(Locale.US, "%d/%s;", g.Id,
                     new SimpleDateFormat("MM/dd", Locale.TAIWAN).format(g.StartTime.getTime()));
         }
         storeDelayGames2014(context, year, delay_str);
@@ -1311,7 +1316,7 @@ public class CpblCalendarHelper extends HttpHelper {
         if (context == null) {
             return;//cannot store, no context
         }
-        File f = new File(getCacheDir(context), String.format("%d.delay", year));
+        File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
         FileUtils.writeStringToFile(f, delay_str);
     }
 
@@ -1320,7 +1325,7 @@ public class CpblCalendarHelper extends HttpHelper {
         if (context == null) {
             return;//cannot store, no context
         }
-        File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
+        File f = new File(getCacheDir(context), String.format(Locale.US, "%d-%02d.delay_cache", year, month));
         FileUtils.writeStringToFile(f, html);
     }
 
@@ -1328,7 +1333,7 @@ public class CpblCalendarHelper extends HttpHelper {
     private String readDelayGamesCache2014(Context context, int year, int month) {
         if (context != null) {
             //restore data from cache
-            File f = new File(getCacheDir(context), String.format("%d-%02d.delay_cache", year, month));
+            File f = new File(getCacheDir(context), String.format(Locale.US, "%d-%02d.delay_cache", year, month));
             if (f.exists()) {
                 return FileUtils.readFileToString(f);
             }
@@ -1346,7 +1351,7 @@ public class CpblCalendarHelper extends HttpHelper {
      */
     public boolean removeDelayGames2014(Context context, int year) {
         if (context != null) {
-            File f = new File(getCacheDir(context), String.format("%d.delay", year));
+            File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
             return f.delete();
         }
         return false;
@@ -1359,7 +1364,7 @@ public class CpblCalendarHelper extends HttpHelper {
             return delayedGames;//[160]++ avoid use NullPointer to File constructor
         }
         //restore data from cache
-        File f = new File(getCacheDir(context), String.format("%d.delay", year));
+        File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
         String delay_str = FileUtils.readFileToString(f);
         if (delay_str != null && !delay_str.isEmpty()) {
             for (String delay : delay_str.split(";")) {
@@ -1641,7 +1646,7 @@ public class CpblCalendarHelper extends HttpHelper {
         //Matcher matchTeams = Pattern.compile("").matcher(html);
 
         //http://www.cpbl.com.tw/games/box.html?&game_type=01&game_id=198&game_date=2015-10-01&pbyear=2015
-        game.Url = String.format("%s/games/box.html?game_date=%04d-%02d-%02d&game_id=%d&pbyear=%04d&game_type=%s",
+        game.Url = String.format(Locale.US, "%s/games/box.html?game_date=%04d-%02d-%02d&game_id=%d&pbyear=%04d&game_type=%s",
                 URL_BASE, year, month, day, game.Id, year, kind);
 
         if (html.contains("game_playing")) {

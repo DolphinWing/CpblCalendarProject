@@ -29,13 +29,5 @@
             android:summaryOn="@string/title_highlight_today_on"
             android:summaryOff="@string/title_highlight_today_off"
             android:defaultValue="@bool/def_highlight_today"/>
-
-        <!-- only for xlarge screen -->
-        <CheckBoxPreference
-            android:key="include_lead_board"
-            android:title="@string/title_include_lead_board"
-            android:enabled="false"
-            android:summary="@string/title_include_lead_board_no_support"
-            android:defaultValue="@bool/def_include_lead_board"/>
     </PreferenceCategory>
 </PreferenceScreen>

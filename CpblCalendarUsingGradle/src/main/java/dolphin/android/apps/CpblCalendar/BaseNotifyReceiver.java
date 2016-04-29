@@ -23,7 +23,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  */
 public abstract class BaseNotifyReceiver extends BroadcastReceiver {
     private final static String TAG = "NotifyReceiver";
-    protected final static String KEY_GAME = "_game";
+    final static String KEY_GAME = "_game";
 
     public final static String ACTION_ALARM = "dolphin.android.apps.CpblCalendar.ALARM";
     public final static String ACTION_DELETE_NOTIFICATION =
@@ -64,14 +64,11 @@ public abstract class BaseNotifyReceiver extends BroadcastReceiver {
      */
     private static PendingIntent getAlarmIntent(Context context, String key) {
         Intent intent = AlarmProvider.getIntent(context);
-        if (intent != null) {
-            intent.setAction(ACTION_ALARM);
-            if (key != null) {
-                intent.putExtra(KEY_GAME, key);
-            }
-            return PendingIntent.getBroadcast(context, 2001, intent, 0);
+        intent.setAction(ACTION_ALARM);
+        if (key != null) {
+            intent.putExtra(KEY_GAME, key);
         }
-        return null;
+        return PendingIntent.getBroadcast(context, 2001, intent, 0);
     }
 
     /**
@@ -81,7 +78,7 @@ public abstract class BaseNotifyReceiver extends BroadcastReceiver {
      * @param alarmTime alarm time
      * @param key       game key
      */
-    public static void setAlarm(Context context, Calendar alarmTime, String key) {
+    private static void setAlarm(Context context, Calendar alarmTime, String key) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent alermIntent = getAlarmIntent(context, key);
         if (alermIntent != null) {

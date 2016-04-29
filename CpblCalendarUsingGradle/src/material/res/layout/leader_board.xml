@@ -27,7 +27,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:minHeight="@dimen/min_lead_team_board_height"/>-->
-    <LinearLayout style="@style/Theme.Holo_green.Dialog.ButtonBar">
+    <LinearLayout style="@style/Theme.Holo_green.Dialog.ButtonBar"
+        android:visibility="gone">
 
         <TextView
             style="@style/Theme.Holo_green.Dialog.Button"

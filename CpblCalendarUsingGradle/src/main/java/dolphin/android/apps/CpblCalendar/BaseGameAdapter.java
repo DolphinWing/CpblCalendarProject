@@ -1,7 +1,6 @@
 package dolphin.android.apps.CpblCalendar;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Html;
 import android.text.SpannableString;
@@ -30,7 +29,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * common implementation for game adapter
  */
 public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
-    private Context mContext;
+    private final Context mContext;
 
     public final static long ONE_DAY = 1000 * 60 * 60 * 24;
 
@@ -38,19 +37,19 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     public final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
 
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
 
-    private boolean bShowWinner;
+    private final boolean bShowWinner;
 
-    private boolean bShowLogo;
+    private final boolean bShowLogo;
 
-    private boolean bShowToday;
+    private final boolean bShowToday;
 
-    private boolean bIsTablet;//[47]dolphin++
+    private final boolean bIsTablet;//[47]dolphin++
 
-    private AlarmHelper mAlarmHelper;//[50]dolphin++
+    private final AlarmHelper mAlarmHelper;//[50]dolphin++
 
-    private Calendar mNow;
+    private final Calendar mNow;
 
     public BaseGameAdapter(Context context, List<Game> objects) {
         super(context, android.R.layout.activity_list_item, objects);
@@ -99,7 +98,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
 
         TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
-        String date_str = String.format("%s, %02d:%02d",
+        String date_str = String.format(Locale.TAIWAN, "%s, %02d:%02d",
                 //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
                 //[53]dolphin++ use DAY_OF_WEEK to all devices
                 //new SimpleDateFormat(bIsTablet ? "MMM dd (E)" : "MMM dd",

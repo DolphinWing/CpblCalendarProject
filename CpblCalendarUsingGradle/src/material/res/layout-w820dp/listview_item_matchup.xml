@@ -9,7 +9,8 @@
     android:paddingBottom="@dimen/padding_medium"
     android:paddingTop="@dimen/padding_small"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
 
     <FrameLayout
         android:id="@+id/item_control_pane"

@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class AspNetHelper {
     private final static String TAG = "AspNetHelper";
-    private String mUrl;
+    private final String mUrl;
     private String mViewState;
     private String mValidation;
     private String mEncoding = "utf-8";

@@ -32,9 +32,9 @@ import com.actionbarsherlock.view.Window;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import dolphin.android.app.ABSFragmentActivity;
-import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.GBPreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
@@ -399,12 +399,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //[118]dolphin++ add check delay games
-                //[158]dolphin++ only 2005 and after has delay games record in web page
-                if (mYear >= 2005 && mDelayGames2014.get(mYear) == null) {
-                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
-                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
-                }
+//                //[118]dolphin++ add check delay games
+//                //[158]dolphin++ only 2005 and after has delay games record in web page
+//                if (mYear >= 2005 && mDelayGames2014.get(mYear) == null) {
+//                    doQueryStateUpdateCallback(R.string.title_download_delay_games);
+//                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
+//                }
 
                 ArrayList<Game> gameList = null;
                 try {
@@ -495,7 +495,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mIsQuery = false;
 
         mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
-                String.format("%04d/%02d:%s", mYear, mMonth,
+                String.format(Locale.US, "%04d/%02d:%s", mYear, mMonth,
                         GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
 
         if (list != null && mHelper != null && mHelper.canUseCache()

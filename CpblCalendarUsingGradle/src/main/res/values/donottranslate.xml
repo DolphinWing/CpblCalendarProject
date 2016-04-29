@@ -193,16 +193,10 @@
     <string name="summary_zxc22">http://zxc22.idv.tw</string>
     <string name="title_actionbarsherlock">ActionBarSherlock</string>
     <string name="summary_actionbarsherlock">Copyright 2012 Jake Wharton</string>
-    <string name="title_npombourcq">ActionBarDrawerToggle.java</string>
-    <string name="summary_npombourcq">ActionBarSherlock compatible ActionBarDrawerToggle</string>
+
     <string name="title_asset_studio">Android Asset Studio</string>
     <string name="summary_asset_studio">Creative Commons 3.0 BY</string>
-    <string name="title_iconic_set">Iconic icon set</string>
-    <string name="summary_iconic_set">Creative Commons Share Alike 3.0</string>
-    <string name="title_showcaseview">ShowcaseView</string>
-    <string name="summary_showcaseview">Copyright Alex Curran © 2012.</string>
-    <string name="title_nine_old_android">NineOldAndroids</string>
-    <string name="summary_nine_old_android">Copyright 2012 Jake Wharton</string>
+
     <string name="title_floating_action_button">FloatingActionButton</string>
     <string name="summary_floating_action_button">Copyright &#169; 2014 Oleksandr Melnykov</string>
     <string name="title_circle_image_view">CircleImageView</string>
@@ -233,5 +227,7 @@
         <item>0B-oMP4622t0hdHhjR2FKZS1kV2c</item><!-- 2013 -->
         <item>0B-oMP4622t0hbWsxblF2NGd3V00</item><!-- 2014 -->
     </string-array>
+
+    <string name="aspnet_month_template">%d月 </string>
 
 </resources>

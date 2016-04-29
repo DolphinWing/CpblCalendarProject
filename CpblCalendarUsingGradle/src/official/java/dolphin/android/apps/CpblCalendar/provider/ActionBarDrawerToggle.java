@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -374,7 +375,7 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
         }
 
         @Override
-        public void setColorFilter(int color, PorterDuff.Mode mode) {
+        public void setColorFilter(int color, @NonNull PorterDuff.Mode mode) {
             mWrapped.setColorFilter(color, mode);
         }
 
@@ -451,7 +452,7 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
         }
 
         @Override
-        public boolean getPadding(Rect padding) {
+        public boolean getPadding(@NonNull Rect padding) {
             return mWrapped.getPadding(padding);
         }
 
@@ -492,7 +493,7 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 final class ActionBarDrawerToggleNative {
-    private static final String TAG = "ActionBarDrawerToggleNative";
+    private static final String TAG = "ActionBarDrawerToggle";
 
     private static final int[] THEME_ATTRS = new int[]{
             android.R.attr.homeAsUpIndicator
@@ -589,7 +590,7 @@ final class ActionBarDrawerToggleNative {
 
 final class ActionBarDrawerToggleSherlock {
 
-    private static final String TAG = "ActionBarDrawerToggleSherlock";
+    private static final String TAG = "ActionBarDrawerToggleS";
 
     private static final int[] THEME_ATTRS = new int[]{
             com.actionbarsherlock.R.attr.homeAsUpIndicator

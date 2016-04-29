@@ -17,6 +17,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class Game {
     public int Id = 0;
@@ -58,7 +59,7 @@ public class Game {
      * @return string data
      */
     public static String toPrefString(Game game) {
-        return String.format("%d;%d;%d;%s;%s;%d;%s", game.Id,
+        return String.format(Locale.US, "%d;%d;%d;%s;%s;%d;%s", game.Id,
                 game.AwayTeam.getId(), game.HomeTeam.getId(),
                 game.Field, game.Channel, game.StartTime.getTimeInMillis(), game.Kind);
     }
@@ -86,7 +87,7 @@ public class Game {
 
     //http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/TypeAdapter.html
     public static class GameTypeAdapter extends TypeAdapter<Game> {
-        private Context mContext;
+        private final Context mContext;
 
         public GameTypeAdapter(Context context) {
             super();
@@ -215,7 +216,7 @@ public class Game {
     }
 
     public static class GameListTypeAdapter extends TypeAdapter<ArrayList<Game>> {
-        private Context mContext;
+        private final Context mContext;
 
         public GameListTypeAdapter(Context context) {
             super();

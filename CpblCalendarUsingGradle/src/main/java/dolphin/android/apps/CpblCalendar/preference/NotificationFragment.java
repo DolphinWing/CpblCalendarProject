@@ -46,8 +46,8 @@ public class NotificationFragment extends PreferenceFragment
     private String[] mNotifySongValue;
     private String[] mNotifySongList;
 
-    private String KEY_DEBUG_LIST = "debug_alarm_list";
-    private String KEY_TEST_SONG = "test_notify_song";
+    private final String KEY_DEBUG_LIST = "debug_alarm_list";
+    private final String KEY_TEST_SONG = "test_notify_song";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,6 @@ public class NotificationFragment extends PreferenceFragment
         //[50]dolphin++ currently only support manual register alarm
         mNotifyTeams = resources.getBoolean(R.bool.feature_notify_teams);
         if (!mNotifyTeams) {
-
             if (group != null) {
                 Preference pref = findPreference(PreferenceUtils.KEY_NOTIFY_TEAMS);
                 if (pref != null)

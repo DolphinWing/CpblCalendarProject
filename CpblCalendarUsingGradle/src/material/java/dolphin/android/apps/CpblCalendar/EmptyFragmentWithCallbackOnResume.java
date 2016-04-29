@@ -1,8 +1,8 @@
 package dolphin.android.apps.CpblCalendar;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Build;
 
 /**
@@ -15,10 +15,10 @@ import android.os.Build;
 public class EmptyFragmentWithCallbackOnResume extends Fragment {
     public final static String TAG = "EmptyFragmentWithCallbackOnResume";
 
-    OnFragmentAttachedListener mListener = null;
+    private OnFragmentAttachedListener mListener = null;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mListener = (OnFragmentAttachedListener) activity;
@@ -37,6 +37,6 @@ public class EmptyFragmentWithCallbackOnResume extends Fragment {
     }
 
     public interface OnFragmentAttachedListener {
-        public void OnFragmentAttached();
+        void OnFragmentAttached();
     }
 }

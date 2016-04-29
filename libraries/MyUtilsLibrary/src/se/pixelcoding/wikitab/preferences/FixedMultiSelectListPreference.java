@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -160,8 +161,14 @@ public class FixedMultiSelectListPreference extends DialogPreference {
 	
 	private Set<String> getPersistedStringSet(Set<String> defaultReturnValue) {
 		String key = getKey();
-		
-		return getSharedPreferences().getStringSet(key, defaultReturnValue);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            return getSharedPreferences().getStringSet(key, defaultReturnValue);
+        }
+        String s = getSharedPreferences().getString(key, null);
+        if (s != null) {
+            return new HashSet<>(Arrays.asList(s.split(",")));
+        }
+        return null;
 	}
 	
 	private boolean persistStringSet(Set<String> values) {
@@ -174,12 +181,30 @@ public class FixedMultiSelectListPreference extends DialogPreference {
 		}
 		
         SharedPreferences.Editor editor = getEditor();
-        editor.putStringSet(getKey(), values);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			editor.putStringSet(getKey(), values);
+		} else {
+            editor.putString(getKey(), join(values, ","));
+		}
         // Default class does fancy stuff here
         editor.apply();
         
         return true;
 	}
+
+    private static String join(Set<String> set, String delim) {
+        StringBuilder sb = new StringBuilder();
+        String loopDelim = "";
+
+        for (String s : set) {
+            sb.append(loopDelim);
+            sb.append(s);
+
+            loopDelim = delim;
+        }
+
+        return sb.toString();
+    }
 	
 	@Override
     protected Parcelable onSaveInstanceState() {

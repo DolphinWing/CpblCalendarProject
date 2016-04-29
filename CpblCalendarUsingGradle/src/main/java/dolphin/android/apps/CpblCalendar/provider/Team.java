@@ -26,6 +26,7 @@ public class Team {
     public final static int ID_ELEPHANTS = 1;
     //
     public final static int ID_UNI_LIONS = 2;
+    public final static int ID_UNI_711_LIONS = 7112;//[184]++
     //
     public final static int ID_W_DRAGONS = 3;
     //
@@ -93,7 +94,7 @@ public class Team {
         if (name.equalsIgnoreCase(c.getString(R.string.team_lions_short))
                 || name.equalsIgnoreCase(c.getString(R.string.team_711_lions_short))
                 || name.equalsIgnoreCase(c.getString(R.string.team_711_lions_short2)))
-            return ID_UNI_LIONS;
+            return year < 2007 ? ID_UNI_LIONS : ID_UNI_711_LIONS;
         if (name.equalsIgnoreCase(c.getString(R.string.team_eda_rhinos_short))
                 || name.equalsIgnoreCase(c.getString(R.string.team_eda_rhinos_short2)))
             return ID_EDA_RHINOS;
@@ -137,6 +138,7 @@ public class Team {
             case ID_CT_ELEPHANTS://[69]dolphin++ //[134]dolphin++ new logo for 2015
                 return year > 2014 ? R.drawable.elephant_2015 : R.drawable.elephant_2014;
             case ID_UNI_LIONS:
+            case ID_UNI_711_LIONS://[184]++
                 if (year >= 2009)
                     return R.drawable.lion_2009_2013;
                 else if (year >= 2007)
@@ -204,6 +206,9 @@ public class Team {
                 string_id = R.string.team_elephants;
                 break;
             case ID_UNI_LIONS:
+                string_id = R.string.team_lions;
+                break;
+            case ID_UNI_711_LIONS://[184]++
                 string_id = R.string.team_711_lions;
                 break;
             case ID_EDA_RHINOS:
@@ -287,6 +292,7 @@ public class Team {
                 string_id = R.string.team_elephants_short;
                 break;
             case ID_UNI_LIONS:
+            case ID_UNI_711_LIONS://[184]++
                 string_id = R.string.team_711_lions_short;
                 break;
             case ID_EDA_RHINOS:
@@ -352,9 +358,9 @@ public class Team {
         return context.getString(string_id);
     }
 
-    private int mId;
+    private final int mId;
     private String mName;//[66]++
-    private Context mContext;
+    private final Context mContext;
 
     public Team(Context context, int id) {
         mContext = context;
@@ -414,7 +420,7 @@ public class Team {
         if (png.contains("E02")) {
             id = ID_CT_ELEPHANTS;
         } else if (png.contains("L01")) {
-            id = ID_UNI_LIONS;
+            id = year < 2007 ? ID_UNI_LIONS : ID_UNI_711_LIONS;
         } else if (png.contains("A02")) {
             if (year <= 2003) {
                 id = ID_FIRST_KINGO;
@@ -463,7 +469,7 @@ public class Team {
 
     //http://goo.gl/JeMgZh
     public static class TeamTypeAdapter extends TypeAdapter<Team> {
-        private Context mContext;
+        private final Context mContext;
 
         public TeamTypeAdapter(Context context) {
             super();

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.SparseArray;
 
 import java.io.File;
 import java.util.HashMap;
@@ -165,18 +166,22 @@ public class PreferenceUtils {
      * @param context
      * @return
      */
-    public static HashMap<Integer, Team> getFavoriteTeams(Context context) {
-        HashMap<Integer, Team> teams = new HashMap<Integer, Team>();
+    public static SparseArray<Team> getFavoriteTeams(Context context) {
+        SparseArray<Team> teams = new SparseArray<>();
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {//SDK > 11
                 dolphin.android.preference.PreferenceUtils utils =
                         new dolphin.android.preference.PreferenceUtils(context);
                 Set<String> teamSet = getFavoriteTeams_pre(utils);
                 if (teamSet != null) {
-                    Iterator<String> iterator = teamSet.iterator();
-                    while (iterator.hasNext()) {
-                        int id = Integer.parseInt(iterator.next());
+                    for (String team : teamSet) {
+                        int id = Integer.parseInt(team);
                         //Log.d("PreferenceUtils", "id = " + id);
+                        if (id == Team.ID_ELEPHANTS) {
+                            id = Team.ID_ELEPHANTS;
+                        } else if (id == Team.ID_UNI_LIONS) {//[184]++
+                            id = Team.ID_UNI_711_LIONS;
+                        }
                         teams.put(id, new Team(context, id));
                     }
                 } else
@@ -200,9 +205,8 @@ public class PreferenceUtils {
         Set<String> newSet = new HashSet<String>();
         Set<String> teamSet = utils.getStringSet(KEY_FAVORITE_TEAMS, null);
         if (teamSet != null) {
-            Iterator<String> iterator = teamSet.iterator();
-            while (iterator.hasNext()) {
-                int id = Integer.parseInt(iterator.next());
+            for (String team : teamSet) {
+                int id = Integer.parseInt(team);
                 //2014: ID_ELEPHANTS -> ID_CT_ELEPHANTS
                 if (id == Team.ID_ELEPHANTS) {
                     //http://goo.gl/sfsrWc http://goo.gl/KTDRdB
@@ -210,7 +214,11 @@ public class PreferenceUtils {
                     //iterator.remove();
                     //id = Team.ID_CT_ELEPHANTS;
                     newSet.add(String.valueOf(Team.ID_CT_ELEPHANTS));
-                } else newSet.add(String.valueOf(id));
+                } else if (id == Team.ID_UNI_LIONS) {//[184]++
+                    newSet.add(String.valueOf(Team.ID_UNI_711_LIONS));
+                } else {
+                    newSet.add(String.valueOf(id));
+                }
             }
             utils.putStringSet(KEY_FAVORITE_TEAMS, newSet);
             return newSet;

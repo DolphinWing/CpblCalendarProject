@@ -11,7 +11,7 @@ public class ABSFragmentActivityHandler extends Handler
 	//Handlers and memory leaks in Android
 	//http://stackoverflow.com/a/11336822
 
-	private WeakReference<ABSFragmentActivity> mActivity;
+	private final WeakReference<ABSFragmentActivity> mActivity;
 
 	//private ABSActivity mActivity;
 

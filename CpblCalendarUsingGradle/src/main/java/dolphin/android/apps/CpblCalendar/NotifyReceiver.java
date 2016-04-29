@@ -60,7 +60,7 @@ public class NotifyReceiver extends BaseNotifyReceiver {
      * @param context Context
      * @param key     game key
      */
-    public static void showAlarm(Context context, String key) {
+    private static void showAlarm(Context context, String key) {
         //Log.v(TAG, "showAlarm " + Calendar.getInstance().getTime().toString());
         //final boolean demoMode = context.getResources().getBoolean(R.bool.demo_notification);
         AlarmHelper helper = new AlarmHelper(context);

@@ -16,8 +16,6 @@ import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-import dolphin.android.libs.R;
-
 public class ABSPreferenceActivity extends SherlockPreferenceActivity
 {
 	private final static String TAG = "ABSActivity";

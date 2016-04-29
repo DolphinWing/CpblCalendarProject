@@ -12,7 +12,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  *
  * Google Analytics helper class
  */
-public class GoogleAnalyticsHelper {
+class GoogleAnalyticsHelper {
     public final static String SCREEN_CALENDAR_ACTIVITY_BASE =
             "dolphin.android.apps.CpblCalendar.CalendarActivity";
     public final static String SCREEN_CALENDAR_ACTIVITY_PHONE =
@@ -24,8 +24,8 @@ public class GoogleAnalyticsHelper {
     public final static String SCREEN_PREFERENCE_ACTIVITY_GB =
             "dolphin.android.apps.CpblCalendar.preference.GBPreferenceActivity";
 
-    private CpblApplication mApplication;
-    private String mScreenName;
+    private final CpblApplication mApplication;
+    private final String mScreenName;
 
     public GoogleAnalyticsHelper(CpblApplication application) {
         mApplication = application;

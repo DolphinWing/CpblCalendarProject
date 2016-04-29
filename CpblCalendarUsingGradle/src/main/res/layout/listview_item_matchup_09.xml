@@ -6,11 +6,12 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/padding_medium"
     android:paddingTop="@dimen/padding_small"
-    tools:context=".SplashActivity">
+    tools:ignore="RtlSymmetry,RtlHardcoded">
 
     <ImageView
         android:id="@android:id/icon"
-        style="@style/Theme.Holo_green.Match.Drawer" />
+        style="@style/Theme.Holo_green.Match.Drawer"
+        android:contentDescription="@null" />
 
     <LinearLayout
         android:id="@+id/match_title"

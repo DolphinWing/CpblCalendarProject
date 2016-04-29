@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.DownloadFileDialog;
 import dolphin.android.apps.CpblCalendar.preference.NotificationFragment;
@@ -97,8 +99,11 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
     private void startMainApp() {
         Intent intent = new Intent();
         intent.setComponent(new ComponentName(this, SplashActivity.class));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        } else {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         startActivity(intent);
         finish();
     }
@@ -175,7 +180,7 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
         int alarmTime = PreferenceUtils.getAlarmNotifyTime(getBaseContext());
         boolean isVibrate = PreferenceUtils.isEnableNotifyVibrate(getBaseContext());
         sendGmsGoogleAnalyticsReport("UI", "NotifyDialog",
-                String.format("before=%d, vibrate=%s", alarmTime, isVibrate));
+                String.format(Locale.US, "before=%d, vibrate=%s", alarmTime, isVibrate));
     }
 
     protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {

@@ -174,7 +174,7 @@ public class AbsListViewHelper
 		}
 	}
 
-	private AdapterView.OnItemClickListener onItemClickListener =
+	private final AdapterView.OnItemClickListener onItemClickListener =
 		new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -211,7 +211,7 @@ public class AbsListViewHelper
 		}
 	}
 
-	private AdapterView.OnItemLongClickListener onItemLongClickListener =
+	private final AdapterView.OnItemLongClickListener onItemLongClickListener =
 		new AdapterView.OnItemLongClickListener() {
 
 			@Override

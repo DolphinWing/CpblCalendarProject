@@ -10,7 +10,8 @@
 
     <ImageView
         style="@style/Theme.Holo_green.Match.Drawer"
-        android:id="@android:id/icon"/>
+        android:id="@android:id/icon"
+        android:contentDescription="@null" />
 
     <LinearLayout
         style="@style/Theme.Holo_green.Match.Title"

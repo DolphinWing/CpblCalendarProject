@@ -21,6 +21,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.DownloadFileDialog;
 import dolphin.android.apps.CpblCalendar.preference.NotificationFragment;
@@ -175,10 +176,10 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
         int alarmTime = PreferenceUtils.getAlarmNotifyTime(getBaseContext());
         boolean isVibrate = PreferenceUtils.isEnableNotifyVibrate(getBaseContext());
         sendGmsGoogleAnalyticsReport("UI", "NotifyDialog",
-                String.format("before=%d, vibrate=%s", alarmTime, isVibrate));
+                String.format(Locale.US, "before=%d, vibrate=%s", alarmTime, isVibrate));
     }
 
-    protected void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
+    private void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
         // Get tracker.
         Tracker t = ((CpblApplication) getApplication()).getTracker(
                 CpblApplication.TrackerName.APP_TRACKER);

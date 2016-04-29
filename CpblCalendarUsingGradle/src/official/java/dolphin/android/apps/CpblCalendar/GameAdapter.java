@@ -1,17 +1,9 @@
 package dolphin.android.apps.CpblCalendar;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.text.Html;
-import android.text.SpannableString;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
-import android.text.style.StyleSpan;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,9 +12,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
-import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**

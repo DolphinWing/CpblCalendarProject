@@ -2,5 +2,27 @@
 <resources>
 
     <string name="title_activity_delay_game">DebugActivity</string>
-    
+
+    <!-- Showcase -->
+    <string name="phone_activity_showcase_title">歡迎使用</string>
+    <string name="phone_activity_showcase_detail">點擊這裡可以叫出切換賽程的查詢窗格，亦可使用手勢從螢幕左側滑入。\n
+        \n請按右上角的設定來修改顯示設定。</string>
+    <string name="tablet_activity_showcase_title">歡迎使用 CPBL 賽程表</string>
+    <string name="tablet_activity_showcase_detail">\n點擊查詢按鈕即可進行查詢。\n
+        \n如果要更改顯示設定，請按右上角的設定進入設定頁面。</string>
+
+    <string name="title_npombourcq">ActionBarDrawerToggle.java</string>
+    <string name="summary_npombourcq">ActionBarSherlock compatible ActionBarDrawerToggle</string>
+    <string name="title_iconic_set">Iconic icon set</string>
+    <string name="summary_iconic_set">Creative Commons Share Alike 3.0</string>
+    <string name="title_showcaseview">ShowcaseView</string>
+    <string name="summary_showcaseview">Copyright Alex Curran © 2012.</string>
+    <string name="title_nine_old_android">NineOldAndroids</string>
+    <string name="summary_nine_old_android">Copyright 2012 Jake Wharton</string>
+
+    <string name="title_include_lead_board">戰績表</string>
+    <string name="title_include_lead_board_on">將戰績表顯示於主畫面中</string>
+    <string name="title_include_lead_board_off">將戰績表顯示於對話框中</string>
+    <string name="title_include_lead_board_no_support">僅支援對話框模式</string>
+    <string name="title_orientation">自動旋轉螢幕</string>
 </resources>

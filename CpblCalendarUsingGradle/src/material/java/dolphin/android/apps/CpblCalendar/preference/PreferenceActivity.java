@@ -43,7 +43,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
             // Where path is a String representing the screen name.
             t.setScreenName("dolphin.android.apps.CpblCalendar.preference.PreferenceActivity");
             // Send a screen view.
-            t.send(new HitBuilders.AppViewBuilder().build());
+            t.send(new HitBuilders.ScreenViewBuilder().build());
         }
 
         if (PreferenceUtils.isEngineerMode(this)) {//[28]dolphin

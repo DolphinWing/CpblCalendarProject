@@ -16,27 +16,27 @@ import dolphin.android.net.HttpProgressListener;
  */
 public class DownloadFileDialog extends ProgressDialog implements Runnable, HttpProgressListener {
     private final static String TAG = "download";
-    private Context mContext;
+    private final Context mContext;
     private Thread mThread;
     private String mId;
     private File mDst;
     private long mContentSize;
     private long mEstimateSize;
 
-    protected DownloadFileDialog(Context context) {
+    private DownloadFileDialog(Context context) {
         super(context);
         mContext = context;
     }
 
-    public void setMessage(int resId) {
+    private void setMessage(int resId) {
         setMessage(mContext.getString(resId));
     }
 
-    public void setDownloadTask(String id, File dst) {
+    private void setDownloadTask(String id, File dst) {
         setDownloadTask(id, dst, 0);
     }
 
-    public void setDownloadTask(String id, File dst, long estSize) {
+    private void setDownloadTask(String id, File dst, long estSize) {
         mThread = new Thread(this);
         mId = id;
         mDst = dst;
@@ -78,7 +78,7 @@ public class DownloadFileDialog extends ProgressDialog implements Runnable, Http
     }
 
     public static class Builder {
-        private DownloadFileDialog mDialog;
+        private final DownloadFileDialog mDialog;
 
         public Builder(Context context) {
             mDialog = new DownloadFileDialog(context);

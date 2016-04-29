@@ -6,10 +6,9 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+import android.util.SparseArray;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import dolphin.android.apps.CpblCalendar.R;
@@ -64,16 +63,16 @@ public class DisplayFragment extends PreferenceFragment
 
     private void refresh() {
         String summary = "";
-        HashMap<Integer, Team> teamMap = PreferenceUtils.getFavoriteTeams(getActivity());
+        SparseArray<Team> teamMap = PreferenceUtils.getFavoriteTeams(getActivity());
         if (teamMap != null && teamMap.size() > 0) {
             if (mCpblTeams.length == teamMap.size()) {
                 summary = getString(R.string.title_favorite_teams_all);
             } else {//show the team names one by one
-                Iterator<Map.Entry<Integer, Team>> iterator = teamMap.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Team team = iterator.next().getValue();
+                for (int i = 0; i < teamMap.size(); i++) {
+                    Team team = teamMap.valueAt(i);
                     summary += team.getName() + " ";
                 }
+                summary = summary.trim();
             }
         } else {//[34]dolphin++ no team games to show
             summary = getString(R.string.no_favorite_teams);

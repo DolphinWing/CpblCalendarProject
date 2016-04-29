@@ -4,7 +4,8 @@
               android:layout_height="match_parent"
               tools:context=".SplashActivity"
               android:orientation="horizontal"
-              android:padding="@dimen/padding_medium">
+              android:padding="@dimen/padding_medium"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
 
     <LinearLayout
         android:orientation="vertical"
