@@ -52,7 +52,8 @@
             android:ringtoneType="notification"
             android:showDefault="true"
             android:showSilent="true"
-            android:title="@string/title_notify_ringtone" />
+            android:title="@string/title_notify_ringtone"
+            android:dependency="enable_notification" />
 
         <ListPreference
             android:key="notify_pending_action"
