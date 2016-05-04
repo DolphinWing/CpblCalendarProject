@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
@@ -34,6 +35,16 @@ public class GameAdapter extends BaseGameAdapter {
     @Override
     protected boolean supportLongName(Game game) {
         return game.Kind.equalsIgnoreCase("09");
+    }
+
+    @Override
+    protected void setAlarm(Game game) {
+        AlarmProvider.setNextAlarm(getContext());
+    }
+
+    @Override
+    protected void cancelAlarm(Game game) {
+        AlarmProvider.setNextAlarm(getContext());
     }
 
     public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,

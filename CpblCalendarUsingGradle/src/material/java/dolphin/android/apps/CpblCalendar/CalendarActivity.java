@@ -103,10 +103,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mCacheMode = PreferenceUtils.isCacheMode(this);//[83]dolphin++
         //Log.d(TAG, "mCacheMode = " + mCacheMode);
 
-        //[56]++ refresh the alarm when open the activity
-        if (PreferenceUtils.isEnableNotification(this)) {
-            AlarmProvider.setNextAlarm(this);
-        }
+//        //[56]++ refresh the alarm when open the activity
+//        if (PreferenceUtils.isEnableNotification(this)) {
+//            AlarmProvider.setNextAlarm((CpblApplication) getApplication());
+//        }
         mActivity = getActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
 
         mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(),

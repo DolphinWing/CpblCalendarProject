@@ -84,6 +84,8 @@ public class GeneralFragment extends PreferenceFragment {
             PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_TW_BASEBALL_WIKI);
         } else if (key.equals(PreferenceUtils.KEY_ZXC22)) {
             PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ZXC22);
+        } else if (key.equals(PreferenceUtils.KEY_LIB_EVERNOTE_JOB)) {//[188]dolphin++
+            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_EVERNOTE_ANDROID_JOB);
         } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
             PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
         } else if (key.equals(PreferenceUtils.KEY_LIB_CIRCLE_IMAGE_VIEW)) {//[168]dolphin++

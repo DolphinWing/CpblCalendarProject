@@ -10,9 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import dolphin.android.apps.CpblCalendar.R;
@@ -21,11 +19,12 @@ import dolphin.android.apps.CpblCalendar.provider.Team;
 
 /**
  * Created by dolphin on 2013/6/9.
- *
+ * <p/>
  * Helper class for accessing preference value
  */
 public class PreferenceUtils {
     public static final String TAG = "Preference";
+
     //GeneralFragment
     public static final String KEY_APP_VERSION = "app_version";
     public static final String KEY_CPBL_WEB = "data_from_cpbl";
@@ -39,6 +38,8 @@ public class PreferenceUtils {
     public static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
     public static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
     public static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
+    public static final String KEY_LIB_EVERNOTE_JOB = "lib_evernote_android_job";//[168]++
+
     //DisplayFragment
     public final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
     public final static String KEY_UPCOMING_ON = "upcoming_game";
@@ -48,7 +49,8 @@ public class PreferenceUtils {
     public final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
     public final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
     public final static String KEY_FAVORITE_TEAMS = "favorite_teams";
-    //ShowcaseView
+
+    @Deprecated //ShowcaseView
     public final static String KEY_SHOWCASE_PHONE = "showcase_phone";
     //public final static String KEY_SHOWCASE_TABLET = "showcase_tablet";
 
@@ -85,18 +87,24 @@ public class PreferenceUtils {
             "http://espiandev.github.io/ShowcaseView/";
     //[18]dolphin++ NineOldAndroids
     public final static String URL_NINEOLD_ANDROID = "http://nineoldandroids.com/";
+
     //[129]dolphin++ FloatingActionButton
     public final static String URL_FLOATING_ACTION_BUTTON =
             "https://github.com/makovkastar/FloatingActionButton";
+
     //[129]dolphin++ FloatingActionButton
     public final static String URL_CIRCLE_IMAGE_VIEW =
             "https://github.com/hdodenhof/CircleImageView";
 
+    //[188]dolphin++ Evernote Android Job library
+    public final static String URL_EVERNOTE_ANDROID_JOB =
+            "https://blog.evernote.com/tech/2015/10/26/unified-job-library-android/";
+
     /**
      * start a browser activity
      *
-     * @param context
-     * @param url
+     * @param context Context
+     * @param url     url
      */
     public static void startBrowserActivity(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -117,8 +125,8 @@ public class PreferenceUtils {
     /**
      * english build
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if we are in engineer mode
      */
     public static boolean isEngineerMode(Context context) {
         return context.getResources().getBoolean(R.bool.pref_engineer_mode);
@@ -127,8 +135,8 @@ public class PreferenceUtils {
     /**
      * show team logo in matchup
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if we should show the team logo
      */
     public static boolean isTeamLogoShown(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -139,8 +147,8 @@ public class PreferenceUtils {
     /**
      * auto scroll to upcoming games
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if we should scroll to upcoming games
      */
     public static boolean isUpComingOn(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -151,8 +159,8 @@ public class PreferenceUtils {
     /**
      * highlight the winner
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return tru if we should highlight the winner team
      */
     public static boolean isHighlightWin(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -163,8 +171,8 @@ public class PreferenceUtils {
     /**
      * get favorite teams
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return favorite teams
      */
     public static SparseArray<Team> getFavoriteTeams(Context context) {
         SparseArray<Team> teams = new SparseArray<>();
@@ -201,6 +209,12 @@ public class PreferenceUtils {
         return teams;
     }
 
+    /***
+     * pre-processing of favorite team list
+     *
+     * @param utils accessing to shared preference
+     * @return updated list
+     */
     public static Set<String> getFavoriteTeams_pre(dolphin.android.preference.PreferenceUtils utils) {
         Set<String> newSet = new HashSet<String>();
         Set<String> teamSet = utils.getStringSet(KEY_FAVORITE_TEAMS, null);
@@ -229,21 +243,22 @@ public class PreferenceUtils {
     /**
      * highlight today background
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if we should highlight today
      */
     public static boolean isHighlightToday(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) ? true : pref.getBoolean(KEY_HIGHLIGHT_TODAY,
+        return isEngineerMode(context) || pref.getBoolean(KEY_HIGHLIGHT_TODAY,
                 context.getResources().getBoolean(R.bool.def_highlight_today));
     }
 
     /**
      * show leader board layout in main screen
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if we should include leader board on main UI
      */
+    @Deprecated
     public static boolean isIncludeLeaderBoard(Context context) {
 //        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 //        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
@@ -254,8 +269,8 @@ public class PreferenceUtils {
     /**
      * enable notification
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if user enables notification
      */
     public static boolean isEnableNotification(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//SDK < 11
@@ -265,15 +280,15 @@ public class PreferenceUtils {
             return false;//not enabled function
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) ? true : pref.getBoolean(KEY_ENABLE_NOTIFICATION,
+        return isEngineerMode(context) || pref.getBoolean(KEY_ENABLE_NOTIFICATION,
                 context.getResources().getBoolean(R.bool.def_enable_notification));
     }
 
     /**
      * set alarm time offset before a game
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return time offset before a game for notification
      */
     public static int getAlarmNotifyTime(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -293,7 +308,7 @@ public class PreferenceUtils {
     /**
      * get notification pending action
      *
-     * @param context
+     * @param context Context
      * @return PENDING_ACTION_*
      */
     public static int getNotifyPendingAction(Context context) {
@@ -305,42 +320,72 @@ public class PreferenceUtils {
     /**
      * enable notification dialog
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return true if user enable notification dialog
      */
     public static boolean isEnableNotifyDialog(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) ? true : pref.getBoolean(KEY_NOTIFY_DIALOG,
+        return isEngineerMode(context) || pref.getBoolean(KEY_NOTIFY_DIALOG,
                 context.getResources().getBoolean(R.bool.def_enable_notify_dialog));
     }
 
+    /**
+     * enable notification song
+     *
+     * @param context Context
+     * @return true if we should play the notification song
+     */
     public static boolean isEnableNotifySong(Context context) {
         if (!context.getResources().getBoolean(R.bool.feature_enable_song)) {
             return false;
         }
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) ? true : pref.getBoolean(KEY_NOTIFY_SONG,
+        return isEngineerMode(context) || pref.getBoolean(KEY_NOTIFY_SONG,
                 context.getResources().getBoolean(R.bool.def_enable_notify_song));
     }
 
+    /**
+     * get current notification song
+     *
+     * @param context Context
+     * @return notification song file location
+     */
     public static File getNotifySong(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         return new File(context.getCacheDir(), pref.getString(PreferenceUtils.KEY_NOTIFY_SONG_LIST,
                 context.getString(R.string.def_notify_song)));
     }
 
+    /**
+     * enable notification vibration
+     *
+     * @param context Context
+     * @return true if user enables notification vibration
+     */
     public static boolean isEnableNotifyVibrate(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) ? true : pref.getBoolean(KEY_NOTIFY_VIBRATE,
+        return isEngineerMode(context) || pref.getBoolean(KEY_NOTIFY_VIBRATE,
                 context.getResources().getBoolean(R.bool.def_notify_vibrate));
     }
 
+    /**
+     * enable cache mode
+     *
+     * @param context Context
+     * @return true if we enable cache mode
+     */
     public static boolean isCacheMode(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         return pref.getBoolean(KEY_CACHE_MODE,
                 context.getResources().getBoolean(R.bool.def_cache_mode));
     }
 
+    /**
+     * set cache mode
+     *
+     * @param context Context
+     * @param enabled true if we enable cache mode
+     */
     public static void setCacheMode(Context context, boolean enabled) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = pref.edit();
@@ -348,6 +393,12 @@ public class PreferenceUtils {
         editor.apply();
     }
 
+    /**
+     * get notification Uri
+     *
+     * @param context Context
+     * @return notification Uri
+     */
     public static Uri getNotificationUri(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         String path = pref.getString(KEY_NOTIFY_RINGTONE, null);

@@ -22,36 +22,9 @@
             android:summary="@string/summary_zxc22" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/title_open_source">
-        <!--<Preference
-            android:key="lib_actionbarsherlock"
-            android:title="@string/title_actionbarsherlock"
-            android:summary="@string/summary_actionbarsherlock">
-        </Preference>
-        <Preference
-            android:key="lib_npombourcq"
-            android:title="@string/title_npombourcq">
-            <!- android:summary="@string/summary_npombourcq" ->
-        </Preference>-->
         <Preference
             android:key="res_asset_studio"
-            android:title="@string/title_asset_studio">
-            <!-- android:summary="@string/summary_asset_studio" -->
-        </Preference>
-        <!--<Preference
-            android:key="res_iconic_set"
-            android:title="@string/title_iconic_set"
-            android:summary="@string/summary_iconic_set" >
-        </Preference>-->
-        <!--<Preference
-            android:key="lib_showcaseview"
-            android:title="@string/title_showcaseview"
-            android:summary="@string/summary_showcaseview">
-        </Preference>
-        <Preference
-            android:key="lib_nineold_android"
-            android:title="@string/title_nine_old_android"
-            android:summary="@string/summary_nine_old_android">
-        </Preference>-->
+            android:title="@string/title_asset_studio" />
         <Preference
             android:key="lib_floating_action_button"
             android:title="@string/title_floating_action_button"
@@ -60,6 +33,10 @@
             android:key="lib_circle_image_view"
             android:title="@string/title_circle_image_view"
             android:summary="@string/summary_circle_image_view" />
+        <Preference
+            android:key="lib_evernote_android_job"
+            android:title="@string/title_evernote_android_job"
+            android:summary="@string/summary_evernote_android_job" />
     </PreferenceCategory>
 
 </PreferenceScreen>

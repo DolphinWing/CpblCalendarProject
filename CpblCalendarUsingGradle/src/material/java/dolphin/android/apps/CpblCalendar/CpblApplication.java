@@ -1,17 +1,27 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.app.Application;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-import android.app.Application;
-
 import java.util.HashMap;
+
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 
 /**
  * Created by dolphin on 2014/6/1.
  * http://wangshifuola.blogspot.tw/2011/12/androidapplicationglobal-variable.html
  */
 public class CpblApplication extends Application {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        //https://github.com/evernote/android-job
+        AlarmProvider.registerJob(this);
+    }
 
     /**
      * Enum used to identify the tracker that needs to be used for tracking.
@@ -26,7 +36,7 @@ public class CpblApplication extends Application {
         ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
     }
 
-    private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     public CpblApplication() {
         super();
@@ -51,7 +61,7 @@ public class CpblApplication extends Application {
                             : analytics.newTracker(R.xml.ecommerce_tracker);
             if (trackerId == TrackerName.APP_TRACKER) {
                 t.enableAutoActivityTracking(true);
-                t.enableExceptionReporting(true);
+                //t.enableExceptionReporting(true);
                 t.enableAdvertisingIdCollection(true);
             }
             mTrackers.put(trackerId, t);

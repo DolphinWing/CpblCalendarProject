@@ -201,6 +201,8 @@
     <string name="summary_floating_action_button">Copyright &#169; 2014 Oleksandr Melnykov</string>
     <string name="title_circle_image_view">CircleImageView</string>
     <string name="summary_circle_image_view">Copyright 2014 &#8211; 2015 Henning Dodenhof</string>
+    <string name="title_evernote_android_job">Android-Job</string>
+    <string name="summary_evernote_android_job">Copyright &#169; 2007&#8211;2015 by Evernote Corporation, All rights reserved.</string>
 
     <string-array name="notify_music_value">
         <item>theme.mp3</item>

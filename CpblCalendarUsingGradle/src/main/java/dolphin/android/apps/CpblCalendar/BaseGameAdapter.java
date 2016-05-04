@@ -261,12 +261,14 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                         if (mAlarmHelper.hasAlarm(g)) {
                             mAlarmHelper.removeGame(g);
                             img.setImageResource(R.drawable.ic_device_access_alarm);
+                            cancelAlarm(g);
                         } else {
                             mAlarmHelper.addGame(g);
                             img.setImageResource(R.drawable.ic_device_access_alarmed);
+                            setAlarm(g);
                         }
 
-                        AlarmProvider.setNextAlarm(mContext);
+                        //AlarmProvider.setNextAlarm(mContext);
                     }
                 });
 
@@ -282,6 +284,10 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     protected abstract int getLayoutResId(Game game);
 
     protected abstract boolean supportLongName(Game game);
+
+    protected abstract void setAlarm(Game game);
+
+    protected abstract void cancelAlarm(Game game);
 
     public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
                                                  boolean bIsTablet, boolean bShowLogo) {
@@ -312,5 +318,9 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     public boolean isTablet() {
         return bIsTablet;
+    }
+
+    public AlarmHelper getAlarmHelper() {
+        return mAlarmHelper;
     }
 }

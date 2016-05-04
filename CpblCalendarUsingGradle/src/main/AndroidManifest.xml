@@ -28,7 +28,6 @@
     <application
         android:name=".CpblApplication"
         android:allowBackup="true"
-        android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Holo_green"

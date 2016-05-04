@@ -1,14 +1,19 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
-import java.util.Calendar;
+import com.evernote.android.job.Job;
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.util.support.PersistableBundleCompat;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Set;
+
+import dolphin.android.apps.CpblCalendar.CpblApplication;
 import dolphin.android.apps.CpblCalendar.NotifyReceiver;
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
@@ -16,11 +21,12 @@ import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 
 /**
  * Created by dolphin on 2016/04/28.
- * <p />
+ * <p/>
  * To fix Alarm Intent in new structure
  */
 public class AlarmProvider {
     private final static String TAG = "AlarmProvider";
+    private final static boolean DEBUG_LOG = false;
 
     public final static String KEY_GAME = "_game";
 
@@ -29,11 +35,25 @@ public class AlarmProvider {
             "dolphin.android.apps.CpblCalendar.DELETE_NOTIFICATION";
 
     /**
-     * set next available alarm
+     * initialize JobManager
      *
      * @param context Context
      */
-    public static void setNextAlarm(Context context) {
+    public static void registerJob(Context context) {
+        if (DEBUG_LOG) {
+            Log.d(TAG, "onRegisterJob");
+        }
+        JobManager.create(context).addJobCreator(new NotifyJobCreator());
+    }
+
+    /**
+     * set next available alarm
+     *
+     * @param application CpblApplication
+     */
+    @Deprecated
+    public static void setNextAlarm(CpblApplication application) {
+        Context context = application.getBaseContext();
         //get next alarm from list
         AlarmHelper helper = new AlarmHelper(context);
         Game nextGame = helper.getNextAlarm();
@@ -45,73 +65,86 @@ public class AlarmProvider {
             Log.d(TAG, "alarm: " + alarm.getTime().toString());
             if (context.getResources().getBoolean(R.bool.demo_notification)) {//debug alarm
                 alarm = CpblCalendarHelper.getNowTime();
-                alarm.add(Calendar.SECOND, 15);
+                alarm.add(Calendar.SECOND, 15 * helper.getAlarmList().size());
+                Log.d(TAG, "demo alarm: " + alarm.getTime().toString());
             }
-            setAlarm(context, alarm, AlarmHelper.getAlarmIdKey(nextGame));
+            setAlarm(application, alarm, AlarmHelper.getAlarmIdKey(nextGame));
         } else {//try to cancel the alarm
-            cancelAlarm(context, null);
+            cancelAlarm(application, null);
             Log.v(TAG, "try to cancel the alarm that is not triggered");
         }
     }
 
     /**
-     * get PendingIntent for AlarmManager
-     *
-     * @param context Context
-     * @param key     game key
-     * @return alarm intent
-     */
-    private static PendingIntent getAlarmIntent(Context context, String key) {
-        Intent intent = AlarmProvider.getIntent(context);
-        intent.setAction(ACTION_ALARM);
-        if (key != null) {
-            intent.putExtra(KEY_GAME, key);
-        }
-        return PendingIntent.getBroadcast(context, 2001, intent, 0);
-    }
-
-    /**
      * set alarm
      *
-     * @param context   Context
-     * @param alarmTime alarm time
-     * @param key       game key
+     * @param application CpblApplication
+     * @param alarmTime   alarm time
+     * @param key         game key
      */
-    private static void setAlarm(Context context, Calendar alarmTime, String key) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent alarmIntent = getAlarmIntent(context, key);
-        if (alarmIntent != null) {
-            //[168]++ add different alarm wake mode
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                        alarmIntent);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                am.setExact(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                        alarmIntent);
-            } else {
-                am.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(),
-                        alarmIntent);
-            }
-            Log.v(TAG, "Alarm set! " + alarmTime.getTime().toString());
+    public static int setAlarm(CpblApplication application, Calendar alarmTime, String key) {
+        Context context = application.getBaseContext();
+        AlarmHelper helper = new AlarmHelper(context);
+
+        long now = CpblCalendarHelper.getNowTime().getTimeInMillis();
+        long offset = alarmTime.getTimeInMillis() - now;
+        if (DEBUG_LOG) {
+            Log.d(TAG, String.format("exact offset from now: %d ms", offset));
         }
+        PersistableBundleCompat extras = new PersistableBundleCompat();
+        extras.putString(KEY_GAME, key);
+        int jobId = new JobRequest.Builder(NotifyJob.TAG)
+                .setBackoffCriteria(5_000L, JobRequest.BackoffPolicy.EXPONENTIAL)
+                .setExact(offset) //alarmTime.getTimeInMillis()
+                //.setExact(20_000L)
+                .setExtras(extras)
+                .setPersisted(true)
+                //.setUpdateCurrent(true)
+                .build()
+                .schedule();
+        if (DEBUG_LOG) {
+            Log.d(TAG, "jobId = " + jobId);
+        }
+        helper.addJobId(key, jobId);
+        return jobId;
     }
 
     /**
      * cancel alarm
      *
-     * @param context Context
-     * @param key     game key
+     * @param application CpblApplication
+     * @param key         game key
      */
-    public static void cancelAlarm(Context context, String key) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent alarmIntent = getAlarmIntent(context, key);
-        if (alarmIntent != null) {
-            am.cancel(alarmIntent);
-            //Log.v(TAG, "Alarm cancel!");
-        }
-    }
+    public static void cancelAlarm(CpblApplication application, String key) {
+        Context context = application.getBaseContext();
+//        Log.d(TAG, "JobRequest");
+//        Set<JobRequest> jobRequests = JobManager.instance().getAllJobRequests();
+//        for (JobRequest request : jobRequests) {
+//            Log.d(TAG, "  id: " + request.getJobId());
+//        }
+//        Log.d(TAG, "Job");
+//        Set<Job> jobs = JobManager.instance().getAllJobs();
+//        for (Job job : jobs) {
+//            Log.d(TAG, job.toString());
+//            Log.d(TAG, "  finished?: " + job.isFinished());
+//        }
 
-    public static Intent getIntent(Context context) {
-        return new Intent(context, NotifyReceiver.class);
+        AlarmHelper helper = new AlarmHelper(context);
+        if (key != null && !key.isEmpty()) {
+            int jobId = helper.getJobId(key);
+            if (DEBUG_LOG) {
+                Log.d(TAG, "found jobId: " + jobId);
+            }
+            if (jobId > 0) {
+                JobManager.instance().cancel(jobId);
+                helper.removeJobId(jobId);
+            }
+        } else {
+            if (DEBUG_LOG) {
+                Log.d(TAG, "cancel all");
+            }
+            JobManager.instance().cancelAll();
+            helper.removeJobId(0);
+        }
     }
 }

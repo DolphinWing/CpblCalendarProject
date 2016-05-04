@@ -26,6 +26,7 @@
     <string name="no_favorite_teams">沒有球隊比賽可顯示</string>
     <string name="no_available_network">沒有網路連線</string>
     <string name="title_game_year_all_months">所有月份</string>
+    <string name="title_delayed_game">補賽</string>
 
     <!-- preference -->
     <!-- GeneralFragment -->

@@ -18,16 +18,20 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/8/31.
- *
+ * <p/>
  * Hleper class to get/set alarm from preference
  */
 public class AlarmHelper {
     public final static String TAG = "AlarmHelper";
+    private final static boolean DEBUG_LOG = false;
+
     private final Context mContext;
     private final dolphin.android.preference.PreferenceUtils pHelper;
     //private SparseArray<Game> mAlarmArray = null;
 
     private final static String KEY_ALARM_LIST = "_alarm_list";
+
+    private final static String KEY_JOB_MAP = "_job_map";
 
     /**
      * get key for Alarm ID
@@ -68,7 +72,9 @@ public class AlarmHelper {
         }
 
         String key = getAlarmIdKey(game);
-        Log.v(TAG, "addGame key: " + key);
+        if (DEBUG_LOG) {
+            Log.v(TAG, "addGame key: " + key);
+        }
         Set<String> keySet = pHelper.getStringSet(KEY_ALARM_LIST);
         if (keySet != null) {
             if (keySet.contains(key)) {
@@ -99,8 +105,10 @@ public class AlarmHelper {
      *
      * @param key game key
      */
-    private void removeGame(String key) {
-        Log.v(TAG, "removeGame key: " + key);
+    public void removeGame(String key) {
+        if (DEBUG_LOG) {
+            Log.v(TAG, "removeGame key: " + key);
+        }
         Set<String> keySet = pHelper.getStringSet(KEY_ALARM_LIST);
         if (keySet != null && keySet.contains(key)) {
             keySet.remove(key);
@@ -173,18 +181,24 @@ public class AlarmHelper {
         });
 
         //mAlarmArray.clear();
-        ArrayList<Game> list = new ArrayList<Game>();
+        ArrayList<Game> list = new ArrayList<>();
         //Log.d(TAG, String.format("getAlarmList list size = %d", keys.size()));
         Calendar now = CpblCalendarHelper.getNowTime();//Calendar.getInstance();
+        if (PreferenceUtils.getAlarmNotifyTime(mContext) == 0) {
+            now.add(Calendar.MINUTE, -1);//check one minute before
+        }
         for (String key : keys) {
             Game g = Game.fromPrefString(mContext, pHelper.getString(getAlarmDataKey(key)));
-            Log.d(TAG, " " + g.Id + " @ " + g.StartTime.getTimeInMillis());
+            if (DEBUG_LOG) {
+                Log.d(TAG, " " + g.Id + " @ " + g.StartTime.getTimeInMillis());
+            }
             //mAlarmArray.put(g.Id, g);//put to memory
             if (g.StartTime.after(now)) {
                 list.add(g);
             } else {//should remove from the list
                 Log.w(TAG, String.format("game %d StartTime is passed.", g.Id));
-                if (g.StartTime.get(Calendar.YEAR) < now.get(Calendar.YEAR)) {
+                if (g.StartTime.get(Calendar.YEAR) < now.get(Calendar.YEAR) ||
+                        (now.getTimeInMillis() - g.StartTime.getTimeInMillis() > 86400)) {
                     removeGame(g);//remove last year's game
                 }
             }
@@ -205,7 +219,9 @@ public class AlarmHelper {
         Set<String> keySet = pHelper.getStringSet(KEY_ALARM_LIST);
         if (keySet != null) {
             if (keySet.contains(key)) {
-                Log.d(TAG, "hasAlarm key: " + key);
+                if (DEBUG_LOG) {
+                    Log.d(TAG, "hasAlarm key: " + key);
+                }
                 return true;
             } else {//check game id, for some old key pair
                 //[122]dolphin-- now always use year-id-kind as key
@@ -249,8 +265,95 @@ public class AlarmHelper {
     public void clear() {
         ArrayList<Game> list = getAlarmList();
         if (list != null) {//not empty list
-            for (Game game : list)
+            for (Game game : list) {
                 removeGame(game);//remove the game from alarm list
+            }
+        }
+    }
+
+    /**
+     * store Job ID for Evernote JobManager
+     *
+     * @param key   Game key
+     * @param jobId Job ID
+     */
+    public void addJobId(String key, int jobId) {
+        //remove duplicated data
+        for (int oldId = getJobId(key); oldId > 0; oldId = getJobId(key)) {
+            if (DEBUG_LOG) {
+                Log.d(TAG, "remove old id: " + oldId);
+            }
+            removeJobId(oldId);
+        }
+
+        String pattern = String.format(Locale.US, "%s:%d", key, jobId);
+        String jobMap = pHelper.getString(KEY_JOB_MAP, "");
+        if (DEBUG_LOG) {
+            Log.d(TAG, "map>>> " + jobMap);
+        }
+        if (!jobMap.contains(pattern)) {
+            jobMap = jobMap.concat(";").concat(pattern);
+            jobMap = jobMap.replaceAll("[;]+", ";");
+            if (DEBUG_LOG) {
+                Log.d(TAG, "new map>>> " + jobMap);
+            }
+            pHelper.putString(KEY_JOB_MAP, jobMap);
+        }
+    }
+
+    /**
+     * get Job ID for Evernote JobManager from SharedPreference
+     *
+     * @param key Game key
+     * @return Job ID
+     */
+    public int getJobId(String key) {
+        String jobMap = pHelper.getString(KEY_JOB_MAP, "");
+        if (DEBUG_LOG) {
+            Log.d(TAG, "map>>> " + jobMap);
+        }
+        String[] maps = jobMap.split(";");
+        for (String job : maps) {
+            String[] map = job.split(":");
+            if (map.length > 1 && map[0].equals(key)) {
+                if (DEBUG_LOG) {
+                    Log.d(TAG, "found: " + job);
+                }
+                return Integer.parseInt(map[1]);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * remove Job ID from SharedPreference
+     *
+     * @param jobId Job ID
+     */
+    public void removeJobId(int jobId) {
+        String jobMap = pHelper.getString(KEY_JOB_MAP, "");
+        if (DEBUG_LOG) {
+            Log.d(TAG, "map>>> " + jobMap);
+        }
+        if (jobId > 0) {
+            String[] maps = jobMap.split(";");
+            for (String job : maps) {
+                String[] map = job.split(":");
+                if (map.length > 1 && Integer.parseInt(map[1]) == jobId) {
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, "found: " + job);
+                    }
+                    jobMap = jobMap.replace(job, "");
+                    jobMap = jobMap.replaceAll("[;]+", ";");
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, "new map>>> " + jobMap);
+                    }
+                    pHelper.putString(KEY_JOB_MAP, jobMap);
+                }
+            }
+        } else if (jobId == 0) {
+            Log.v(TAG, "clear all");
+            pHelper.putString(KEY_JOB_MAP, "");
         }
     }
 }

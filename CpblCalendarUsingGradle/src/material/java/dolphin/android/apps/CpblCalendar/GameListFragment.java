@@ -26,6 +26,8 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2013/6/3.
+ * <p/>
+ * GameList implementation
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class GameListFragment extends ListFragment implements ListView.OnItemLongClickListener {
@@ -43,7 +45,8 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         //this.setListShown(false);
         //Log.d(TAG, String.format("updateAdapter gameArrayList.size = %d",
         //        ((gameArrayList != null) ? gameArrayList.size() : 0)));
-        this.setListAdapter(new GameAdapter(activity, gameArrayList));
+        this.setListAdapter(new GameAdapter(activity, gameArrayList,
+                (CpblApplication) getActivity().getApplication()));
         //http://stackoverflow.com/a/5888331
         if (PreferenceUtils.isUpComingOn(activity) && gameArrayList != null) {
             try {//[8]++ try to scroll to not playing game at beginning
