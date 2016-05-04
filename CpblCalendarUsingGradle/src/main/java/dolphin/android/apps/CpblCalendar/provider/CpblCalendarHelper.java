@@ -1317,6 +1317,7 @@ public class CpblCalendarHelper extends HttpHelper {
             return;//cannot store, no context
         }
         File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
+        //Log.d(TAG, f.getAbsolutePath());
         FileUtils.writeStringToFile(f, delay_str);
     }
 
@@ -1365,6 +1366,7 @@ public class CpblCalendarHelper extends HttpHelper {
         }
         //restore data from cache
         File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
+        //Log.d(TAG, f.getAbsolutePath());
         String delay_str = FileUtils.readFileToString(f);
         if (delay_str != null && !delay_str.isEmpty()) {
             for (String delay : delay_str.split(";")) {
@@ -1406,6 +1408,8 @@ public class CpblCalendarHelper extends HttpHelper {
      */
     public ArrayList<Game> query2016(int year, int month, String kind, String field) {
         long start = System.currentTimeMillis();
+
+        SparseArray<Game> delayedGames = queryDelayGames2016(year, true, true);
 //        year = 2016;
 //        month = 3;
 //        kind = "07";
@@ -1447,10 +1451,20 @@ public class CpblCalendarHelper extends HttpHelper {
                 Game game = parseOneGameHtml2016(one_block[i], year, month, d, kind);
                 if (game != null) {
                     if (game.IsDelay && !game.IsFinal && game.StartTime.before(now)) {
-                        Log.w(TAG, String.format("bypass %d @ %s", game.Id, game.StartTime.getTime().toString()));
+                        Log.w(TAG, String.format("bypass %d @ %s", game.Id, game.getDisplayDate()));
                         continue;//don't add to game list
                     }
                     game.Source = Game.SOURCE_CPBL;
+                    if (delayedGames != null && delayedGames.get(game.Id) != null) {
+                        Game delayed = delayedGames.get(game.Id);
+                        String d_date = new SimpleDateFormat("yyyy/MM/dd", Locale.TAIWAN)
+                                .format(delayed.StartTime.getTime());
+                        game.DelayMessage = game.DelayMessage == null
+                                ? String.format("<b><font color='red'>%s&nbsp;%s</font></b>",
+                                    d_date, getContext().getString(R.string.title_delayed_game))
+                                : String.format("<b><font color='red'>%s</font></b> %s",
+                                    d_date, game.DelayMessage);
+                    }
                     gameList.add(game);
                 }
             }
@@ -1460,6 +1474,13 @@ public class CpblCalendarHelper extends HttpHelper {
         return gameList;
     }
 
+    /**
+     * Try to parse day of month of the block
+     *
+     * @param dayMap current existing days
+     * @param block  block html
+     * @return possible day of month
+     */
     private int parseGame2016TestGameDay(TreeMap<String, String> dayMap, String block) {
         if (block.contains("<!-- one_block -->")) {
             block = block.substring(0, block.lastIndexOf("<!-- one_block -->"));
@@ -1475,10 +1496,27 @@ public class CpblCalendarHelper extends HttpHelper {
         return 0;
     }
 
+    /**
+     * get Team by PNG file name
+     *
+     * @param png  PNG file name
+     * @param year year
+     * @return Team object
+     */
     private Team getTeamByPng(String png, int year) {
         return Team.getTeam2014(getContext(), png, year);
     }
 
+    /**
+     * Parse HTML to get game info
+     *
+     * @param html  source html
+     * @param year  year
+     * @param month month
+     * @param day   day of month
+     * @param kind  game kind
+     * @return Game object
+     */
     private Game parseOneGameHtml2016(String html, int year, int month, int day, String kind) {
         Game game = new Game();
         //onClick="location.href='/games/box.html?&game_type=01&game_id=158&game_date=2015-08-01&pbyear=2015';"
@@ -1695,5 +1733,137 @@ public class CpblCalendarHelper extends HttpHelper {
         }
 
         return game;
+    }
+
+    /**
+     * Get delayed game list from new 2016 web html
+     *
+     * @param year        year
+     * @param allowCache  allow get data from cache folder
+     * @param allowBackup allow get data from Google Drive backup
+     * @return delayed game list
+     */
+    public SparseArray<Game> queryDelayGames2016(int year, boolean allowCache, boolean allowBackup) {
+        long start = System.currentTimeMillis();
+        Log.d(TAG, "query delay games 2016: " + year);
+
+        Context context = getContext();
+        if (year < 2005 || context == null) {
+            Log.w(TAG, String.format("no %d delay game info in www.cpbl.com.tw", year));
+            return null;
+        }
+
+        //read current month
+        Calendar now = getNowTime();
+        boolean isThisYear = now.get(Calendar.YEAR) == year;
+        SparseArray<Game> delayedGames;
+
+        if (allowCache) {
+            delayedGames = restoreDelayGames2016(year);//new SparseArray<>();
+            if (!isThisYear && delayedGames.size() > 0) {//use cache directly
+                Log.v(TAG, String.format("use cached data, delay games = %d", delayedGames.size()));
+                return delayedGames;
+            }
+        }
+
+        if (allowBackup) {
+            //read from Google Drive
+            String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
+            int index = year - 2005;
+            if (index < driveIds.length) {//already have cached data in Google Drive
+                String driveId = driveIds[year - 2005];
+                File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
+                GoogleDriveHelper.download(context, driveId, f);
+                delayedGames = restoreDelayGames2016(year);//read again
+                if (delayedGames.size() > 0) {//use cache directly
+                    Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
+                    return delayedGames;
+                }
+            }
+        }
+
+        delayedGames = new SparseArray<>();
+        int m2 = isThisYear ? now.get(Calendar.MONTH) + 1 : 11;
+        for (int month = 3; month < m2; month++) {
+            String url = URL_SCHEDULE_2016.replace("@year", String.valueOf(year))
+                    .replace("@month", String.valueOf(month))
+                    .replace("@kind", "01").replace("@field", "");
+            //Log.d(TAG, "url: " + url);
+            String html = getUrlContent(url);
+            //Log.d(TAG, "html: " + html.length());
+
+            if (html != null && html.contains("<div class=\"one_block\"")) {
+                //Log.d(TAG, "check game list");
+                html = html.substring(0, html.indexOf("<div class=\"footer\">"));
+
+                //http://stackoverflow.com/a/7860836/2673859
+                TreeMap<String, String> dayMap = new TreeMap<>();
+                String[] tdDays = html.split("<td valign=\"top\">");
+                //Log.d(TAG, "td days = " + tdDays.length);
+
+                //<th class="past">29</th>
+                //<th class="today">01</th>
+                //<th class="future">02</th>
+                Matcher matchGameDay = Pattern.compile("<th class=\"[^\"]*\">([0-9]+)</th>").matcher(html);
+                int days = 0;
+                while (matchGameDay.find()) {//find the first
+                    days++;
+                    //Log.d(TAG, String.format("%d, day=%s", day, matchGameDay.group(1)));
+                    if (tdDays[days].contains("one_block")) {
+                        //Log.d(TAG, "  we have games today");
+                        dayMap.put(matchGameDay.group(1), tdDays[days]);
+                    }
+                }
+
+                String[] one_block = html.split("<div class=\"one_block\"");
+                //Log.d(TAG, "one_block = " + one_block.length);
+                int games = one_block.length;
+                //Calendar now = CpblCalendarHelper.getNowTime();
+                for (int i = 1; i < games; i++) {
+                    int d = parseGame2016TestGameDay(dayMap, one_block[i]);
+                    Game game = parseOneGameHtml2016(one_block[i], year, month, d, "01");
+                    if (game.IsDelay && !game.IsFinal && game.StartTime.before(now)) {
+                        //Log.w(TAG, String.format("bypass %d @ %s", game.Id, game.getDisplayDate()));
+                        game.StartTime.set(Calendar.HOUR_OF_DAY, 0);
+                        game.StartTime.set(Calendar.MINUTE, 0);
+                        //continue;//don't add to game list
+                        Log.d(TAG, "  " + game.DelayMessage);
+
+                        if (delayedGames.get(game.Id) == null) {
+                            delayedGames.put(game.Id, game);
+                        }
+                        delayedGames.get(game.Id).DelayMessage = game.DelayMessage;
+                        continue;
+                    }
+                    //Log.d(TAG, "game ID: " + game.Id);
+                    if (delayedGames.get(game.Id) != null) {
+                        //delayGames.get(game.Id).IsFinal = game.IsFinal;
+                        Log.d(TAG, "completed! " + game.toString());
+                        //delayGames.remove(game.Id);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < delayedGames.size(); i++) {
+            Log.d(TAG, delayedGames.valueAt(i).toString());
+        }
+        if (allowCache) {
+            storeDelayGames2016(year, delayedGames);
+        }
+
+        long cost = System.currentTimeMillis() - start;
+        Log.d(TAG, String.format("cost %d ms", cost));
+        return delayedGames;
+    }
+
+    public void storeDelayGames2016(int year, SparseArray<Game> games) {
+        //use previous data format
+        storeDelayGames2014(getContext(), year, games);
+    }
+
+    public SparseArray<Game> restoreDelayGames2016(int year) {
+        //use previous data format
+        return restoreDelayGames2014(getContext(), year);
     }
 }

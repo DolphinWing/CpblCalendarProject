@@ -52,6 +52,21 @@ public class Game {
     public boolean IsLive = false;//[181]++
     public String LiveMessage = null;//[181]++
 
+    @Override
+    public String toString() {
+        //return super.toString();
+        String delayMsg = DelayMessage != null ? DelayMessage : "";
+        if (AwayTeam == null || HomeTeam == null) {//delay game list
+            return String.format(Locale.US, "[%03d] %s %s", Id, getDisplayDate(), delayMsg);
+        }
+        if (IsFinal) {
+            return String.format(Locale.US, "[%03d] %d vs %d [%d:%d], %s %s", Id, AwayTeam.getId(),
+                    HomeTeam.getId(), AwayScore, HomeScore, getDisplayDate(), delayMsg);
+        }
+        return String.format(Locale.US, "[%03d] %d vs %d, %s %s", Id, AwayTeam.getId(),
+                HomeTeam.getId(), getDisplayDate(), delayMsg);
+    }
+
     /**
      * convert from Game object to string
      *
@@ -62,6 +77,27 @@ public class Game {
         return String.format(Locale.US, "%d;%d;%d;%s;%s;%d;%s", game.Id,
                 game.AwayTeam.getId(), game.HomeTeam.getId(),
                 game.Field, game.Channel, game.StartTime.getTimeInMillis(), game.Kind);
+    }
+
+    /**
+     * Format Calendar as proper time display string
+     *
+     * @param calendar Calendar
+     * @return time display string
+     */
+    public static String getDisplayDate(Calendar calendar) {
+        return String.format(Locale.US, "%04d/%02d/%02d %02d:%02d", calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+    }
+
+    /**
+     * Format StartTime as proper time display string
+     *
+     * @return time display string
+     */
+    public String getDisplayDate() {
+        return getDisplayDate(StartTime);
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
