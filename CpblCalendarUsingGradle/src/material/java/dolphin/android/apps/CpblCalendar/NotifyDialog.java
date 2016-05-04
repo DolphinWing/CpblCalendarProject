@@ -26,6 +26,7 @@ import java.util.Locale;
 import dolphin.android.apps.CpblCalendar.preference.DownloadFileDialog;
 import dolphin.android.apps.CpblCalendar.preference.NotificationFragment;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
@@ -149,7 +150,7 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
         }
 
         //send update message to main activity if exists
-        sendBroadcast(new Intent(NotifyReceiver.ACTION_DELETE_NOTIFICATION));
+        sendBroadcast(new Intent(AlarmProvider.ACTION_DELETE_NOTIFICATION));
 
         super.onDestroy();
     }

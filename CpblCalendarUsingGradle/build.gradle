@@ -13,6 +13,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            useProguard false
 //            zipAlign true
 //            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -23,13 +24,13 @@ android {
             minSdkVersion 16
             targetSdkVersion 23
             versionName '2.3.6'
-            versionCode 185
+            versionCode 187
         }
         official {
             minSdkVersion 9
             targetSdkVersion 15
             versionName '1.6.2'
-            versionCode 184
+            versionCode 186
         }
         dump {
             minSdkVersion 9

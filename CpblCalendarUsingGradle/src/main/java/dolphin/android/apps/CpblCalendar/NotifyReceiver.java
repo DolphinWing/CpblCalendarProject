@@ -3,6 +3,7 @@ package dolphin.android.apps.CpblCalendar;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import java.util.Calendar;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
@@ -27,7 +29,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * <p/>
  * Notification receiver and some helper methods
  */
-public class NotifyReceiver extends BaseNotifyReceiver {
+public class NotifyReceiver extends BroadcastReceiver {
     private final static String TAG = "NotifyReceiver";
 
     @Override
@@ -42,16 +44,16 @@ public class NotifyReceiver extends BaseNotifyReceiver {
         if (action.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
             //register next alarm on boot complete
             Log.i(TAG, Intent.ACTION_BOOT_COMPLETED);
-        } else if (action.equals(ACTION_DELETE_NOTIFICATION)) {
+        } else if (action.equals(AlarmProvider.ACTION_DELETE_NOTIFICATION)) {
             //Log.d(TAG, action);
             return;
         } else {
-            String key = intent.getStringExtra(KEY_GAME);
+            String key = intent.getStringExtra(AlarmProvider.KEY_GAME);
             showAlarm(context, key);
             //showAlarm should remove the notified alarm from the list
         }
 
-        setNextAlarm(context);//set alarm for next event
+        AlarmProvider.setNextAlarm(context);//set alarm for next event
     }
 
     /**
@@ -81,7 +83,7 @@ public class NotifyReceiver extends BaseNotifyReceiver {
                 //if the time has passed the game start time, ignore it
                 if (now.compareTo(game.StartTime) <= 0) {
                     Log.w(TAG, "bypass the notification and reset alarm! " + key);
-                    cancelAlarm(context, key);
+                    AlarmProvider.cancelAlarm(context, key);
                     //return;//bypass the notification and reset alarm
                 }//still show the dialog
             }
@@ -128,7 +130,7 @@ public class NotifyReceiver extends BaseNotifyReceiver {
             showNotification(context, contentText, bigMsgText);
         } else {
             Log.w(TAG, "showAlarm no alarm " + key);
-            cancelAlarm(context, key);//cancel the event in manager
+            AlarmProvider.cancelAlarm(context, key);//cancel the event in manager
         }
     }
 
@@ -165,7 +167,7 @@ public class NotifyReceiver extends BaseNotifyReceiver {
      */
     private static PendingIntent getDeleteIntent(Context context) {
         Intent deleteIntent = new Intent();
-        deleteIntent.setAction(ACTION_DELETE_NOTIFICATION);
+        deleteIntent.setAction(AlarmProvider.ACTION_DELETE_NOTIFICATION);
         return PendingIntent.getBroadcast(context, 2003, deleteIntent, 0);
     }
 

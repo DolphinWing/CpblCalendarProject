@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
@@ -265,7 +266,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                             img.setImageResource(R.drawable.ic_device_access_alarmed);
                         }
 
-                        BaseNotifyReceiver.setNextAlarm(mContext);
+                        AlarmProvider.setNextAlarm(mContext);
                     }
                 });
 

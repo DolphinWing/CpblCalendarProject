@@ -24,8 +24,8 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import dolphin.android.apps.CpblCalendar.BaseNotifyReceiver;
 import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.util.FileUtils;
 import dolphin.android.util.PackageUtils;
 
@@ -156,7 +156,7 @@ public class NotificationFragment extends PreferenceFragment
             if (!Boolean.parseBoolean(o.toString())) {//[57]dolphin++
                 Log.w(AlarmHelper.TAG, "clear all alarms");
                 mHelper.clear();
-                BaseNotifyReceiver.cancelAlarm(getActivity(), null);
+                AlarmProvider.cancelAlarm(getActivity(), null);
             }
         } else if (key.equalsIgnoreCase(PreferenceUtils.KEY_NOTIFY_SONG)) {
             //check if we have the song on disk, if not, download it

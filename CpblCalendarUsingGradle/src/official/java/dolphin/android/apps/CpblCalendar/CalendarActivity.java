@@ -38,6 +38,7 @@ import dolphin.android.app.ABSFragmentActivity;
 import dolphin.android.apps.CpblCalendar.preference.GBPreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceActivity;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.Stand;
@@ -123,7 +124,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
         //[56]++ refresh the alarm when open the activity
         if (PreferenceUtils.isEnableNotification(this)) {
-            NotifyReceiver.setNextAlarm(this);
+            AlarmProvider.setNextAlarm(this);
         }
         mActivity = getSFActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
 
@@ -142,7 +143,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         super.onResume();
 
         registerReceiver(mRefreshListReceiver,
-                new IntentFilter(NotifyReceiver.ACTION_DELETE_NOTIFICATION));
+                new IntentFilter(AlarmProvider.ACTION_DELETE_NOTIFICATION));
     }
 
     @Override
@@ -726,7 +727,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action != null && action.equals(NotifyReceiver.ACTION_DELETE_NOTIFICATION)) {
+            if (action != null && action.equals(AlarmProvider.ACTION_DELETE_NOTIFICATION)) {
                 //AlarmHelper helper = new AlarmHelper(context);
                 //helper.getAlarmList();
                 if (mButtonQuery != null) {

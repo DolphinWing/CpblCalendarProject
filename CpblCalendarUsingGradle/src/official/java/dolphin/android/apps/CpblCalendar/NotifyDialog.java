@@ -27,6 +27,7 @@ import java.util.Locale;
 import dolphin.android.apps.CpblCalendar.preference.DownloadFileDialog;
 import dolphin.android.apps.CpblCalendar.preference.NotificationFragment;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
@@ -64,12 +65,14 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
         });
 
         View button2 = findViewById(android.R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startMainApp();
-            }
-        });
+        if (button2 != null) {
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startMainApp();
+                }
+            });
+        }
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -153,7 +156,7 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
         }
 
         //send update message to main activity if exists
-        sendBroadcast(new Intent(NotifyReceiver.ACTION_DELETE_NOTIFICATION));
+        sendBroadcast(new Intent(AlarmProvider.ACTION_DELETE_NOTIFICATION));
 
         super.onDestroy();
     }

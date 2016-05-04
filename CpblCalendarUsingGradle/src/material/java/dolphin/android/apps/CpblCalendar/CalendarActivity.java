@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.Stand;
@@ -104,7 +105,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         //[56]++ refresh the alarm when open the activity
         if (PreferenceUtils.isEnableNotification(this)) {
-            NotifyReceiver.setNextAlarm(this);
+            AlarmProvider.setNextAlarm(this);
         }
         mActivity = getActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
 
@@ -125,7 +126,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         super.onResume();
 
         registerReceiver(mRefreshListReceiver,
-                new IntentFilter(NotifyReceiver.ACTION_DELETE_NOTIFICATION));
+                new IntentFilter(AlarmProvider.ACTION_DELETE_NOTIFICATION));
     }
 
     @Override
@@ -167,7 +168,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
 
         mButtonQuery = (Button) findViewById(android.R.id.button1);
-        mButtonQuery.setOnClickListener(onQueryClick);
+        if (mButtonQuery != null) {
+            mButtonQuery.setOnClickListener(onQueryClick);
+        }
     }
 
     @Override
@@ -637,56 +640,56 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
     }
 
-    /**
-     * show leader team board dialog
-     */
-    private void showLeaderBoard(String html) {
-        try {//[42]dolphin++ add a try-catch //[43]catch all dialog
-            //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
-            Utils.buildLeaderBoard2014Dialog(CalendarActivity.this, html,
-                    mSpinnerKind.getItemAtPosition(0).toString());
-        } catch (Exception e) {
-            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
-        }
-
-        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
-    }
-
-    private ArrayList<Stand> mStanding = null;
-
-    @Deprecated
-    public void showLeaderBoard2014() {
-        if (mStanding != null) {
-            doShowLeaderBoard2014();
-            return;
-        }
-
-        mIsQuery = true;//indicate that now it is downloading
-        invalidateOptionsMenu();
-        internalLoading(true);//download from website
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mStanding = mHelper.query2014LeaderBoard();
-                if (mActivity != null) {//[91]dolphin++
-                    CalendarActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            doShowLeaderBoard2014();
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    @Deprecated
-    private void doShowLeaderBoard2014() {
-        showLeaderBoard(Utils.prepareLeaderBoard2014(getActivity(), mStanding));
-        internalLoading(false);
-        mIsQuery = false;
-        invalidateOptionsMenu();
-    }
+//    /**
+//     * show leader team board dialog
+//     */
+//    private void showLeaderBoard(String html) {
+//        try {//[42]dolphin++ add a try-catch //[43]catch all dialog
+//            //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
+//            Utils.buildLeaderBoard2014Dialog(CalendarActivity.this, html,
+//                    mSpinnerKind.getItemAtPosition(0).toString());
+//        } catch (Exception e) {
+//            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+//        }
+//
+//        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
+//    }
+//
+//    private ArrayList<Stand> mStanding = null;
+//
+//    @Deprecated
+//    public void showLeaderBoard2014() {
+//        if (mStanding != null) {
+//            doShowLeaderBoard2014();
+//            return;
+//        }
+//
+//        mIsQuery = true;//indicate that now it is downloading
+//        invalidateOptionsMenu();
+//        internalLoading(true);//download from website
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mStanding = mHelper.query2014LeaderBoard();
+//                if (mActivity != null) {//[91]dolphin++
+//                    CalendarActivity.this.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            doShowLeaderBoard2014();
+//                        }
+//                    });
+//                }
+//            }
+//        }).start();
+//    }
+//
+//    @Deprecated
+//    private void doShowLeaderBoard2014() {
+//        showLeaderBoard(Utils.prepareLeaderBoard2014(getActivity(), mStanding));
+//        internalLoading(false);
+//        mIsQuery = false;
+//        invalidateOptionsMenu();
+//    }
 
     private void showLeaderBoard2016() {
         try {
@@ -727,9 +730,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //[98]dolphin++ add check delay list
-                SparseArray<Game> delayList = //mHelper.getDelayGameList();
-                        mHelper.queryDelayGames2014(getActivity(), mYear);
+//                //[98]dolphin++ add check delay list
+//                SparseArray<Game> delayList = //mHelper.getDelayGameList();
+//                        mHelper.queryDelayGames2014(getActivity(), mYear);
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
@@ -799,7 +802,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action != null && action.equals(NotifyReceiver.ACTION_DELETE_NOTIFICATION)) {
+            if (action != null && action.equals(AlarmProvider.ACTION_DELETE_NOTIFICATION)) {
                 //AlarmHelper helper = new AlarmHelper(context);
                 //helper.getAlarmList();
                 //mButtonQuery.performClick();

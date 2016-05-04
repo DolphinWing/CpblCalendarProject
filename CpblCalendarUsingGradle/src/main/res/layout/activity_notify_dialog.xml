@@ -47,10 +47,11 @@
         android:background="@color/holo_green_light"/>
 
     <Button
+        android:id="@android:id/button1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@android:string/ok"
-        android:id="@android:id/button1"
         android:layout_gravity="center"
-        android:background="@drawable/selectable_background_holo_green"/>
+        android:background="@drawable/selectable_background_holo_green"
+        android:text="@string/ok_ask_permission" />
+
 </LinearLayout>

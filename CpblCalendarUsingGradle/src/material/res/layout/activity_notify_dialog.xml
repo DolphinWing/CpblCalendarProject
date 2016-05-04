@@ -52,7 +52,7 @@
             android:id="@android:id/button2" />
         <TextView
             style="@style/Theme.Holo_green.Dialog.Button"
-            android:text="@android:string/ok"
+            android:text="@string/ok_ask_permission"
             android:id="@android:id/button1" />
     </LinearLayout>
 </LinearLayout>
