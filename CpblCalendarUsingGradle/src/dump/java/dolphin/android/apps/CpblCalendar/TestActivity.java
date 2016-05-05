@@ -3,10 +3,15 @@ package dolphin.android.apps.CpblCalendar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -16,6 +21,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * Dump data test
  */
 public class TestActivity extends Activity implements View.OnClickListener {
+    private int mYear = 2008;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +38,11 @@ public class TestActivity extends Activity implements View.OnClickListener {
         if (button2 != null) {
             button2.setOnClickListener(this);
         }
+
+        EditText text = (EditText) findViewById(android.R.id.edit);
+        if (text != null) {
+            text.setText(String.valueOf(mYear));
+        }
     }
 
     @Override
@@ -47,20 +58,41 @@ public class TestActivity extends Activity implements View.OnClickListener {
     }
 
     private void queryDelayGames() {
-        final int year = 2015;
+        EditText text = (EditText) findViewById(android.R.id.edit);
+        if (text != null) {
+            mYear = Integer.parseInt(text.getText().toString());
+        }
+
+        final int year = mYear;
         new Thread(new Runnable() {
             @Override
             public void run() {
+                long start = System.currentTimeMillis();
                 CpblCalendarHelper helper = new CpblCalendarHelper(getBaseContext());
                 SparseArray<Game> list = helper.queryDelayGames2016(year, false, false);
-                helper.storeDelayGames2016(year, list);
+                if (list != null) {
+                    helper.storeDelayGames2016(year, list);
+                }
+                final long cost = System.currentTimeMillis() - start;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), String.format(Locale.US,
+                                "cost %d ms", cost), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }).start();
     }
 
     private void readDelayGamesFromCache() {
+        EditText text = (EditText) findViewById(android.R.id.edit);
+        if (text != null) {
+            mYear = Integer.parseInt(text.getText().toString());
+        }
+
         CpblCalendarHelper helper = new CpblCalendarHelper(this);
-        SparseArray<Game> delayedGames = helper.restoreDelayGames2016(2015);
+        SparseArray<Game> delayedGames = helper.restoreDelayGames2016(mYear);
 
         String dataList = "";
         for (int i = 0; i < delayedGames.size(); i++) {

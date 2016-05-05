@@ -1748,7 +1748,7 @@ public class CpblCalendarHelper extends HttpHelper {
         Log.d(TAG, "query delay games 2016: " + year);
 
         Context context = getContext();
-        if (year < 2005 || context == null) {
+        if (/*year < 2005 || */context == null) {
             Log.w(TAG, String.format("no %d delay game info in www.cpbl.com.tw", year));
             return null;
         }
@@ -1770,8 +1770,8 @@ public class CpblCalendarHelper extends HttpHelper {
             //read from Google Drive
             String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
             int index = year - 2005;
-            if (index < driveIds.length) {//already have cached data in Google Drive
-                String driveId = driveIds[year - 2005];
+            if (index >= 0 && index < driveIds.length) {//already have cached data in Google Drive
+                String driveId = driveIds[index];
                 File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
                 GoogleDriveHelper.download(context, driveId, f);
                 delayedGames = restoreDelayGames2016(year);//read again
@@ -1812,6 +1812,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     if (tdDays[days].contains("one_block")) {
                         //Log.d(TAG, "  we have games today");
                         dayMap.put(matchGameDay.group(1), tdDays[days]);
+                        //Log.d(TAG, String.format("day=%d, %s", days, matchGameDay.group(1)));
                     }
                 }
 
