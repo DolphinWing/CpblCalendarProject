@@ -254,8 +254,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 return true;//break;
             case R.id.action_go_to_cpbl:
                 mAnalytics.sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
-                CpblCalendarHelper.startActivityToCpblSchedule(getBaseContext(), mYear, mMonth,
-                        getGameKind(mKind), mField, true);
+                CpblCalendarHelper.startActivityToCpblSchedule(mActivity, mYear,
+                        mMonth, getGameKind(mKind), mField/*, true*/);
                 return true;
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel
@@ -659,10 +659,16 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     }
 
     private void showLeaderBoard2016() {
-        try {
-            Utils.buildLeaderBoardZxc22(CalendarActivity.this);
-        } catch (Exception e) {
-            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+        if (Utils.isGoogleChromeInstalled(getBaseContext())) {//[190]++ use Chrome Custom Tabs
+            //http://stackoverflow.com/a/15629199/2673859
+            Utils.startBrowserActivity(getApplicationContext(),
+                "http://zxc22.idv.tw/rank_up.asp");
+        } else {
+            try {
+                Utils.buildLeaderBoardZxc22(CalendarActivity.this);
+            } catch (Exception e) {
+                Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+            }
         }
         mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
         internalLoading(false);

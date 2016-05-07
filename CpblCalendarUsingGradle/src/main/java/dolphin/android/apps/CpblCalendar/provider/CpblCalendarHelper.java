@@ -110,37 +110,38 @@ public class CpblCalendarHelper extends HttpHelper {
      */
     public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
                                                    String field) {
-        startActivityToCpblSchedule(context, year, month, kind, field, false);
-    }
-
-    /**
-     * start CPBL website in browser
-     *
-     * @param context Context
-     * @param year    year
-     * @param month   month
-     * @param kind    game kind
-     * @param field   game field
-     * @param newTask true if in a new task
-     */
-    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
-                                                   String field, boolean newTask) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        startActivityToCpblSchedule(context, year, month, kind, field, false);
+//    }
+//
+//    /**
+//     * start CPBL website in browser
+//     *
+//     * @param context Context
+//     * @param year    year
+//     * @param month   month
+//     * @param kind    game kind
+//     * @param field   game field
+//     * @param newTask true if in a new task
+//     */
+//    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
+//                                                   String field, boolean newTask) {
+////        Intent intent = new Intent(Intent.ACTION_VIEW);
         String url = URL_SCHEDULE_2016.replace("@year", String.valueOf(year))
                 .replace("@month", String.valueOf(month))
                 .replace("@kind", kind).replace("@field", field.equals("F00") ? "" : field);
-        intent.setData(Uri.parse(url));//URL_SCHEDULE_2014
-        if (newTask) {//[170]++
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {//[167]++
-            //[164]dolphin++ add Chrome Custom Tabs
-            Bundle extras = new Bundle();
-            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
-            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                    context.getResources().getColor(R.color.holo_green_dark));
-            intent.putExtras(extras);
-        }
-        context.startActivity(intent);
+//        intent.setData(Uri.parse(url));//URL_SCHEDULE_2014
+//        if (newTask) {//[170]++
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {//[167]++
+//            //[164]dolphin++ add Chrome Custom Tabs
+//            Bundle extras = new Bundle();
+//            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
+//            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+//                    SupportV4Utils.getColor(context, R.color.holo_green_dark));
+//            intent.putExtras(extras);
+//        }
+//        context.startActivity(intent);
+        Utils.startBrowserActivity(context, url);
     }
 
     //<font color=blue>001 義大-統一(新莊)</font>
@@ -533,7 +534,7 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return cache dir
      */
     public static File getCacheDir(Context context) {
-        return SupprtV4Utils.getCacheDir(context);
+        return SupportV4Utils.getCacheDir(context);
     }
 
     /**

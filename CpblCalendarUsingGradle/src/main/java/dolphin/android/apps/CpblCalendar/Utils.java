@@ -28,6 +28,7 @@ import java.util.List;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.apps.CpblCalendar.provider.SupportV4Utils;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 
 /**
@@ -227,29 +228,25 @@ public class Utils {
             url = null;
         }
 
-        if (/*game != null && */url != null) {//[78]-- game.IsFinal) {
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-
-            //[164]++
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                //[164]dolphin++ add Chrome Custom Tabs
-                Bundle extras = new Bundle();
-                extras.putBinder(EXTRA_CUSTOM_TABS_SESSION, null);
-                extras.putInt(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                        context.getResources().getColor(R.color.holo_green_dark));
-                i.putExtras(extras);
-            } else {
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            }
+        if (/*game != null &&*/ url != null) {//[78]-- game.IsFinal) {
+//            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//
+//            //[164]++
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//                //[164]dolphin++ add Chrome Custom Tabs
+//                Bundle extras = new Bundle();
+//                extras.putBinder(EXTRA_CUSTOM_TABS_SESSION, null);
+//                extras.putInt(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+//                        context.getResources().getColor(R.color.holo_green_dark));
+//                i.putExtras(extras);
+//            } else {
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            }
 
             if (PreferenceUtils.isEngineerMode(context)) {
                 Log.d("CpblCalendarHelper", "Url=" + url.substring(url.lastIndexOf("/")));
             } else {
-                try {//[97]dolphin++
-                    context.startActivity(i);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
-                }
+                startBrowserActivity(context, url);
             }
         }
     }
