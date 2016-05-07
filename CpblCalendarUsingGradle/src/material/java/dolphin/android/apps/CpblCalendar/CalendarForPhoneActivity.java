@@ -56,15 +56,19 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
-        mDrawerList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //used to avoid clicking objects behind drawer
-            }
-        });
+        if (mDrawerList != null) {
+            mDrawerList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //used to avoid clicking objects behind drawer
+                }
+            });
+        }
 
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        if (mDrawerLayout != null) {
+            // set a custom shadow that overlays the main content when the drawer opens
+            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        }
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -76,14 +80,19 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         mAdView = (AdView) findViewById(R.id.adView);
 
-        findViewById(R.id.button_floating_action).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mDrawerLayout.openDrawer(mDrawerList);
+        View fabButton = findViewById(R.id.button_floating_action);
+        if (fabButton != null) {
+            fabButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (mDrawerLayout != null) {
+                                mDrawerLayout.openDrawer(mDrawerList);
+                            }
+                        }
                     }
-                }
-        );
+            );
+        }
 
         new Handler().post(new Runnable() {
             @Override
@@ -121,11 +130,21 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                mSpinnerField.setSelection(field);
-                mSpinnerKind.setSelection(kind);
-                mSpinnerYear.setSelection(debugMode ? 1 : year);
-                mSpinnerMonth.setSelection(debugMode ? 5 : month);
-                mButtonQuery.performClick();//load at beginning
+                if (mSpinnerField != null) {
+                    mSpinnerField.setSelection(field);
+                }
+                if (mSpinnerKind != null) {
+                    mSpinnerKind.setSelection(kind);
+                }
+                if (mSpinnerYear != null) {
+                    mSpinnerYear.setSelection(debugMode ? 1 : year);
+                }
+                if (mSpinnerMonth != null) {
+                    mSpinnerMonth.setSelection(debugMode ? 5 : month);
+                }
+                if (mButtonQuery != null) {
+                    mButtonQuery.performClick();//load at beginning
+                }
             }
         });
     }
@@ -142,10 +161,19 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         boolean visible = !drawerOpen & !IsQuery();
-        menu.findItem(R.id.action_settings).setVisible(visible);
-        menu.findItem(R.id.action_refresh).setVisible(visible);
-        menu.findItem(R.id.action_leader_board).setVisible(true);
-        menu.findItem(R.id.action_leader_board).setEnabled(visible);//keep the menu order
+        MenuItem item1 = menu.findItem(R.id.action_settings);
+        if (item1 != null) {
+            item1.setVisible(visible);
+        }
+        MenuItem item2 = menu.findItem(R.id.action_refresh);
+        if (item2 != null) {
+            item2.setVisible(visible);
+        }
+        MenuItem item3 = menu.findItem(R.id.action_leader_board);
+        if (item3 != null) {
+            item3.setVisible(true);
+            item3.setEnabled(visible);//keep the menu order
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -153,7 +181,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search://[133]dolphin++
-                mDrawerLayout.openDrawer(mDrawerList);
+                if (mDrawerLayout != null && mDrawerList != null) {
+                    mDrawerLayout.openDrawer(mDrawerList);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -171,7 +201,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     @Override
     public void onQueryStart() {
-        mDrawerLayout.closeDrawer(mDrawerList);
+        if (mDrawerLayout != null && mDrawerList != null) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        }
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
         onLoading(true);//[30]dolphin++
     }
@@ -185,8 +217,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
-    public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList, int year, int month) {
-        mDrawerLayout.closeDrawer(mDrawerList);//[138]++ close it//[87]dolphin++ put to success?
+    public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList, int year,
+                               int month) {
+        if (mDrawerLayout != null && mDrawerList != null) {
+            mDrawerLayout.closeDrawer(mDrawerList);//[138]++ close it//[87]dolphin++ put to success?
+        }
         //Log.d(TAG, "onSuccess");
         updateGameListFragment(gameArrayList, year, month);
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -200,8 +235,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         FragmentTransaction trans = fmgr.beginTransaction();
         GameListFragment frag1 = (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
         if (frag1 != null) {
-            frag1.updateAdapter(gameArrayList, mSpinnerYear.getSelectedItem().toString(),
-                    mSpinnerMonth.getSelectedItem().toString());
+            String y = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString() : null;
+            String m = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItem().toString() : null;
+            frag1.updateAdapter(gameArrayList, y, m);
             try {
                 trans.commitAllowingStateLoss();//[30]dolphin++
             } catch (IllegalStateException e) {
@@ -259,7 +295,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         //[22]dolphin++ need get the data from server again!
         // because the favorite team preference may remove some teams
         //onQuerySuccess(mGameList);//reload the fragment when possible preferences change
-        mButtonQuery.performClick();//[22]dolphin++
+        if (mButtonQuery != null) {
+            mButtonQuery.performClick();//[22]dolphin++
+        }
         //query_to_update(true);//[126]dolphin++ quick refresh
     }
 
@@ -330,9 +368,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-            mDrawerLayout.closeDrawer(mDrawerList);
-            return;//[146]++
+        if (mDrawerLayout != null && mDrawerList != null) {
+            if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+                mDrawerLayout.closeDrawer(mDrawerList);
+                return;//[146]++
+            }
         }
         super.onBackPressed();
     }

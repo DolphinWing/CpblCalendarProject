@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.SplashActivity;
+import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.util.AssetUtils;
 import dolphin.android.util.PackageUtils;
 
@@ -79,29 +80,29 @@ public class GeneralFragment extends PreferenceFragment {
             textView.setTextSize(12);
             return true;
         } else if (key.equals(PreferenceUtils.KEY_CPBL_WEB)) {
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CPBL_OFFICAL_WEBSITE);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CPBL_OFFICAL_WEBSITE);
         } else if (key.equals(PreferenceUtils.KEY_TWBALL_WIKI)) {
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_TW_BASEBALL_WIKI);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_TW_BASEBALL_WIKI);
         } else if (key.equals(PreferenceUtils.KEY_ZXC22)) {
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ZXC22);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ZXC22);
         } else if (key.equals(PreferenceUtils.KEY_LIB_EVERNOTE_JOB)) {//[188]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_EVERNOTE_ANDROID_JOB);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_EVERNOTE_ANDROID_JOB);
         } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
         } else if (key.equals(PreferenceUtils.KEY_LIB_CIRCLE_IMAGE_VIEW)) {//[168]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CIRCLE_IMAGE_VIEW);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CIRCLE_IMAGE_VIEW);
         } else if (key.equals(PreferenceUtils.KEY_LIB_ABS_WEB)) {
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
         } else if (key.equals(PreferenceUtils.KEY_LIB_ABDT_GIT)) {
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
         } else if (key.equals(PreferenceUtils.KEY_RES_AAS)) {//[13]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ANDROID_ASSET_STUDIO);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ANDROID_ASSET_STUDIO);
         } else if (key.equals(PreferenceUtils.KEY_RES_ICONIC)) {//[13]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ICONIC_ICON_SET);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ICONIC_ICON_SET);
         } else if (key.equals(PreferenceUtils.KEY_LIB_SHOWCASE)) {//[18]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_SHOWCASE_VIEW);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_SHOWCASE_VIEW);
         } else if (key.equals(PreferenceUtils.KEY_LIB_NINEOLD)) {//[18]dolphin++
-            PreferenceUtils.startBrowserActivity(getActivity(), PreferenceUtils.URL_NINEOLD_ANDROID);
+            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_NINEOLD_ANDROID);
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }

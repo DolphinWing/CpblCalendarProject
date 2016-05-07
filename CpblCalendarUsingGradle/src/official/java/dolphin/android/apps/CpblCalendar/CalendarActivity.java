@@ -8,12 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -41,7 +39,6 @@ import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar.provider.Stand;
 import dolphin.android.net.HttpHelper;
 
 /**
@@ -84,7 +81,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
 
     private GoogleAnalyticsHelper mAnalytics;
 
-    private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
+//    private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,7 +126,7 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         mActivity = getSFActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
 
         mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(), getScreenName());
-        mDelayGames2014 = new SparseArray<>();
+//        mDelayGames2014 = new SparseArray<>();
     }
 
     @Override
@@ -543,72 +540,72 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         }
     }
 
-    /**
-     * check if the tutorial is done
-     */
-    public boolean isTutorialDone() {
-        if (CpblCalendarHelper.getNowTime().get(Calendar.YEAR) < 2014) {
-            if (PreferenceUtils.isEngineerMode(getBaseContext())) {
-                return false;//[39]dolphin++ move to global method
-            }
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-            return pref.getBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, false);
-        }
-        return true;//[70]jimmy++ new website don't use GET method
-    }
+//    /**
+//     * check if the tutorial is done
+//     */
+//    public boolean isTutorialDone() {
+//        if (CpblCalendarHelper.getNowTime().get(Calendar.YEAR) < 2014) {
+//            if (PreferenceUtils.isEngineerMode(getBaseContext())) {
+//                return false;//[39]dolphin++ move to global method
+//            }
+//            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//            return pref.getBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, false);
+//        }
+//        return true;//[70]jimmy++ new website don't use GET method
+//    }
+//
+//    /**
+//     * set tutorial is done
+//     */
+//    public void setTutorialDone() {
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//        SharedPreferences.Editor editor = pref.edit();
+//        editor.putBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, true);
+//        editor.apply();
+//    }
 
-    /**
-     * set tutorial is done
-     */
-    public void setTutorialDone() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(PreferenceUtils.KEY_SHOWCASE_PHONE, true);
-        editor.apply();
-    }
-
-    /**
-     * show leader team board dialog
-     */
-    public void showLeaderBoard(String html) {
-        try {//[42]dolphin++ add a try-catch //[43]catch all dialog
-            //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
-            Utils.buildLeaderBoardDialog(CalendarActivity.this, html,
-                    mSpinnerKind.getItemAtPosition(0).toString());
-        } catch (Exception e) {
-            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
-        }
-
-        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
-    }
-
-    ArrayList<Stand> mStanding = null;
-
-    @Deprecated
-    public void showLeaderBoard2014() {
-        if (mStanding != null) {
-            doShowLeaderBoard2014();
-            return;
-        }
-
-        mIsQuery = true;//indicate that now it is downloading
-        invalidateOptionsMenu();
-        internalLoading(true);//download from website
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mStanding = mHelper.query2014LeaderBoard();
-                if (mActivity != null) {//[91]dolphin++
-                    CalendarActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            doShowLeaderBoard2014();
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
+//    /**
+//     * show leader team board dialog
+//     */
+//    public void showLeaderBoard(String html) {
+//        try {//[42]dolphin++ add a try-catch //[43]catch all dialog
+//            //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
+//            Utils.buildLeaderBoardDialog(CalendarActivity.this, html,
+//                    mSpinnerKind.getItemAtPosition(0).toString());
+//        } catch (Exception e) {
+//            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+//        }
+//
+//        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
+//    }
+//
+//    ArrayList<Stand> mStanding = null;
+//
+//    @Deprecated
+//    public void showLeaderBoard2014() {
+//        if (mStanding != null) {
+//            doShowLeaderBoard2014();
+//            return;
+//        }
+//
+//        mIsQuery = true;//indicate that now it is downloading
+//        invalidateOptionsMenu();
+//        internalLoading(true);//download from website
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mStanding = mHelper.query2014LeaderBoard();
+//                if (mActivity != null) {//[91]dolphin++
+//                    CalendarActivity.this.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            doShowLeaderBoard2014();
+//                        }
+//                    });
+//                }
+//            }
+//        }).start();
+//    }
 
     private void showLeaderBoard2016() {
         try {
@@ -622,12 +619,12 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         invalidateOptionsMenu();
     }
 
-    private void doShowLeaderBoard2014() {
-        showLeaderBoard(Utils.prepareLeaderBoard2014(getSFActivity(), mStanding));
-        internalLoading(false);
-        mIsQuery = false;
-        invalidateOptionsMenu();
-    }
+//    private void doShowLeaderBoard2014() {
+//        showLeaderBoard(Utils.prepareLeaderBoard2014(getSFActivity(), mStanding));
+//        internalLoading(false);
+//        mIsQuery = false;
+//        invalidateOptionsMenu();
+//    }
 
     private void showCacheModeEnableDialog(final MenuItem item) {
         AlertDialog dialog = Utils.buildEnableCacheModeDialog(CalendarActivity.this,
@@ -656,8 +653,8 @@ public abstract class CalendarActivity extends ABSFragmentActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //[98]dolphin++ add check delay list
-                SparseArray<Game> delayList = mHelper.getDelayGameList();
+                ////[98]dolphin++ add check delay list
+                //SparseArray<Game> delayList = mHelper.getDelayGameList();
                 for (int m = 3; m <= 10; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));

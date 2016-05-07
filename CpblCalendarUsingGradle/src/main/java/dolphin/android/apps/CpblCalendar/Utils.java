@@ -22,14 +22,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar.provider.Stand;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 
 /**
@@ -73,150 +71,6 @@ public class Utils {
             gameList.add(game);
         }
         return gameList;
-    }
-
-    private final static String TABLE_ROW_TEMPLATE =
-            "<tr style='%style' bgcolor='@bgcolor'>" +
-                    "<td style='width:40%;'>@team</td>" +
-                    "<td style='width:15%;text-align:center'>@win</td>" +
-                    "<td style='width:15%;text-align:center'>@lose</td>" +
-                    "<td style='width:15%;text-align:center'>@tie</td>" +
-                    "<td style='width:15%;text-align:center'>@behind</td></tr>";
-
-    /**
-     * prepare leader board html
-     *
-     * @param context  Context
-     * @param standing output data
-     * @return html
-     */
-    public static String prepareLeaderBoard2014(Context context, ArrayList<Stand> standing) {
-        if (standing == null)
-            return "";
-        String standingHtml = "<table style='width:100%;'>";
-        standingHtml += TABLE_ROW_TEMPLATE
-                .replace("@style", "color:white;")
-                .replace("@bgcolor", "#669900")
-                .replace("td", "th")
-                .replace("@team", context.getString(R.string.title_team))
-                .replace("@win", context.getString(R.string.title_win))
-                .replace("@lose", context.getString(R.string.title_lose))
-                .replace("@tie", context.getString(R.string.title_tie))
-                .replace("@behind", context.getString(R.string.title_game_behind));
-        //standingHtml += "<tr><td colspan='5'><hr /></td></tr>";
-        final String[] color = {"#F1EFE6", "#E6F1EF"};
-        int c = 0;
-        for (Stand stand : standing) {
-            standingHtml += TABLE_ROW_TEMPLATE
-                    .replace("@style", "")
-                    .replace("@bgcolor", color[(c++ % 2)])
-                    .replace("@team", stand.getTeam().getName())
-                    .replace("@win", String.valueOf(stand.getGamesWon()))
-                    .replace("@lose", String.valueOf(stand.getGamesLost()))
-                    .replace("@tie", String.valueOf(stand.getGamesTied()))
-                    .replace("@behind", String.valueOf(stand.getGamesBehind()));
-        }
-        standingHtml += "</table>";
-        return standingHtml;
-    }
-
-    /**
-     * build a leader board dialog
-     *
-     * @param context Context
-     * @param html    html content
-     * @param title   dialog title
-     * @return a leader board dialog
-     */
-    public static AlertDialog buildLeaderBoardDialog(Context context, String html, String title) {
-        //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
-        AlertDialog dialog = new AlertDialog.Builder(context).create();
-        //dialog.setTitle(mSpinnerKind.getItemAtPosition(1).toString());
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(android.R.string.ok),
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        // do nothing, just dismiss
-                    }
-                }
-        );
-        // How to display the Html formatted text in the PopUp box
-        // using alert dialog builder?
-        // http://stackoverflow.com/a/8641399
-        //dialog.setMessage(Html.fromHtml(mHelper.getScoreBoardHtml()));
-
-        //change the style like the entire theme
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.leader_board, null);
-        TextView textView = (TextView) view.findViewById(android.R.id.title);
-        if (textView != null && title != null) {
-            textView.setText(title);
-        }
-
-        // android from html cannot recognize all HTML tag
-        // http://stackoverflow.com/a/8632338
-        WebView webView = (WebView) view.findViewById(R.id.webView);//new WebView(this);
-        // http://pop1030123.iteye.com/blog/1399305
-        //webView.getSettings().setDefaultTextEncodingName(CpblCalendarHelper.ENCODE_UTF8);
-        webView.getSettings().setJavaScriptEnabled(false);
-        webView.getSettings().setSupportZoom(false);
-        // Encoding issue with WebView's loadData
-        // http://stackoverflow.com/a/9402988
-        webView.loadData(html, "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
-        dialog.setView(view);//webView
-        dialog.show();
-
-        //set button style as holo green light
-        View btOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (btOk != null) {
-            btOk.setBackgroundResource(R.drawable.item_background_holo_light);
-        }
-        return dialog;
-    }
-
-    /**
-     * build a leader board dialog for 2014 data
-     *
-     * @param context Context
-     * @param html    html content
-     * @param title   dialog title
-     * @return leader board dialog
-     */
-    public static AlertDialog buildLeaderBoard2014Dialog(Context context, String html, String title) {
-        final AlertDialog dialog = new AlertDialog.Builder(context).create();
-        //change the style like the entire theme
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.leader_board, null);
-        TextView textView = (TextView) view.findViewById(android.R.id.title);
-        if (textView != null && title != null) {
-            textView.setText(title);
-        }
-
-        // android from html cannot recognize all HTML tag
-        // http://stackoverflow.com/a/8632338
-        WebView webView = (WebView) view.findViewById(R.id.webView);//new WebView(this);
-        // http://pop1030123.iteye.com/blog/1399305
-        //webView.getSettings().setDefaultTextEncodingName(CpblCalendarHelper.ENCODE_UTF8);
-        webView.getSettings().setJavaScriptEnabled(false);
-        webView.getSettings().setSupportZoom(false);
-        // Encoding issue with WebView's loadData
-        // http://stackoverflow.com/a/9402988
-        webView.loadData(html, "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
-
-        View btOk = view.findViewById(android.R.id.button1);
-        if (btOk != null) {
-            btOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
-        }
-
-        dialog.setView(view);//webView
-        dialog.show();
-        return dialog;
     }
 
     public static AlertDialog buildLeaderBoardZxc22(Context context) {
@@ -401,6 +255,41 @@ public class Utils {
     }
 
     /**
+     * start a browser activity
+     *
+     * @param context Context
+     * @param url     url
+     */
+    public static void startBrowserActivity(Context context, String url) {
+        if (context == null) {
+            Log.e("CpblCalendarHelper", "no Context, no Activity");
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //[169]dolphin++ add Chrome Custom Tabs
+            Bundle extras = new Bundle();
+            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
+            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+                    SupportV4Utils.getColor(context, R.color.holo_green_dark));
+            intent.putExtras(extras);
+//            if (!isGoogleChromeInstalled(context)) {//for non-chrome app
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            }
+        } else {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+
+        try {//[97]dolphin++
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
      * Check if Google Chrome is installed.
      *
      * @param context Context
@@ -411,7 +300,7 @@ public class Utils {
         List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, 0);
         if (list != null && list.size() > 0) {
             for (ResolveInfo resolveInfo : list) {
-                Log.d("CpblCalendarHelper", resolveInfo.activityInfo.packageName);
+                //Log.d("CpblCalendarHelper", resolveInfo.activityInfo.packageName);
                 if (resolveInfo.activityInfo.packageName.startsWith("com.android.chrome")) {
                     return true;
                 }

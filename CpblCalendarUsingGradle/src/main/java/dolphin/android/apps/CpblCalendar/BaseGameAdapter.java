@@ -103,7 +103,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
                 //[53]dolphin++ use DAY_OF_WEEK to all devices
                 //new SimpleDateFormat(bIsTablet ? "MMM dd (E)" : "MMM dd",
-                new SimpleDateFormat("MMM dd (E)", Locale.TAIWAN).format(c.getTime()),
+                new SimpleDateFormat("MMM d (E)", Locale.TAIWAN).format(c.getTime()),
                 //time
                 //DateFormat.getTimeFormat(getSherlockActivity()).format(c.getTime()));
                 c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
@@ -113,7 +113,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 DateUtils.getRelativeTimeSpanString(c.getTimeInMillis(),
                         System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS))
                 : date_str;
-        date_str = game.IsFinal || bLiveNow ? new SimpleDateFormat("MMM dd (E)",
+        date_str = game.IsFinal || bLiveNow ? new SimpleDateFormat("MMM d (E)",
                 Locale.TAIWAN).format(c.getTime()) : date_str;//[70]++
         if (game.IsLive) {//[181]++
             date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);

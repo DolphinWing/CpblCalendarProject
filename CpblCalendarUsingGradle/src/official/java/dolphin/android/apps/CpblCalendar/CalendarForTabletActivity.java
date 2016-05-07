@@ -207,13 +207,13 @@ public class CalendarForTabletActivity extends CalendarActivity {
             @Override
             public void onQuerySuccess(CpblCalendarHelper helper, ArrayList<Game> gameArrayList,
                                        int year, int month) {
-                if (mLeaderBoardContent != null) {//[27]dolphin++
-                    //Log.d(TAG, html);
-                    // Encoding issue with WebView's loadData
-                    // http://stackoverflow.com/a/9402988
-                    mLeaderBoardContent.loadData(helper.getScoreBoardHtml(),
-                            "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
-                }
+//                if (mLeaderBoardContent != null) {//[27]dolphin++
+//                    //Log.d(TAG, html);
+//                    // Encoding issue with WebView's loadData
+//                    // http://stackoverflow.com/a/9402988
+//                    mLeaderBoardContent.loadData(helper.getScoreBoardHtml(),
+//                            "text/html; charset=" + CpblCalendarHelper.ENCODE_UTF8, null);
+//                }
 
                 updateGameListFragment(gameArrayList, year, month);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()

@@ -35,7 +35,6 @@ import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar.provider.Stand;
 import dolphin.android.net.HttpHelper;
 
 /**
@@ -148,13 +147,15 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mSpinnerMonth = (Spinner) findViewById(R.id.spinner4);
 
         mProgressView = findViewById(android.R.id.progress);
-        mProgressView.setOnTouchListener(new View.OnTouchListener() {
-            //[123]++ use touch to replace click, capture all events
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;//do nothing
-            }
-        });
+        if (mProgressView != null) {
+            mProgressView.setOnTouchListener(new View.OnTouchListener() {
+                //[123]++ use touch to replace click, capture all events
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return true;//do nothing
+                }
+            });
+        }
         mProgressText = (TextView) findViewById(android.R.id.message);
 
         final Calendar now = CpblCalendarHelper.getNowTime();
@@ -162,10 +163,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mYear = (mYear > 2013) ? mYear : 2014;//[89]dolphin++ set initial value
         mMonth = now.get(Calendar.MONTH) + 1;//[78]dolphin++ add initial value
 
-        mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
-        mSpinnerYear.setEnabled(!mCacheMode);
+        if (mSpinnerYear != null) {
+            mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
+            mSpinnerYear.setEnabled(!mCacheMode);
+        }
 
-        mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
+        if (mSpinnerMonth != null) {
+            mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
+        }
 
         mButtonQuery = (Button) findViewById(android.R.id.button1);
         if (mButtonQuery != null) {
@@ -265,16 +270,20 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 return true;
             case R.id.action_fast_rewind://[154]dolphin++
                 //select previous one, and do query
-                if (mSpinnerMonth.getSelectedItemPosition() > 0) {
+                if (mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() > 0) {
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() - 1);
-                    mButtonQuery.performClick();
+                    if (mButtonQuery != null) {
+                        mButtonQuery.performClick();
+                    }
                 }
                 break;
             case R.id.action_fast_forward://[154]dolphin++
                 //select preceeding one, and do query
-                if (mSpinnerMonth.getSelectedItemPosition() < 12) {
+                if (mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() < 12) {
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() + 1);
-                    mButtonQuery.performClick();
+                    if (mButtonQuery != null) {
+                        mButtonQuery.performClick();
+                    }
                 }
                 break;
         }
@@ -296,21 +305,25 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         final ActionBar actionBar = getSupportActionBar();
         final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
 
-        String kind = mSpinnerKind.getSelectedItem().toString();
+        String kind = mSpinnerKind != null ? mSpinnerKind.getSelectedItem().toString() : "01";
         if (actionBar != null) {
             actionBar.setTitle(kind);
         }
 
-        String gameYear = mSpinnerYear.getSelectedItem().toString();
+        Calendar now = CpblCalendarHelper.getNowTime();
+        String gameYear = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString()
+                : String.format(Locale.US, "%d ", now.get(Calendar.YEAR));
         int year = Integer.parseInt(gameYear.split(" ")[0]);
         //Log.d(TAG, String.format("  mSpinnerYear: %d", year));
-        int month = mSpinnerMonth.getSelectedItemPosition() + 1;
+        int month = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItemPosition() + 1
+                : now.get(Calendar.MONTH) + 1;
         //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
         String time_str = gameYear;//[154]-- String.format("%s %s", gameYear,
         //mSpinnerMonth.getSelectedItem().toString());
-        time_str = mSpinnerMonth.getSelectedItemPosition() >= 12 ? gameYear : time_str;//[146]++
+        time_str = mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() >= 12
+                ? gameYear : time_str;//[146]++
 
-        int fieldIndex = mSpinnerField.getSelectedItemPosition();
+        int fieldIndex = mSpinnerField != null ? mSpinnerField.getSelectedItemPosition() : 0;
         String fieldId = mGameField[fieldIndex];
         if (actionBar != null) {
             if (fieldIndex > 0) {
@@ -339,7 +352,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         } else if (quick_refresh) {//do a quick refresh from local variable
             doQueryCallback(mGameList, false);//[126]dolphin++
         } else if (HttpHelper.checkNetworkConnected(activity)/* && !bDemoCache*/) {
-            doWebQuery(activity, mSpinnerKind.getSelectedItemPosition(),
+            doWebQuery(activity, mSpinnerKind != null ? mSpinnerKind.getSelectedItemPosition() : 1,
                     year, month, fieldId, getOnQueryCallback());
         } else {//[35]dolphin++ check network
             Toast.makeText(activity, R.string.no_available_network,
@@ -419,6 +432,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         if (mQueryCallback != null) {//call before start
             mQueryCallback.onQueryStart();
         }
+        if (mActivity == null) {
+            doQueryCallback(null, false);
+            return;
+        }
+
         final boolean clearCache = year != mYear;
         mKind = kind;//[22]dolphin++
         mYear = year;//[22]dolphin++
@@ -606,7 +624,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         final ArrayList<Game> gameList = Utils.cleanUpGameList(mActivity, list, mYear,
-                mSpinnerField.getSelectedItemPosition());
+                mSpinnerField != null ? mSpinnerField.getSelectedItemPosition() : 0);
         if (mActivity != null && mQueryCallback != null) {
             final ActionBar actionBar = getActivity().getSupportActionBar();
             mActivity.runOnUiThread(new Runnable() {
@@ -640,57 +658,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
     }
 
-//    /**
-//     * show leader team board dialog
-//     */
-//    private void showLeaderBoard(String html) {
-//        try {//[42]dolphin++ add a try-catch //[43]catch all dialog
-//            //[42]dolphin++ WindowManager$BadTokenException reported @ 2013-07-23
-//            Utils.buildLeaderBoard2014Dialog(CalendarActivity.this, html,
-//                    mSpinnerKind.getItemAtPosition(0).toString());
-//        } catch (Exception e) {
-//            Log.e(TAG, "showLeaderBoard: " + e.getMessage());
-//        }
-//
-//        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
-//    }
-//
-//    private ArrayList<Stand> mStanding = null;
-//
-//    @Deprecated
-//    public void showLeaderBoard2014() {
-//        if (mStanding != null) {
-//            doShowLeaderBoard2014();
-//            return;
-//        }
-//
-//        mIsQuery = true;//indicate that now it is downloading
-//        invalidateOptionsMenu();
-//        internalLoading(true);//download from website
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                mStanding = mHelper.query2014LeaderBoard();
-//                if (mActivity != null) {//[91]dolphin++
-//                    CalendarActivity.this.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            doShowLeaderBoard2014();
-//                        }
-//                    });
-//                }
-//            }
-//        }).start();
-//    }
-//
-//    @Deprecated
-//    private void doShowLeaderBoard2014() {
-//        showLeaderBoard(Utils.prepareLeaderBoard2014(getActivity(), mStanding));
-//        internalLoading(false);
-//        mIsQuery = false;
-//        invalidateOptionsMenu();
-//    }
-
     private void showLeaderBoard2016() {
         try {
             Utils.buildLeaderBoardZxc22(CalendarActivity.this);
@@ -713,8 +680,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         item.setIcon(R.drawable.holo_green_btn_check_on_holo_dark);
                         //item.setCheckable(mCacheMode);
                         //mButtonQuery.performClick();
-                        mSpinnerYear.setSelection(0);//[87]dolphin++
-                        mSpinnerField.setSelection(0);//[87]dolphin++
+                        if (mSpinnerYear != null) {
+                            mSpinnerYear.setSelection(0);//[87]dolphin++
+                        }
+                        if (mSpinnerMonth != null) {
+                            mSpinnerField.setSelection(0);//[87]dolphin++
+                        }
                         runDownloadCache();
                     }
                 });
@@ -730,10 +701,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                //[98]dolphin++ add check delay list
-//                SparseArray<Game> delayList = //mHelper.getDelayGameList();
-//                        mHelper.queryDelayGames2014(getActivity(), mYear);
-                for (int m = 3; m <= 10; m++) {
+                for (int m = 2; m <= 11; m++) {
                     doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                             mYear, m));
                     ArrayList<Game> list = //mHelper.query2014(mYear, m, null, delayList);

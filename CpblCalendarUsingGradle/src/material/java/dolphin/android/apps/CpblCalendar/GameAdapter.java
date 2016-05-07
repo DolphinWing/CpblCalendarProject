@@ -133,7 +133,7 @@ public class GameAdapter extends BaseGameAdapter {
         Calendar c = game.StartTime;
         tv1.setText(String.format("%s, %s",
                 //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
-                new SimpleDateFormat(bIsTablet ? "MMM dd (E)" : "MMM dd",
+                new SimpleDateFormat(bIsTablet ? "MMM d (E)" : "MMM d",
                         Locale.TAIWAN).format(c.getTime()),//[47]dolphin++
                 //time
                 DateFormat.getTimeFormat(context).format(c.getTime())

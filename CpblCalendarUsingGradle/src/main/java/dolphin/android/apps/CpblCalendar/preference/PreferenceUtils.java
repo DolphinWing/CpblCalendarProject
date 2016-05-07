@@ -101,28 +101,6 @@ public class PreferenceUtils {
             "https://blog.evernote.com/tech/2015/10/26/unified-job-library-android/";
 
     /**
-     * start a browser activity
-     *
-     * @param context Context
-     * @param url     url
-     */
-    public static void startBrowserActivity(Context context, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //[169]dolphin++ add Chrome Custom Tabs
-            Bundle extras = new Bundle();
-            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
-            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                    context.getResources().getColor(R.color.holo_green_dark));
-            intent.putExtras(extras);
-        } else {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
-        context.startActivity(intent);
-    }
-
-    /**
      * english build
      *
      * @param context Context
