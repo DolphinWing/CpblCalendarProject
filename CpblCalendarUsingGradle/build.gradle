@@ -23,8 +23,8 @@ android {
         material {
             minSdkVersion 16
             targetSdkVersion 23
-            versionName '2.3.6'
-            versionCode 188
+            versionName '2.3.7'
+            versionCode 191
         }
         official {
             minSdkVersion 9
@@ -64,7 +64,7 @@ dependencies {
     materialCompile 'com.google.android.gms:play-services-base:8.4.0'
     materialCompile 'com.google.android.gms:play-services-ads:8.4.0'
     materialCompile 'com.google.android.gms:play-services-analytics:8.4.0'
-    materialCompile 'com.google.android.gms:play-services-gcm:8.4.0'
+    //materialCompile 'com.google.android.gms:play-services-gcm:8.4.0'
 
     materialCompile 'com.android.support:support-v4:23.3.0'
     materialCompile 'com.android.support:appcompat-v7:23.3.0'

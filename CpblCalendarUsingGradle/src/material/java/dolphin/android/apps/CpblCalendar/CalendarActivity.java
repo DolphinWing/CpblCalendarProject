@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,6 +93,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         Utils.enableStrictMode();
+        //http://aleung.github.io/blog/2012/10/06/change-locale-in-android-application/
+        Locale.setDefault(Locale.TAIWAN);
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        config.locale = Locale.TAIWAN;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
 
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

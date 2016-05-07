@@ -35,6 +35,28 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[191] @ 2016-05-07
+    fix AndroidRuntimeException when starting Activity from Action Bar
+    some other tweaks
+
+[190] @ 2016-05-06
+    use Chrome Custom Tabs for leading board
+    add new delay games list from 1990~2004
+        I manually made them by myself... it took me about 2.x hours
+    some code optimizations
+    test remove GCM
+    set app locale TAIWAN
+
+[189] @ 2016-05-06
+    add new dump ability
+    fix some debug string display error
+    update Google drive delay files.
+        those old files has one day offset to real schedule... why no one notice?
+
+    One guy sent me a mail and said his Galaxy S6 (6.0.1) cannot update from Store
+    He's got error 505 and unable to install the update
+    Never got this before...
+
 [188] @ 2016-05-04
     use Evernote Android-Job library to replace original AlarmManager
         https://github.com/evernote/android-job
