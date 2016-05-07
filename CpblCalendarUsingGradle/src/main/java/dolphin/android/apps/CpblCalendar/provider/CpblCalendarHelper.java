@@ -909,7 +909,7 @@ public class CpblCalendarHelper extends HttpHelper {
         if (allowBackup) {
             //read from Google Drive
             String[] driveIds = context.getResources().getStringArray(R.array.year_delay_game_2014);
-            int index = year - 2005;
+            int index = year - 1990;
             if (index >= 0 && index < driveIds.length) {//already have cached data in Google Drive
                 String driveId = driveIds[index];
                 File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
