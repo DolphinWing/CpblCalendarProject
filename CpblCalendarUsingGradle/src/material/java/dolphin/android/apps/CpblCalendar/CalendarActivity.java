@@ -666,13 +666,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     }
 
     private void showLeaderBoard2016() {
-        if (Utils.isGoogleChromeInstalled(getBaseContext())) {//[190]++ use Chrome Custom Tabs
+        if (Utils.isGoogleChromeInstalled(mActivity)) {//[190]++ use Chrome Custom Tabs
             //http://stackoverflow.com/a/15629199/2673859
-            Utils.startBrowserActivity(getApplicationContext(),
-                "http://zxc22.idv.tw/rank_up.asp");
+            Utils.startBrowserActivity(mActivity, "http://zxc22.idv.tw/rank_up.asp");
         } else {
             try {
-                Utils.buildLeaderBoardZxc22(CalendarActivity.this);
+                Utils.buildLeaderBoardZxc22(mActivity);
             } catch (Exception e) {
                 Log.e(TAG, "showLeaderBoard: " + e.getMessage());
             }

@@ -75,6 +75,10 @@ public class Utils {
     }
 
     public static AlertDialog buildLeaderBoardZxc22(Context context) {
+        if (context == null) {
+            return null;
+        }
+
         final AlertDialog dialog = new AlertDialog.Builder(context).create();
         //change the style like the entire theme
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -293,6 +297,10 @@ public class Utils {
      * @return true if installed
      */
     public static boolean isGoogleChromeInstalled(Context context) {
+        if (context == null) {
+            return false;
+        }
+
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(CpblCalendarHelper.URL_BASE));
         List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, 0);
         if (list != null && list.size() > 0) {
