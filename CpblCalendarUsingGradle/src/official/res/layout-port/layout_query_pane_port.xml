@@ -2,10 +2,10 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/abs__background_holo_light"
               tools:context=".SplashActivity"
               android:orientation="horizontal"
-              android:padding="@dimen/padding_medium">
+              android:padding="@dimen/padding_medium"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
 
     <LinearLayout
         android:orientation="vertical"
@@ -81,7 +81,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="invisible">
 
             <TextView
                 style="@style/Theme.Holo_green.QueryPane.Title"

@@ -70,11 +70,13 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         }
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-//        if (getResources().getBoolean(R.bool.config_tablet)) {
-//            mToolbar.setLogo(R.drawable.ic_launcher);
-//        }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (!getResources().getBoolean(R.bool.config_tablet)) {
+                toolbar.setLogo(R.drawable.ic_launcher);
+            }
+        }
 
         initQueryPane();
 
@@ -159,7 +161,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        boolean drawerOpen = mDrawerLayout != null && mDrawerList != null
+                && mDrawerLayout.isDrawerOpen(mDrawerList);
         boolean visible = !drawerOpen & !IsQuery();
         MenuItem item1 = menu.findItem(R.id.action_settings);
         if (item1 != null) {
@@ -173,6 +176,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         if (item3 != null) {
             item3.setVisible(true);
             item3.setEnabled(visible);//keep the menu order
+        }
+        MenuItem item4 = menu.findItem(R.id.action_search);
+        if (item4 != null) {
+            item4.setVisible(mDrawerLayout != null);
         }
         return super.onPrepareOptionsMenu(menu);
     }

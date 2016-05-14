@@ -13,21 +13,21 @@
         <ImageView
             android:layout_width="@dimen/activity_horizontal_margin"
             android:layout_height="match_parent"
-            android:src="@drawable/drawer_shadow"
+            android:layout_alignParentLeft="true"
+            android:background="@color/shadow_background"
+            android:contentDescription="@null"
             android:scaleType="fitXY"
             android:scaleX="-1"
-            android:contentDescription="@null"
-            android:layout_alignParentLeft="true"
-            android:background="@color/shadow_background" />
+            android:src="@drawable/drawer_shadow" />
 
         <ImageView
             android:layout_width="@dimen/activity_horizontal_margin"
             android:layout_height="match_parent"
-            android:src="@drawable/drawer_shadow"
+            android:layout_alignParentRight="true"
+            android:background="@color/shadow_background"
             android:contentDescription="@null"
             android:scaleType="fitXY"
-            android:layout_alignParentRight="true"
-            android:background="@color/shadow_background" />
+            android:src="@drawable/drawer_shadow" />
 
         <!-- The main content view -->
         <FrameLayout
@@ -38,19 +38,20 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin">
 
             <fragment
+                android:id="@+id/content_frame"
+                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
-                android:id="@+id/content_frame"
                 tools:layout="@layout/listview_empty_view" />
         </FrameLayout>
 
         <android.support.v7.widget.Toolbar
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/holo_green_dark" />
+            android:background="@color/holo_green_dark"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
         <!-- http://goo.gl/HYmvGy -->
         <com.melnykov.fab.FloatingActionButton
@@ -64,8 +65,8 @@
             android:src="@drawable/ic_action_action_event"
             app:fab_colorNormal="@color/holo_green_light"
             app:fab_colorPressed="@color/holo_green_dark"
-            app:fab_type="normal"
-            app:fab_shadow="true" />
+            app:fab_shadow="true"
+            app:fab_type="normal" />
 
         <include layout="@layout/include_loading_frame" />
 
@@ -74,8 +75,8 @@
     <!-- The navigation drawer -->
     <include
         android:id="@+id/left_drawer"
+        layout="@layout/layout_query_pane"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
-        android:layout_gravity="right"
-        layout="@layout/layout_query_pane" />
+        android:layout_gravity="right" />
 </android.support.v4.widget.DrawerLayout>

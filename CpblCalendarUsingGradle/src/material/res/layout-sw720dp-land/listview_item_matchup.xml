@@ -79,11 +79,11 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@android:id/icon1"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/match_logo_width"
+                android:layout_height="@dimen/match_logo_height"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                app:civ_border_width="1dp"
+                app:civ_border_width="2dp"
                 app:civ_border_color="@android:color/secondary_text_light_nodisable" />
 
             <TextView
@@ -98,7 +98,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="@dimen/padding_small"
+            android:layout_width="@dimen/padding_medium"
             android:layout_height="match_parent" />
 
         <LinearLayout
@@ -123,11 +123,11 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@android:id/icon2"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/match_logo_width"
+                android:layout_height="@dimen/match_logo_height"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                app:civ_border_width="1dp"
+                app:civ_border_width="2dp"
                 app:civ_border_color="@color/circle_image_border" />
 
 

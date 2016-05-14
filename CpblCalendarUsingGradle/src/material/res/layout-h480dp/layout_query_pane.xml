@@ -12,7 +12,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/navigation_drawer_padding"
+        android:paddingRight="@dimen/navigation_drawer_padding">
 
         <TextView
             style="@style/Theme.Holo_green.QueryPane.Title"
@@ -83,7 +85,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/padding_very_large" />
+        android:layout_height="@dimen/padding_medium" />
 
     <Button
         style="@style/ButtonHolo_green"

@@ -117,6 +117,9 @@
         <item name="android:layout_weight">0.8</item>
         <item name="android:gravity">center_vertical|left</item>
         <item name="android:text">@string/empty_data</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
