@@ -27,6 +27,7 @@
     <string name="no_available_network">沒有網路連線</string>
     <string name="title_game_year_all_months">所有月份</string>
     <string name="title_delayed_game">補賽</string>
+    <string name="delayed_game_cancelled">取消 不補賽</string>
 
     <!-- preference -->
     <!-- GeneralFragment -->

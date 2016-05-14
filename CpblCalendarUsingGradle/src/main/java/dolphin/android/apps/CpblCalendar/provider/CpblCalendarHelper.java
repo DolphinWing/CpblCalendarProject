@@ -537,6 +537,10 @@ public class CpblCalendarHelper extends HttpHelper {
         return SupportV4Utils.getCacheDir(context);
     }
 
+    private String getString(int id) {
+        return getContext() != null && id > 0 ? getContext().getString(id) : "";
+    }
+
     /**
      * New query game for new 2016 web pages
      *
@@ -549,7 +553,8 @@ public class CpblCalendarHelper extends HttpHelper {
     public ArrayList<Game> query2016(int year, int month, String kind, String field) {
         long start = System.currentTimeMillis();
 
-        SparseArray<Game> delayedGames = kind.equals("01") ? queryDelayGames2016(year, true, true) : null;
+        SparseArray<Game> delayedGames = kind.equals("01") //[193]++ only check regular games
+                ? queryDelayGames2016(year, true, true) : null;
 //        year = 2016;
 //        month = 3;
 //        kind = "07";
@@ -601,9 +606,14 @@ public class CpblCalendarHelper extends HttpHelper {
                                 .format(delayed.StartTime.getTime());
                         game.DelayMessage = game.DelayMessage == null
                                 ? String.format("<b><font color='red'>%s&nbsp;%s</font></b>",
-                                    d_date, getContext().getString(R.string.title_delayed_game))
+                                    d_date, getString(R.string.title_delayed_game))
                                 : String.format("<b><font color='red'>%s</font></b> %s",
                                     d_date, game.DelayMessage);
+                    }
+                    if (kind.equals("07") && Utils.passed1Day(game.StartTime)) {
+                        game.IsFinal = true;
+                        game.IsDelay = true;
+                        game.DelayMessage = getString(R.string.delayed_game_cancelled);
                     }
                     gameList.add(game);
                 }

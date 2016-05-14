@@ -199,6 +199,10 @@ public class Utils {
         return ((c.getTimeInMillis() - System.currentTimeMillis()) <= BaseGameAdapter.ONE_DAY * 2);
     }
 
+    public static boolean passed1Day(Calendar c) {
+        return (System.currentTimeMillis() - c.getTimeInMillis() >= BaseGameAdapter.ONE_DAY);
+    }
+
     //https://developer.chrome.com/multidevice/android/customtabs
     //https://github.com/GoogleChrome/custom-tabs-client
     public static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
