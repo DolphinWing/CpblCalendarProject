@@ -15,6 +15,7 @@ import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -31,6 +32,10 @@ public class GeneralFragment extends PreferenceFragment {
     public static final String KEY_APP_VERSION = "app_version";
     public static final String VERSION_FILE = "Version.txt";
     public static final String VERSION_FILE_ENCODE = "UTF-8";
+
+    private final static int TAPS_TO_BE_A_DEVELOPER = 5;
+    private int mDevHitCountdown = TAPS_TO_BE_A_DEVELOPER;
+    private Toast mDevHitToast = null;
 
     private boolean mIsEngineerMode = false;
 
@@ -52,32 +57,30 @@ public class GeneralFragment extends PreferenceFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        mDevHitCountdown = TAPS_TO_BE_A_DEVELOPER;
+    }
+
+    @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
                                          @NonNull Preference preference) {
         String key = preference.getKey();
         if (key == null) {
             Log.wtf(TAG, "onPreferenceTreeClick key == null");//should not happen
-        } else if (key.equals(KEY_APP_VERSION) && mIsEngineerMode) {
-            AlertDialog dialog = new AlertDialog.Builder(getActivity()).create();
-            dialog.setTitle(R.string.app_change_log);
-            //[39]-- dialog.setIcon(android.R.drawable.ic_popup_reminder);
-            // windows Unicode file http://goo.gl/gRyTU
-            dialog.setMessage(AssetUtils.read_asset_text(getActivity(),
-                    VERSION_FILE, VERSION_FILE_ENCODE));
-            dialog.setButton(AlertDialog.BUTTON_POSITIVE, getActivity()
-                    .getString(android.R.string.ok), new OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    // do nothing, just dismiss
+        } else if (key.equals(KEY_APP_VERSION)) {
+            if (--mDevHitCountdown <= 0 || mIsEngineerMode) {
+                showVersionTxtDialog();
+            } else {
+                if (mDevHitToast != null) {
+                    mDevHitToast.cancel();
                 }
-            });
-            dialog.show();
-
-            // change AlertDialog message font size
-            // http://stackoverflow.com/a/6563075
-            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-            textView.setTextSize(12);
+                mDevHitToast = Toast.makeText(getActivity(),
+                        getString(R.string.app_change_log_click_toast, mDevHitCountdown),
+                        Toast.LENGTH_LONG);
+                mDevHitToast.show();
+            }
             return true;
         } else if (key.equals(PreferenceUtils.KEY_CPBL_WEB)) {
             Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CPBL_OFFICAL_WEBSITE);
@@ -107,5 +110,25 @@ public class GeneralFragment extends PreferenceFragment {
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
+    private void showVersionTxtDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.app_change_log)
+                .setMessage(AssetUtils.read_asset_text(getActivity(),
+                        VERSION_FILE, VERSION_FILE_ENCODE))// windows Unicode file http://goo.gl/gRyTU
+                .setPositiveButton(android.R.string.ok, null)
+                .setCancelable(true)
+                .create();
+        //[39]-- dialog.setIcon(android.R.drawable.ic_popup_reminder);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
 
+        if (!getResources().getBoolean(R.bool.config_tablet)) {
+            // change AlertDialog message font size
+            // http://stackoverflow.com/a/6563075
+            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+            if (textView != null) {
+                textView.setTextSize(12);
+            }
+        }
+    }
 }

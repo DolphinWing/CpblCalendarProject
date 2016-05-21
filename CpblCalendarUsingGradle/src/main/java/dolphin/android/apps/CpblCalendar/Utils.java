@@ -92,7 +92,8 @@ public class Utils {
         WebView webView = (WebView) view.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(false);
         webView.getSettings().setSupportZoom(false);
-        webView.loadUrl("http://zxc22.idv.tw/rank_up.asp");
+        //webView.loadUrl("http://zxc22.idv.tw/rank_up.asp");
+        webView.loadUrl("http://www.cpbl.com.tw/standing/season/");
 
         View btOk = view.findViewById(android.R.id.button1);
         if (btOk != null) {

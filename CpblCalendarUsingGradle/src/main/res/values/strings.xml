@@ -35,6 +35,7 @@
     <string name="app_version">版本</string>
     <string name="app_build_info">版本資訊</string>
     <string name="app_change_log">更新紀錄</string>
+    <string name="app_change_log_click_toast">再按 %d 下可顯示更新紀錄</string>
     <string name="title_data_source">資料來源</string>
     <string name="title_copyright">版權</string>
     <string name="title_about_app">關於程式</string>

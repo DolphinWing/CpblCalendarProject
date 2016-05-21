@@ -508,7 +508,7 @@ public class CpblCalendarHelper extends HttpHelper {
         File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
         //Log.d(TAG, f.getAbsolutePath());
         String delay_str = FileUtils.readFileToString(f);
-        if (delay_str != null && !delay_str.isEmpty()) {
+        if (delay_str != null && !delay_str.isEmpty() && !delay_str.contains("HTTP")) {
             for (String delay : delay_str.split(";")) {
                 //Log.d(TAG, delay);
                 if (!delay.isEmpty()) {

@@ -35,6 +35,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[195] @ 2016-05-17
+    add Version.txt show click check
+    fix possible NumberFormatException
+    change CPBL standing url
+
 [194] @ 2016-05-12
     fix warm up games that already passed set it complete and no re-game
     test new landscape layout
