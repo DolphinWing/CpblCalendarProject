@@ -85,8 +85,9 @@ public class Utils {
         View view = inflater.inflate(R.layout.leader_board, null);
         TextView textView = (TextView) view.findViewById(android.R.id.title);
         if (textView != null) {
-            textView.setText(String.format("%s %s", context.getString(R.string.title_zxc22),
-                    context.getString(R.string.summary_zxc22)));
+            //textView.setText(String.format("%s %s", context.getString(R.string.title_zxc22),
+            //        context.getString(R.string.summary_zxc22)));
+            textView.setText(R.string.action_leader_board);
         }
 
         WebView webView = (WebView) view.findViewById(R.id.webView);

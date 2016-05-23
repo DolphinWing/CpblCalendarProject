@@ -35,6 +35,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[197] @ 2016-05-24
+    adjust project structure, add backward support of ActionBarSherlock, migrate to Google Play Services 9.0
+    add Firebase Analytics
+
 [195] @ 2016-05-17
     add Version.txt show click check
     fix possible NumberFormatException
