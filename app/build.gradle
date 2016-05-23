@@ -24,14 +24,14 @@ android {
         material {
             minSdkVersion 16
             targetSdkVersion 23
-            versionName '2.3.8'
-            versionCode 195
+            versionName '2.4.0'
+            versionCode 197
         }
         official {
             minSdkVersion 9
             targetSdkVersion 15
-            versionName '1.6.2'
-            versionCode 186
+            versionName '1.7.0'
+            versionCode 196
         }
         dump {
             minSdkVersion 9
@@ -72,4 +72,9 @@ dependencies {
     materialCompile 'de.hdodenhof:circleimageview:2.0.0'
     materialCompile 'com.melnykov:floatingactionbutton:1.3.0'
     materialCompile 'com.evernote:android-job:1.0.5'
+
+    //Firebase
+    compile 'com.google.firebase:firebase-analytics:9.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

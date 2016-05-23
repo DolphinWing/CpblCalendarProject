@@ -26,6 +26,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,6 +49,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     //private ArrayList<Game> mGameList = null;
 
     private AdView mAdView;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         initQueryPane();
 
         mAdView = (AdView) findViewById(R.id.adView);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         View fabButton = findViewById(R.id.button_floating_action);
         if (fabButton != null) {
@@ -211,6 +214,26 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         if (mDrawerLayout != null && mDrawerList != null) {
             mDrawerLayout.closeDrawer(mDrawerList);
         }
+
+        Bundle bundle = new Bundle();
+        if (mSpinnerField != null) {
+            String field = mSpinnerField.getSelectedItem().toString();
+            bundle.putString("field", field);
+        }
+        if (mSpinnerKind != null) {
+            String kind = mSpinnerKind.getSelectedItem().toString();
+            bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, kind);
+        }
+        if (mSpinnerYear != null) {
+            String year = mSpinnerYear.getSelectedItem().toString();
+            bundle.putString("year", year);
+        }
+        if (mSpinnerMonth != null) {
+            String month = mSpinnerMonth.getSelectedItem().toString();
+            bundle.putString("month", month);
+        }
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
         onLoading(true);//[30]dolphin++
     }
