@@ -1,1 +1,1 @@
-include ':CpblCalendarUsingGradle', ':libraries:MyUtilsLibrary'
+include ':app', ':MyUtils', ':actionbarsherlock'
