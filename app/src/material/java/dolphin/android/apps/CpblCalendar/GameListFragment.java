@@ -14,11 +14,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -33,6 +35,8 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 public class GameListFragment extends ListFragment implements ListView.OnItemLongClickListener {
 
     private final static String TAG = "GameListFragment";
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     /**
      * update the adapter to ListView
@@ -129,12 +133,22 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         super.onListItemClick(l, v, position, id);
         //Log.d(TAG, "onListItemClick: " + position);
         if (v != null) {
-            //Game game = (Game) v.getTag();
+            Game game = (Game) v.getTag();
             //Log.d(TAG, "onListItemClick: " + position);
             //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
             //Log.d(TAG, "  game.Url: " + game.Url);
+            if (mFirebaseAnalytics != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
+                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
+                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
+                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
+            }
 
-            Utils.startGameActivity(getActivity(), (Game) v.getTag());
+            Utils.startGameActivity(getActivity(), game);
         }
     }
 
@@ -179,6 +193,8 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
                 }
             });
         }
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
     }
 
     @Override

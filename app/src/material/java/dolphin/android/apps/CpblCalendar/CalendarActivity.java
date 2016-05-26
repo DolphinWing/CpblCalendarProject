@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +26,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,6 +80,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     private TextView mProgressText;//[84]dolphin++
 
     private GoogleAnalyticsHelper mAnalytics;
+    private FirebaseAnalytics mFirebaseAnalytics;//[198]++
+    private FirebaseRemoteConfig mRemoteConfig;//[199]++
 
     private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
 
@@ -93,12 +97,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         Utils.enableStrictMode();
-        //http://aleung.github.io/blog/2012/10/06/change-locale-in-android-application/
-        Locale.setDefault(Locale.TAIWAN);
-        Configuration config = getBaseContext().getResources().getConfiguration();
-        config.locale = Locale.TAIWAN;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
 
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -117,6 +115,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(),
                 GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_BASE);
+        mRemoteConfig = FirebaseRemoteConfig.getInstance();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mDelayGames2014 = new SparseArray<>();
         mAllGamesCache = new SparseArray<>();//[146]++
     }
@@ -235,12 +235,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings: {
-                Intent i = new Intent();
-                i.setClass(this, SettingsActivity.class);
-                startActivityForResult(i, 0);
-            }
-            return true;
+            case R.id.action_settings:
+                startActivityForResult(new Intent(this, SettingsActivity.class), 0);
+                return true;
             case R.id.action_refresh://[13]dolphin++
                 if (PreferenceUtils.isCacheMode(this)) {
                     runDownloadCache();
@@ -258,9 +255,25 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 item.setVisible(false);
                 //showLeaderBoard2014();//[87]dolphin++
                 showLeaderBoard2016();
+                if (mFirebaseAnalytics != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "show_leader_board");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                            getString(R.string.action_leader_board));
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                }
                 return true;//break;
             case R.id.action_go_to_cpbl:
                 mAnalytics.sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
+                if (mFirebaseAnalytics != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "go_to_website");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                            getString(R.string.action_go_to_website));
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                }
                 CpblCalendarHelper.startActivityToCpblSchedule(mActivity, mYear,
                         mMonth, getGameKind(mKind), mField/*, true*/);
                 return true;
@@ -282,6 +295,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     if (mButtonQuery != null) {
                         mButtonQuery.performClick();
                     }
+                    if (mFirebaseAnalytics != null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "fast_rewind");
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                                getString(R.string.title_fast_rewind));
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    }
                 }
                 break;
             case R.id.action_fast_forward://[154]dolphin++
@@ -290,6 +311,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() + 1);
                     if (mButtonQuery != null) {
                         mButtonQuery.performClick();
+                    }
+                    if (mFirebaseAnalytics != null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "fast_forward");
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                                getString(R.string.title_fast_forward));
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                     }
                 }
                 break;
@@ -452,6 +481,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         final String gameKind = getGameKind(mKind);
         final Resources resources = mActivity.getResources();
+        final boolean allowCache = mRemoteConfig.getBoolean("enable_delay_games_from_cache");
+        final boolean allowDrive = mRemoteConfig.getBoolean("enable_delay_games_from_drive");
+        //Log.d(TAG, "allowCache = " + allowCache);
+        //Log.d(TAG, "allowDrive = " + allowDrive);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -493,8 +526,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 //                            list = mHelper.query2014(mYear, i, gameKind,
 //                                    mDelayGames2014.get(mYear));
 ////                            }
-                            list = mHelper.query2016(mYear, i, gameKind, mField);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                            list = mHelper.query2016(mYear, i, gameKind, mField, allowCache, allowDrive);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+                                    && isDestroyed()) {
                                 Log.w(TAG, "activity destroyed");
                                 return;
                             }
@@ -526,7 +560,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     } else {//read from internet
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_cpbl,
                                 mYear, mMonth));
-                        gameList = mHelper.query2016(mYear, mMonth, gameKind, mField);
+                        gameList = mHelper.query2016(mYear, mMonth, gameKind, mField, allowCache, allowDrive);
                         doQueryStateUpdateCallback(R.string.title_download_complete);
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
@@ -668,7 +702,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     private void showLeaderBoard2016() {
         if (Utils.isGoogleChromeInstalled(mActivity)) {//[190]++ use Chrome Custom Tabs
             //http://stackoverflow.com/a/15629199/2673859
-            Utils.startBrowserActivity(mActivity, "http://zxc22.idv.tw/rank_up.asp");
+            Utils.startBrowserActivity(mActivity, Utils.LEADER_BOARD_URL);
         } else {
             try {
                 Utils.buildLeaderBoardZxc22(mActivity);
@@ -697,6 +731,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         }
                         if (mSpinnerMonth != null) {
                             mSpinnerField.setSelection(0);//[87]dolphin++
+                        }
+                        if (mFirebaseAnalytics != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "enable_cache_mode");
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                                    getString(R.string.action_cache_mode));
+                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                         }
                         runDownloadCache();
                     }

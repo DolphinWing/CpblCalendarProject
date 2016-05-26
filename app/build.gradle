@@ -25,7 +25,7 @@ android {
             minSdkVersion 16
             targetSdkVersion 23
             versionName '2.4.0'
-            versionCode 197
+            versionCode 198
         }
         official {
             minSdkVersion 9
@@ -75,6 +75,7 @@ dependencies {
 
     //Firebase
     compile 'com.google.firebase:firebase-analytics:9.0.0'
+    compile 'com.google.firebase:firebase-config:9.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
