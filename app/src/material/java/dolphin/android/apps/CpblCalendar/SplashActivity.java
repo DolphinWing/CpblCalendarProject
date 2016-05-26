@@ -25,6 +25,7 @@ import java.util.Locale;
 public class SplashActivity extends Activity {
     private final static String TAG = "SplashActivity";
     private FirebaseRemoteConfig mRemoteConfig;
+    private MyHandler myHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +41,34 @@ public class SplashActivity extends Activity {
         FirebaseAnalytics.getInstance(this);//initialize this
         prepareRemoteConfig();
 
+        setContentView(R.layout.activity_splash);
         //http://stackoverflow.com/a/31016761/2673859
         //check google play service and authentication
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(this);
         if (result != ConnectionResult.SUCCESS) {
             Log.e(TAG, googleAPI.getErrorString(result));
+            TextView textView = (TextView) findViewById(android.R.id.message);
+            if (textView != null) {
+                textView.setText(googleAPI.getErrorString(result));
+            }
+            return;//don't show progress bar
+        }
+
+        myHandler = new MyHandler(this);
+        myHandler.sendEmptyMessageDelayed(0, 3000);//set a backup startActivity
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showLoadingInProgress();
+            }
+        }, 1000);
+    }
+
+    private void showLoadingInProgress() {
+        View progress = findViewById(android.R.id.progress);
+        if (progress != null) {
+            progress.setVisibility(View.VISIBLE);
         }
     }
 
@@ -80,6 +103,7 @@ public class SplashActivity extends Activity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        myHandler.removeMessages(0);//remove backup startActivity
                         long cost = System.currentTimeMillis() - start;
                         if (task.isSuccessful()) {
                             Log.v(TAG, String.format("Fetch Succeeded: %s ms", cost));
@@ -93,6 +117,20 @@ public class SplashActivity extends Activity {
                     }
                 });
         // [END fetch_config_with_callback]
+    }
+
+    static class MyHandler extends Handler {
+        private WeakReference<SplashActivity> mActivity;
+
+        MyHandler(SplashActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            //super.handleMessage(msg);
+            mActivity.get().startNextActivity();
+        }
     }
 
     private void startNextActivity() {

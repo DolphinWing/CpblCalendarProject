@@ -7,10 +7,6 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ArrayAdapter;
@@ -513,6 +509,9 @@ public class CpblCalendarHelper extends HttpHelper {
                 //Log.d(TAG, delay);
                 if (!delay.isEmpty()) {
                     String[] d = delay.split("/");
+                    if (d.length <= 2) {
+                        continue;//bypass the error record
+                    }
                     Game g = new Game();
                     g.Id = Integer.parseInt(d[0]);
                     g.StartTime = getNowTime();
