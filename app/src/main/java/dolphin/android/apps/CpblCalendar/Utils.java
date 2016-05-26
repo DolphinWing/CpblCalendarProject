@@ -74,6 +74,9 @@ public class Utils {
         return gameList;
     }
 
+    //http://zxc22.idv.tw/rank_up.asp
+    public final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+
     public static AlertDialog buildLeaderBoardZxc22(Context context) {
         if (context == null) {
             return null;
@@ -93,8 +96,7 @@ public class Utils {
         WebView webView = (WebView) view.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(false);
         webView.getSettings().setSupportZoom(false);
-        //webView.loadUrl("http://zxc22.idv.tw/rank_up.asp");
-        webView.loadUrl("http://www.cpbl.com.tw/standing/season/");
+        webView.loadUrl(LEADER_BOARD_URL);
 
         View btOk = view.findViewById(android.R.id.button1);
         if (btOk != null) {

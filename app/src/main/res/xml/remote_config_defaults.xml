@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- START xml_defaults -->
+<defaultsMap>
+    <entry>
+        <key>enable_delay_games_from_cache</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>enable_delay_games_from_drive</key>
+        <value>true</value>
+    </entry>
+</defaultsMap>
+<!-- END xml_defaults -->

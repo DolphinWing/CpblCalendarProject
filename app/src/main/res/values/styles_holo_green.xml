@@ -34,6 +34,14 @@
         <item name="android:spinnerItemStyle">@style/SpinnerItemHolo_green</item>
     </style>
 
+    <style name="Theme.Holo_green.SplashTheme" parent="Theme.Holo_green">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <!-- http://developer.android.com/reference/android/R.attr.html#windowEnterAnimation -->
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <!-- created by http://android-holo-colors.com/ -->
     <style name="CheckBoxHolo_green" parent="android:Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/btn_check_holo_light</item>

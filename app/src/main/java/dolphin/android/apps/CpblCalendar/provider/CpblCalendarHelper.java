@@ -551,10 +551,15 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return list of games
      */
     public ArrayList<Game> query2016(int year, int month, String kind, String field) {
+        return query2016(year, month, kind, field, true, true);
+    }
+
+    public ArrayList<Game> query2016(int year, int month, String kind, String field,
+                                     boolean allowDelayCache, boolean allowDelayDrive) {
         long start = System.currentTimeMillis();
 
         SparseArray<Game> delayedGames = kind.equals("01") //[193]++ only check regular games
-                ? queryDelayGames2016(year, true, true) : null;
+                ? queryDelayGames2016(year, allowDelayCache, allowDelayDrive) : null;
 //        year = 2016;
 //        month = 3;
 //        kind = "07";
