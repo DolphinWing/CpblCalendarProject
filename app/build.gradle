@@ -25,13 +25,13 @@ android {
             minSdkVersion 16
             targetSdkVersion 23
             versionName '2.4.0'
-            versionCode 198
+            versionCode 200
         }
         official {
             minSdkVersion 9
             targetSdkVersion 15
             versionName '1.7.0'
-            versionCode 196
+            versionCode 199
         }
         dump {
             minSdkVersion 9

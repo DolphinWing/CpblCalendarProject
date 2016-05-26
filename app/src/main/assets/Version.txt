@@ -35,6 +35,13 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[200] @ 2016-05-27
+    fix 1999 delay game incorrect parsing
+    fix launcher icon on ActionBAr
+    fix Frebase Remote Config may not call fetch onComplete callback
+        use a workaround to make sure app can continue
+    add loading icon in splash screen for long download
+
 [198] @ 2016-05-25
     add splash screen
     add Firebase Remote Config
