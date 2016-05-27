@@ -25,7 +25,7 @@ android {
             minSdkVersion 16
             targetSdkVersion 23
             versionName '2.4.0'
-            versionCode 200
+            versionCode 201
         }
         official {
             minSdkVersion 9

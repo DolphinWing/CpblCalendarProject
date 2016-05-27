@@ -35,6 +35,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[201] @ 2016-05-27
+    add Settings don't refresh if no needs
+
 [200] @ 2016-05-27
     fix 1999 delay game incorrect parsing
     fix launcher icon on ActionBAr

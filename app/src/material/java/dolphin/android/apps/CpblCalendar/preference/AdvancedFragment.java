@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import dolphin.android.apps.CpblCalendar.CpblApplication;
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.SplashActivity;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -63,6 +64,8 @@ public class AdvancedFragment extends PreferenceFragment {
                 }
                 Toast.makeText(getActivity(), R.string.title_clear_cache_complete,
                         Toast.LENGTH_SHORT).show();
+
+                ((CpblApplication) getActivity().getApplication()).setPrefrenceChanged(true);
             }
             return r;
         } else if (key.equals(KEY_RESTART_APP)) {

@@ -241,7 +241,7 @@ public class NotifyReceiver extends BroadcastReceiver {
         if (sound != null) {//[183]++
             builder.setSound(sound);
         }
-        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
         builder.setLargeIcon(bm);
 
         switch (PreferenceUtils.getNotifyPendingAction(context)) {
