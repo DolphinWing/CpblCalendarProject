@@ -11,6 +11,7 @@ import android.util.SparseArray;
 import java.util.Iterator;
 import java.util.Set;
 
+import dolphin.android.apps.CpblCalendar.CpblApplication;
 import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 import se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference;
@@ -99,20 +100,23 @@ public class DisplayFragment extends PreferenceFragment
             String summary = "";
             Set<String> teamSet =
                     ((FixedMultiSelectListPreference) preference).getCheckedValues();
-            if (teamSet != null && teamSet.size() > 0)
+            if (teamSet != null && teamSet.size() > 0) {
                 if (mCpblTeams.length == teamSet.size()) {
                     summary = getString(R.string.title_favorite_teams_all);
                 } else {//show the team names one by one
-                    Iterator<String> iterator = teamSet.iterator();
-                    while (iterator.hasNext()) {
-                        int id = Integer.parseInt(iterator.next());
+                    for (String aTeamSet : teamSet) {
+                        int id = Integer.parseInt(aTeamSet);
                         summary += Team.getTeamName(getActivity(), id) + " ";
                     }
                 }
-            else
+            } else {
                 summary = getString(R.string.no_favorite_teams);
+            }
 
             preference.setSummary(summary);
+
+            CpblApplication application = (CpblApplication) getActivity().getApplication();
+            application.setPrefrenceChanged(true);
         }
         return true;
     }

@@ -59,4 +59,12 @@ public class CpblApplication extends Application {
         }
         return mTrackers.get(trackerId);
     }
+
+    public void setPrefrenceChanged(boolean changed) {
+        //do nothing
+    }
+
+    public boolean isUpdateRequired() {
+        return true;
+    }
 }

@@ -75,7 +75,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            if (!getResources().getBoolean(R.bool.config_tablet)) {
+            if (getResources().getBoolean(R.bool.config_tablet)) {
                 toolbar.setLogo(R.mipmap.ic_launcher);
             }
         }
@@ -195,6 +195,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                     mDrawerLayout.openDrawer(mDrawerList);
                 }
                 return true;
+            case R.id.action_settings://set default values
+                ((CpblApplication) getApplication()).setPrefrenceChanged(false);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -323,12 +326,18 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         super.onActivityResult(requestCode, resultCode, data);
 
         //[22]dolphin++ need get the data from server again!
+        CpblApplication application = (CpblApplication) getApplication();
+
         // because the favorite team preference may remove some teams
         //onQuerySuccess(mGameList);//reload the fragment when possible preferences change
-        if (mButtonQuery != null) {
+        if (application.isUpdateRequired() && mButtonQuery != null) {
             mButtonQuery.performClick();//[22]dolphin++
+        } else {
+            quick_update();
         }
         //query_to_update(true);//[126]dolphin++ quick refresh
+
+        application.setPrefrenceChanged(false);//reset to default
     }
 
     @Override

@@ -699,6 +699,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
     }
 
+    protected void quick_update() {
+        doQueryCallback(mGameList, false);
+    }
+
     private void showLeaderBoard2016() {
         if (Utils.isGoogleChromeInstalled(mActivity)) {//[190]++ use Chrome Custom Tabs
             //http://stackoverflow.com/a/15629199/2673859

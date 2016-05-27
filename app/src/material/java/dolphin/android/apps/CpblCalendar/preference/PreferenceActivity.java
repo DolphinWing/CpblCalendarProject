@@ -11,6 +11,7 @@ import android.os.Bundle;
 import java.util.List;
 
 import dolphin.android.apps.CpblCalendar.CpblApplication;
+import dolphin.android.apps.CpblCalendar.GoogleAnalyticsHelper;
 import dolphin.android.apps.CpblCalendar.R;
 
 /**
@@ -28,7 +29,8 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return GeneralFragment.class.getName().equals(fragmentName)
                 || DisplayFragment.class.getName().equals(fragmentName)
-                || NotificationFragment.class.getName().equals(fragmentName);
+                || NotificationFragment.class.getName().equals(fragmentName)
+                || AdvancedFragment.class.getName().equals(fragmentName);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -36,12 +38,11 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         // Get tracker.
-        Tracker t = ((CpblApplication) getApplication()).getTracker(
-                CpblApplication.TrackerName.APP_TRACKER);
+        Tracker t = ((CpblApplication) getApplication()).getDefaultTracker();
         if (t != null) {
             // Set screen name.
             // Where path is a String representing the screen name.
-            t.setScreenName("dolphin.android.apps.CpblCalendar.preference.PreferenceActivity");
+            t.setScreenName(GoogleAnalyticsHelper.SCREEN_PREFERENCE_ACTIVITY);
             // Send a screen view.
             t.send(new HitBuilders.ScreenViewBuilder().build());
         }

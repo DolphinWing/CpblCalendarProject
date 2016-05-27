@@ -13,4 +13,11 @@ public class CpblApplication extends Application {
         super();
     }
 
+    public void setPrefrenceChanged(boolean changed) {
+    }
+
+    public boolean isUpdateRequired() {
+        return true;
+    }
+
 }

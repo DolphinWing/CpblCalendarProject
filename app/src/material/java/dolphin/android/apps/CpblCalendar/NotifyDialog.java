@@ -182,12 +182,11 @@ public class NotifyDialog extends Activity implements DialogInterface.OnDismissL
 
     private void sendGmsGoogleAnalyticsReport(String category, String action, String label) {
         // Get tracker.
-        Tracker t = ((CpblApplication) getApplication()).getTracker(
-                CpblApplication.TrackerName.APP_TRACKER);
+        Tracker t = ((CpblApplication) getApplication()).getDefaultTracker();
 
         // Set screen name.
         // Where path is a String representing the screen name.
-        t.setScreenName("dolphin.android.apps.CpblCalendar.NotifyDialog");
+        t.setScreenName(GoogleAnalyticsHelper.SCREEN_NOTIFY_DIALOG);
 
         //// Send a screen view.
         //t.send(new HitBuilders.AppViewBuilder().build());

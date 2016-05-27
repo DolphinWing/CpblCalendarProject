@@ -62,14 +62,19 @@ public class SplashActivity extends Activity {
             public void run() {
                 showLoadingInProgress();
             }
-        }, 1000);
+        }, 500);
     }
 
     private void showLoadingInProgress() {
-        View progress = findViewById(android.R.id.progress);
-        if (progress != null) {
-            progress.setVisibility(View.VISIBLE);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                View progress = findViewById(android.R.id.progress);
+                if (progress != null) {
+                    progress.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void prepareRemoteConfig() {

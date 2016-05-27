@@ -12,17 +12,16 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  *
  * Google Analytics helper class
  */
-class GoogleAnalyticsHelper {
-    public final static String SCREEN_CALENDAR_ACTIVITY_BASE =
-            "dolphin.android.apps.CpblCalendar.CalendarActivity";
+public class GoogleAnalyticsHelper {
+    public final static String SCREEN_CALENDAR_ACTIVITY_BASE = "CpblCalendar.CalendarActivity";
     public final static String SCREEN_CALENDAR_ACTIVITY_PHONE =
-            "dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity";
+            "CpblCalendar.CalendarForPhoneActivity";
     public final static String SCREEN_CALENDAR_ACTIVITY_TABLET =
-            "dolphin.android.apps.CpblCalendar.CalendarForTabletActivity";
-    public final static String SCREEN_PREFERENCE_ACTIVITY =
-            "dolphin.android.apps.CpblCalendar.preference.PreferenceActivity";
+            "CpblCalendar.CalendarForTabletActivity";
+    public final static String SCREEN_PREFERENCE_ACTIVITY = "CpblCalendar.PreferenceActivity";
     public final static String SCREEN_PREFERENCE_ACTIVITY_GB =
-            "dolphin.android.apps.CpblCalendar.preference.GBPreferenceActivity";
+            "CpblCalendar.GBPreferenceActivity";
+    public final static String SCREEN_NOTIFY_DIALOG = "CpblCalendar.NotifyDialog";
 
     private final CpblApplication mApplication;
     private final String mScreenName;
@@ -61,7 +60,7 @@ class GoogleAnalyticsHelper {
     public void sendGmsGoogleAnalyticsReport(String path, String category, String action,
                                              String label, long evtValue) {
         // Get tracker.
-        Tracker t = mApplication.getTracker(CpblApplication.TrackerName.APP_TRACKER);
+        Tracker t = mApplication.getDefaultTracker();
 
         // Set screen name.
         // Where path is a String representing the screen name.
