@@ -1,3 +1,6 @@
+**Released @ 2016-05-31 due to suspended by Google Play.**
+有意願接手者可以參考並實作。
+
 快速取得CPBL中華職棒例行賽賽程表
 
 本程式純粹是為了朋友而幫忙~ 非官方APP
@@ -23,6 +26,6 @@
 
 [DolphinWing's App play yard](https://plus.google.com/u/0/communities/117125774226013120188)
 
-[Google Play Store](https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar)
+~~[Google Play Store](https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar)~~
 
 \#中華職棒 \#CPBL \#中職
