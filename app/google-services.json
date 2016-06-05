@@ -15,22 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "476925821932-k845lktjt4drmlq28hqoahck5l5sl4f4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "dolphin.android.apps.CpblCalendar",
-            "certificate_hash": "804587AA02FE5C95291ADD79D660D09ECB0DA1DC"
-          }
-        },
-        {
-          "client_id": "476925821932-j67sducc8bji0f2pq0tjna851iq4hs5s.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "dolphin.android.apps.CpblCalendar",
-            "certificate_hash": "BB86D6E927A2306BAD126B30513611A9B747261A"
-          }
-        },
-        {
           "client_id": "476925821932-kgsmrbgq9gs1lubh2tbh477706s47hjm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

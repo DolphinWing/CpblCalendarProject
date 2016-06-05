@@ -56,7 +56,7 @@ public class SplashActivity extends Activity {
         }
 
         myHandler = new MyHandler(this);
-        myHandler.sendEmptyMessageDelayed(0, 3000);//set a backup startActivity
+        myHandler.sendEmptyMessageDelayed(0, 1000);//set a backup startActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -84,7 +84,7 @@ public class SplashActivity extends Activity {
                 .build();
         mRemoteConfig.setConfigSettings(configSettings);
         mRemoteConfig.setDefaults(R.xml.remote_config_defaults);
-        fetchRemoteConfig();
+        //fetchRemoteConfig();
     }
 
     /**

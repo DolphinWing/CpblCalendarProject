@@ -75,9 +75,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            if (getResources().getBoolean(R.bool.config_tablet)) {
-                toolbar.setLogo(R.mipmap.ic_launcher);
-            }
+            //if (getResources().getBoolean(R.bool.config_tablet)) {
+            //    toolbar.setLogo(R.mipmap.ic_launcher);
+            //}
         }
 
         initQueryPane();
