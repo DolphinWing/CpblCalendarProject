@@ -35,6 +35,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[202] @ 2016-06-05
+    remove Firebase connection and keys
+    remove app icon from action bar
+
 [201] @ 2016-05-27
     add Settings don't refresh if no needs
 
