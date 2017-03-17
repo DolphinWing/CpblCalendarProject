@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:key="preference_screen">
+
+    <PreferenceCategory android:title="@string/app_build_info">
+        <Preference
+            android:key="app_version"
+            android:title="@string/app_version" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_data_source">
+        <Preference
+            android:key="data_from_cpbl"
+            android:title="@string/title_cpbl_offical"
+            android:summary="@string/summary_cpbl_offical" />
+        <Preference
+            android:key="data_from_twbsball"
+            android:title="@string/title_twbsball_wiki"
+            android:summary="@string/summary_twbsball_wiki" />
+        <Preference
+            android:key="data_from_zxc22"
+            android:title="@string/title_zxc22"
+            android:summary="@string/summary_zxc22" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_open_source">
+        <Preference
+            android:key="res_asset_studio"
+            android:title="@string/title_asset_studio" />
+        <Preference
+            android:key="lib_evernote_android_job"
+            android:title="@string/title_evernote_android_job"
+            android:summary="@string/summary_evernote_android_job" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

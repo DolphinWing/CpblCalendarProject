@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <!-- Match row style -->
+    <style name="Theme.Holo_green.TextLarge" parent="@style/TextAppearance.AppCompat.Large" />
+
+    <style name="Theme.Holo_green.TextMedium" parent="@style/TextAppearance.AppCompat.Medium" />
+
+    <style name="Theme.Holo_green.TextSmall" parent="@style/TextAppearance.AppCompat.Small" />
+
+
+    <!-- match style -->
+    <style name="Theme.Holo_green.Match.Main" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Extra" parent="Theme.Holo_green.TextSmall">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Base">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <!-- Query Panel style -->
+    <style name="Theme.Holo_green.QueryPane.Title" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:paddingTop">@dimen/padding_medium</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+</resources>
