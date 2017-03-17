@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="preference_screen">
+
+    <Preference
+        android:key="action_clear_cache"
+        android:title="@string/title_clear_cache"
+        android:summary="@string/summary_clear_cache" />
+
+    <Preference
+        android:key="action_restart_app"
+        android:title="@string/title_restart_app" />
+
+</PreferenceScreen>

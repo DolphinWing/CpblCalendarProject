@@ -1,0 +1,91 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="@dimen/activity_horizontal_margin"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:alpha="0.8"
+            android:background="@color/shadow_background"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:scaleX="-1"
+            android:src="@drawable/drawer_shadow" />
+
+        <ImageView
+            android:layout_width="@dimen/activity_horizontal_margin"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:alpha="0.8"
+            android:background="@color/shadow_background"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/drawer_shadow" />
+
+        <!-- The main content view -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+            <fragment
+                android:id="@+id/content_frame"
+                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout="@layout/listview_empty_view" />
+        </FrameLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/holo_green_dark"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@+id/toolbar"
+            android:alpha="0.4"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/drawer_shadow_vert" />
+
+        <!-- https://developer.android.com/reference/android/support/design/widget/FloatingActionButton.html -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/button_floating_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/padding_large"
+            android:layout_marginRight="@dimen/floating_action_button_margin"
+            android:src="@drawable/ic_action_action_event"
+            app:backgroundTint="@color/holo_green_light"
+            app:elevation="1dp"
+            app:fabSize="normal" />
+
+
+    </RelativeLayout>
+
+    <!-- The navigation drawer -->
+    <include
+        android:id="@+id/left_drawer"
+        layout="@layout/layout_query_pane"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="right" />
+</android.support.v4.widget.DrawerLayout>

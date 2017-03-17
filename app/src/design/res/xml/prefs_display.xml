@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:key="preference_screen">
+
+    <PreferenceCategory
+        android:key="display_group"
+        android:title="@string/title_display_settings">
+        <CheckBoxPreference
+            android:key="upcoming_game"
+            android:title="@string/title_select_upcoming"
+            android:summaryOn="@string/title_select_upcoming_on"
+            android:summaryOff="@string/title_select_upcoming_off"
+            android:defaultValue="@bool/def_upcoming_game" />
+        <CheckBoxPreference
+            android:key="team_logo"
+            android:title="@string/title_show_team_logo"
+            android:summaryOn="@string/title_show_team_logo_on"
+            android:summaryOff="@string/title_show_team_logo_off"
+            android:enabled="false"
+            android:defaultValue="@bool/def_team_logo" />
+        <CheckBoxPreference
+            android:key="highlight_win"
+            android:title="@string/title_highlight_win"
+            android:summaryOn="@string/title_highlight_win_on"
+            android:summaryOff="@string/title_highlight_win_off"
+            android:defaultValue="@bool/def_highlight_win"/>
+        <CheckBoxPreference
+            android:key="highlight_today"
+            android:title="@string/title_highlight_today"
+            android:summaryOn="@string/title_highlight_today_on"
+            android:summaryOff="@string/title_highlight_today_off"
+            android:defaultValue="@bool/def_highlight_today"/>
+    </PreferenceCategory>
+</PreferenceScreen>

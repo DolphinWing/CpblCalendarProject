@@ -1,0 +1,60 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dolphin.android.apps.CpblCalendar">
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_config"
+        android:name=".CpblApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Holo_green">
+
+        <activity
+            android:name=".CalendarForPhoneActivity"
+            android:screenOrientation="locked" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.Holo_green.Settings" />
+
+        <!-- android:process=":remote" -->
+        <!--<receiver
+            android:name=".NotifyReceiver"
+            android:enabled="@bool/feature_notify">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="dolphin.android.apps.CpblCalendar.ALARM" />
+                <action android:name="dolphin.android.apps.CpblCalendar.DELETE_NOTIFICATION" />
+            </intent-filter>
+        </receiver>-->
+
+        <activity
+            android:name=".NotifyDialog"
+            android:enabled="@bool/feature_notify"
+            android:excludeFromRecents="true"
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.Holo_green.Dialog" />
+
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:enabled="@bool/feature_admob"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!--<service
+            android:name="com.evernote.android.job.gcm.PlatformGcmService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
+            </intent-filter>
+        </service>-->
+
+    </application>
+
+</manifest>

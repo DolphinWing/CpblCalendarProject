@@ -35,6 +35,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1001] @ 2017-03-17
+    prepare new flavor and new layout
+
 [204] @ 2017-03-16
     update build tools and libraries
 
