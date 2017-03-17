@@ -63,21 +63,7 @@ public class DisplayFragment extends PreferenceFragment
     }
 
     private void refresh() {
-        String summary = "";
-        SparseArray<Team> teamMap = PreferenceUtils.getFavoriteTeams(getActivity());
-        if (teamMap != null && teamMap.size() > 0) {
-            if (mCpblTeams.length == teamMap.size()) {
-                summary = getString(R.string.title_favorite_teams_all);
-            } else {//show the team names one by one
-                for (int i = 0; i < teamMap.size(); i++) {
-                    Team team = teamMap.valueAt(i);
-                    summary += team.getName() + " ";
-                }
-                summary = summary.trim();
-            }
-        } else {//[34]dolphin++ no team games to show
-            summary = getString(R.string.no_favorite_teams);
-        }
+        String summary = PreferenceUtils.getFavoriteTeamSummary(getActivity());
 
         //ListPreference pref = //[34]dolphin++
         //        (ListPreference) findPreference(PreferenceUtils.KEY_FAVORITE_TEAMS);

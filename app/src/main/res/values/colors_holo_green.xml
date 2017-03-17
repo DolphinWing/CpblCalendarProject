@@ -26,4 +26,6 @@
     <color name="shadow_background">#20000000</color>
 
     <color name="circle_image_border">#66cccccc</color>
+
+    <color name="selectable_item_pressed">#20000000</color>
 </resources>
