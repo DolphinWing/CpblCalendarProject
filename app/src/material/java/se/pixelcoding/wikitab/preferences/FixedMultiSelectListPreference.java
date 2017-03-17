@@ -158,13 +158,13 @@ public class FixedMultiSelectListPreference extends DialogPreference {
 		setValues((restorePersistedValue ? getPersistedStringSet(values) : defaultValues));
 	}
 	
-	private Set<String> getPersistedStringSet(Set<String> defaultReturnValue) {
+	public Set<String> getPersistedStringSet(Set<String> defaultReturnValue) {
 		String key = getKey();
 		
 		return getSharedPreferences().getStringSet(key, defaultReturnValue);
 	}
 	
-	private boolean persistStringSet(Set<String> values) {
+	public boolean persistStringSet(Set<String> values) {
 		if (shouldPersist()) {
 			// Shouldn't store null
 			if (values == getPersistedStringSet(null)) {

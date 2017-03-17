@@ -1,1 +1,1 @@
-include ':app', ':MyUtils', ':actionbarsherlock'
+include ':app'
