@@ -5,18 +5,17 @@
     <string name="empty_data">(null)</string>
 
     <string-array name="cpbl_team_name">
-        <!--<item>兄弟象</item> [89]++ -->
-        <item>中信兄弟象</item>
+        <item>中信兄弟</item>
         <item>統一7-ELEVEn獅</item>
-        <item>義大犀牛</item>
-        <item>Lamigo桃猿</item>
+        <item>富邦悍將</item>
+        <item>LAMIGO桃猿</item>
     </string-array>
 
     <string-array name="cpbl_team_id">
         <!--<item>1</item> [89]++ -->
         <item>17</item>
-        <item>2</item>
-        <item>7</item>
+        <item>7112</item>
+        <item>18</item>
         <item>14</item>
     </string-array>
 
@@ -167,6 +166,10 @@
     <!-- 2016-03-27++ warm up games -->
     <string name="team_south_korea">韓國隊</string>
     <string name="team_chinese_taipei">中華隊</string>
+    <!-- 2017-03-16++  -->
+    <string name="team_south_japan">日本隊</string>
+    <string name="team_fubon_guardians">富邦悍將</string>
+    <string name="team_fubon_guardians_short">富邦</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">
@@ -195,14 +198,14 @@
     <string name="summary_actionbarsherlock">Copyright 2012 Jake Wharton</string>
 
     <string name="title_asset_studio">Android Asset Studio</string>
-    <string name="summary_asset_studio">Creative Commons 3.0 BY</string>
+    <string name="summary_asset_studio">Created by Roman Nurik</string>
 
     <string name="title_floating_action_button">FloatingActionButton</string>
     <string name="summary_floating_action_button">Copyright &#169; 2014 Oleksandr Melnykov</string>
     <string name="title_circle_image_view">CircleImageView</string>
     <string name="summary_circle_image_view">Copyright 2014 &#8211; 2015 Henning Dodenhof</string>
     <string name="title_evernote_android_job">Android-Job</string>
-    <string name="summary_evernote_android_job">Copyright &#169; 2007&#8211;2015 by Evernote Corporation, All rights reserved.</string>
+    <string name="summary_evernote_android_job">Copyright &#169; 2007&#8211;2016 by Evernote Corporation, All rights reserved.</string>
 
     <string-array name="notify_music_value">
         <item>theme.mp3</item>

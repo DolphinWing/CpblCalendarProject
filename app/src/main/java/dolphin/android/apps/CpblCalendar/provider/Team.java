@@ -57,6 +57,8 @@ public class Team {
     public final static int ID_MKT_SUNS = 16;
     //ID_ELEPHANTS -> ID_CT_ELEPHANTS
     public final static int ID_CT_ELEPHANTS = 17;
+    //
+    public final static int ID_FUBON_GUARDIANS = 18;
 
     public final static int ID_ALL_STAR_RED = 101;
     public final static int ID_ALL_STAR_WHITE = 102;
@@ -132,6 +134,9 @@ public class Team {
      * @return logo drawable of that year
      */
     public static int getTeamLogo(int id, int year) {
+        //if (year >= 2017) {
+        //    return R.drawable.no_logo;
+        //}
         switch (id) {
             case ID_ELEPHANTS:
                 return R.drawable.elephant_1990_2013;
@@ -139,7 +144,9 @@ public class Team {
                 return year > 2014 ? R.drawable.elephant_2015 : R.drawable.elephant_2014;
             case ID_UNI_LIONS:
             case ID_UNI_711_LIONS://[184]++
-                if (year >= 2009)
+                if (year >= 2017) {
+                    return R.drawable.lion_2017;
+                } else if (year >= 2009)
                     return R.drawable.lion_2009_2013;
                 else if (year >= 2007)
                     return R.drawable.lion_2007_2008;
@@ -150,6 +157,8 @@ public class Team {
                 else if (year >= 1991)
                     return R.drawable.lion_1991_1992;
                 return R.drawable.lion_1989_1990;
+            case ID_FUBON_GUARDIANS:
+                return R.drawable.fubon_2017;
             case ID_EDA_RHINOS:
                 return R.drawable.rhino_2013;
             case ID_W_DRAGONS:
@@ -177,7 +186,7 @@ public class Team {
             case ID_LANEW_BEARS:
                 return R.drawable.lanew_2004_2010;
             case ID_LAMIGO_MONKEYS:
-                return R.drawable.lamigo_2011_2013;
+                return (year >= 2017) ? R.drawable.lamigo_2017 : R.drawable.lamigo_2011_2013;
             case ID_ALL_STAR_RED://[161]++
                 return R.drawable.allstar_red;
             case ID_ALL_STAR_WHITE://[161]++
@@ -274,6 +283,9 @@ public class Team {
             case ID_CHINESE_TAIPEI://[181]++
                 string_id = R.string.team_chinese_taipei;
                 break;
+            case ID_FUBON_GUARDIANS:
+                string_id = R.string.team_fubon_guardians;
+                break;
         }
         return context.getString(string_id);
     }
@@ -354,6 +366,9 @@ public class Team {
             case ID_CHINESE_TAIPEI://[181]++
                 string_id = R.string.team_chinese_taipei;
                 break;
+            case ID_FUBON_GUARDIANS:
+                string_id = R.string.team_fubon_guardians_short;
+                break;
         }
         return context.getString(string_id);
     }
@@ -429,6 +444,8 @@ public class Team {
             } else {
                 id = ID_LAMIGO_MONKEYS;
             }
+        } else if (png.contains("B04")) {
+            id = ID_FUBON_GUARDIANS;
         } else if (png.contains("B03")) {
             id = ID_EDA_RHINOS;
         } else if (png.contains("E01")) {
