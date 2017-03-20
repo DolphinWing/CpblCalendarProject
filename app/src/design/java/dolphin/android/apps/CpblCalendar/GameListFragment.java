@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -125,29 +126,29 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         return mEmptyView;
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        //Log.d(TAG, "onListItemClick: " + position);
-        if (v != null) {
-            Game game = (Game) v.getTag();
-            //Log.d(TAG, "onListItemClick: " + position);
-            //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
-            //Log.d(TAG, "  game.Url: " + game.Url);
-            if (mFirebaseAnalytics != null) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
-                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
-                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
-                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
-            }
-
-            Utils.startGameActivity(getActivity(), game);
-        }
-    }
+//    @Override
+//    public void onListItemClick(ListView l, View v, int position, long id) {
+//        super.onListItemClick(l, v, position, id);
+//        //Log.d(TAG, "onListItemClick: " + position);
+//        if (v != null) {
+//            Game game = (Game) v.getTag();
+//            //Log.d(TAG, "onListItemClick: " + position);
+//            //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
+//            //Log.d(TAG, "  game.Url: " + game.Url);
+//            if (mFirebaseAnalytics != null) {
+//                Bundle bundle = new Bundle();
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
+//                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
+//                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
+//                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
+//            }
+//
+//            Utils.startGameActivity(getActivity(), game);
+//        }
+//    }
 
     //Long click on ListFragment
     //http://stackoverflow.com/a/6857819/2673859
@@ -167,5 +168,4 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         //FIXME: don't do anything
         return true;
     }
-
 }
