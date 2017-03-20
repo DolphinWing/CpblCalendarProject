@@ -132,4 +132,10 @@
     <string name="ok_ask_permission">我知道了</string>
     <string name="cancel_ask_permission">不了，謝謝</string>
 
+    <!-- Bottom Sheet Actions -->
+    <string name="action_show_game_info">顯示球賽資訊</string>
+    <string name="action_add_to_calendar">加入行事曆</string>
+    <string name="action_show_field_info">顯示球場資訊</string>
+    <string name="action_navigate_to_field">導航至球場</string>
+
 </resources>

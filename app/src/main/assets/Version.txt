@@ -35,6 +35,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1002] @ 2017-03-20
+    new game list layout
+    add BottomSheet and Snackbar
+    remove useless resources
+    add FAB animation
+
 [1001] @ 2017-03-17
     prepare new flavor and new layout
 
