@@ -14,6 +14,18 @@
         android:layout_alignParentRight="true"
         android:layout_gravity="right" />
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_toLeftOf="@id/left_drawer"
+        android:background="@color/holo_green_dark"
+        android:gravity="bottom"
+        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Headline" />
+
     <ImageView
         android:layout_width="@dimen/activity_horizontal_margin"
         android:layout_height="match_parent"
@@ -44,17 +56,6 @@
             android:layout_weight="1"
             tools:layout="@layout/listview_empty_view" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
-        android:layout_toLeftOf="@id/left_drawer"
-        android:background="@color/holo_green_dark"
-        android:gravity="bottom"
-        android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -66,20 +67,6 @@
         android:scaleType="fitXY"
         android:src="@drawable/drawer_shadow_vert" />
 
-    <!-- https://developer.android.com/reference/android/support/design/widget/FloatingActionButton.html -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/button_floating_action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/padding_large"
-        android:layout_marginRight="@dimen/floating_action_button_margin"
-        android:src="@drawable/ic_action_action_event"
-        android:visibility="gone"
-        app:backgroundTint="@color/holo_green_light"
-        app:elevation="1dp"
-        app:fabSize="normal" />
 
     <include layout="@layout/include_loading_frame" />
 

@@ -36,6 +36,6 @@
     <dimen name="min_lead_team_board_height">320dp</dimen>
     <dimen name="min_notify_dialog_width">240dp</dimen>
 
-    <dimen name="match_logo_width">48dp</dimen>
-    <dimen name="match_logo_height">48dp</dimen>
+    <dimen name="match_logo_width">24dp</dimen>
+    <dimen name="match_logo_height">24dp</dimen>
 </resources>

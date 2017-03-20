@@ -84,6 +84,7 @@
         <item name="android:layout_gravity">center_horizontal|bottom</item>
         <item name="android:padding">@dimen/padding_medium</item>
         <item name="android:background">#66001100</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="Theme.Holo_green.LoadingIcon" parent="@style/Widget.AppCompat.ProgressBar">
@@ -111,10 +112,10 @@
     </style>
 
     <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.Match.Main">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:layout_weight">0.8</item>
+        <!--<item name="android:layout_weight">0.8</item>-->
         <item name="android:gravity">center_vertical|left</item>
         <item name="android:text">@string/empty_data</item>
         <item name="android:singleLine">true</item>
@@ -123,11 +124,10 @@
     </style>
 
     <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
-        <item name="android:layout_weight">0.2</item>
-        <item name="android:gravity">center_vertical|right</item>
-        <item name="android:textSize" tools:ignore="PrivateResource">
-            @dimen/abc_text_size_headline_material
-        </item>
+        <!--<item name="android:layout_weight">0.2</item>-->
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:minWidth">48dp</item>
     </style>
 
     <style name="Theme.Holo_green.Match.GameId" parent="Theme.Holo_green.Match.Extra">
