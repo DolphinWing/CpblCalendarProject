@@ -190,4 +190,12 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <!-- Holo AlertDialog-->
+    <style name="WindowTitleHolo_green" parent="android:TextAppearance.DialogWindowTitle">
+        <item name="android:textColor">@color/holo_green_dark</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
 </resources>
