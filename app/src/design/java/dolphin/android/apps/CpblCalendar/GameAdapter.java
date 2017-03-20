@@ -43,22 +43,57 @@ public class GameAdapter extends BaseGameAdapter {
     protected void decorate(View convertView, Game game) {
         super.decorate(convertView, game);
 
-        //url indicator
-        ImageView iv1 = (ImageView) convertView.findViewById(android.R.id.icon);
-        iv1.setVisibility(View.INVISIBLE);
+//        //more action
+//        ImageView moreAction = (ImageView) convertView.findViewById(android.R.id.icon);
+//        if (moreAction != null) {
+//            moreAction.setVisibility(View.INVISIBLE);
+//        }
+
+        TextView timeText = (TextView) convertView.findViewById(R.id.textView1);
+        TextView liveText = (TextView) convertView.findViewById(R.id.textView10);
+        if (timeText != null) {
+            String date_str = getGameDateStr(game);
+            if (game.IsLive) {
+                if (liveText != null) {//use live text field in design flavor
+                    liveText.setText(Html.fromHtml(game.LiveMessage.replace("&nbsp;&nbsp;", "<br>")));
+                    liveText.setVisibility(View.INVISIBLE);
+                    timeText.setText(date_str);
+                } else {
+                    date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
+                    timeText.setText(Html.fromHtml(date_str));
+                }
+            } else {
+                if (liveText != null) {//don't show
+                    liveText.setVisibility(View.INVISIBLE);
+                }
+                timeText.setText(date_str);
+            }
+        }
 
         //delay message
-        TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
-        if (game.DelayMessage != null && game.DelayMessage.length() > 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                tv8.setText(Html.fromHtml(game.DelayMessage,
-                        Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+        TextView extraText = (TextView) convertView.findViewById(R.id.textView8);
+        if (extraText != null) {
+            if (game.DelayMessage != null && game.DelayMessage.length() > 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    extraText.setText(Html.fromHtml(game.DelayMessage,
+                            Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                } else {
+                    extraText.setText(Html.fromHtml(game.DelayMessage));
+                }
+                extraText.setVisibility(View.VISIBLE);
             } else {
-                tv8.setText(Html.fromHtml(game.DelayMessage));
+                extraText.setVisibility(View.GONE);
             }
-            tv8.setVisibility(View.VISIBLE);
-        } else {
-            tv8.setVisibility(View.GONE);
+        }
+
+        TextView channelText = (TextView) convertView.findViewById(R.id.textView6);
+        if (channelText != null) {////don't use INVISIBLE in design flavor
+            channelText.setVisibility((game.Channel != null) ? View.VISIBLE : View.GONE);
+        }
+
+        View alarm = convertView.findViewById(R.id.icon_alarm);
+        if (alarm != null && alarm.getVisibility() == View.GONE) {//don't use GONE in design flavor
+            alarm.setVisibility(View.INVISIBLE);
         }
 
         //team logo
