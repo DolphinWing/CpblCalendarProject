@@ -10,7 +10,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -133,6 +137,25 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             if (listView != null) {
                 listView.setOnScrollListener(this);
             }
+        }
+
+        View bottomSheet = findViewById(R.id.bottom_sheet);
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        mBottomSheetBehavior.setPeekHeight(0);
+        mBottomSheetBehavior.setHideable(true);
+        //override parent class
+        mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
+        if (mBottomSheetBackground != null) {
+            mBottomSheetBackground.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
+                            && motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        setBottomSheetVisibility(false);
+                    }
+                    return true;//do nothing
+                }
+            });
         }
 
         new Handler().post(new Runnable() {
@@ -277,11 +300,20 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         onLoading(true);//[30]dolphin++
     }
 
+    private Snackbar mSnackbar;
+
     @Override
     public void onQueryStateChange(String msg) {
         //Log.d(TAG, "onQueryUpdate: " + msg);
         if (getProgressText() != null) {
             getProgressText().setText(msg);
+        }
+
+        if (mSnackbar != null && mSnackbar.isShown()) {
+            mSnackbar.setText(msg);
+        } else {
+            mSnackbar = Snackbar.make(findViewById(R.id.main_content_frame), msg, Snackbar.LENGTH_INDEFINITE);
+            mSnackbar.show();
         }
     }
 
@@ -318,8 +350,15 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         super.onLoading(false);
 
+//        if (mBottomSheetBackground != null) {
+//            mBottomSheetBackground.setVisibility(View.GONE);
+//        }
         if (mFab != null) {//enable search
             mFab.show();
+        }
+        if (mSnackbar != null) {//hide loading text
+            mSnackbar.dismiss();
+            mSnackbar = null;
         }
     }
 
@@ -359,6 +398,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 //        }
         super.onLoading(is_load);
 
+//        if (mBottomSheetBackground != null) {
+//            mBottomSheetBackground.setVisibility(is_load ? View.VISIBLE : View.GONE);
+//        }
         if (mFab != null) {
             if (is_load) {
                 mFab.hide();
@@ -368,6 +410,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
         if (getProgressText() != null) {
             getProgressText().setVisibility(View.GONE);
+        }
+        if (mSnackbar != null && !is_load) {
+            mSnackbar.dismiss();
+            mSnackbar = null;
         }
     }
 
@@ -551,20 +597,71 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (view != null) {
-            Game game = (Game) view.getTag();
-            if (mFirebaseAnalytics != null) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
-                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
-                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
-                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
-            }
-            Utils.startGameActivity(getActivity(), game);
-        }
+//        if (view != null) {
+//            Game game = (Game) view.getTag();
+//            if (mFirebaseAnalytics != null) {
+//                Bundle bundle = new Bundle();
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
+//                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
+//                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
+//                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
+//                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
+//            }
+//            Utils.startGameActivity(getActivity(), game);
+//        }
+        setBottomSheetVisibility(true);
     }
 
+    private void setBottomSheetVisibility(boolean visible) {
+        if (mBottomSheetBackground != null) {//use progress background
+            final boolean isVisible = visible;
+            float from = visible ? 0.0f : 1.0f;
+            float to = visible ? 1.0f : 0.0f;
+            //http://stackoverflow.com/a/20629036
+            //https://developer.android.com/reference/android/view/animation/AlphaAnimation.html
+            AlphaAnimation animation1 = new AlphaAnimation(from, to);
+            animation1.setDuration(200);
+            //animation1.setStartOffset(5000);
+            animation1.setFillAfter(true);
+            animation1.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    //Log.d(TAG, "onAnimationStart");
+                    if (isVisible) {
+                        mBottomSheetBackground.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    //Log.d(TAG, "onAnimationEnd");
+                    if (!isVisible) {
+                        mBottomSheetBackground.setVisibility(View.GONE);
+                        //Log.d(TAG, "hide background");
+                    }
+                    //http://tomkuo139.blogspot.tw/2009/11/android-alphaanimation.html
+                    mBottomSheetBackground.setAnimation(null);//clear animation
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            mBottomSheetBackground.startAnimation(animation1);
+        }
+        if (mBottomSheetBehavior != null) {
+            mBottomSheetBehavior.setState(visible ? BottomSheetBehavior.STATE_EXPANDED
+                    : BottomSheetBehavior.STATE_COLLAPSED);
+        }
+        if (mFab != null) {
+            if (visible) {
+                mFab.hide();
+            } else {
+                mFab.show();
+            }
+        }
+    }
 }
