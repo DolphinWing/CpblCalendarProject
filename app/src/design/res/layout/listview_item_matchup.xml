@@ -30,7 +30,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="6dp"
-            android:src="@drawable/ic_action_action_about" />
+            android:src="@drawable/ic_action_more_vert" />
 
     </FrameLayout>
 
@@ -139,6 +139,9 @@
         <TextView
             android:id="@+id/textView8"
             style="@style/Theme.Holo_green.Match.ExtraMsg"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|left"
             android:paddingRight="@dimen/padding_large" />
 
         <TextView
