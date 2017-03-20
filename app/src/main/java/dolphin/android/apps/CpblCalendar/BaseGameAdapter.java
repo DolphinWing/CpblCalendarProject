@@ -83,11 +83,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         return convertView;//super.getView(position, convertView, parent);
     }
 
-    protected void decorate(View convertView, Game game) {
-        //[67]++ for long team name
-        boolean bIsLongName = supportLongName(game);
-
-        //game time
+    private boolean isLiveNow(Game game) {
         Calendar c = game.StartTime;
         boolean bNoScoreNoLive = (game.Source == Game.SOURCE_CPBL_2013
                 && c.get(Calendar.YEAR) >= 2014);
@@ -96,9 +92,12 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
         //Log.d("GameAdapter", c.toString() + " live=" + bLiveNow);
         bLiveNow &= ((mNow.getTimeInMillis() - game.StartTime.getTimeInMillis()) < LONGEST_GAME);
-        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
+        return bLiveNow;
+    }
 
-        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
+    String getGameDateStr(Game game) {
+        Calendar c = game.StartTime;
+        boolean bLiveNow = isLiveNow(game);
         String date_str = String.format(Locale.TAIWAN, "%s, %02d:%02d",
                 //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
                 //[53]dolphin++ use DAY_OF_WEEK to all devices
@@ -115,6 +114,22 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 : date_str;
         date_str = game.IsFinal || bLiveNow ? new SimpleDateFormat("MMM d (E)",
                 Locale.TAIWAN).format(c.getTime()) : date_str;//[70]++
+        return date_str;
+    }
+
+    protected void decorate(View convertView, Game game) {
+        //[67]++ for long team name
+        boolean bIsLongName = supportLongName(game);
+
+        //game time
+        Calendar c = game.StartTime;
+        boolean bNoScoreNoLive = (game.Source == Game.SOURCE_CPBL_2013 && c.get(Calendar.YEAR) >= 2014);
+        //[84]dolphin++//live channel
+        boolean bLiveNow = isLiveNow(game);
+        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
+
+        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
+        String date_str = getGameDateStr(game);
         if (game.IsLive) {//[181]++
             date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
             tv1.setText(Html.fromHtml(date_str));

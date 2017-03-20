@@ -32,20 +32,16 @@
             android:src="@drawable/drawer_shadow" />
 
         <!-- The main content view -->
-        <FrameLayout
+        <fragment
+            android:id="@+id/main_content_frame"
+            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin">
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="?attr/actionBarSize"
+            tools:layout="@layout/listview_empty_view" />
 
-            <fragment
-                android:id="@+id/content_frame"
-                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout="@layout/listview_empty_view" />
-        </FrameLayout>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -76,7 +72,9 @@
             android:src="@drawable/ic_action_action_event"
             app:backgroundTint="@color/holo_green_light"
             app:elevation="1dp"
-            app:fabSize="normal" />
+            app:fabSize="normal"
+            app:layout_anchor="@+id/main_content_frame"
+            app:layout_anchorGravity="bottom|right" />
 
 
     </RelativeLayout>

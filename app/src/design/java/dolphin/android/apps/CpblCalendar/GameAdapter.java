@@ -1,10 +1,8 @@
 package dolphin.android.apps.CpblCalendar;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
-import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.Log;

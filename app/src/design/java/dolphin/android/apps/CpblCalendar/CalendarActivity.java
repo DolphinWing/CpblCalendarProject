@@ -450,7 +450,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             mProgressText.setVisibility(is_load ? View.VISIBLE : View.GONE);
             mProgressText.setText(is_load ? getString(R.string.title_download) : "");
         }
-        setProgressBarIndeterminateVisibility(is_load);
+        //setProgressBarIndeterminateVisibility(is_load);
     }
 
     void onLoading(boolean is_load) {

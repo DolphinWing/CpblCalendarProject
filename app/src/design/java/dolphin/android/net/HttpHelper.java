@@ -10,7 +10,7 @@ public class HttpHelper extends UrlHelper {
     private static final String TAG = "HttpHelper";
 
     /**
-     * {@link org.apache.http.StatusLine} HTTP status code when no server error has occurred.
+     * HTTP status code when no server error has occurred.
      */
     public static final int HTTP_STATUS_OK = 200;
 

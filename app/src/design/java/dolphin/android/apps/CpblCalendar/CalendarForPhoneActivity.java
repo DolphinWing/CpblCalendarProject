@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -17,11 +18,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +40,6 @@ import java.util.Calendar;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar.provider.Team;
 
 /**
  * Created by dolphin on 2013/6/3.
@@ -45,13 +47,18 @@ import dolphin.android.apps.CpblCalendar.provider.Team;
  * CalendarActivity for phone version, with a ActionBarDrawer pane.
  */
 public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback {
+        ActivityCompat.OnRequestPermissionsResultCallback, AbsListView.OnScrollListener,
+        AdapterView.OnItemClickListener {
 
     private DrawerLayout mDrawerLayout;
 
     private View mDrawerList;
+
     private TextView mFavTeams;
     //private ArrayList<Game> mGameList = null;
+    private FloatingActionButton mFab;
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private View mBottomSheetBackground;
 
     private AdView mAdView;
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -102,9 +109,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         mAdView = (AdView) findViewById(R.id.adView);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        View fabButton = findViewById(R.id.button_floating_action);
-        if (fabButton != null) {
-            fabButton.setOnClickListener(
+        GameListFragment gameListFragment = (GameListFragment) getFragmentManager()
+                .findFragmentById(R.id.main_content_frame);
+        ListView listView = gameListFragment.getListView();
+        if (listView != null) {
+            listView.setOnItemClickListener(this);
+        }
+
+        mFab = (FloatingActionButton) findViewById(R.id.button_floating_action);
+        if (mFab != null) {
+            mFab.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -114,6 +128,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                         }
                     }
             );
+
+            //add FAB show/hide control
+            if (listView != null) {
+                listView.setOnScrollListener(this);
+            }
         }
 
         new Handler().post(new Runnable() {
@@ -283,7 +302,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         FragmentManager fmgr = getFragmentManager();
         //if (fmgr != null) {//update the fragment
         FragmentTransaction trans = fmgr.beginTransaction();
-        GameListFragment frag1 = (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
+        GameListFragment frag1 = (GameListFragment) fmgr.findFragmentById(R.id.main_content_frame);
         if (frag1 != null) {
             String y = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString() : null;
             String m = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItem().toString() : null;
@@ -298,6 +317,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         //}
 
         super.onLoading(false);
+
+        if (mFab != null) {//enable search
+            mFab.show();
+        }
     }
 
     @Override
@@ -316,7 +339,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         //if (fmgr != null) {
         FragmentTransaction trans = fmgr.beginTransaction();
         GameListFragment frag1 =
-                (GameListFragment) fmgr.findFragmentById(R.id.content_frame);
+                (GameListFragment) fmgr.findFragmentById(R.id.main_content_frame);
         if (frag1 != null) {
             frag1.setListShown(is_load);
         }
@@ -335,6 +358,17 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 //            mFavTeams.setEnabled(!is_load);
 //        }
         super.onLoading(is_load);
+
+        if (mFab != null) {
+            if (is_load) {
+                mFab.hide();
+            } else {
+                mFab.show();
+            }
+        }
+        if (getProgressText() != null) {
+            getProgressText().setVisibility(View.GONE);
+        }
     }
 
     private void sendTrackerException() {
@@ -477,7 +511,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void showFavTeamsDialog() {
-        Log.d(TAG, "show fav teams dialog");
+        //Log.d(TAG, "show fav teams dialog");
         new MultiChoiceListDialogFragment(getActivity(),
                 new MultiChoiceListDialogFragment.OnClickListener() {
                     @Override
@@ -497,4 +531,40 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             mFavTeams.setText(PreferenceUtils.getFavoriteTeamSummary(getActivity()));
         }
     }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            if (mFab != null) {
+                mFab.show();
+            }
+        } else if (mFab != null && mFab.isShown()) {
+            mFab.hide();
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
+                         int totalItemCount) {
+        //TODO: auto generated section
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        if (view != null) {
+            Game game = (Game) view.getTag();
+            if (mFirebaseAnalytics != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
+                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
+                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
+                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
+            }
+            Utils.startGameActivity(getActivity(), game);
+        }
+    }
+
 }
