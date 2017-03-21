@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.2'
 
     defaultConfig {
-        applicationId "dolphin.android.apps.CpblCalendar"
+        applicationId "dolphin.android.apps.CpblCalendar3"
 //        minSdkVersion 9
 //        targetSdkVersion 23
         resConfigs /*"zh",*/ "zh_TW"
@@ -29,9 +29,9 @@ android {
         }
         design {
             minSdkVersion 16
-            targetSdkVersion 23
+            targetSdkVersion 25
             versionName '3.0.0'
-            versionCode 1001
+            versionCode 1002
         }
 //        dump {
 //            minSdkVersion 9
