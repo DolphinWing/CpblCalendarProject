@@ -107,7 +107,7 @@
     <!-- download message -->
     <string name="title_download">載入中</string>
     <string name="title_download_delay_games">更新補賽資料中</string>
-    <string name="title_download_from_cpbl">自 CPBL 官網下載中 %1$04d/%2$02d</string>
+    <string name="title_download_from_cpbl">賽程下載中 %1$04d/%2$02d</string>
     <string name="title_download_from_zxc22">自 zxc22.idv.tw 下載中 %1$04d/%2$02d</string>
     <string name="title_download_from_cache">快取 %1$04d/%2$02d 載入中</string>
     <string name="title_download_complete">資料下載完成，解析中</string>
@@ -136,6 +136,6 @@
     <string name="action_show_game_info">顯示球賽資訊</string>
     <string name="action_add_to_calendar">加入行事曆</string>
     <string name="action_show_field_info">顯示球場資訊</string>
-    <string name="action_navigate_to_field">導航至球場</string>
+    <string name="action_add_to_notification">加入提醒</string>
 
 </resources>

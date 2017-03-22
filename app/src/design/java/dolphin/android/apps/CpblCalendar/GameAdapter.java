@@ -134,7 +134,7 @@ public class GameAdapter extends BaseGameAdapter {
 
     @Override
     protected boolean supportLongName(Game game) {
-        return true;//always long name
+        return getContext().getResources().getBoolean(R.bool.config_support_long_name);
     }
 
     @Override

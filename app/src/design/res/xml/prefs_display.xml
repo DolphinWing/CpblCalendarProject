@@ -12,13 +12,6 @@
             android:summaryOff="@string/title_select_upcoming_off"
             android:defaultValue="@bool/def_upcoming_game" />
         <CheckBoxPreference
-            android:key="team_logo"
-            android:title="@string/title_show_team_logo"
-            android:summaryOn="@string/title_show_team_logo_on"
-            android:summaryOff="@string/title_show_team_logo_off"
-            android:enabled="false"
-            android:defaultValue="@bool/def_team_logo" />
-        <CheckBoxPreference
             android:key="highlight_win"
             android:title="@string/title_highlight_win"
             android:summaryOn="@string/title_highlight_win_on"
