@@ -144,6 +144,7 @@
         <item name="android:gravity">center_vertical|left</item>
         <item name="android:text">@string/title_game_field</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:lines">1</item>
     </style>
 
     <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.Match.Extra">

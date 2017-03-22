@@ -113,6 +113,7 @@
     <!-- Teams -->
     <string name="team_elephants">兄弟象</string>
     <string name="team_elephants_short">象</string>
+    <string name="team_elephants_short2">兄弟</string>
     <string name="team_ct_elephants">中信兄弟</string>
     <string name="team_ct_elephants_short">象</string>
     <string name="team_lions">統一獅</string>
@@ -126,36 +127,48 @@
     <string name="team_lamigo_monkeys_short2">猿</string>
     <string name="team_sinon_bulls">興農牛</string>
     <string name="team_sinon_bulls_short">牛</string>
+    <string name="team_sinon_bulls_short2">興農</string>
     <string name="team_lanew_bears">La New熊</string>
     <string name="team_lanew_bears_short">熊</string>
+    <string name="team_lanew_bears_short2">La New</string>
     <string name="team_first_kinkon">第一金剛</string>
     <string name="team_first_kinkon_short">金剛</string>
     <string name="team_first_kinkon_short2">金</string>
+    <string name="team_first_kinkon_short3">第一</string>
     <string name="team_jungo_bears">俊國熊</string>
     <string name="team_jungo_bears_short">熊</string>
+    <string name="team_jungo_bears_short2">俊國</string>
     <string name="team_eagles">時報鷹</string>
     <string name="team_eagles_short">鷹</string>
+    <string name="team_eagles_short2">時報</string>
     <string name="team_tigers">三商虎</string>
     <string name="team_tigers_short">虎</string>
+    <string name="team_tigers_short2">三商</string>
     <string name="team_dragons">味全龍</string>
     <string name="team_dragons_short">龍</string>
+    <string name="team_dragons_short2">味全</string>
     <string name="team_makoto_cobras">誠泰COBRAS</string>
     <string name="team_makoto_cobras_short">COBRAS</string>
     <string name="team_makoto_cobras_short2">蛇</string>
     <string name="team_makoto_sun">誠泰太陽</string>
     <string name="team_makoto_sun_short">太陽</string>
+    <string name="team_makoto_sun_short2">誠泰</string>
     <string name="team_media_t_rex">米迪亞暴龍</string>
     <string name="team_media_t_rex_short">暴龍</string>
     <string name="team_media_t_rex_short2">暴</string>
+    <string name="team_media_t_rex_short3">米迪亞</string>
     <string name="team_ct_whales">中信鯨</string>
     <string name="team_ct_whales_short">鯨</string>
+    <string name="team_ct_whales_short2">中信</string>
     <string name="team_kg_whales">和信鯨</string>
     <string name="team_kg_whales_short">鯨</string>
+    <string name="team_kg_whales_short2">和信</string>
     <!-- 2014-03-15++ different source -->
     <string name="team_lamigo_monkeys_short3">Lamigo</string>
     <string name="team_eda_rhinos_short2">義大</string>
     <string name="team_711_lions_short2">統一</string>
     <string name="team_ct_elephants_short2">中信兄弟</string>
+    <string name="team_ct_elephants_short3">中信</string>
     <!-- 2015-07-29++ ALL STAR GAMES -->
     <string name="team_all_star_red">明星紅</string>
     <string name="team_all_star_white">明星白</string>
@@ -166,7 +179,7 @@
     <!-- 2016-03-27++ warm up games -->
     <string name="team_south_korea">韓國隊</string>
     <string name="team_chinese_taipei">中華隊</string>
-    <!-- 2017-03-16++  -->
+    <!-- 2017-03-16++ -->
     <string name="team_south_japan">日本隊</string>
     <string name="team_fubon_guardians">富邦悍將</string>
     <string name="team_fubon_guardians_short">富邦</string>

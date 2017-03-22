@@ -15,6 +15,7 @@
 -->
 
 <resources>
+    <bool name="config_support_long_name">false</bool>
     <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
     <dimen name="navigation_drawer_width">320dp</dimen>
     <dimen name="navigation_drawer_padding">16dp</dimen>

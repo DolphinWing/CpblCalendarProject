@@ -373,6 +373,70 @@ public class Team {
         return context.getString(string_id);
     }
 
+    public static String getShortName(Context context, int id) {
+        int string_id = R.string.empty_data;
+        switch (id) {
+            case ID_ELEPHANTS:
+                string_id = R.string.team_elephants_short2;
+                break;
+            case ID_UNI_LIONS:
+                string_id = R.string.team_711_lions_short2;
+                break;
+            case ID_UNI_711_LIONS:
+                string_id = R.string.team_711_lions_short2;
+                break;
+            case ID_EDA_RHINOS:
+                string_id = R.string.team_eda_rhinos_short2;
+                break;
+            case ID_W_DRAGONS:
+                string_id = R.string.team_dragons_short2;
+                break;
+            case ID_SS_TIGERS:
+                string_id = R.string.team_tigers_short2;
+                break;
+            case ID_JUNGO_BEARS:
+                string_id = R.string.team_jungo_bears_short2;
+                break;
+            case ID_SINON_BULLS:
+                string_id = R.string.team_sinon_bulls_short2;
+                break;
+            case ID_TIME_EAGLES:
+                string_id = R.string.team_eagles_short2;
+                break;
+            case ID_CT_WHALES:
+                string_id = R.string.team_ct_whales_short2;
+                break;
+            case ID_KG_WHALES:
+                string_id = R.string.team_kg_whales_short2;
+                break;
+            case ID_MKT_SUNS:
+            case ID_MKT_COBRAS:
+                string_id = R.string.team_makoto_sun_short2;
+                break;
+            case ID_MEDIA_T_REX:
+                string_id = R.string.team_media_t_rex_short3;
+                break;
+            case ID_FIRST_KINGO:
+                string_id = R.string.team_first_kinkon_short3;
+                break;
+            case ID_LANEW_BEARS:
+                string_id = R.string.team_lanew_bears_short2;
+                break;
+            case ID_LAMIGO_MONKEYS:
+                string_id = R.string.team_lamigo_monkeys_short3;
+                break;
+            case ID_CT_ELEPHANTS:
+                string_id = R.string.team_ct_elephants_short3;
+                break;
+            case ID_FUBON_GUARDIANS:
+                string_id = R.string.team_fubon_guardians_short;
+                break;
+            default:
+                return getTeamNameShort(context, id);
+        }
+        return context.getString(string_id);
+    }
+
     private final int mId;
     private String mName;//[66]++
     private final Context mContext;
@@ -414,8 +478,8 @@ public class Team {
      */
     public String getShortName() {
         if (getId() != ID_UNKNOWN)
-            return getTeamNameShort(mContext, mId);
-        return mName;
+            return getShortName(mContext, mId);
+        return getName();
     }
 
     /**

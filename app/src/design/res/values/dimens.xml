@@ -16,6 +16,7 @@
 
 <resources>
     <bool name="config_tablet">false</bool>
+    <bool name="config_support_long_name">false</bool>
     <!-- paddings -->
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_medium">8dp</dimen>

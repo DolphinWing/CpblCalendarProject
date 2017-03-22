@@ -52,7 +52,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  */
 public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback,
         ActivityCompat.OnRequestPermissionsResultCallback, AbsListView.OnScrollListener,
-        AdapterView.OnItemClickListener {
+        AdapterView.OnItemClickListener, View.OnClickListener {
 
     private DrawerLayout mDrawerLayout;
 
@@ -151,11 +151,27 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
                             && motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        setBottomSheetVisibility(false);
+                        setBottomSheetVisibility(false, null);
                     }
                     return true;//do nothing
                 }
             });
+        }
+        View option1 = bottomSheet.findViewById(R.id.bottom_sheet_option1);
+        if (option1 != null) {
+            option1.setOnClickListener(this);
+        }
+        View option2 = bottomSheet.findViewById(R.id.bottom_sheet_option2);
+        if (option2 != null) {
+            option2.setOnClickListener(this);
+        }
+        View option3 = bottomSheet.findViewById(R.id.bottom_sheet_option3);
+        if (option3 != null) {
+            option3.setOnClickListener(this);
+        }
+        View option4 = bottomSheet.findViewById(R.id.bottom_sheet_option4);
+        if (option4 != null) {
+            option4.setOnClickListener(this);
         }
 
         new Handler().post(new Runnable() {
@@ -513,6 +529,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 return;//[146]++
             }
         }
+        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            setBottomSheetVisibility(false, null);
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -611,10 +631,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 //            }
 //            Utils.startGameActivity(getActivity(), game);
 //        }
-        setBottomSheetVisibility(true);
+        setBottomSheetVisibility(true, (Game) view.getTag());
     }
 
-    private void setBottomSheetVisibility(boolean visible) {
+    private void setBottomSheetVisibility(boolean visible, Game game) {
         if (mBottomSheetBackground != null) {//use progress background
             final boolean isVisible = visible;
             float from = visible ? 0.0f : 1.0f;
@@ -663,5 +683,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 mFab.show();
             }
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        setBottomSheetVisibility(false, null);
     }
 }

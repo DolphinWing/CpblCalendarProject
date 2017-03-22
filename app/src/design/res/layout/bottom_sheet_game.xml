@@ -15,7 +15,7 @@
 
     <LinearLayout
         android:id="@+id/bottom_sheet"
-        android:layout_width="200dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:background="@android:color/white"
@@ -24,6 +24,7 @@
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
         <TextView
+            android:id="@+id/bottom_sheet_option1"
             style="@style/Theme.Holo_green.BottomSheet.Option"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,6 +33,7 @@
             android:text="@string/action_show_game_info" />
 
         <TextView
+            android:id="@+id/bottom_sheet_option2"
             style="@style/Theme.Holo_green.BottomSheet.Option"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,20 +42,22 @@
             android:text="@string/action_add_to_calendar" />
 
         <TextView
+            android:id="@+id/bottom_sheet_option3"
+            style="@style/Theme.Holo_green.BottomSheet.Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/selectable_item_background"
+            android:text="@string/action_add_to_notification" />
+
+        <TextView
+            android:id="@+id/bottom_sheet_option4"
             style="@style/Theme.Holo_green.BottomSheet.Option"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:background="@drawable/selectable_item_background"
             android:text="@string/action_show_field_info" />
-
-        <TextView
-            style="@style/Theme.Holo_green.BottomSheet.Option"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:background="@drawable/selectable_item_background"
-            android:text="@string/action_navigate_to_field" />
     </LinearLayout>
 
 </merge>
