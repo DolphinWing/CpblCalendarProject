@@ -9,18 +9,21 @@
 
     <FrameLayout
         android:id="@+id/item_control_pane"
-        android:layout_width="24dp"
-        android:layout_height="60dp"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:minHeight="96dp">
 
         <ImageView
             android:id="@android:id/icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_gravity="top"
+            android:layout_gravity="bottom|left"
+            android:background="@drawable/selectable_item_background"
             android:contentDescription="@null"
-            android:src="@drawable/ic_action_more_vert"
+            android:src="@drawable/ic_action_more_horiz"
+            android:padding="4dp"
             android:visibility="visible" />
 
     </FrameLayout>
@@ -128,10 +131,11 @@
         android:layout_above="@+id/more_info"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1"
-        android:layout_marginLeft="24dp"
+        android:layout_marginLeft="32dp"
         android:layout_toLeftOf="@+id/textView3"
         android:focusable="false"
-        android:focusableInTouchMode="false">
+        android:focusableInTouchMode="false"
+        android:minHeight="80dp">
 
         <ImageView
             android:id="@android:id/icon1"
@@ -159,7 +163,8 @@
         android:layout_toLeftOf="@+id/item_control_pane"
         android:layout_toRightOf="@+id/textView4"
         android:focusable="false"
-        android:focusableInTouchMode="false">
+        android:focusableInTouchMode="false"
+        android:minHeight="80dp">
 
         <ImageView
             android:id="@android:id/icon2"

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -37,13 +38,16 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.util.PackageUtils;
 
 /**
  * Created by dolphin on 2013/6/3.
@@ -53,6 +57,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 public class CalendarForPhoneActivity extends CalendarActivity implements OnQueryCallback,
         ActivityCompat.OnRequestPermissionsResultCallback, AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener, View.OnClickListener {
+    private boolean ENABLE_BOTTOM_SHEET = false;
 
     private DrawerLayout mDrawerLayout;
 
@@ -63,6 +68,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     private FloatingActionButton mFab;
     private BottomSheetBehavior mBottomSheetBehavior;
     private View mBottomSheetBackground;
+    private View mBottomSheetOption1, mBottomSheetOption2;
+    private View mBottomSheetOption3, mBottomSheetOption4;
 
     private AdView mAdView;
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -71,6 +78,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_phone);
+
+        ENABLE_BOTTOM_SHEET = FirebaseRemoteConfig.getInstance()
+                .getBoolean("enable_bottom_sheet_options");
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
@@ -117,7 +127,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 .findFragmentById(R.id.main_content_frame);
         ListView listView = gameListFragment.getListView();
         if (listView != null) {
-            listView.setOnItemClickListener(this);
+            if (ENABLE_BOTTOM_SHEET) {
+                gameListFragment.setOnOptionClickListener(new GameAdapter.OnOptionClickListener() {
+                    @Override
+                    public void onOptionClicked(Game game) {
+                        setBottomSheetVisibility(true, game);
+                    }
+                });
+            } else {
+                listView.setOnItemClickListener(this);
+            }
         }
 
         mFab = (FloatingActionButton) findViewById(R.id.button_floating_action);
@@ -140,38 +159,42 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
 
         View bottomSheet = findViewById(R.id.bottom_sheet);
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        mBottomSheetBehavior.setPeekHeight(0);
-        mBottomSheetBehavior.setHideable(true);
-        //override parent class
-        mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
-        if (mBottomSheetBackground != null) {
-            mBottomSheetBackground.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
-                            && motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        setBottomSheetVisibility(false, null);
+        if (ENABLE_BOTTOM_SHEET && bottomSheet != null) {
+            mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+            mBottomSheetBehavior.setPeekHeight(0);
+            mBottomSheetBehavior.setHideable(true);
+            //override parent class
+            mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
+            if (mBottomSheetBackground != null) {
+                mBottomSheetBackground.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
+                                && motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                            setBottomSheetVisibility(false, null);
+                        }
+                        return true;//do nothing
                     }
-                    return true;//do nothing
-                }
-            });
-        }
-        View option1 = bottomSheet.findViewById(R.id.bottom_sheet_option1);
-        if (option1 != null) {
-            option1.setOnClickListener(this);
-        }
-        View option2 = bottomSheet.findViewById(R.id.bottom_sheet_option2);
-        if (option2 != null) {
-            option2.setOnClickListener(this);
-        }
-        View option3 = bottomSheet.findViewById(R.id.bottom_sheet_option3);
-        if (option3 != null) {
-            option3.setOnClickListener(this);
-        }
-        View option4 = bottomSheet.findViewById(R.id.bottom_sheet_option4);
-        if (option4 != null) {
-            option4.setOnClickListener(this);
+                });
+            }
+            mBottomSheetOption1 = bottomSheet.findViewById(R.id.bottom_sheet_option1);
+            if (mBottomSheetOption1 != null) {
+                mBottomSheetOption1.setOnClickListener(this);
+            }
+            mBottomSheetOption2 = bottomSheet.findViewById(R.id.bottom_sheet_option2);
+            if (mBottomSheetOption2 != null) {
+                mBottomSheetOption2.setOnClickListener(this);
+            }
+            mBottomSheetOption3 = bottomSheet.findViewById(R.id.bottom_sheet_option3);
+            if (mBottomSheetOption3 != null) {
+                mBottomSheetOption3.setOnClickListener(this);
+            }
+            mBottomSheetOption4 = bottomSheet.findViewById(R.id.bottom_sheet_option4);
+            if (mBottomSheetOption4 != null) {
+                mBottomSheetOption4.setOnClickListener(this);
+            }
+        } else if (bottomSheet != null) {//don't show
+            bottomSheet.setVisibility(View.GONE);
         }
 
         new Handler().post(new Runnable() {
@@ -365,17 +388,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         //}
 
         super.onLoading(false);
-
-//        if (mBottomSheetBackground != null) {
-//            mBottomSheetBackground.setVisibility(View.GONE);
-//        }
-        if (mFab != null) {//enable search
-            mFab.show();
-        }
-        if (mSnackbar != null) {//hide loading text
-            mSnackbar.dismiss();
-            mSnackbar = null;
-        }
+        doOnLoading2017(false);
     }
 
     @Override
@@ -413,21 +426,24 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 //            mFavTeams.setEnabled(!is_load);
 //        }
         super.onLoading(is_load);
+        if (getProgressText() != null) {
+            getProgressText().setVisibility(View.GONE);
+        }
+        doOnLoading2017(is_load);
+    }
 
+    private void doOnLoading2017(boolean visible) {
 //        if (mBottomSheetBackground != null) {
 //            mBottomSheetBackground.setVisibility(is_load ? View.VISIBLE : View.GONE);
 //        }
         if (mFab != null) {
-            if (is_load) {
+            if (visible) {
                 mFab.hide();
             } else {
                 mFab.show();
             }
         }
-        if (getProgressText() != null) {
-            getProgressText().setVisibility(View.GONE);
-        }
-        if (mSnackbar != null && !is_load) {
+        if (mSnackbar != null && !visible) {
             mSnackbar.dismiss();
             mSnackbar = null;
         }
@@ -515,10 +531,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
      */
     @Override
     public void onDestroy() {
+        super.onDestroy();
         if (mAdView != null) {
             mAdView.destroy();
         }
-        super.onDestroy();
     }
 
     @Override
@@ -617,21 +633,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//        if (view != null) {
-//            Game game = (Game) view.getTag();
-//            if (mFirebaseAnalytics != null) {
-//                Bundle bundle = new Bundle();
-//                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
-//                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
-//                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
-//                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
-//                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
-//                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
-//                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
-//            }
-//            Utils.startGameActivity(getActivity(), game);
-//        }
-        setBottomSheetVisibility(true, (Game) view.getTag());
+        if (ENABLE_BOTTOM_SHEET) {//more options
+            setBottomSheetVisibility(true, (Game) view.getTag());
+        } else if (view != null) {//old method
+            showGameActivity((Game) view.getTag());
+        }
     }
 
     private void setBottomSheetVisibility(boolean visible, Game game) {
@@ -683,10 +689,106 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 mFab.show();
             }
         }
+
+//        int accountHeight = 0;//accountTextView.getHeight();
+        if (game != null) {//check option visibility
+            if (mBottomSheetOption1 != null) {
+                if (game.canOpenUrl()) {
+                    mBottomSheetOption1.setVisibility(View.VISIBLE);
+                    mBottomSheetOption1.setEnabled(true);
+                } else {
+//                    accountHeight += mBottomSheetOption1.getHeight();
+//                    mBottomSheetOption1.setVisibility(View.GONE);
+                    mBottomSheetOption1.setEnabled(false);
+                }
+                mBottomSheetOption1.setTag(game);
+            }
+            if (mBottomSheetOption2 != null) {
+                if (game.IsLive || game.IsFinal) {
+//                    accountHeight += mBottomSheetOption2.getHeight();
+//                    mBottomSheetOption2.setVisibility(View.GONE);
+                    mBottomSheetOption2.setEnabled(false);
+                } else {
+                    mBottomSheetOption2.setVisibility(View.VISIBLE);
+                    mBottomSheetOption2.setEnabled(true);
+                }
+                mBottomSheetOption2.setTag(game);
+            }
+            if (mBottomSheetOption3 != null) {
+                if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
+                    mBottomSheetOption3.setVisibility(View.VISIBLE);
+                    mBottomSheetOption3.setEnabled(true);
+                } else {
+//                    accountHeight += mBottomSheetOption3.getHeight();
+//                    mBottomSheetOption3.setVisibility(View.GONE);
+                    mBottomSheetOption3.setEnabled(false);
+                }
+                mBottomSheetOption3.setTag(game);
+            }
+            if (mBottomSheetOption4 != null) {
+                mBottomSheetOption4.setTag(game);
+            }
+        }
+//        if (visible) {
+//            //http://stackoverflow.com/a/35804525
+//            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+//            View bottomSheet = findViewById(R.id.bottom_sheet);
+//            bottomSheet.getLayoutParams().height = bottomSheet.getHeight() - accountHeight;
+//            bottomSheet.requestLayout();
+//            mBottomSheetBehavior.onLayoutChild(coordinatorLayout, bottomSheet,
+//                    ViewCompat.LAYOUT_DIRECTION_LTR);
+//        }
+    }
+
+    private void showGameActivity(Game game) {
+        if (mFirebaseAnalytics != null) {//log to Firebase Analytics
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
+                    "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
+                    "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
+            bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
+        }
+        Utils.startGameActivity(getActivity(), game);
     }
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.bottom_sheet_option1:
+                showGameActivity((Game) view.getTag());
+                break;
+            case R.id.bottom_sheet_option2:
+                addToCalendar((Game) view.getTag());
+                break;
+            case R.id.bottom_sheet_option3:
+                break;
+            case R.id.bottom_sheet_option4:
+                break;
+        }
         setBottomSheetVisibility(false, null);
+    }
+
+    //Android Essentials: Adding Events to the User’s Calendar
+    //http://goo.gl/jyT75l
+    private void addToCalendar(Game game) {
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setData(CalendarContract.Events.CONTENT_URI);
+        calIntent.setType("vnd.android.cursor.item/event");
+        String contentText = getString(R.string.msg_content_text,
+                game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
+        calIntent.putExtra(CalendarContract.Events.TITLE, contentText);
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.Field);
+        //calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "description");
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+        long startTime = game.StartTime.getTimeInMillis();
+        long scheduledEndTime = (long) (startTime + 3.5 * 60 * 60 * 1000);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, scheduledEndTime);
+        if (PackageUtils.isCallable(getActivity(), calIntent)) {
+            startActivity(calIntent);
+        }
     }
 }

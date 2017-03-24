@@ -100,10 +100,13 @@ public class Game {
         return getDisplayDate(StartTime);
     }
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     /**
      * convert from string to Game object
+     *
+     * @param context Context
+     * @param str     to json str
      */
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public static Game fromPrefString(Context context, String str) {
         String[] gInfo = str.split(";");
         //Log.d("dolphin", "size: " + gInfo.length);
@@ -122,10 +125,10 @@ public class Game {
     }
 
     //http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/TypeAdapter.html
-    public static class GameTypeAdapter extends TypeAdapter<Game> {
+    private static class GameTypeAdapter extends TypeAdapter<Game> {
         private final Context mContext;
 
-        public GameTypeAdapter(Context context) {
+        GameTypeAdapter(Context context) {
             super();
             mContext = context;
         }
@@ -140,7 +143,7 @@ public class Game {
             writeOneGame(jsonWriter, game);
         }
 
-        public static void writeOneGame(JsonWriter jsonWriter, Game game) throws IOException {
+        static void writeOneGame(JsonWriter jsonWriter, Game game) throws IOException {
             jsonWriter.beginObject();
 
             jsonWriter.name("Id").value(game.Id);
@@ -187,48 +190,64 @@ public class Game {
             return readOneGame(mContext, jsonReader);
         }
 
-        public static Game readOneGame(Context context, JsonReader jsonReader) throws IOException {
+        static Game readOneGame(Context context, JsonReader jsonReader) throws IOException {
             Game game = new Game();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
                 String name = jsonReader.nextName();
-                if (name.equals("Id")) {
-                    game.Id = jsonReader.nextInt();
-                } else if (name.equals("Kind")) {
-                    game.Kind = jsonReader.nextString();
-                } else if (name.equals("StartTime")) {
-                    game.StartTime = CpblCalendarHelper.getNowTime();
-                    game.StartTime.setTimeInMillis(jsonReader.nextLong());
-                } else if (name.equals("Source")) {
-                    game.Source = jsonReader.nextInt();
-                } else if (name.equals("Field")) {
-                    game.Field = jsonReader.nextString();
-                } else if (name.equals("AwayTeamId")) {
-                    game.AwayTeam = new Team(context, jsonReader.nextInt());
-                } else if (name.equals("HomeTeamId")) {
-                    game.HomeTeam = new Team(context, jsonReader.nextInt());
-                } else if (name.equals("IsFinal")) {
-                    game.IsFinal = jsonReader.nextBoolean();
-                } else if (name.equals("AwayScore")) {
-                    game.AwayScore = jsonReader.nextInt();
-                } else if (name.equals("HomeScore")) {
-                    game.HomeScore = jsonReader.nextInt();
-                } else if (name.equals("People")) {
-                    game.People = jsonReader.nextInt();
-                } else if (name.equals("Url")) {
-                    game.Url = jsonReader.nextString();
-                } else if (name.equals("IsDelay")) {
-                    game.IsDelay = jsonReader.nextBoolean();
-                } else if (name.equals("Kind")) {
-                    game.Kind = jsonReader.nextString();
-                } else if (name.equals("Channel")) {
-                    game.Channel = jsonReader.nextString();
-                } else if (name.equals("DelayMessage")) {
-                    game.DelayMessage = jsonReader.nextString();
-                } else if (name.equals("HomeTeamName")) {//this may override the HomeTeam
-                    game.HomeTeam = new Team(context, jsonReader.nextString(), 2014);
-                } else if (name.equals("AwayTeamName")) {//this may override the AwayTeam
-                    game.AwayTeam = new Team(context, jsonReader.nextString(), 2014);
+                switch (name) {
+                    case "Id":
+                        game.Id = jsonReader.nextInt();
+                        break;
+                    case "Kind":
+                        game.Kind = jsonReader.nextString();
+                        break;
+                    case "StartTime":
+                        game.StartTime = CpblCalendarHelper.getNowTime();
+                        game.StartTime.setTimeInMillis(jsonReader.nextLong());
+                        break;
+                    case "Source":
+                        game.Source = jsonReader.nextInt();
+                        break;
+                    case "Field":
+                        game.Field = jsonReader.nextString();
+                        break;
+                    case "AwayTeamId":
+                        game.AwayTeam = new Team(context, jsonReader.nextInt());
+                        break;
+                    case "HomeTeamId":
+                        game.HomeTeam = new Team(context, jsonReader.nextInt());
+                        break;
+                    case "IsFinal":
+                        game.IsFinal = jsonReader.nextBoolean();
+                        break;
+                    case "AwayScore":
+                        game.AwayScore = jsonReader.nextInt();
+                        break;
+                    case "HomeScore":
+                        game.HomeScore = jsonReader.nextInt();
+                        break;
+                    case "People":
+                        game.People = jsonReader.nextInt();
+                        break;
+                    case "Url":
+                        game.Url = jsonReader.nextString();
+                        break;
+                    case "IsDelay":
+                        game.IsDelay = jsonReader.nextBoolean();
+                        break;
+                    case "Channel":
+                        game.Channel = jsonReader.nextString();
+                        break;
+                    case "DelayMessage":
+                        game.DelayMessage = jsonReader.nextString();
+                        break;
+                    case "HomeTeamName": //this may override the HomeTeam
+                        game.HomeTeam = new Team(context, jsonReader.nextString(), 2014);
+                        break;
+                    case "AwayTeamName": //this may override the AwayTeam
+                        game.AwayTeam = new Team(context, jsonReader.nextString(), 2014);
+                        break;
                 }
             }
             jsonReader.endObject();
@@ -251,10 +270,10 @@ public class Game {
         return gson.fromJson(json, type);
     }
 
-    public static class GameListTypeAdapter extends TypeAdapter<ArrayList<Game>> {
+    private static class GameListTypeAdapter extends TypeAdapter<ArrayList<Game>> {
         private final Context mContext;
 
-        public GameListTypeAdapter(Context context) {
+        GameListTypeAdapter(Context context) {
             super();
             mContext = context;
         }
@@ -290,18 +309,24 @@ public class Game {
         }
     }
 
-    public static String listToJson(Context context, ArrayList<Game> games) {
+    static String listToJson(Context context, ArrayList<Game> games) {
         //Type type = new TypeToken<List<Game>>() {
         //}.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(ArrayList.class, new GameListTypeAdapter(context)).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(ArrayList.class,
+                new GameListTypeAdapter(context)).create();
         //Log.d(TAG, gson.toJson(games));
         return gson.toJson(games);
     }
 
-    public static ArrayList<Game> listFromJson(Context context, String json) {
+    static ArrayList<Game> listFromJson(Context context, String json) {
         Type type = new TypeToken<List<Game>>() {
         }.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(type, new GameListTypeAdapter(context)).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(type,
+                new GameListTypeAdapter(context)).create();
         return gson.fromJson(json, type);
+    }
+
+    public boolean canOpenUrl() {
+        return !(StartTime.after(CpblCalendarHelper.getNowTime()) && Url.contains("box.html"));
     }
 }

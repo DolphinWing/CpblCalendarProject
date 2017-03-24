@@ -36,6 +36,12 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
+    private GameAdapter.OnOptionClickListener mOnOptionClickListener;
+
+    public void setOnOptionClickListener(GameAdapter.OnOptionClickListener listener) {
+        mOnOptionClickListener = listener;
+    }
+
     /**
      * update the adapter to ListView
      *
@@ -47,8 +53,12 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         //this.setListShown(false);
         //Log.d(TAG, String.format("updateAdapter gameArrayList.size = %d",
         //        ((gameArrayList != null) ? gameArrayList.size() : 0)));
-        this.setListAdapter(new GameAdapter(activity, gameArrayList,
-                (CpblApplication) getActivity().getApplication()));
+        GameAdapter adapter = new GameAdapter(activity, gameArrayList,
+                (CpblApplication) getActivity().getApplication());
+        if (mOnOptionClickListener != null) {//set listener
+            adapter.setOnOptionclickListener(mOnOptionClickListener);
+        }
+        this.setListAdapter(adapter);
         //http://stackoverflow.com/a/5888331
         if (PreferenceUtils.isUpComingOn(activity) && gameArrayList != null) {
             try {//[8]++ try to scroll to not playing game at beginning

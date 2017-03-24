@@ -9,5 +9,9 @@
         <key>enable_delay_games_from_drive</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>enable_bottom_sheet_options</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>
 <!-- END xml_defaults -->
