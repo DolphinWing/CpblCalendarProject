@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,22 +34,43 @@ import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
 public class GameAdapter extends BaseGameAdapter {
     private final CpblApplication mApplication;
     private final TeamHelper mTeamHelper;
+    private boolean ENABLE_BOTTOM_SHEET = false;
+    private OnOptionClickListener mListener;
+
+    public interface OnOptionClickListener {
+        void onOptionClicked(Game game);
+    }
 
     public GameAdapter(Context context, List<Game> objects, CpblApplication application) {
         super(context, objects);
         mApplication = application;
         mTeamHelper = new TeamHelper(mApplication);
+        ENABLE_BOTTOM_SHEET = FirebaseRemoteConfig.getInstance()
+                .getBoolean("enable_bottom_sheet_options");
+    }
+
+    public void setOnOptionclickListener(OnOptionClickListener listener) {
+        mListener = listener;
     }
 
     @Override
     protected void decorate(View convertView, Game game) {
         super.decorate(convertView, game);
 
-//        //more action
-//        ImageView moreAction = (ImageView) convertView.findViewById(android.R.id.icon);
-//        if (moreAction != null) {
-//            moreAction.setVisibility(View.INVISIBLE);
-//        }
+        //more action
+        ImageView moreAction = (ImageView) convertView.findViewById(android.R.id.icon);
+        if (moreAction != null) {
+            moreAction.setVisibility(ENABLE_BOTTOM_SHEET ? View.VISIBLE : View.INVISIBLE);
+            moreAction.setTag(game);//for listener
+            moreAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onOptionClicked((Game) view.getTag());
+                    }
+                }
+            });
+        }
 
         TextView timeText = (TextView) convertView.findViewById(R.id.textView1);
         TextView liveText = (TextView) convertView.findViewById(R.id.textView10);
@@ -55,12 +78,21 @@ public class GameAdapter extends BaseGameAdapter {
             String date_str = getGameDateStr(game);
             if (game.IsLive) {
                 if (liveText != null) {//use live text field in design flavor
-                    liveText.setText(Html.fromHtml(game.LiveMessage.replace("&nbsp;&nbsp;", "<br>")));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        liveText.setText(Html.fromHtml(game.LiveMessage.replace("&nbsp;&nbsp;",
+                                "<br>"), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                    } else {
+                        liveText.setText(Html.fromHtml(game.LiveMessage.replace("&nbsp;&nbsp;", "<br>")));
+                    }
                     liveText.setVisibility(View.INVISIBLE);
                     timeText.setText(date_str);
                 } else {
                     date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
-                    timeText.setText(Html.fromHtml(date_str));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        timeText.setText(Html.fromHtml(date_str, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                    } else {
+                        timeText.setText(Html.fromHtml(date_str));
+                    }
                 }
             } else {
                 if (liveText != null) {//don't show

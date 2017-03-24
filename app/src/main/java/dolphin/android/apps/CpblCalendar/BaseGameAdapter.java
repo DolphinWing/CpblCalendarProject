@@ -2,8 +2,11 @@ package dolphin.android.apps.CpblCalendar;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -20,7 +23,6 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
-import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
@@ -132,11 +134,14 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         String date_str = getGameDateStr(game);
         if (game.IsLive) {//[181]++
             date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
-            tv1.setText(Html.fromHtml(date_str));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tv1.setText(Html.fromHtml(date_str, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                tv1.setText(Html.fromHtml(date_str));
+            }
         } else {
             tv1.setText(date_str);
         }
-
 
         //match up
         TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
@@ -159,12 +164,13 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv2.setText(bIsLongName ? game.AwayTeam.getName()
                     : game.AwayTeam.getShortName());
             tv2.setBackgroundResource(android.R.color.transparent);//reset back
+            //tv2.setBackgroundResource(android.R.color.holo_red_light);
             tv3.setText(String.valueOf(game.AwayScore));
             tv3.setBackgroundResource(android.R.color.transparent);//[45]++ reset back
         }
-        tv3.setTextColor(mContext.getResources().getColor(game.IsFinal || bLiveNow
-                ? android.R.color.primary_text_light
-                : android.R.color.secondary_text_light_nodisable));
+        tv3.setTextColor(ContextCompat.getColor(mContext,
+                game.IsFinal || bLiveNow ? android.R.color.primary_text_light
+                        : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
         //[87]dolphin++ CPBL_2013 source no score
         if (bNoScoreNoLive || (!game.IsFinal && !game.IsLive)) {
@@ -193,10 +199,11 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv5.setText(bIsLongName ? game.HomeTeam.getName()
                     : game.HomeTeam.getShortName());
             tv5.setBackgroundResource(android.R.color.transparent);//reset back
+            //tv5.setBackgroundResource(android.R.color.holo_red_light);
         }
-        tv4.setTextColor(mContext.getResources().getColor(game.IsFinal || bLiveNow
-                ? android.R.color.primary_text_light
-                : android.R.color.secondary_text_light_nodisable));
+        tv4.setTextColor(ContextCompat.getColor(mContext,
+                game.IsFinal || bLiveNow ? android.R.color.primary_text_light
+                        : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
         //[87]dolphin++ CPBL_2013 source no score
         if (bNoScoreNoLive || (!game.IsFinal && !game.IsLive)) {
@@ -213,8 +220,16 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 //        } else
         if (game.Channel != null) {
             tv6.setVisibility(View.VISIBLE);
-            tv6.setText(bLiveNow ? Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
-                    mContext.getString(R.string.title_live_now), game.Channel)) : game.Channel);
+            Spanned spanned;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                spanned = Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
+                        mContext.getString(R.string.title_live_now), game.Channel),
+                        Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL);
+            } else {
+                spanned = Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
+                        mContext.getString(R.string.title_live_now), game.Channel));
+            }
+            tv6.setText(bLiveNow ? spanned : game.Channel);
         } else {
             tv6.setVisibility(View.INVISIBLE);
         }
@@ -229,7 +244,11 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         //delay message
         TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
         if (game.DelayMessage != null && game.DelayMessage.length() > 0) {
-            tv8.setText(Html.fromHtml(game.DelayMessage));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tv8.setText(Html.fromHtml(game.DelayMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                tv8.setText(Html.fromHtml(game.DelayMessage));
+            }
             tv8.setVisibility(View.VISIBLE);
         } else {
             tv8.setVisibility(View.GONE);
@@ -243,12 +262,15 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
 
         //team logo
+        int year = game.StartTime.get(Calendar.YEAR);
         ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
-        ic1.setImageResource(game.AwayTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
+        ic1.setImageResource(game.AwayTeam.getLogo(year));
         ic1.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
+        //ic1.setBackgroundResource(android.R.color.holo_red_light);
         ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
-        ic2.setImageResource(game.HomeTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
+        ic2.setImageResource(game.HomeTeam.getLogo(year));
         ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
+        //ic2.setBackgroundResource(android.R.color.holo_red_light);
 
         //[23]dolphin++ add a background layer id
         View bg = convertView.findViewById(R.id.match_title);
