@@ -35,6 +35,18 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1005] @ 2017-03-27
+    update layout
+    fix no network may cause Firebase RemoteConfig crush
+    fix some possible crushes
+    update calendar event description
+    hide logo via preference
+
+[1004] @ 2017-03-24
+    add BottomSheet option control
+    add more option
+    fix HTC D626 dual sim matchup layout
+
 [1003] @ 2017-03-22
     change icon
     use short name for smaller screen

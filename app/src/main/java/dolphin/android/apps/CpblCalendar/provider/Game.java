@@ -30,7 +30,7 @@ public class Game {
     public int AwayScore = 0;
 
     public String Field = null;
-    //public int FieldId;
+    public int FieldId;
 
     public Calendar StartTime;
     public boolean IsFinal = false;
@@ -151,15 +151,18 @@ public class Game {
             jsonWriter.name("StartTime").value(game.StartTime.getTimeInMillis());
 
             jsonWriter.name("AwayTeamId").value(game.AwayTeam.getId());
-            if (game.AwayTeam.getId() == Team.ID_UNKNOWN)
+            if (game.AwayTeam.getId() == Team.ID_UNKNOWN) {
                 jsonWriter.name("AwayTeamName").value(game.AwayTeam.getName());
+            }
             jsonWriter.name("HomeTeamId").value(game.HomeTeam.getId());
-            if (game.HomeTeam.getId() == Team.ID_UNKNOWN)
+            if (game.HomeTeam.getId() == Team.ID_UNKNOWN) {
                 jsonWriter.name("HomeTeamName").value(game.HomeTeam.getName());
+            }
 
             jsonWriter.name("Source").value(game.Source);
-            if (game.Source == Game.SOURCE_ZXC22)
+            if (game.Source == Game.SOURCE_ZXC22) {
                 jsonWriter.name("People").value(game.People);
+            }
 
             jsonWriter.name("IsFinal").value(game.IsFinal);
             if (game.IsFinal) {
@@ -167,12 +170,15 @@ public class Game {
                 jsonWriter.name("HomeScore").value(game.HomeScore);
             }
 
-            if (game.Field != null)
+            if (game.Field != null) {
                 jsonWriter.name("Field").value(game.Field);
-            if (game.Channel != null)
+            }
+            if (game.Channel != null) {
                 jsonWriter.name("Channel").value(game.Channel);
-            if (game.Url != null)
+            }
+            if (game.Url != null) {
                 jsonWriter.name("Url").value(game.Url);
+            }
 
             jsonWriter.name("IsDelay").value(game.IsDelay);
             if (game.IsDelay) {
