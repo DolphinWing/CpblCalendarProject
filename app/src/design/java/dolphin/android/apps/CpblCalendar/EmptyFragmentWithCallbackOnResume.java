@@ -36,7 +36,7 @@ public class EmptyFragmentWithCallbackOnResume extends Fragment {
         }
     }
 
-    public interface OnFragmentAttachedListener {
+    interface OnFragmentAttachedListener {
         void OnFragmentAttached();
     }
 }

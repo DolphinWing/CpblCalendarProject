@@ -137,5 +137,6 @@
     <string name="action_add_to_calendar">加入行事曆</string>
     <string name="action_show_field_info">顯示球場資訊</string>
     <string name="action_add_to_notification">加入提醒</string>
+    <string name="action_remove_notification">移除提醒</string>
 
 </resources>

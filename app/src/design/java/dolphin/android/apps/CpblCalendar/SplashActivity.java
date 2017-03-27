@@ -37,6 +37,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        myHandler = new MyHandler(this);
 //        //http://aleung.github.io/blog/2012/10/06/change-locale-in-android-application/
 //        Locale.setDefault(Locale.TAIWAN);
 //        Configuration config = getBaseContext().getResources().getConfiguration();
@@ -45,7 +46,6 @@ public class SplashActivity extends Activity {
 //                getBaseContext().getResources().getDisplayMetrics());
 
         FirebaseAnalytics.getInstance(this);//initialize this
-        prepareRemoteConfig();
 
         setContentView(R.layout.activity_splash);
         //http://stackoverflow.com/a/31016761/2673859
@@ -61,8 +61,7 @@ public class SplashActivity extends Activity {
             return;//don't show progress bar
         }
 
-        myHandler = new MyHandler(this);
-        myHandler.sendEmptyMessageDelayed(0, 1000);//set a backup startActivity
+        //myHandler.sendEmptyMessageDelayed(0, 1000);//set a backup startActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -73,6 +72,7 @@ public class SplashActivity extends Activity {
             @Override
             public void run() {
                 preparePalette();
+                prepareRemoteConfig();
                 //myHandler.sendEmptyMessage(0);
             }
         }).start();
