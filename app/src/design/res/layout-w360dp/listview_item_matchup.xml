@@ -7,27 +7,6 @@
     android:paddingTop="@dimen/padding_small"
     tools:ignore="RtlSymmetry,RtlHardcoded">
 
-    <FrameLayout
-        android:id="@+id/item_control_pane"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:minHeight="96dp">
-
-        <ImageView
-            android:id="@android:id/icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="bottom|left"
-            android:background="@drawable/selectable_item_background"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_action_more_horiz"
-            android:padding="4dp"
-            android:visibility="visible" />
-
-    </FrameLayout>
-
     <TextView
         android:id="@+id/textView9"
         style="@style/Theme.Holo_green.Match.GameId"
@@ -39,26 +18,44 @@
         android:layout_marginTop="12dp"
         android:gravity="center" />
 
-    <ImageView
-        android:id="@+id/icon_alarm"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_alignParentLeft="true"
+    <FrameLayout
+        android:id="@+id/item_control_pane"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:background="@drawable/item_background_holo_light"
-        android:contentDescription="@null"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_device_access_alarm"
-        android:visibility="invisible" />
+        android:minHeight="96dp">
+
+        <ImageView
+            android:id="@+id/icon_alarm"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top"
+            android:background="@drawable/item_background_holo_light"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_device_access_alarm"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@android:id/icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|left"
+            android:contentDescription="@null"
+            android:padding="4dp"
+            android:src="@drawable/ic_action_more_horiz"
+            android:visibility="visible" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textView1"
         style="@style/Theme.Holo_green.Match.Time"
         android:layout_width="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
         android:layout_toLeftOf="@+id/textView9"
-        android:layout_toRightOf="@id/icon_alarm"
         android:gravity="center_vertical|left"
         android:textSize="14sp" />
 
@@ -123,7 +120,7 @@
         android:layout_marginLeft="8dp"
         android:layout_toLeftOf="@+id/item_control_pane"
         android:gravity="center_vertical|left"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <FrameLayout
         android:layout_width="wrap_content"

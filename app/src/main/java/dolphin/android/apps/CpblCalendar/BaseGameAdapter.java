@@ -3,6 +3,7 @@ package dolphin.android.apps.CpblCalendar;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableString;
@@ -31,14 +32,14 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
  * <p/>
  * common implementation for game adapter
  */
-public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
+abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     private final Context mContext;
 
-    public final static long ONE_DAY = 1000 * 60 * 60 * 24;
+    protected final static long ONE_DAY = 1000 * 60 * 60 * 24;
 
-    public final static long ONE_WEEK = ONE_DAY * 7;
+    protected final static long ONE_WEEK = ONE_DAY * 7;
 
-    public final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
+    protected final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
 
     private final LayoutInflater mInflater;
 
@@ -54,7 +55,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     private final Calendar mNow;
 
-    public BaseGameAdapter(Context context, List<Game> objects) {
+    BaseGameAdapter(Context context, List<Game> objects) {
         super(context, android.R.layout.activity_list_item, objects);
 
         mContext = context;
@@ -69,8 +70,9 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         mNow = CpblCalendarHelper.getNowTime();
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         //Log.d(TAG, "getView: " + position);
         Game game = getItem(position);
         //Log.d(TAG, String.format("game id = %d", game.Id));
@@ -108,7 +110,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 //time
                 //DateFormat.getTimeFormat(getSherlockActivity()).format(c.getTime()));
                 c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
-        date_str = bIsTablet && withinOneWeek(c) //[53]dolphin++ only tablets
+        date_str = isTablet() && withinOneWeek(c) //[53]dolphin++ only tablets
                 ? String.format("%s (%s)", date_str,
                 //relative time span to have better date idea
                 DateUtils.getRelativeTimeSpanString(c.getTimeInMillis(),
@@ -147,7 +149,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
         TextView tv3 = (TextView) convertView.findViewById(R.id.textView3);
         //[13]++ add highlight winning team
-        if (bShowWinner && game.AwayScore > game.HomeScore) {
+        if (isShowWinner() && game.AwayScore > game.HomeScore) {
             //[67]++ for long team name
             SpannableString span1 = new SpannableString(bIsLongName
                     ? game.AwayTeam.getName() : game.AwayTeam.getShortName());
@@ -180,7 +182,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         TextView tv4 = (TextView) convertView.findViewById(R.id.textView4);
         TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
         //[13]++ add highlight winning team
-        if (bShowWinner && game.HomeScore > game.AwayScore) {
+        if (isShowWinner() && game.HomeScore > game.AwayScore) {
             SpannableString span2 = new SpannableString(String.valueOf(game.HomeScore));
             span2.setSpan(new StyleSpan(Typeface.BOLD), 0, span2.length(), 0);
             tv4.setText(span2);
@@ -236,10 +238,12 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
         //game field
         TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
-        tv7.setText(game.Source == Game.SOURCE_CPBL ||
-                !game.Field.contains(mContext.getString(R.string.title_at))
-                ? String.format("%s%s", mContext.getString(R.string.title_at),
-                game.Field) : game.Field);
+        if (tv7 != null) {
+            tv7.setText(game.Source == Game.SOURCE_CPBL ||
+                    !game.Field.contains(mContext.getString(R.string.title_at))
+                    ? String.format("%s%s", mContext.getString(R.string.title_at),
+                    game.Field) : game.Field);
+        }
 
         //delay message
         TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
@@ -259,23 +263,29 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
         //url indicator
         ImageView iv1 = (ImageView) convertView.findViewById(android.R.id.icon);
-        iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
+        if (iv1 != null) {
+            iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
+        }
 
         //team logo
         int year = game.StartTime.get(Calendar.YEAR);
         ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
-        ic1.setImageResource(game.AwayTeam.getLogo(year));
-        ic1.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
-        //ic1.setBackgroundResource(android.R.color.holo_red_light);
+        if (ic1 != null) {
+            ic1.setImageResource(game.AwayTeam.getLogo(year));
+            ic1.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
+            //ic1.setBackgroundResource(android.R.color.holo_red_light);
+        }
         ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
-        ic2.setImageResource(game.HomeTeam.getLogo(year));
-        ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
-        //ic2.setBackgroundResource(android.R.color.holo_red_light);
+        if (ic2 != null) {
+            ic2.setImageResource(game.HomeTeam.getLogo(year));
+            ic2.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
+            //ic2.setBackgroundResource(android.R.color.holo_red_light);
+        }
 
         //[23]dolphin++ add a background layer id
         View bg = convertView.findViewById(R.id.match_title);
         if (bg != null) {//[22]dolphin++
-            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && bShowToday)
+            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && isShowToday())
                     ? R.drawable.item_highlight_background_holo_light
                     : android.R.color.transparent);
         }
@@ -293,19 +303,8 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                     public void onClick(View view) {
                         Game g = (Game) view.getTag();
                         //Log.d(TAG, "id = " + g.Id);
-
                         ImageView img = (ImageView) view;
-                        if (mAlarmHelper.hasAlarm(g)) {
-                            mAlarmHelper.removeGame(g);
-                            img.setImageResource(R.drawable.ic_device_access_alarm);
-                            cancelAlarm(g);
-                        } else {
-                            mAlarmHelper.addGame(g);
-                            img.setImageResource(R.drawable.ic_device_access_alarmed);
-                            setAlarm(g);
-                        }
-
-                        //AlarmProvider.setNextAlarm(mContext);
+                        updateGameNotification(img, g);
                     }
                 });
 
@@ -316,6 +315,20 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 alarm.setVisibility(View.GONE);
             }
         }
+    }
+
+    protected void updateGameNotification(ImageView icon, Game game) {
+        if (mAlarmHelper.hasAlarm(game)) {
+            mAlarmHelper.removeGame(game);
+            icon.setImageResource(R.drawable.ic_device_access_alarm);
+            cancelAlarm(game);
+        } else {
+            mAlarmHelper.addGame(game);
+            icon.setImageResource(R.drawable.ic_device_access_alarmed);
+            setAlarm(game);
+        }
+
+        //AlarmProvider.setNextAlarm(mContext);
     }
 
     protected abstract int getLayoutResId(Game game);
@@ -341,23 +354,23 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         return Math.abs(c.getTimeInMillis() - System.currentTimeMillis()) <= (ONE_WEEK);
     }
 
-    public boolean isShowWinner() {
+    boolean isShowWinner() {
         return bShowWinner;
     }
 
-    public boolean isShowLogo() {
+    boolean isShowLogo() {
         return bShowLogo;
     }
 
-    public boolean isShowToday() {
+    boolean isShowToday() {
         return bShowToday;
     }
 
-    public boolean isTablet() {
+    boolean isTablet() {
         return bIsTablet;
     }
 
-    public AlarmHelper getAlarmHelper() {
+    AlarmHelper getAlarmHelper() {
         return mAlarmHelper;
     }
 }

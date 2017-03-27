@@ -37,7 +37,7 @@ public class GameAdapter extends BaseGameAdapter {
     private boolean ENABLE_BOTTOM_SHEET = false;
     private OnOptionClickListener mListener;
 
-    public interface OnOptionClickListener {
+    interface OnOptionClickListener {
         void onOptionClicked(Game game);
     }
 
@@ -49,7 +49,7 @@ public class GameAdapter extends BaseGameAdapter {
                 .getBoolean("enable_bottom_sheet_options");
     }
 
-    public void setOnOptionclickListener(OnOptionClickListener listener) {
+    void setOnOptionclickListener(OnOptionClickListener listener) {
         mListener = listener;
     }
 
@@ -124,8 +124,10 @@ public class GameAdapter extends BaseGameAdapter {
         }
 
         View alarm = convertView.findViewById(R.id.icon_alarm);
-        if (alarm != null && alarm.getVisibility() == View.GONE) {//don't use GONE in design flavor
-            alarm.setVisibility(View.INVISIBLE);
+        if (alarm != null) {
+            alarm.setOnClickListener(null);
+            //alarm.setClickable(false);
+            alarm.setFocusable(false);
         }
 
         //team logo
@@ -136,12 +138,14 @@ public class GameAdapter extends BaseGameAdapter {
             awayLogo.setImageResource(R.drawable.ic_baseball);
             awayLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.AwayTeam, year),
                     PorterDuff.Mode.SRC_IN);
+            awayLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
         }
         ImageView homeLogo = (ImageView) convertView.findViewById(android.R.id.icon2);
         if (homeLogo != null) {
             homeLogo.setImageResource(R.drawable.ic_baseball);
             homeLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.HomeTeam, year),
                     PorterDuff.Mode.SRC_IN);
+            homeLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
