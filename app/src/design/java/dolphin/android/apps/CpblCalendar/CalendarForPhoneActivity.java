@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -718,6 +719,12 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
                     mBottomSheetOption3.setVisibility(View.VISIBLE);
                     mBottomSheetOption3.setEnabled(true);
+                    if (mBottomSheetOption3 instanceof TextView) {
+                        TextView option3 = (TextView) mBottomSheetOption3;
+                        AlarmHelper helper = new AlarmHelper(getBaseContext());
+                        option3.setText(helper.hasAlarm(game) ? R.string.action_remove_notification
+                                : R.string.action_add_to_notification);
+                    }
                 } else {
 //                    accountHeight += mBottomSheetOption3.getHeight();
 //                    mBottomSheetOption3.setVisibility(View.GONE);
@@ -777,16 +784,34 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         Intent calIntent = new Intent(Intent.ACTION_INSERT);
         calIntent.setData(CalendarContract.Events.CONTENT_URI);
         calIntent.setType("vnd.android.cursor.item/event");
+
         String contentText = getString(R.string.msg_content_text,
                 game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
         calIntent.putExtra(CalendarContract.Events.TITLE, contentText);
+
+        //FIXME: change to full game field name
         calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.Field);
-        //calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "description");
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+
+        String description = "";
+        if (game.DelayMessage != null && !game.DelayMessage.isEmpty()) {
+            description = game.DelayMessage.replaceAll("&nbsp;", " ")
+                    .replaceAll("<br>", "\n").replaceAll("<br />", "\n")
+                    .replaceAll("<[^>]*>", "");
+        }
+        if (game.Channel != null && !game.Channel.isEmpty()) {
+            description = description.isEmpty() ? game.Channel
+                    : description.concat("\n").concat(game.Channel);
+        }
+        if (!description.isEmpty()) {
+            calIntent.putExtra(CalendarContract.Events.DESCRIPTION, description);
+        }
+
         long startTime = game.StartTime.getTimeInMillis();
         long scheduledEndTime = (long) (startTime + 3.5 * 60 * 60 * 1000);
         calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
         calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, scheduledEndTime);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+
         if (PackageUtils.isCallable(getActivity(), calIntent)) {
             startActivity(calIntent);
         }
