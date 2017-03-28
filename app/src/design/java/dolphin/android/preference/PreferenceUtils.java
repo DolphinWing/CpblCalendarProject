@@ -49,26 +49,19 @@ public class PreferenceUtils {
         //https://gist.github.com/shreeshga/5398506
         Set<String> set = null;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            //[57]++ java.lang.String cannot be cast to java.util.Set
-            try {
-                set = mSharedPreferences.getStringSet(key, null);
-            } catch (Exception e) {//try to get as String
-                String s = mSharedPreferences.getString(key, null);
-                if (s != null) {
-                    set = new HashSet<String>(Arrays.asList(s.split(",")));
-                } else {
-                    set = new HashSet<String>();
-                }
-                //clear the String format, and convert to StringSet
-                mSharedPreferences.edit().remove(key).apply();
-                putStringSet(key, set);//update with new format
-            }
-        } else {
+        //[57]++ java.lang.String cannot be cast to java.util.Set
+        try {
+            set = mSharedPreferences.getStringSet(key, null);
+        } catch (Exception e) {//try to get as String
             String s = mSharedPreferences.getString(key, null);
             if (s != null) {
                 set = new HashSet<String>(Arrays.asList(s.split(",")));
+            } else {
+                set = new HashSet<String>();
             }
+            //clear the String format, and convert to StringSet
+            mSharedPreferences.edit().remove(key).apply();
+            putStringSet(key, set);//update with new format
         }
         return set;
     }

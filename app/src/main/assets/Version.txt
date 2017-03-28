@@ -35,6 +35,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1006] @ 2017-03-28
+	add alarm icon
+		still need to check service/alarm
+	add field url and open browser
+	add new version notice
+
 [1005] @ 2017-03-27
     update layout
     fix no network may cause Firebase RemoteConfig crush

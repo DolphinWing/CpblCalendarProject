@@ -1,10 +1,14 @@
 package dolphin.android.apps.CpblCalendar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +31,7 @@ import java.util.Calendar;
 
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.util.PackageUtils;
 
 public class SplashActivity extends Activity {
     private final static String TAG = "SplashActivity";
@@ -61,7 +66,7 @@ public class SplashActivity extends Activity {
             return;//don't show progress bar
         }
 
-        //myHandler.sendEmptyMessageDelayed(0, 1000);//set a backup startActivity
+        myHandler.sendEmptyMessageDelayed(0, 8000);//set a backup startActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -128,10 +133,11 @@ public class SplashActivity extends Activity {
                             // Once the config is successfully fetched it must be activated before
                             // newly fetched values are returned.
                             mRemoteConfig.activateFetched();
+                            checkLatestVersion();
                         } else {
                             Log.e(TAG, "Fetch failed");
+                            startNextActivity();
                         }
-                        startNextActivity();
                     }
                 });
         // [END fetch_config_with_callback]
@@ -193,5 +199,56 @@ public class SplashActivity extends Activity {
 //            }
             application.setTeamLogoPalette(logoId, p);
         }
+    }
+
+    private void checkLatestVersion() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (isDestroyed() || isFinishing()) {
+                return;
+            }
+        } else {
+            if (isFinishing()) {
+                return;
+            }
+        }
+
+        PackageInfo info = PackageUtils.getPackageInfo(this, SplashActivity.class);
+        int versionCode = info != null ? info.versionCode : 0;
+        if (versionCode > mRemoteConfig.getLong("latest_version_code")) {
+            startNextActivity();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.new_version_available_title)
+                .setMessage(R.string.new_version_available_message)
+                .setPositiveButton(R.string.new_version_available_go,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startGooglePlayApp();
+                            }
+                        })
+                .setNegativeButton(R.string.new_version_available_later,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startNextActivity();
+                            }
+                        })
+                .show();
+    }
+
+    private void startGooglePlayApp() {
+        //http://stackoverflow.com/a/11753070/2673859
+        final String appPackageName = getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+        finish();
     }
 }

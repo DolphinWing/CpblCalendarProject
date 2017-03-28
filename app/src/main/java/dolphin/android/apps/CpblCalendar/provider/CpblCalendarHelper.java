@@ -39,6 +39,8 @@ public class CpblCalendarHelper extends HttpHelper {
     private final static String URL_SCHEDULE_2016 = URL_BASE +
             "/schedule/index/@year-@month-01.html?&date=@year-@month-01&gameno=01&sfieldsub=@field&sgameno=@kind";
 
+    public final static String URL_FIELD_2017 = URL_BASE + "/footer/stadium/@field";
+
     private final Context mContext;
 
     protected Context getContext() {

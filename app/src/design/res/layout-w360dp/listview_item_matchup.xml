@@ -28,9 +28,9 @@
 
         <ImageView
             android:id="@+id/icon_alarm"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="top"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|center_horizontal"
             android:background="@drawable/item_background_holo_light"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
@@ -41,10 +41,10 @@
             android:id="@android:id/icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_gravity="bottom|left"
+            android:layout_gravity="top|center_horizontal"
             android:contentDescription="@null"
             android:padding="4dp"
-            android:src="@drawable/ic_action_more_horiz"
+            android:src="@drawable/ic_action_more_vert"
             android:visibility="visible" />
 
     </FrameLayout>

@@ -25,10 +25,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,7 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.util.PackageUtils;
@@ -82,6 +85,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         ENABLE_BOTTOM_SHEET = FirebaseRemoteConfig.getInstance()
                 .getBoolean("enable_bottom_sheet_options");
+        //Log.d(TAG, "ENABLE_BOTTOM_SHEET: " + ENABLE_BOTTOM_SHEET);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
@@ -126,17 +130,22 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         GameListFragment gameListFragment = (GameListFragment) getFragmentManager()
                 .findFragmentById(R.id.main_content_frame);
-        ListView listView = gameListFragment.getListView();
-        if (listView != null) {
-            if (ENABLE_BOTTOM_SHEET) {
-                gameListFragment.setOnOptionClickListener(new GameAdapter.OnOptionClickListener() {
-                    @Override
-                    public void onOptionClicked(Game game) {
-                        setBottomSheetVisibility(true, game);
-                    }
-                });
-            } else {
-                listView.setOnItemClickListener(this);
+        ListView listView = null;
+        if (gameListFragment != null) {
+            listView = gameListFragment.getListView();
+            if (listView != null) {
+                if (ENABLE_BOTTOM_SHEET) {
+                    //Log.d(TAG, "use bottom sheet");
+                    gameListFragment.setOnOptionClickListener(new GameAdapter.OnOptionClickListener() {
+                        @Override
+                        public void onOptionClicked(View view, Game game) {
+                            setBottomSheetVisibility(true, game, view);
+                        }
+                    });
+                } else {
+                    //Log.d(TAG, "use list.onclick");
+                    listView.setOnItemClickListener(this);
+                }
             }
         }
 
@@ -159,6 +168,29 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             }
         }
 
+        prepareBottomSheet();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                loadAds();//load ads in the background
+            }
+        });
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            autoLoadGames(savedInstanceState);
+        } else {//ask user to grant permission
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                showRequestStorageRationale();
+            } else {
+                requestStoragePermission();
+            }
+        }
+    }
+
+    private void prepareBottomSheet() {
         View bottomSheet = findViewById(R.id.bottom_sheet);
         if (ENABLE_BOTTOM_SHEET && bottomSheet != null) {
             mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -172,7 +204,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                     public boolean onTouch(View view, MotionEvent motionEvent) {
                         if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
                                 && motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                            setBottomSheetVisibility(false, null);
+                            setBottomSheetVisibility(false);
                         }
                         return true;//do nothing
                     }
@@ -196,25 +228,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             }
         } else if (bottomSheet != null) {//don't show
             bottomSheet.setVisibility(View.GONE);
-        }
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                loadAds();//load ads in the background
-            }
-        });
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            autoLoadGames(savedInstanceState);
-        } else {//ask user to grant permission
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                showRequestStorageRationale();
-            } else {
-                requestStoragePermission();
-            }
         }
     }
 
@@ -546,8 +559,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 return;//[146]++
             }
         }
-        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            setBottomSheetVisibility(false, null);
+        if (ENABLE_BOTTOM_SHEET && mBottomSheetBehavior != null
+                && mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            setBottomSheetVisibility(false);
             return;
         }
         super.onBackPressed();
@@ -635,13 +649,38 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (ENABLE_BOTTOM_SHEET) {//more options
-            setBottomSheetVisibility(true, (Game) view.getTag());
+            setBottomSheetVisibility(true, (Game) view.getTag(), view);
         } else if (view != null) {//old method
             showGameActivity((Game) view.getTag());
         }
     }
 
+    private void setBottomSheetVisibility(boolean visible) {
+        setBottomSheetVisibility(visible, null);
+    }
+
     private void setBottomSheetVisibility(boolean visible, Game game) {
+        setBottomSheetVisibility(visible, game, null);
+    }
+
+    private static class Option3Holder {
+        public View alarm;
+        public Game game;
+
+        Option3Holder(View image, Game game) {
+            this.alarm = image;
+            this.game = game;
+        }
+    }
+
+    private void setBottomSheetVisibility(boolean visible, Game game, View view) {
+        View alarm = null;
+        if (view != null && view.getParent() != null) {
+            //Log.d(TAG, "setBottomSheetVisibility " + view.getParent());
+            if (view.getParent() instanceof ViewGroup) {
+                alarm = ((ViewGroup) view.getParent()).findViewById(R.id.icon_alarm);
+            }
+        }
         if (mBottomSheetBackground != null) {//use progress background
             final boolean isVisible = visible;
             float from = visible ? 0.0f : 1.0f;
@@ -718,19 +757,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             if (mBottomSheetOption3 != null) {
                 if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
                     mBottomSheetOption3.setVisibility(View.VISIBLE);
-                    mBottomSheetOption3.setEnabled(true);
-                    if (mBottomSheetOption3 instanceof TextView) {
-                        TextView option3 = (TextView) mBottomSheetOption3;
-                        AlarmHelper helper = new AlarmHelper(getBaseContext());
-                        option3.setText(helper.hasAlarm(game) ? R.string.action_remove_notification
-                                : R.string.action_add_to_notification);
-                    }
+                    boolean enabled = PreferenceUtils.isEnableNotification(getBaseContext());
+                    enabled &= alarm != null && alarm.getVisibility() == View.VISIBLE;
+                    mBottomSheetOption3.setEnabled(enabled);
+                    refreshBottomSheetOption3Text(game);
                 } else {
 //                    accountHeight += mBottomSheetOption3.getHeight();
 //                    mBottomSheetOption3.setVisibility(View.GONE);
                     mBottomSheetOption3.setEnabled(false);
                 }
-                mBottomSheetOption3.setTag(game);
+                mBottomSheetOption3.setTag(new Option3Holder(alarm, game));
             }
             if (mBottomSheetOption4 != null) {
                 mBottomSheetOption4.setTag(game);
@@ -771,11 +807,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 addToCalendar((Game) view.getTag());
                 break;
             case R.id.bottom_sheet_option3:
+                if (view.getTag() != null) {
+                    Option3Holder holder = (Option3Holder) view.getTag();
+                    updateNotification(holder.alarm, holder.game);
+                }
                 break;
             case R.id.bottom_sheet_option4:
+                showFieldInfoActivity((Game) view.getTag());
                 break;
         }
-        setBottomSheetVisibility(false, null);
+        setBottomSheetVisibility(false);
     }
 
     //Android Essentials: Adding Events to the User’s Calendar
@@ -815,5 +856,40 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         if (PackageUtils.isCallable(getActivity(), calIntent)) {
             startActivity(calIntent);
         }
+    }
+
+    private void updateNotification(View view, Game game) {
+        CpblApplication application = (CpblApplication) getApplication();
+        AlarmHelper helper = new AlarmHelper(getBaseContext());
+        if (helper.hasAlarm(game)) {
+            helper.removeGame(game);
+            AlarmProvider.cancelAlarmByGame(application, game);//cancelAlarm(game);
+        } else {
+            helper.addGame(game);
+            AlarmProvider.setAlarmByGame(application, game);//setAlarm(game);
+        }
+        //Log.d(TAG, "updateNotification: " + view);
+        if (view instanceof ImageView) {
+            ((ImageView) view).setImageResource(helper.hasAlarm(game)
+                    ? R.drawable.ic_device_access_alarmed
+                    : R.drawable.ic_device_access_alarm);
+        }
+        refreshBottomSheetOption3Text(game);
+    }
+
+    private void refreshBottomSheetOption3Text(Game game) {
+        if (mBottomSheetOption3 instanceof TextView) {
+            TextView option3 = (TextView) mBottomSheetOption3;
+            AlarmHelper helper = new AlarmHelper(getBaseContext());
+            option3.setText(helper.hasAlarm(game) ? R.string.action_remove_notification
+                    : R.string.action_add_to_notification);
+        }
+    }
+
+    private void showFieldInfoActivity(Game game) {
+        game.getFieldId(getBaseContext());//update game field id
+        String url = CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId);
+        //Log.d(TAG, "url = " + url);
+        Utils.startBrowserActivity(getActivity(), url);
     }
 }

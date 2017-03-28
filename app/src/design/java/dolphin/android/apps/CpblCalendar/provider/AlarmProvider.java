@@ -109,6 +109,36 @@ public class AlarmProvider {
         return jobId;
     }
 
+    public static int setAlarmByGame(CpblApplication application, Game game) {
+        Context context = application.getBaseContext();
+        AlarmHelper helper = new AlarmHelper(context);
+        ArrayList<Game> list = helper.getAlarmList();
+        if (list != null && list.size() > 0) {
+            for (Game g : list) {
+                if (g.Id == game.Id) {
+                    continue;//bypass myself
+                }
+                if (g.StartTime.compareTo(game.StartTime) == 0) {//same day
+                    Log.v(AlarmHelper.TAG, String.format("same day: %d %d", g.Id, game.Id));
+                    //already registered, no need to update alarm
+                    return helper.getJobId(AlarmHelper.getAlarmIdKey(g));
+                }
+            }
+        }
+
+        String key = AlarmHelper.getAlarmIdKey(game);
+        Calendar alarm = game.StartTime;
+        alarm.add(Calendar.MINUTE, -PreferenceUtils.getAlarmNotifyTime(context));
+        if (context.getResources().getBoolean(R.bool.demo_notification)) {//debug alarm
+            alarm = CpblCalendarHelper.getNowTime();
+            //already stored in the map, so use the count to do the demo
+            alarm.add(Calendar.SECOND, 15);
+            //Log.d(AlarmHelper.TAG, "demo alarm: " + alarm.getTime().toString());
+            //alarm.add(Calendar.MINUTE, 10);
+        }
+        return setAlarm(application, alarm, key);
+    }
+
     /**
      * cancel alarm
      *
@@ -145,6 +175,36 @@ public class AlarmProvider {
             }
             JobManager.instance().cancelAll();
             helper.removeJobId(0);
+        }
+    }
+
+    public static void cancelAlarmByGame(CpblApplication application, Game game) {
+        Context context = application.getBaseContext();
+        AlarmHelper helper = new AlarmHelper(context);
+        String key = AlarmHelper.getAlarmIdKey(game);
+        Game anotherGame = null;
+        //check if we have the same day job
+        ArrayList<Game> list = helper.getAlarmList();
+        if (!list.isEmpty()) {//cancel the same day
+            for (Game g : list) {
+                if (g.Id == game.Id) {
+                    continue;//bypass myself
+                }
+                if (g.StartTime.compareTo(game.StartTime) == 0) {//same day
+                    Log.v(AlarmHelper.TAG, String.format("same day: %d %d", g.Id, game.Id));
+                    int previousJobId = helper.getJobId(key);
+                    if (previousJobId > 0) {//yes, previous registered
+                        //Log.d(AlarmHelper.TAG, "yes, previous registered: " + previousJobId);
+                        anotherGame = g;
+                    }
+                }
+            }
+        }
+
+        cancelAlarm(application, key);//cancel current game
+        if (anotherGame != null) {//set alarm for another game
+            Log.v(AlarmHelper.TAG, "set alarm for another game " + anotherGame.Id);
+            setAlarmByGame(application, anotherGame);
         }
     }
 }

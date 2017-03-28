@@ -2,8 +2,9 @@ package dolphin.android.apps.CpblCalendar.provider;
 
 /**
  * Created by dolphin on 2014/4/4.
+ * Standing list
  */
-public class Stand {
+class Stand {
     private final Team mTeam;
     private final int mWins;
     private final int mLoses;
