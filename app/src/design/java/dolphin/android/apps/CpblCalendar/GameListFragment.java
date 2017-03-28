@@ -5,20 +5,15 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -34,7 +29,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
 
     private final static String TAG = "GameListFragment";
 
-    private FirebaseAnalytics mFirebaseAnalytics;
+//    private FirebaseAnalytics mFirebaseAnalytics;
 
     private GameAdapter.OnOptionClickListener mOnOptionClickListener;
 
@@ -168,9 +163,9 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         final ListView listView = getListView();
         listView.setOnItemLongClickListener(this);
 
-        final AppCompatActivity activity = (AppCompatActivity) getActivity();
+//        final AppCompatActivity activity = (AppCompatActivity) getActivity();
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
     }
 
     @Override

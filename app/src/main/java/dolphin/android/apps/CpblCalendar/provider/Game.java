@@ -3,6 +3,7 @@ package dolphin.android.apps.CpblCalendar.provider;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,6 +20,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import dolphin.android.apps.CpblCalendar.R;
+
+@Keep
 public class Game {
     public int Id = 0;
     public String Kind = null;
@@ -30,7 +34,7 @@ public class Game {
     public int AwayScore = 0;
 
     public String Field = null;
-    public int FieldId;
+    public String FieldId;
 
     public Calendar StartTime;
     public boolean IsFinal = false;
@@ -334,5 +338,27 @@ public class Game {
 
     public boolean canOpenUrl() {
         return !(StartTime.after(CpblCalendarHelper.getNowTime()) && Url.contains("box.html"));
+    }
+
+    public String getFieldId(Context context) {
+        return getFieldId(context, this);
+    }
+
+    public static String getFieldId(Context context, Game game) {
+        if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F19))) {
+            game.FieldId = "F19";
+        } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F23))) {
+            game.FieldId = "F23";
+        } else {//check list
+            String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_name);
+            String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);
+            for (int i = 0; i < fieldIds.length; i++) {
+                if (game.Field.equals(fields[i])) {
+                    game.FieldId = fieldIds[i];
+                    break;
+                }
+            }
+        }
+        return game.FieldId;
     }
 }

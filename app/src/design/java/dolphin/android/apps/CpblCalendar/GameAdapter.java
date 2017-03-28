@@ -38,7 +38,7 @@ public class GameAdapter extends BaseGameAdapter {
     private OnOptionClickListener mListener;
 
     interface OnOptionClickListener {
-        void onOptionClicked(Game game);
+        void onOptionClicked(View view, Game game);
     }
 
     public GameAdapter(Context context, List<Game> objects, CpblApplication application) {
@@ -60,16 +60,33 @@ public class GameAdapter extends BaseGameAdapter {
         //more action
         ImageView moreAction = (ImageView) convertView.findViewById(android.R.id.icon);
         if (moreAction != null) {
-            moreAction.setVisibility(ENABLE_BOTTOM_SHEET ? View.VISIBLE : View.INVISIBLE);
-            moreAction.setTag(game);//for listener
-            moreAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mListener != null) {
-                        mListener.onOptionClicked((Game) view.getTag());
-                    }
+            if (ENABLE_BOTTOM_SHEET) {
+                moreAction.setVisibility(View.VISIBLE);
+                View control = convertView.findViewById(R.id.item_control_pane);
+                if (control != null) {
+                    control.setTag(game);//for listener
+                    control.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (mListener != null) {
+                                mListener.onOptionClicked(view, (Game) view.getTag());
+                            }
+                        }
+                    });
+                } else {
+                    moreAction.setTag(game);//for listener
+                    moreAction.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (mListener != null) {
+                                mListener.onOptionClicked(view, (Game) view.getTag());
+                            }
+                        }
+                    });
                 }
-            });
+            } else {
+                moreAction.setVisibility(View.INVISIBLE);
+            }
         }
 
         TextView timeText = (TextView) convertView.findViewById(R.id.textView1);
