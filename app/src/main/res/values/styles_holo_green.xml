@@ -23,8 +23,6 @@
         <!-- created by http://android-holo-colors.com/-->
         <item name="android:buttonStyle">@style/ButtonHolo_green</item>
         <item name="android:imageButtonStyle">@style/ImageButtonHolo_green</item>
-        <item name="android:listViewStyle">@style/ListViewHolo_green</item>
-        <item name="android:listViewWhiteStyle">@style/ListViewHolo_green.White</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItemHolo_green</item>
     </style>
 

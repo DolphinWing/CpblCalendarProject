@@ -15,7 +15,7 @@ import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
  * <p/>
  * https://github.com/evernote/android-job
  */
-public class NotifyJob extends Job {
+class NotifyJob extends Job {
     public static final String TAG = "NotifyJob";
     private final static boolean DEBUG_LOG = false;
 
