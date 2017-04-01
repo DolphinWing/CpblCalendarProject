@@ -11,25 +11,25 @@
         android:id="@+id/action_fast_rewind"
         app:showAsAction="withText"
         android:title="@string/title_fast_rewind"
-        android:icon="@drawable/ic_action_navigation_arrow_back" />
+        android:icon="@drawable/ic_action_event_minus" />
 
     <item
         android:id="@+id/action_fast_forward"
         app:showAsAction="ifRoom|withText"
         android:title="@string/title_fast_forward"
-        android:icon="@drawable/ic_action_navigation_arrow_forward" />
+        android:icon="@drawable/ic_action_event_plus" />
 
     <item
         android:id="@+id/action_search"
         app:showAsAction="ifRoom|withText"
         android:title="@string/title_query"
-        android:icon="@drawable/ic_action_action_event" />
+        android:icon="@drawable/ic_action_event_search" />
 
     <item
         android:id="@+id/action_refresh"
         app:showAsAction="withText"
         android:title="@string/action_refresh"
-        android:icon="@drawable/ic_action_navigation_refresh_dark" />
+        android:icon="@drawable/ic_action_refresh" />
 
     <item
         android:id="@+id/action_cache_mode"
