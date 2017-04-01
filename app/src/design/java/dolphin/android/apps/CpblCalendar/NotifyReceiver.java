@@ -146,11 +146,11 @@ public class NotifyReceiver extends BroadcastReceiver {
         Intent notifyIntent = new Intent();
         notifyIntent.setComponent(new ComponentName(context, SplashActivity.class));
         // Sets the Activity to start in a new, empty task
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        } else {
-            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //} else {
+        //    notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //}
         // Creates the PendingIntent
         return PendingIntent.getActivity(
                 context,

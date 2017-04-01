@@ -78,7 +78,7 @@ public class CpblApplication extends Application {
      *
      * @param changed true if we want app to download again
      */
-    public void setPrefrenceChanged(boolean changed) {
+    public void setPreferenceChanged(boolean changed) {
         mRequireUpdate = changed;
     }
 

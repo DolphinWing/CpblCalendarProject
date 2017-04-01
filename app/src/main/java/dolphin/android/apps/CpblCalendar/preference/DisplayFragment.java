@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
-import android.util.SparseArray;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import dolphin.android.apps.CpblCalendar.CpblApplication;
@@ -102,7 +100,7 @@ public class DisplayFragment extends PreferenceFragment
             preference.setSummary(summary);
 
             CpblApplication application = (CpblApplication) getActivity().getApplication();
-            application.setPrefrenceChanged(true);
+            application.setPreferenceChanged(true);
         }
         return true;
     }

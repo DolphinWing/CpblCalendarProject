@@ -65,7 +65,7 @@ public class AdvancedFragment extends PreferenceFragment {
                 Toast.makeText(getActivity(), R.string.title_clear_cache_complete,
                         Toast.LENGTH_SHORT).show();
 
-                ((CpblApplication) getActivity().getApplication()).setPrefrenceChanged(true);
+                ((CpblApplication) getActivity().getApplication()).setPreferenceChanged(true);
             }
             return r;
         } else if (key.equals(KEY_RESTART_APP)) {

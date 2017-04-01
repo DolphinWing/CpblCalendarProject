@@ -308,7 +308,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 }
                 return true;
             case R.id.action_settings://set default values
-                ((CpblApplication) getApplication()).setPrefrenceChanged(false);
+                ((CpblApplication) getApplication()).setPreferenceChanged(false);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -483,7 +483,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
         //query_to_update(true);//[126]dolphin++ quick refresh
 
-        application.setPrefrenceChanged(false);//reset to default
+        application.setPreferenceChanged(false);//reset to default
     }
 
     @Override
