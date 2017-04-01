@@ -2,11 +2,12 @@
     package="dolphin.android.apps.CpblCalendar">
 
     <application
+        android:name=".CpblApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_config"
-        android:name=".CpblApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_r"
         android:theme="@style/Theme.Holo_green">
 
         <activity
