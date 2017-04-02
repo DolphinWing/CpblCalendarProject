@@ -13,11 +13,11 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -109,6 +109,13 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             //if (getResources().getBoolean(R.bool.config_tablet)) {
             //    toolbar.setLogo(R.mipmap.ic_launcher);
             //}
+        }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setLogo(R.mipmap.ic_launcher);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDefaultDisplayHomeAsUpEnabled(false);
         }
 
         initQueryPane();
@@ -353,8 +360,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         onLoading(true);//[30]dolphin++
     }
 
-    private Snackbar mSnackbar;
-
     @Override
     public void onQueryStateChange(String msg) {
         //Log.d(TAG, "onQueryUpdate: " + msg);
@@ -362,12 +367,13 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             getProgressText().setText(msg);
         }
 
-        if (mSnackbar != null && mSnackbar.isShown()) {
-            mSnackbar.setText(msg);
-        } else {
-            mSnackbar = Snackbar.make(findViewById(R.id.main_content_frame), msg, Snackbar.LENGTH_INDEFINITE);
-            mSnackbar.show();
-        }
+//        if (mSnackbar != null && mSnackbar.isShown()) {
+//            mSnackbar.setText(msg);
+//        } else {
+//            mSnackbar = Snackbar.make(findViewById(R.id.main_content_frame), msg, Snackbar.LENGTH_INDEFINITE);
+//            mSnackbar.show();
+//        }
+        showSnackbar(msg);
     }
 
     @Override
@@ -457,6 +463,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 mFab.show();
             }
         }
+
+//        //show offline mode indicator
+//        if (!visible && PreferenceUtils.isCacheMode(getBaseContext())) {
+//            showSnackbar(getString(R.string.action_cache_mode));
+//        } else
         if (mSnackbar != null && !visible) {
             mSnackbar.dismiss();
             mSnackbar = null;
@@ -629,10 +640,13 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
     }
 
+    //http://stackoverflow.com/a/5123903
+    private boolean mAlreadyBottom = false;
+
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            if (mFab != null) {
+            if (!mAlreadyBottom && mFab != null) {
                 mFab.show();
             }
         } else if (mFab != null && mFab.isShown()) {
@@ -643,7 +657,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
                          int totalItemCount) {
-        //TODO: auto generated section
+        //http://stackoverflow.com/a/5123903
+        mAlreadyBottom = firstVisibleItem + visibleItemCount >= totalItemCount;
     }
 
     @Override

@@ -16,6 +16,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="12dp"
+        android:paddingRight="12dp"
         android:gravity="center" />
 
     <FrameLayout
@@ -75,6 +76,7 @@
         android:layout_below="@id/textView9"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="6dp"
+        android:paddingRight="12dp"
         android:layout_marginTop="-6dp"
         android:gravity="center"
         android:lines="2"
@@ -87,6 +89,7 @@
         style="@style/Theme.Holo_green.Match.Field"
         android:layout_below="@+id/textView10"
         android:layout_centerHorizontal="true"
+        android:paddingRight="12dp"
         android:layout_marginTop="4dp" />
 
     <TextView
@@ -103,6 +106,7 @@
         android:layout_below="@+id/textView1"
         android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/textView9"
+        android:layout_marginLeft="-12dp"
         android:gravity="center" />
 
     <View
@@ -128,7 +132,7 @@
         android:layout_above="@+id/more_info"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1"
-        android:layout_marginLeft="32dp"
+        android:layout_marginLeft="8dp"
         android:layout_toLeftOf="@+id/textView3"
         android:focusable="false"
         android:focusableInTouchMode="false"

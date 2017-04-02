@@ -87,6 +87,9 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
                     getString(R.string.no_favorite_teams)));
         }
         this.setListShown(true);
+//        if (PreferenceUtils.isCacheMode(getActivity())) {
+//            this.getListView().setPadding(0, 0, 0, 96);
+//        }
     }
 
     private View mEmptyView = null;
