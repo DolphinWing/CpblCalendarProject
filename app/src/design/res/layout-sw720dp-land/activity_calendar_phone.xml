@@ -32,35 +32,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/navigation_drawer_width"
-        android:layout_marginTop="@dimen/toolbar_height">
+        android:layout_marginTop="@dimen/toolbar_height"
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="@dimen/activity_horizontal_margin"
-            android:layout_height="match_parent"
-            android:alpha="0.8"
-            android:background="@color/shadow_background"
-            android:contentDescription="@null"
-            android:scaleType="fitXY"
-            android:scaleX="-1"
-            android:src="@drawable/drawer_shadow" />
+        <TextView
+            android:id="@+id/mode_indicator"
+            style="@style/Theme.Holo_green.Toolbar.ModeIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <!-- The main content view -->
-        <fragment
-            android:id="@+id/main_content_frame"
-            android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            tools:layout="@layout/listview_empty_view" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="@dimen/activity_horizontal_margin"
-            android:layout_height="match_parent"
-            android:alpha="0.8"
-            android:background="@color/shadow_background"
-            android:contentDescription="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/drawer_shadow" />
+            <ImageView
+                android:layout_width="@dimen/activity_horizontal_margin"
+                android:layout_height="match_parent"
+                android:alpha="0.8"
+                android:background="@color/shadow_background"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:scaleX="-1"
+                android:src="@drawable/drawer_shadow" />
+
+            <!-- The main content view -->
+            <fragment
+                android:id="@+id/main_content_frame"
+                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                tools:layout="@layout/listview_empty_view" />
+
+            <ImageView
+                android:layout_width="@dimen/activity_horizontal_margin"
+                android:layout_height="match_parent"
+                android:alpha="0.8"
+                android:background="@color/shadow_background"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/drawer_shadow" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

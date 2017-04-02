@@ -32,6 +32,7 @@
     <!-- preference -->
     <!-- GeneralFragment -->
     <string name="title_general_settings">一般設定</string>
+    <string name="summary_general_settings">版本與程式資訊</string>
     <string name="app_version">版本</string>
     <string name="app_build_info">版本資訊</string>
     <string name="app_change_log">更新紀錄</string>
@@ -43,6 +44,7 @@
 
     <!-- DisplayFragment -->
     <string name="title_display_settings">顯示設定</string>
+    <string name="summary_display_settings">選擇比賽列表的呈現方式</string>
     <string name="title_select_upcoming">即將到來的比賽</string>
     <string name="title_select_upcoming_on">直接跳至即將到來的比賽</string>
     <string name="title_select_upcoming_off">直接顯示所有比賽</string>
@@ -61,6 +63,7 @@
 
     <!-- NotificationFragment -->
     <string name="title_notification_settings">通知設定</string>
+    <string name="summary_notification_settings">設定比賽通知</string>
     <string name="title_enable_notification_on">啟用通知</string>
     <string name="title_enable_notification_off">停用通知</string>
     <string name="title_notify_teams">接收通知的球隊</string>
@@ -70,9 +73,9 @@
     <string name="title_manual_game_notify_on">點擊鬧鐘圖示可加入通知排程</string>
     <string name="title_manual_game_notify_off">只接收球隊的通知</string>
     <string name="title_notify_pending_action">點擊通知時的動作</string>
-    <string name="title_show_dialog">除通知外，以對話框提醒</string>
-    <string name="title_show_dialog_on">時間到時會輔以對話框提醒</string>
-    <string name="title_show_dialog_off">時間到時不會跳出對話框</string>
+    <string name="title_show_dialog">以對話框提醒</string>
+    <string name="title_show_dialog_on">比賽時間到時會同時以對話框提醒</string>
+    <string name="title_show_dialog_off">比賽時間到時不會以對話框提醒</string>
     <string name="title_enable_song">自動播放中華職棒主題曲</string>
     <string name="title_enable_song_on">顯示對話框時，一並播放中華職棒主題曲</string>
     <string name="title_enable_song_off">顯示對話框時，不播放中華職棒主題曲</string>
@@ -80,10 +83,11 @@
     <string name="title_test_song_no_support">音樂檔格式不正確或檔案有問題</string>
     <string name="title_test_song_fail">音樂似乎有問題，請稍後再試！</string>
     <string name="title_vibrate">震動通知</string>
-    <string name="title_vibrate_on">時間到時會輔以震動提醒</string>
-    <string name="title_vibrate_off">時間到時不以震動提醒</string>
+    <string name="title_vibrate_on">比賽時間到時會輔以震動提醒</string>
+    <string name="title_vibrate_off">比賽時間到時不以震動提醒</string>
     <!-- AdvancedFragment -->
     <string name="title_advanced_settings">進階設定</string>
+    <string name="summary_advanced_settings">給進階使用者的設定</string>
     <string name="title_clear_cache">清除快取</string>
     <string name="summary_clear_cache">清除暫存在本機端的資料</string>
     <string name="summary_clear_cache_off">開啟離線模式的時候，不支援此功能</string>
@@ -118,6 +122,7 @@
     <string name="title_cache_mode_enable_message">離線模式將不會自動更新賽程資料。如果要取得新的賽程，請點擊刷新。\n
         \n第一次下載，必須花一點時間下載完整賽程表。</string>
     <string name="title_cache_mode_start">啟用</string>
+    <string name="title_cache_mode_cancel">取消</string>
     <!-- leader board -->
     <string name="title_team">球隊</string>
     <string name="title_win">勝</string>

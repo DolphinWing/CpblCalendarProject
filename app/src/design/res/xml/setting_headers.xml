@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2010 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,22 +20,26 @@
     <header
         android:id="@+id/general_settings"
         android:fragment="dolphin.android.apps.CpblCalendar.preference.GeneralFragment"
-        android:title="@string/title_about_app"/>
+        android:summary="@string/summary_general_settings"
+        android:title="@string/title_about_app" />
     <!-- android:icon="@drawable/ic_settings_about" -->
 
     <header
         android:id="@+id/display_settings"
         android:fragment="dolphin.android.apps.CpblCalendar.preference.DisplayFragment"
-        android:title="@string/title_display_settings"/>
+        android:summary="@string/summary_display_settings"
+        android:title="@string/title_display_settings" />
 
     <header
         android:id="@+id/notification_settings"
         android:fragment="dolphin.android.apps.CpblCalendar.preference.NotificationFragment"
-        android:title="@string/title_notification_settings"/>
+        android:summary="@string/summary_notification_settings"
+        android:title="@string/title_notification_settings" />
 
     <header
         android:id="@+id/advanced_settings"
         android:fragment="dolphin.android.apps.CpblCalendar.preference.AdvancedFragment"
-        android:title="@string/title_advanced_settings"/>
+        android:summary="@string/summary_advanced_settings"
+        android:title="@string/title_advanced_settings" />
 
 </preference-headers>

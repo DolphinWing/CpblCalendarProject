@@ -13,6 +13,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -87,9 +87,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     private SparseArray<ArrayList<Game>> mAllGamesCache;//[146]++
 
+    Snackbar mSnackbar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        //supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
 
         if (PreferenceUtils.isEngineerMode(this)) {//[28]dolphin
@@ -119,6 +121,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mDelayGames2014 = new SparseArray<>();
         mAllGamesCache = new SparseArray<>();//[146]++
+
+
     }
 
     @Override
@@ -336,15 +340,15 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     private void query_to_update(boolean quick_refresh) {
         onLoading(true);
         mIsQuery = true;//Log.d(TAG, "onQueryClick");
-        setProgressBarIndeterminateVisibility(true);
+        //setProgressBarIndeterminateVisibility(true);
 
         final ActionBar actionBar = getSupportActionBar();
-        final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
+//        final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
 
         String kind = mSpinnerKind != null ? mSpinnerKind.getSelectedItem().toString() : "01";
-        if (actionBar != null) {
-            actionBar.setTitle(kind);
-        }
+//        if (actionBar != null) {
+//            actionBar.setTitle(kind);
+//        }
 
         Calendar now = CpblCalendarHelper.getNowTime();
         String gameYear = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString()
@@ -354,31 +358,37 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         int month = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItemPosition() + 1
                 : now.get(Calendar.MONTH) + 1;
         //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
-        String time_str = gameYear;//[154]-- String.format("%s %s", gameYear,
-        //mSpinnerMonth.getSelectedItem().toString());
-        time_str = mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() >= 12
-                ? gameYear : time_str;//[146]++
-
+//        String time_str = gameYear;//[154]-- String.format("%s %s", gameYear,
+//        //mSpinnerMonth.getSelectedItem().toString());
+//        time_str = mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() >= 12
+//                ? gameYear : time_str;//[146]++
+//
         int fieldIndex = mSpinnerField != null ? mSpinnerField.getSelectedItemPosition() : 0;
         String fieldId = mGameField[fieldIndex];
+//        if (actionBar != null) {
+//            if (fieldIndex > 0) {
+//                String field = String.format("%s%s", getString(R.string.title_at),
+//                        mSpinnerField.getSelectedItem().toString());
+//                if (isTablet) {
+//                    actionBar.setSubtitle(field);
+//                } else {
+//                    actionBar.setTitle(String.format("%s%s", kind, field));
+//                }
+//            } else {//clear ActionBar subtitle first
+//                actionBar.setSubtitle("");
+//            }
+//            //set time string and kind to ActionBar
+//            if (isTablet) {
+//                actionBar.setTitle(time_str + " " + kind);
+//            } else {
+//                actionBar.setSubtitle(time_str);
+//            }
+//        }
+        String leagueYear = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString() : "";
+        leagueYear = leagueYear.contains(" ") ? leagueYear.substring(leagueYear.indexOf(" ") + 1) : leagueYear;
+        leagueYear = leagueYear.isEmpty() ? gameYear : leagueYear.replace("(", "").replace(")", "").trim();
         if (actionBar != null) {
-            if (fieldIndex > 0) {
-                String field = String.format("%s%s", getString(R.string.title_at),
-                        mSpinnerField.getSelectedItem().toString());
-                if (isTablet) {
-                    actionBar.setSubtitle(field);
-                } else {
-                    actionBar.setTitle(String.format("%s%s", kind, field));
-                }
-            } else {//clear ActionBar subtitle first
-                actionBar.setSubtitle("");
-            }
-            //set time string and kind to ActionBar
-            if (isTablet) {
-                actionBar.setTitle(time_str + " " + kind);
-            } else {
-                actionBar.setSubtitle(time_str);
-            }
+            actionBar.setSubtitle(leagueYear.concat(" ").concat(kind));
         }
 
         final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
@@ -676,14 +686,28 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         //update subtitle
                         if (gameList.size() > 0 && gameList.get(0).Source == Game.SOURCE_ZXC22
                                 && getActivity() != null && actionBar != null) {
-                            actionBar.setSubtitle(String.format("%s: %s",
+//                            actionBar.setSubtitle(String.format("%s: %s",
+//                                    getString(R.string.title_data_source),
+//                                    getString(R.string.summary_zxc22)));
+//                            showSnackbar(String.format("%s: %s",
+//                                    getString(R.string.title_data_source),
+//                                    getString(R.string.summary_zxc22)));
+                            showModeIndicator(true, String.format("%s: %s",
                                     getString(R.string.title_data_source),
                                     getString(R.string.summary_zxc22)));
+                        } else {
+                            showModeIndicator(false);
                         }
 
                         //show offline mode indicator
-                        if (PreferenceUtils.isCacheMode(getBaseContext()) && actionBar != null) {
-                            actionBar.setSubtitle(R.string.action_cache_mode);
+                        if (PreferenceUtils.isCacheMode(getBaseContext())) {
+//                            if (actionBar != null) {
+//                                actionBar.setSubtitle(R.string.action_cache_mode);
+//                            }
+                            //showSnackbar(getString(R.string.action_cache_mode));
+                            showModeIndicator(true, getString(R.string.action_cache_mode));
+                        } else {
+                            showModeIndicator(false);
                         }
 
                         mQueryCallback.onQuerySuccess(mHelper, gameList, mYear, mMonth);
@@ -838,4 +862,28 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             }
         }
     };
+
+    protected void showSnackbar(String message) {
+        if (mSnackbar != null && mSnackbar.isShown()) {
+            mSnackbar.setText(message);
+        } else {
+            mSnackbar = Snackbar.make(findViewById(R.id.main_content_frame), message,
+                    Snackbar.LENGTH_INDEFINITE);
+            mSnackbar.show();
+        }
+    }
+
+    private void showModeIndicator(boolean visible) {
+        showModeIndicator(visible, null);
+    }
+
+    private void showModeIndicator(boolean visible, String text) {
+        TextView modeIndicator = (TextView) findViewById(R.id.mode_indicator);
+        if (modeIndicator != null) {
+            modeIndicator.setVisibility(visible ? View.VISIBLE : View.GONE);
+            if (text != null) {
+                modeIndicator.setText(text);
+            }
+        }
+    }
 }

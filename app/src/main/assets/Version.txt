@@ -35,6 +35,12 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1008] @ 2017-04-02
+    change actionbar text
+    add scroll to list bottom hides floating action button
+    add settings header summary
+    add new mode indicator
+
 [1007] @ 2017-04-01
     update team logo
     small tweaks

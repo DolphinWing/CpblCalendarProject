@@ -118,7 +118,9 @@ public class Utils {
         int height = (int) (display.heightPixels * .9);
         //height = height < 480 ? 480 : height;
         //Log.d("CpblCalendarHelper", String.format("w=%d, h=%d", width, height));
-        dialog.getWindow().setLayout(width, height);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(width, height);
+        }
         return dialog;
     }
 
@@ -135,7 +137,7 @@ public class Utils {
                 .setMessage(R.string.title_cache_mode_enable_message)
                 .setTitle(R.string.action_cache_mode)
                 .setPositiveButton(R.string.title_cache_mode_start, listener)
-                .setNegativeButton(android.R.string.cancel,
+                .setNegativeButton(R.string.title_cache_mode_cancel,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
