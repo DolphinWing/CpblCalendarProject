@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -219,7 +220,7 @@ public class SplashActivity extends Activity {
             return;
         }
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.new_version_available_title)
                 .setMessage(R.string.new_version_available_message)
                 .setPositiveButton(R.string.new_version_available_go,
@@ -237,6 +238,18 @@ public class SplashActivity extends Activity {
                             }
                         })
                 .show();
+
+        String summary = mRemoteConfig.getString("latest_version_summary");
+        summary = summary != null && !summary.isEmpty() ? summary
+                : getString(R.string.new_version_available_message);
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        if (textView != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                textView.setText(Html.fromHtml(summary, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                textView.setText(Html.fromHtml(summary));
+            }
+        }
     }
 
     private void startGooglePlayApp() {

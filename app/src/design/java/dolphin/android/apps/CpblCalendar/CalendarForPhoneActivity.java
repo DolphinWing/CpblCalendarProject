@@ -115,7 +115,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             actionBar.setDisplayUseLogoEnabled(true);
             actionBar.setLogo(R.mipmap.ic_launcher);
             actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setDefaultDisplayHomeAsUpEnabled(false);
         }
 
         initQueryPane();

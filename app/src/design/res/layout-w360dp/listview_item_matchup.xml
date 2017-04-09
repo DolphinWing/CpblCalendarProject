@@ -90,7 +90,7 @@
         android:layout_below="@+id/textView10"
         android:layout_centerHorizontal="true"
         android:paddingRight="12dp"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/textView3"

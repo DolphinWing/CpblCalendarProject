@@ -11,9 +11,6 @@
 
         <ProgressBar style="@style/Theme.Holo_green.LoadingIcon" />
 
-        <TextView
-            android:id="@android:id/message"
-            style="@style/Theme.Holo_green.LoadingText" />
     </FrameLayout>
 
 </merge>

@@ -29,5 +29,5 @@
 
     <color name="selectable_item_pressed">#20000000</color>
 
-    <color name="bottom_sheet_background">#40000000</color>
+    <color name="bottom_sheet_background">#60000000</color>
 </resources>

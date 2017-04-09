@@ -1,32 +1,14 @@
 CPBL 中華職棒賽程表
-https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
-
-全新球季，全新排版，配合新的 Android Lollipop 的 Material Design。
-
-用更流暢的操作風格與動線，將過往的成績一覽無遺。
-同時改進了許多過去已經提供的功能，變得更快更順暢。
-另外還增加了新的提醒功能，在比賽開始前的對話框還會有中華職棒的主題曲同步播放！
-只要到通知設定中做修改，你也可以馬上聽到歌曲唷！
-
-即刻更新至 2.0 版，馬上體驗看看~~
+https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3
 
 本程式目前提供以下功能
-● 檢視模式: 快速取得 CPBL 中華職棒今年例行賽賽程表，也可以很快的查詢 2013 年之前的歷史對戰資料。
+● 檢視模式: 快速取得 CPBL 中華職棒例行賽賽程表，也可以查詢之前的歷史對戰資料。
 ● 離線模式: 可以將所有賽程下載到本機端。請在下拉式選單中啟用。啟用離線模式將不會顯示今年的對戰成績。
 ● 通知功能: 請到設定中啟用。啟用後，點擊時間旁邊的小鬧鐘圖示，紅色表示啟動該場通知；灰色表示未啟動。
-新功能！可以在通知對話框開啟的時候，同時播放中華職棒主題曲唷~ 可以到通知設定裡面修改開啟。
-歌曲全長約3分40秒，關閉對話框時會自動關閉音樂。
 
 資料來源：
 ● CPBL 中華職棒官網賽程 http://www.cpbl.com.tw/
-● 中華職棒舊官方網址 http://cpblweb.ksi.com.tw/
 ● 中華職棒觀眾人數分析 http://zxc22.idv.tw (感謝站長carhow)
-
-圖片來源：
-● 台灣棒球維基館 http://twbsball.dils.tku.edu.tw
-開源函式庫：
-● ActionBarSherlock, ShowcaseView, NineOldAndroids
-● FloatingActionButton
 
 本程式純粹是為了朋友而幫忙~ 非官方APP
 如果有任何版權問題或使用上的問題，請來信告知!
@@ -35,6 +17,11 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1009] @ 2017-04-07
+    fix live text
+    add update summary to new version dialog
+    update layout
+
 [1008] @ 2017-04-02
     change actionbar text
     add scroll to list bottom hides floating action button

@@ -18,13 +18,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
+        android:layout_height="?attr/actionBarSize"
         android:layout_marginRight="@dimen/navigation_drawer_width"
         android:layout_toLeftOf="@id/left_drawer"
         android:background="@color/holo_green_dark"
-        android:gravity="bottom"
-        android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Headline" />
 
@@ -32,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/navigation_drawer_width"
-        android:layout_marginTop="@dimen/toolbar_height"
+        android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
 
         <TextView
@@ -82,14 +79,14 @@
         android:layout_height="4dp"
         android:layout_gravity="right"
         android:layout_marginRight="@dimen/navigation_drawer_width"
-        android:layout_marginTop="@dimen/toolbar_height"
+        android:layout_marginTop="?attr/actionBarSize"
         android:alpha="0.4"
         android:contentDescription="@null"
         android:scaleType="fitXY"
         android:src="@drawable/drawer_shadow_vert" />
 
-    <include layout="@layout/bottom_sheet_game" />
-
     <include layout="@layout/include_loading_frame" />
+
+    <include layout="@layout/bottom_sheet_game" />
 
 </android.support.design.widget.CoordinatorLayout>
