@@ -12,10 +12,10 @@
             android:key="data_from_cpbl"
             android:title="@string/title_cpbl_offical"
             android:summary="@string/summary_cpbl_offical" />
-        <Preference
+        <!--<Preference
             android:key="data_from_twbsball"
             android:title="@string/title_twbsball_wiki"
-            android:summary="@string/summary_twbsball_wiki" />
+            android:summary="@string/summary_twbsball_wiki" />-->
         <Preference
             android:key="data_from_zxc22"
             android:title="@string/title_zxc22"

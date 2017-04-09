@@ -66,17 +66,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     final static String KEY_GAME_MONTH = "month";
 
     Spinner mSpinnerKind;
-
     Spinner mSpinnerField;
-
     Spinner mSpinnerYear;
-
     Spinner mSpinnerMonth;
-
     Button mButtonQuery;
 
     private View mProgressView;
-
     private TextView mProgressText;//[84]dolphin++
 
     private GoogleAnalyticsHelper mAnalytics;
@@ -121,8 +116,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mDelayGames2014 = new SparseArray<>();
         mAllGamesCache = new SparseArray<>();//[146]++
-
-
     }
 
     @Override

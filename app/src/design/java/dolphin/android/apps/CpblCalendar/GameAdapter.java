@@ -89,6 +89,12 @@ public class GameAdapter extends BaseGameAdapter {
             }
         }
 
+        //game field
+        TextView fieldText = (TextView) convertView.findViewById(R.id.textView7);
+        if (fieldText != null) {
+            fieldText.setText(game.Field);
+        }
+
         TextView timeText = (TextView) convertView.findViewById(R.id.textView1);
         TextView liveText = (TextView) convertView.findViewById(R.id.textView10);
         if (timeText != null) {
@@ -101,7 +107,7 @@ public class GameAdapter extends BaseGameAdapter {
                     } else {
                         liveText.setText(Html.fromHtml(game.LiveMessage.replace("&nbsp;&nbsp;", "<br>")));
                     }
-                    liveText.setVisibility(View.INVISIBLE);
+                    liveText.setVisibility(View.VISIBLE);
                     timeText.setText(date_str);
                 } else {
                     date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
