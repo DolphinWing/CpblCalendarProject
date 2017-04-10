@@ -26,3 +26,4 @@ libraries/*/*.iml
 libraries/*/*.ipr
 libraries/*/*.iws
 
+app/google-services.json
