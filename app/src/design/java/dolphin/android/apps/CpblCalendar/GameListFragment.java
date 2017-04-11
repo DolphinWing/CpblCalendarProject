@@ -173,7 +173,9 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-        //FIXME: don't do anything
+        if (mOnOptionClickListener != null) {
+            mOnOptionClickListener.onOptionClicked(view, (Game) view.getTag());
+        }
         return true;
     }
 }

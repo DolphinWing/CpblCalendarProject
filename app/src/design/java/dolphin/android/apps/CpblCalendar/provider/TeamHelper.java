@@ -33,12 +33,28 @@ public class TeamHelper {
             getApplication().setTeamLogoPalette(logoId, palette);//save to cache
         }
         int color = Color.BLACK;
-        if (palette.getVibrantSwatch() != null) {
+        if (!validateColor(color) && palette.getDominantSwatch() != null) {
+            color = palette.getDominantColor(color);
+        }
+        if (!validateColor(color) && palette.getVibrantSwatch() != null) {
             color = palette.getVibrantColor(color);
         }
-        if (color == Color.BLACK && palette.getMutedSwatch() != null) {
+        if (!validateColor(color) && palette.getMutedSwatch() != null) {
             color = palette.getMutedColor(color);
         }
+        if (!validateColor(color)) {
+            color = Color.BLACK;//still use black
+        }
         return color;
+    }
+
+    private boolean validateColor(int color) {
+        switch (color) {
+            case Color.BLACK:
+            case Color.WHITE:
+            case Color.TRANSPARENT:
+                return false;
+        }
+        return true;
     }
 }

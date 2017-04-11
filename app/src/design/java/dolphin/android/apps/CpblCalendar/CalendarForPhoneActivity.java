@@ -148,10 +148,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                             setBottomSheetVisibility(true, game, view);
                         }
                     });
-                } else {
-                    //Log.d(TAG, "use list.onclick");
-                    listView.setOnItemClickListener(this);
-                }
+                }// else {
+                //Log.d(TAG, "use list.onclick");
+                listView.setOnItemClickListener(this);
+                //}
             }
         }
 
@@ -662,9 +662,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (ENABLE_BOTTOM_SHEET) {//more options
-            setBottomSheetVisibility(true, (Game) view.getTag(), view);
-        } else if (view != null) {//old method
+        //if (ENABLE_BOTTOM_SHEET) {//more options
+        //    setBottomSheetVisibility(true, (Game) view.getTag(), view);
+        //}//else
+        if (view != null) {//old method
             showGameActivity((Game) view.getTag());
         }
     }
@@ -798,6 +799,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void showGameActivity(Game game) {
+        if (!game.canOpenUrl()) {
+            return;//unable to open url
+        }
         if (mFirebaseAnalytics != null) {//log to Firebase Analytics
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,

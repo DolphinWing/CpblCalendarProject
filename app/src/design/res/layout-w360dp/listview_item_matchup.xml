@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/padding_small"
     android:paddingTop="@dimen/padding_small"
-    tools:ignore="RtlSymmetry,RtlHardcoded">
+    tools:ignore="RtlSymmetry,RtlHardcoded,HardcodedText">
 
     <TextView
         android:id="@+id/textView9"
@@ -16,8 +16,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="12dp"
+        android:gravity="center"
         android:paddingRight="12dp"
-        android:gravity="center" />
+        android:text="0" />
 
     <FrameLayout
         android:id="@+id/item_control_pane"
@@ -75,22 +76,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textView9"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="6dp"
-        android:paddingRight="12dp"
-        android:layout_marginTop="-6dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
         android:gravity="center"
         android:lines="2"
+        android:paddingRight="12dp"
         android:text="LIVE\n1Top"
-        android:visibility="invisible"
-        tools:ignore="HardcodedText" />
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView7"
         style="@style/Theme.Holo_green.Match.Field"
         android:layout_below="@+id/textView10"
         android:layout_centerHorizontal="true"
-        android:paddingRight="12dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:paddingRight="12dp" />
 
     <TextView
         android:id="@+id/textView3"
@@ -98,16 +98,18 @@
         android:layout_below="@+id/textView1"
         android:layout_marginTop="20dp"
         android:layout_toLeftOf="@+id/textView9"
-        android:gravity="center" />
+        android:gravity="center"
+        android:text="0" />
 
     <TextView
         android:id="@+id/textView4"
         style="@style/Theme.Holo_green.Match.Score"
         android:layout_below="@+id/textView1"
+        android:layout_marginLeft="-12dp"
         android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/textView9"
-        android:layout_marginLeft="-12dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:text="0" />
 
     <View
         android:id="@+id/more_info"
