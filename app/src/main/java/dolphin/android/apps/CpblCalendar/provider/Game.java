@@ -337,7 +337,14 @@ public class Game {
     }
 
     public boolean canOpenUrl() {
-        return !(StartTime.after(CpblCalendarHelper.getNowTime()) && Url.contains("box.html"));
+        if (Url == null || Url.isEmpty()) {
+            return false;
+        }
+        Calendar now = CpblCalendarHelper.getNowTime();
+        boolean enabled = Url.contains("box.html") && StartTime.before(now);//past
+        enabled |= StartTime.after(now) && Url.contains("starters.html");//future
+        enabled |= Url.contains("play_by_play.html");//live
+        return enabled;
     }
 
     public String getFieldId(Context context) {

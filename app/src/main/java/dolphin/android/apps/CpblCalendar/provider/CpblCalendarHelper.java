@@ -264,7 +264,7 @@ public class CpblCalendarHelper extends HttpHelper {
             if (str.contains("<font color='#547425'>")) {
                 game.IsFinal = true;
                 //http://www.cpbl.com.tw/game/box.aspx?gameno=07&year=2014&game=4
-                game.Url = String.format(Locale.US, "%s/game/box.aspx?gameno=%s&year=%d&game=%d",
+                game.Url = String.format(Locale.US, "%s/games/box.html?gameno=%s&pbyear=%d&game_id=%d&game_type=01",
                         URL_BASE, game.Kind, game.StartTime.get(Calendar.YEAR), game.Id);
                 String result = str.substring(str.indexOf("<font color='#547425'>"));
                 result = result.substring(result.indexOf("<B>") + 3);

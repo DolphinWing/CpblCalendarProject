@@ -33,6 +33,15 @@
             android:text="@string/action_show_game_info" />
 
         <TextView
+            android:id="@+id/bottom_sheet_option4"
+            style="@style/Theme.Holo_green.BottomSheet.Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/selectable_item_background"
+            android:text="@string/action_show_field_info" />
+
+        <TextView
             android:id="@+id/bottom_sheet_option2"
             style="@style/Theme.Holo_green.BottomSheet.Option"
             android:layout_width="match_parent"
@@ -50,14 +59,6 @@
             android:background="@drawable/selectable_item_background"
             android:text="@string/action_add_to_notification" />
 
-        <TextView
-            android:id="@+id/bottom_sheet_option4"
-            style="@style/Theme.Holo_green.BottomSheet.Option"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:background="@drawable/selectable_item_background"
-            android:text="@string/action_show_field_info" />
     </LinearLayout>
 
 </merge>

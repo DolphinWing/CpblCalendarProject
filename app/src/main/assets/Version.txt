@@ -21,6 +21,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1011] @ 2017-04-12
+    fix live url and next starter url
+
 [1010] @ 2017-04-11
     change click/long click/option event
     adjust live text layout
