@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -29,6 +31,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -45,12 +48,22 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         myHandler = new MyHandler(this);
-//        //http://aleung.github.io/blog/2012/10/06/change-locale-in-android-application/
-//        Locale.setDefault(Locale.TAIWAN);
-//        Configuration config = getBaseContext().getResources().getConfiguration();
-//        config.locale = Locale.TAIWAN;
-//        getBaseContext().getResources().updateConfiguration(config,
-//                getBaseContext().getResources().getDisplayMetrics());
+
+        //http://stackoverflow.com/a/24290514
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            Configuration configuration = new Configuration(Resources.getSystem().getConfiguration());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                configuration.setLocale(Locale.TAIWAN);
+            } else {
+                configuration.locale = Locale.TAIWAN; // or whichever locale you desire
+            }
+            Resources.getSystem().updateConfiguration(configuration, null);
+        }
+        try {//https://developer.android.com/reference/java/util/Locale.html
+            Locale.setDefault(Locale.TAIWAN);
+        } catch (SecurityException e) {
+            e.printStackTrace();//in case that device don't allow locale change
+        }
 
         FirebaseAnalytics.getInstance(this);//initialize this
 

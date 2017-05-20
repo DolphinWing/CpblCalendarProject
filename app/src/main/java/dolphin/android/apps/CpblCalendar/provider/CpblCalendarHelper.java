@@ -22,6 +22,7 @@ import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpHelper;
+import dolphin.android.util.DateUtils;
 import dolphin.android.util.FileUtils;
 
 /**
@@ -430,14 +431,20 @@ public class CpblCalendarHelper extends HttpHelper {
         return now;
     }
 
-    public static boolean isToday(Game game) {
-        if (game != null) {
-            Calendar now = getNowTime();
-            return now.get(Calendar.YEAR) == game.StartTime.get(Calendar.YEAR) &&
-                    now.get(Calendar.DAY_OF_YEAR) == game.StartTime.get(Calendar.DAY_OF_YEAR);
-        }
-        return false;
-    }
+//    public static boolean isToday(Game game) {
+//        if (game != null) {
+//            Calendar now = getNowTime();
+//            return DateUtils.sameDay(game.StartTime, now);
+//        }
+//        return false;
+//    }
+//
+//    public static boolean isSameDay(Game game1, Game game2) {
+//        if (game1 == null || game2 == null) {
+//            return false;
+//        }
+//        return DateUtils.sameDay(game1.StartTime, game2.StartTime);
+//    }
 
     /**
      * build year array adapter

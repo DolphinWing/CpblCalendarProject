@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.util.DateUtils;
 
 @Keep
 public class Game implements Parcelable {
@@ -59,16 +60,17 @@ public class Game implements Parcelable {
     public String LiveMessage = null;//[181]++
 
     public Game() {
-
-    }
-
-    public Game(int id) {
-        Id = id;
         StartTime = Calendar.getInstance();
     }
 
+    public Game(int id) {
+        this();
+        Id = id;
+    }
+
     protected Game(Parcel in) {
-        Id = in.readInt();
+        this(in.readInt());
+
         Kind = in.readString();
 
         HomeTeam = new Team(in.readInt(), in.readString(), in.readString(), in.readInt());
@@ -79,7 +81,6 @@ public class Game implements Parcelable {
         Field = in.readString();
         FieldId = in.readString();
 
-        StartTime = Calendar.getInstance();
         StartTime.setTimeInMillis(in.readLong());
 
         IsFinal = in.readByte() != 0;
@@ -459,5 +460,9 @@ public class Game implements Parcelable {
             }
         }
         return game.FieldId;
+    }
+
+    public boolean isToday() {
+        return DateUtils.isToday(StartTime);
     }
 }

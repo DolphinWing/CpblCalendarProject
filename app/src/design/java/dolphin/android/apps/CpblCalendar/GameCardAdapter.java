@@ -144,7 +144,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder> i
                 holder.HomeTeamScore.setText(String.valueOf(game.HomeScore));
                 break;
             case TYPE_UPCOMING:
-                if (CpblCalendarHelper.isToday(game)) {
+                if (game.isToday()) {
                     holder.GameTime.setText(diff_str.concat(" ").concat(time_str));
                 } else {
                     holder.GameTime.setText(diff_str);

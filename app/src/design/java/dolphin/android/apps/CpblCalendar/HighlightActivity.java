@@ -25,6 +25,7 @@ import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
+import dolphin.android.util.DateUtils;
 
 /**
  * Created by jimmyhu on 2017/5/16.
@@ -249,7 +250,7 @@ public class HighlightActivity extends AppCompatActivity {
             Game game = list.get(i);
             long diff = game.StartTime.getTimeInMillis() - now.getTimeInMillis();
             if (game.StartTime.before(now)) {//final or live
-                if (CpblCalendarHelper.isToday(game)) {//show all games today, final or live
+                if (game.isToday() && beforeDiff != 0) {//show all games today, final or live
                     beforeIndex = i;
                     beforeDiff = 0;//get all today games in the list
                 } else if (diff > beforeDiff) {//no games today, try to get the closest games
@@ -262,12 +263,18 @@ public class HighlightActivity extends AppCompatActivity {
                 }//don't care those
             } else if (game.StartTime.after(now)) {//upcoming games
                 //Log.d(TAG, String.format("after: %d, %s", game.Id, game.getDisplayDate()));
-                if (CpblCalendarHelper.isToday(game)) {//show all games today
+                if (game.isToday()) {//show all games today
                     afterIndex = i;
+                    afterDiff = diff;
+                } else if (afterIndex != -1 && DateUtils.sameDay(list.get(afterIndex).StartTime, game.StartTime)) {
+                    afterDiff = diff;
+                    //Log.d(TAG, String.format("one more game %d", game.Id));
                 } else if (diff < afterDiff) {//no games today, try to find the closest games
                     afterDiff = diff;
                     afterIndex = i;
-                    //Log.d(TAG, String.format("afterIndex=%d, afterDiff=%d", afterIndex, afterDiff));
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, String.format("afterIndex=%d, afterDiff=%d", afterIndex, afterDiff));
+                    }
                 } else if (diff == afterDiff) {//same start time
                     if (DEBUG_LOG) {
                         Log.d(TAG, String.format("after. same day game %d, %d", afterIndex, i));
@@ -277,6 +284,9 @@ public class HighlightActivity extends AppCompatActivity {
                     break;
                 }
             }
+        }
+        if (DEBUG_LOG) {
+            Log.d(TAG, String.format("before=%d, after=%d", beforeIndex, afterIndex));
         }
 
         boolean lived = false;
@@ -291,7 +301,7 @@ public class HighlightActivity extends AppCompatActivity {
             } else if (!lived) {//don't show upcoming when games are live
                 long diff = game.StartTime.getTimeInMillis() - now.getTimeInMillis();
                 //Log.d(TAG, String.format("after: diff=%d", diff));
-                if (diff >= afterDiff) {//ignore all except the closest upcoming games
+                if (diff > afterDiff) {//ignore all except the closest upcoming games
                     //Log.d(TAG, "ignore all except the closest upcoming games");
                     break;
                 }

@@ -28,7 +28,8 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_weight="1">
 
-            <android.support.v7.widget.RecyclerView
+            <!-- android.support.v7.widget.RecyclerView -->
+            <dolphin.android.apps.CpblCalendar.FixedRecyclerView
                 android:id="@android:id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
