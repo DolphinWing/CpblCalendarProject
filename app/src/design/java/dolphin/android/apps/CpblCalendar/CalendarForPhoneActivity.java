@@ -185,7 +185,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
-            autoLoadGames(savedInstanceState);
+            //dolphin++@2017.05.19, check if we have cached data from HighlightActivity
+            //http://stackoverflow.com/a/19314677
+            final ArrayList<Game> list = (getIntent() != null && getIntent().hasExtra(HighlightActivity.KEY_CACHE))
+                    ? getIntent().<Game>getParcelableArrayListExtra(HighlightActivity.KEY_CACHE) : null;
+            if (list != null) {
+                //Log.d(TAG, String.format("list %d", list.size()));
+                doHighlightCacheUpdate(list);
+            } else {
+                autoLoadGames(savedInstanceState);
+            }
         } else {//ask user to grant permission
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -291,7 +300,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
         MenuItem item2 = menu.findItem(R.id.action_refresh);
         if (item2 != null) {
-            item2.setVisible(visible);
+            item2.setVisible(false);
         }
         MenuItem item3 = menu.findItem(R.id.action_leader_board);
         if (item3 != null) {

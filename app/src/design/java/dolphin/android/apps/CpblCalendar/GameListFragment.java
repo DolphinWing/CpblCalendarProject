@@ -51,7 +51,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
         GameAdapter adapter = new GameAdapter(activity, gameArrayList,
                 (CpblApplication) getActivity().getApplication());
         if (mOnOptionClickListener != null) {//set listener
-            adapter.setOnOptionclickListener(mOnOptionClickListener);
+            adapter.setOnOptionClickListener(mOnOptionClickListener);
         }
         this.setListAdapter(adapter);
         //http://stackoverflow.com/a/5888331

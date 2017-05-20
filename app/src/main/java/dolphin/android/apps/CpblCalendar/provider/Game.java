@@ -3,6 +3,8 @@ package dolphin.android.apps.CpblCalendar.provider;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
@@ -23,7 +25,7 @@ import java.util.Locale;
 import dolphin.android.apps.CpblCalendar.R;
 
 @Keep
-public class Game {
+public class Game implements Parcelable {
     public int Id = 0;
     public String Kind = null;
 
@@ -56,6 +58,94 @@ public class Game {
     public boolean IsLive = false;//[181]++
     public String LiveMessage = null;//[181]++
 
+    public Game() {
+
+    }
+
+    public Game(int id) {
+        Id = id;
+        StartTime = Calendar.getInstance();
+    }
+
+    protected Game(Parcel in) {
+        Id = in.readInt();
+        Kind = in.readString();
+
+        HomeTeam = new Team(in.readInt(), in.readString(), in.readString(), in.readInt());
+        HomeScore = in.readInt();
+        AwayTeam = new Team(in.readInt(), in.readString(), in.readString(), in.readInt());
+        AwayScore = in.readInt();
+
+        Field = in.readString();
+        FieldId = in.readString();
+
+        StartTime = Calendar.getInstance();
+        StartTime.setTimeInMillis(in.readLong());
+
+        IsFinal = in.readByte() != 0;
+        Url = in.readString();
+        Channel = in.readString();
+        IsDelay = in.readByte() != 0;
+        DelayMessage = in.readString();
+        Source = in.readInt();
+        People = in.readInt();
+        IsLive = in.readByte() != 0;
+        LiveMessage = in.readString();
+    }
+
+    public static final Creator<Game> CREATOR = new Creator<Game>() {
+        @Override
+        public Game createFromParcel(Parcel in) {
+            return new Game(in);
+        }
+
+        @Override
+        public Game[] newArray(int size) {
+            return new Game[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        int year = StartTime.get(Calendar.YEAR);
+        parcel.writeInt(Id);
+        parcel.writeString(Kind);
+
+        //Home
+        parcel.writeInt(HomeTeam.getId());
+        parcel.writeString(HomeTeam.getName());
+        parcel.writeString(HomeTeam.getShortName());
+        parcel.writeInt(HomeTeam.getLogo(year));
+        parcel.writeInt(HomeScore);
+
+        //Away
+        parcel.writeInt(AwayTeam.getId());
+        parcel.writeString(AwayTeam.getName());
+        parcel.writeString(AwayTeam.getShortName());
+        parcel.writeInt(AwayTeam.getLogo(year));
+        parcel.writeInt(AwayScore);
+
+        parcel.writeString(Field);
+        parcel.writeString(FieldId);
+
+        parcel.writeLong(StartTime.getTimeInMillis());//time in millis
+
+        parcel.writeByte((byte) (IsFinal ? 1 : 0));
+        parcel.writeString(Url);
+        parcel.writeString(Channel);
+        parcel.writeByte((byte) (IsDelay ? 1 : 0));
+        parcel.writeString(DelayMessage);
+        parcel.writeInt(Source);
+        parcel.writeInt(People);
+        parcel.writeByte((byte) (IsLive ? 1 : 0));
+        parcel.writeString(LiveMessage);
+    }
+
     @Override
     public String toString() {
         //return super.toString();
@@ -83,12 +173,14 @@ public class Game {
                 game.Field, game.Channel, game.StartTime.getTimeInMillis(), game.Kind);
     }
 
+
     /**
      * Format Calendar as proper time display string
      *
      * @param calendar Calendar
      * @return time display string
      */
+    @SuppressWarnings("WeakerAccess")
     public static String getDisplayDate(Calendar calendar) {
         return String.format(Locale.US, "%04d/%02d/%02d %02d:%02d", calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH),

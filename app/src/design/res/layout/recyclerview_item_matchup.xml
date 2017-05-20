@@ -61,10 +61,8 @@
         android:layout_below="@+id/match_title"
         android:layout_toLeftOf="@+id/item_control_pane"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
         android:paddingLeft="@dimen/padding_large"
-        android:paddingRight="@dimen/padding_medium"
-        android:paddingTop="8dp">
+        android:paddingRight="@dimen/padding_medium">
 
         <LinearLayout
             android:id="@+id/away_team"
@@ -86,9 +84,7 @@
             <TextView
                 android:id="@+id/textView2"
                 style="@style/Theme.Holo_green.Match.Team"
-                android:layout_width="0dp"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="1" />
+                android:layout_marginLeft="16dp" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -119,9 +115,7 @@
             <TextView
                 android:id="@+id/textView5"
                 style="@style/Theme.Holo_green.Match.Team"
-                android:layout_width="0dp"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="1" />
+                android:layout_marginLeft="16dp" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -136,35 +130,31 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/match_up"
         android:layout_gravity="left|center_vertical"
-        android:layout_toLeftOf="@+id/item_control_pane"
         android:gravity="right|center_vertical"
         android:paddingLeft="16dp"
+        android:paddingRight="@dimen/padding_large"
         android:paddingTop="@dimen/padding_small">
-
-        <TextView
-            android:id="@+id/textView7"
-            style="@style/Theme.Holo_green.Match.Field"
-            android:layout_gravity="top" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="@dimen/padding_small"
-            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/textView8"
             style="@style/Theme.Holo_green.Match.ExtraMsg"
-            android:layout_gravity="top" />
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|left"
+            android:paddingRight="@dimen/padding_large" />
 
+        <TextView
+            android:id="@+id/textView6"
+            style="@style/Theme.Holo_green.Match.Channel"
+            android:visibility="invisible" />
+
+        <View
+            android:layout_width="@dimen/padding_small"
+            android:layout_height="@dimen/padding_small" />
+
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/Theme.Holo_green.Match.Field" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView6"
-        style="@style/Theme.Holo_green.Match.Channel"
-        android:layout_below="@+id/more_info"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="@dimen/padding_small"
-        android:layout_toLeftOf="@+id/item_control_pane"
-        android:visibility="gone" />
 
 </RelativeLayout>

@@ -116,7 +116,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding_medium</item>
         <item name="android:paddingRight">@dimen/padding_small</item>
-        <item name="android:paddingBottom">@dimen/padding_small</item>
+        <!--<item name="android:paddingBottom">@dimen/padding_small</item>-->
     </style>
 
     <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.Match.Main">
@@ -164,12 +164,12 @@
     </style>
 
     <style name="Theme.Holo_green.Match.Channel" parent="Theme.Holo_green.TextSmall">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_gravity">right|center_vertical</item>
+        <!--<item name="android:layout_weight">1</item>-->
+        <item name="android:layout_gravity">left|center_vertical</item>
         <item name="android:text">@string/empty_data</item>
-        <item name="android:paddingTop">8dp</item>
+        <!--<item name="android:paddingTop">8dp</item>-->
     </style>
 
     <!-- Query Panel style -->

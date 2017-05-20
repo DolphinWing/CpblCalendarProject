@@ -8,6 +8,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dolphin.android.apps.CpblCalendar.CpblApplication;
@@ -59,13 +60,19 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
 
         boolean bEnableNotify = getResources().getBoolean(R.bool.feature_notify);
         //Log.d(PreferenceUtils.TAG, "id = " + R.string.title_notification_settings);
+        List<Header> toRemoved = new ArrayList<>();
         for (Header header : target) {//[63]dolphin++
             int id = header.titleRes;
             //Log.d(PreferenceUtils.TAG, "header.titleRes = " + id);
             if ((id == R.string.title_notification_settings) && !bEnableNotify) {
-                target.remove(header);
+                //target.remove(header);
                 //Log.w(PreferenceUtils.TAG, "remove " + getString(id));
+                toRemoved.add(header);
             }
+        }
+        //don't directly remove by iterator
+        for (Header header : toRemoved) {
+            target.remove(header);
         }
     }
 

@@ -440,6 +440,8 @@ public class Team {
     private final int mId;
     private String mName;//[66]++
     private final Context mContext;
+    private String mShortName;
+    private int mLogoId;
 
     public Team(Context context, int id) {
         mContext = context;
@@ -449,6 +451,14 @@ public class Team {
     public Team(Context context, String name, int year) {
         this(context, getTeamId(context, name, year));
         mName = name;//[66]++
+    }
+
+    public Team(int id, String name, String shortName, int logo) {
+        mId = id;
+        mContext = null;
+        mName = name;
+        mShortName = shortName;
+        mLogoId = logo;
     }
 
     /**
@@ -466,8 +476,9 @@ public class Team {
      * @return team name
      */
     public String getName() {
-        if (getId() != ID_UNKNOWN)
+        if (mContext != null && getId() != ID_UNKNOWN) {
             return getTeamName(mContext, mId);
+        }
         return mName;
     }
 
@@ -477,8 +488,12 @@ public class Team {
      * @return team name
      */
     public String getShortName() {
-        if (getId() != ID_UNKNOWN)
+        if (mShortName != null) {
+            return mShortName;
+        }
+        if (getId() != ID_UNKNOWN) {
             return getShortName(mContext, mId);
+        }
         return getName();
     }
 
@@ -489,12 +504,16 @@ public class Team {
      * @return logo drawable
      */
     public int getLogo(int year) {
-        if (getId() != ID_UNKNOWN)
+        if (mLogoId > 0) {
+            return mLogoId;
+        }
+        if (getId() != ID_UNKNOWN) {
             return getTeamLogo(mId, year);
+        }
         return R.drawable.no_logo;
     }
 
-    public static Team getTeam2014(Context context, String png, int year) {
+    static Team getTeam2014(Context context, String png, int year) {
         int id = ID_UNKNOWN;
         if (png.contains("E02")) {
             id = ID_CT_ELEPHANTS;
@@ -549,10 +568,10 @@ public class Team {
     }
 
     //http://goo.gl/JeMgZh
-    public static class TeamTypeAdapter extends TypeAdapter<Team> {
+    private static class TeamTypeAdapter extends TypeAdapter<Team> {
         private final Context mContext;
 
-        public TeamTypeAdapter(Context context) {
+        TeamTypeAdapter(Context context) {
             super();
             mContext = context;
         }

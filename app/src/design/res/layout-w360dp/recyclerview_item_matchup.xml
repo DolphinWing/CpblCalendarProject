@@ -1,0 +1,194 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/padding_small"
+    android:layout_marginLeft="@dimen/padding_medium"
+    android:layout_marginRight="@dimen/padding_medium"
+    android:layout_marginTop="@dimen/padding_small"
+    android:background="@drawable/selectable_card_item_background"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
+
+    <RelativeLayout
+        android:id="@android:id/background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small">
+
+        <TextView
+            android:id="@+id/textView9"
+            style="@style/Theme.Holo_green.Match.GameId"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:paddingRight="12dp"
+            android:text="@string/empty_data"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:id="@+id/item_control_pane"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:minHeight="96dp">
+
+            <ImageView
+                android:id="@+id/icon_alarm"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@drawable/item_background_holo_light"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_device_access_alarm"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@android:id/icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="top|center_horizontal"
+                android:contentDescription="@null"
+                android:padding="4dp"
+                android:src="@drawable/ic_action_more_vert"
+                android:visibility="invisible" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textView1"
+            style="@style/Theme.Holo_green.Match.Time"
+            android:layout_width="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="16dp"
+            android:layout_toLeftOf="@+id/textView9"
+            android:gravity="center_vertical|left"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView10"
+            style="@style/Theme.Holo_green.Match.ExtraMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView9"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:lines="2"
+            android:paddingRight="12dp"
+            android:text="LIVE\n1Top"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/Theme.Holo_green.Match.Field"
+            android:layout_below="@+id/textView10"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="16dp"
+            android:paddingRight="12dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            style="@style/Theme.Holo_green.Match.Score"
+            android:layout_below="@+id/textView1"
+            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@+id/textView9"
+            android:gravity="center"
+            android:text="@string/empty_data" />
+
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/Theme.Holo_green.Match.Score"
+            android:layout_below="@+id/textView1"
+            android:layout_marginLeft="-12dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/textView9"
+            android:gravity="center"
+            android:text="@string/empty_data" />
+
+        <View
+            android:id="@+id/more_info"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@+id/textView7"
+            android:layout_toLeftOf="@id/item_control_pane" />
+
+        <TextView
+            android:id="@+id/textView6"
+            style="@style/Theme.Holo_green.Match.Channel"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/textView7"
+            android:layout_marginLeft="8dp"
+            android:layout_toLeftOf="@+id/item_control_pane"
+            android:gravity="center_vertical|left"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/more_info"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textView1"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toLeftOf="@+id/textView3"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:minHeight="80dp">
+
+            <ImageView
+                android:id="@android:id/icon1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.1"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_baseball" />
+
+            <TextView
+                android:id="@+id/textView2"
+                style="@style/Theme.Holo_green.Match.Team"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/more_info"
+            android:layout_below="@+id/textView1"
+            android:layout_marginBottom="12dp"
+            android:layout_toLeftOf="@+id/item_control_pane"
+            android:layout_toRightOf="@+id/textView4"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:minHeight="80dp">
+
+            <ImageView
+                android:id="@android:id/icon2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.1"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_baseball" />
+
+            <TextView
+                android:id="@+id/textView5"
+                style="@style/Theme.Holo_green.Match.Team"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center" />
+        </FrameLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

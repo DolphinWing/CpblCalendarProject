@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dolphin.android.apps.CpblCalendar">
 
@@ -9,18 +10,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_r"
         android:theme="@style/Theme.Holo_green">
-
         <activity
             android:name=".CalendarForPhoneActivity"
             android:screenOrientation="locked" />
-
         <activity
             android:name=".SettingsActivity"
             android:screenOrientation="locked"
             android:theme="@style/Theme.Holo_green.Settings" />
 
         <!-- android:process=":remote" -->
-        <!--<receiver
+        <!--
+        <receiver
             android:name=".NotifyReceiver"
             android:enabled="@bool/feature_notify">
             <intent-filter>
@@ -28,7 +28,8 @@
                 <action android:name="dolphin.android.apps.CpblCalendar.ALARM" />
                 <action android:name="dolphin.android.apps.CpblCalendar.DELETE_NOTIFICATION" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
+        -->
 
         <activity
             android:name=".NotifyDialog"
@@ -36,7 +37,6 @@
             android:excludeFromRecents="true"
             android:screenOrientation="locked"
             android:theme="@style/Theme.Holo_green.Dialog" />
-
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
@@ -47,14 +47,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <!--<service
-            android:name="com.evernote.android.job.gcm.PlatformGcmService"
-            android:exported="true"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
-            </intent-filter>
-        </service>-->
+        <activity
+            android:name=".HighlightActivity"
+            android:screenOrientation="locked" />
 
     </application>
 

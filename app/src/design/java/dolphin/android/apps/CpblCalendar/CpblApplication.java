@@ -22,8 +22,10 @@ public class CpblApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        //https://github.com/evernote/android-job
-        AlarmProvider.registerJob(this);
+        //only register it when we have enabled it
+        if (getResources().getBoolean(R.bool.feature_notify)) {
+            AlarmProvider.registerJob(this);//https://github.com/evernote/android-job
+        }
     }
 
     /**
@@ -33,7 +35,7 @@ public class CpblApplication extends Application {
      * storing them all in Application object helps ensure that they are created only once per
      * application instance.
      */
-    public enum TrackerName {
+    enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
         GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
         ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
@@ -66,7 +68,6 @@ public class CpblApplication extends Application {
             //t.enableExceptionReporting(true);
             t.enableAdvertisingIdCollection(true);
             mTrackers.put(TrackerName.APP_TRACKER, t);
-
         }
         return mTrackers.get(trackerId);
     }

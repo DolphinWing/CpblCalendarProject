@@ -49,7 +49,7 @@ public class GameAdapter extends BaseGameAdapter {
                 .getBoolean("enable_bottom_sheet_options");
     }
 
-    void setOnOptionclickListener(OnOptionClickListener listener) {
+    void setOnOptionClickListener(OnOptionClickListener listener) {
         mListener = listener;
     }
 
@@ -89,11 +89,11 @@ public class GameAdapter extends BaseGameAdapter {
             }
         }
 
-        //game field
-        TextView fieldText = (TextView) convertView.findViewById(R.id.textView7);
-        if (fieldText != null) {
-            fieldText.setText(game.Field);
-        }
+//        //game field
+//        TextView fieldText = (TextView) convertView.findViewById(R.id.textView7);
+//        if (fieldText != null) {
+//            fieldText.setText(game.Field);
+//        }
 
         TextView timeText = (TextView) convertView.findViewById(R.id.textView1);
         TextView liveText = (TextView) convertView.findViewById(R.id.textView10);

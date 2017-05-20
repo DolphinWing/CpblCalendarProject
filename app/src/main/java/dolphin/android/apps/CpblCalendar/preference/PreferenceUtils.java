@@ -261,19 +261,19 @@ public class PreferenceUtils {
                 context.getResources().getBoolean(R.bool.def_highlight_today));
     }
 
-    /**
-     * show leader board layout in main screen
-     *
-     * @param context Context
-     * @return true if we should include leader board on main UI
-     */
-    @Deprecated
-    public static boolean isIncludeLeaderBoard(Context context) {
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-//        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
-//                context.getResources().getBoolean(R.bool.def_include_lead_board));
-        return false;//[88]dolphin++ force to use menu item
-    }
+//    /**
+//     * show leader board layout in main screen
+//     *
+//     * @param context Context
+//     * @return true if we should include leader board on main UI
+//     */
+//    @Deprecated
+//    public static boolean isIncludeLeaderBoard(Context context) {
+////        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+////        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
+////                context.getResources().getBoolean(R.bool.def_include_lead_board));
+//        return false;//[88]dolphin++ force to use menu item
+//    }
 
     /**
      * enable notification
@@ -282,9 +282,9 @@ public class PreferenceUtils {
      * @return true if user enables notification
      */
     public static boolean isEnableNotification(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//SDK < 11
-            return false;
-        }
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//SDK < 11
+//            return false;
+//        }
         if (!context.getResources().getBoolean(R.bool.feature_notify))//[74]++
             return false;//not enabled function
 

@@ -150,4 +150,8 @@
     <string name="new_version_available_go">更新</string>
     <string name="new_version_available_later">稍後</string>
 
+    <!-- New card UI -->
+    <string name="text_versus">vs</string>
+    <string name="text_more">更多比賽</string>
+
 </resources>

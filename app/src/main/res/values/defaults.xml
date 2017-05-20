@@ -5,7 +5,7 @@
     <bool name="pref_enable_debug_activity">false</bool>
 
     <!-- app configs -->
-	<bool name="feature_notify">true</bool>
+	<bool name="feature_notify">false</bool>
     <bool name="feature_notify_teams">false</bool>
     <bool name="demo_notification">false</bool>
     <bool name="demo_no_data">false</bool>
