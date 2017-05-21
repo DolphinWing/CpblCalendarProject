@@ -190,10 +190,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             final ArrayList<Game> list = (getIntent() != null && getIntent().hasExtra(HighlightActivity.KEY_CACHE))
                     ? getIntent().<Game>getParcelableArrayListExtra(HighlightActivity.KEY_CACHE) : null;
             if (list != null) {
+                autoLoadGames(savedInstanceState, false);
                 //Log.d(TAG, String.format("list %d", list.size()));
                 doHighlightCacheUpdate(list);
             } else {
-                autoLoadGames(savedInstanceState);
+                autoLoadGames(savedInstanceState, true);
             }
         } else {//ask user to grant permission
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -246,7 +247,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
     }
 
-    private void autoLoadGames(Bundle savedInstanceState) {
+    private void autoLoadGames(Bundle savedInstanceState, final boolean performQuery) {
         //[39]dolphin++ for rotation
         final int kind = (savedInstanceState != null)
                 ? savedInstanceState.getInt(KEY_GAME_KIND)
@@ -274,7 +275,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 if (mSpinnerMonth != null) {
                     mSpinnerMonth.setSelection(debugMode ? 5 : month);
                 }
-                if (mButtonQuery != null) {
+                if (performQuery && mButtonQuery != null) {
                     mButtonQuery.performClick();//load at beginning
                 }
             }
@@ -602,7 +603,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 Log.v(TAG, "permission " + permissions[i] + (result ? " granted" : " denied"));
             }
         }
-        autoLoadGames(null);
+        autoLoadGames(null, true);
     }
 
     private void showRequestStorageRationale() {
@@ -620,7 +621,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 .setNegativeButton(R.string.cancel_ask_permission, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        autoLoadGames(null);
+                        autoLoadGames(null, true);
                     }
                 });
         builder.show();

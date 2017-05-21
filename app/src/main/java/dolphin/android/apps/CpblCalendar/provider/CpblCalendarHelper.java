@@ -625,8 +625,9 @@ public class CpblCalendarHelper extends HttpHelper {
                 int d = parseGame2016TestGameDay(dayMap, one_block[i]);
                 Game game = parseOneGameHtml2016(one_block[i], year, month, d, kind);
                 if (game != null) {
-                    if (game.IsDelay && !game.IsFinal && game.StartTime.before(now)) {
+                    if (game.IsDelay && (!game.IsFinal && !game.IsLive) && game.StartTime.before(now)) {
                         Log.w(TAG, String.format("delay %d @ %s", game.Id, game.getDisplayDate()));
+                        //Log.d(TAG, String.format("live? %s", game.IsLive));
                         continue;//don't add to game list
                     }
                     game.Source = Game.SOURCE_CPBL;

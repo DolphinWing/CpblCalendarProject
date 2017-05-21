@@ -25,7 +25,7 @@ android {
             minSdkVersion 16
             targetSdkVersion 25
             versionName '3.0.1'
-            versionCode 1014
+            versionCode 1015
         }
     }
 }

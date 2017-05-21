@@ -21,6 +21,10 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1015] @ 2017-05-21
+    fix delayed live game
+    fix pre auto select spinner
+
 [1014] @ 2017-05-20
     fix today's game list
     fix tomorrow game don't show after today's game final
