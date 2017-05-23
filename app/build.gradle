@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "dolphin.android.apps.CpblCalendar3"
@@ -13,8 +13,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
-            useProguard false
+            minifyEnabled true
+            useProguard true
+            shrinkResources true
 //            zipAlign true
 //            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -25,7 +26,7 @@ android {
             minSdkVersion 16
             targetSdkVersion 25
             versionName '3.0.1'
-            versionCode 1015
+            versionCode 1016
         }
     }
 }

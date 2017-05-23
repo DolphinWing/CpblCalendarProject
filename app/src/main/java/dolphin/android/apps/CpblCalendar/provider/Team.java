@@ -1,6 +1,7 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
 import android.content.Context;
+import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,6 +21,7 @@ import dolphin.android.apps.CpblCalendar.R;
  * Team object
  * Created by dolphin on 2013/6/8.
  */
+@Keep
 public class Team {
     public final static int ID_UNKNOWN = 0;
     //ID_ELEPHANTS -> ID_CT_ELEPHANTS
@@ -614,6 +616,7 @@ public class Team {
         }
     }
 
+    @SuppressWarnings("unused")
     public static String toJson(Context context, Team team) {
         Type type = new TypeToken<Team>() {
         }.getType();
@@ -623,6 +626,7 @@ public class Team {
         return gson.toJson(team);
     }
 
+    @SuppressWarnings("unused")
     public static Team fromJson(Context context, String json) {
         Type type = new TypeToken<Team>() {
         }.getType();

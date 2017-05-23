@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -37,7 +38,7 @@ import dolphin.android.apps.CpblCalendar.provider.Team;
  * Collection of utils in CalendarActivity
  */
 public class Utils {
-    public static void enableStrictMode() {
+    static void enableStrictMode() {
         // http://goo.gl/cmG1V , solve android.os.NetworkOnMainThreadException
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
@@ -53,9 +54,9 @@ public class Utils {
     /**
      * generate a debug list for offline test
      */
-    public static ArrayList<Game> get_debug_list(Context context, int year, int month) {
+    static ArrayList<Game> get_debug_list(Context context, int year, int month) {
         //Log.d(TAG, "get_debug_list");
-        ArrayList<Game> gameList = new ArrayList<Game>();
+        ArrayList<Game> gameList = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             Game game = new Game();
             game.IsFinal = ((i % 3) != 0);
@@ -75,9 +76,10 @@ public class Utils {
     }
 
     //http://zxc22.idv.tw/rank_up.asp
-    public final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
 
-    public static AlertDialog buildLeaderBoardZxc22(Context context) {
+    @SuppressLint("InflateParams")
+    static AlertDialog buildLeaderBoardZxc22(Context context) {
         if (context == null) {
             return null;
         }
@@ -131,8 +133,8 @@ public class Utils {
      * @param listener positive button click listener
      * @return cache mode dialog
      */
-    public static AlertDialog buildEnableCacheModeDialog(Context context,
-                                                         DialogInterface.OnClickListener listener) {
+    static AlertDialog buildEnableCacheModeDialog(Context context,
+                                                  DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setCancelable(true)
                 .setMessage(R.string.title_cache_mode_enable_message)
                 .setTitle(R.string.action_cache_mode)
@@ -162,8 +164,8 @@ public class Utils {
         return matched;
     }
 
-    public static ArrayList<Game> cleanUpGameList(Context context, ArrayList<Game> gameList,
-                                                  int year, int fieldIndex) {
+    static ArrayList<Game> cleanUpGameList(Context context, ArrayList<Game> gameList,
+                                           int year, int fieldIndex) {
         if (context == null || context.getResources() == null || gameList == null) {
             return gameList;//don't do anything
         }
@@ -201,9 +203,9 @@ public class Utils {
         return gameList;
     }
 
-    private static boolean within3Days(Calendar c) {
-        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= BaseGameAdapter.ONE_DAY * 2);
-    }
+//    private static boolean within3Days(Calendar c) {
+//        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= BaseGameAdapter.ONE_DAY * 2);
+//    }
 
     public static boolean passed1Day(Calendar c) {
         return (System.currentTimeMillis() - c.getTimeInMillis() >= BaseGameAdapter.ONE_DAY);
@@ -211,8 +213,8 @@ public class Utils {
 
     //https://developer.chrome.com/multidevice/android/customtabs
     //https://github.com/GoogleChrome/custom-tabs-client
-    public static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
-    public static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
+    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
 
     /**
      * start browser activity
@@ -220,7 +222,7 @@ public class Utils {
      * @param context Context
      * @param game    target game
      */
-    public static void startGameActivity(Context context, Game game) {
+    static void startGameActivity(Context context, Game game) {
         Calendar now = CpblCalendarHelper.getNowTime();
         String url = game.Url;//null;
 //        int year = game.StartTime.get(Calendar.YEAR);
@@ -306,7 +308,7 @@ public class Utils {
      * @param context Context
      * @return true if installed
      */
-    public static boolean isGoogleChromeInstalled(Context context) {
+    static boolean isGoogleChromeInstalled(Context context) {
         if (context == null) {
             return false;
         }

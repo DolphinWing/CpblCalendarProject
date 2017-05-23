@@ -115,6 +115,19 @@ public class HighlightActivity extends AppCompatActivity {
                 CpblCalendarHelper.startActivityToCpblSchedule(this, year, month, "01", "F00");
                 return true;
             }
+            case R.id.action_leader_board: {
+                if (Utils.isGoogleChromeInstalled(this)) {//[190]++ use Chrome Custom Tabs
+                    //http://stackoverflow.com/a/15629199/2673859
+                    Utils.startBrowserActivity(this, Utils.LEADER_BOARD_URL);
+                } else {
+                    try {
+                        Utils.buildLeaderBoardZxc22(this);
+                    } catch (Exception e) {
+                        Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+                    }
+                }
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

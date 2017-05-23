@@ -1,9 +1,12 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
+import android.support.annotation.Keep;
+
 /**
  * Created by dolphin on 2014/4/4.
  * Standing list
  */
+@Keep
 class Stand {
     private final Team mTeam;
     private final int mWins;

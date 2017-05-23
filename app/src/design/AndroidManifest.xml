@@ -37,6 +37,7 @@
             android:excludeFromRecents="true"
             android:screenOrientation="locked"
             android:theme="@style/Theme.Holo_green.Dialog" />
+
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
