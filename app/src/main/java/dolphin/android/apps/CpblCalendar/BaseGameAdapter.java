@@ -150,11 +150,12 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         TextView tv3 = (TextView) convertView.findViewById(R.id.textView3);
         //[13]++ add highlight winning team
         if (isShowWinner() && game.AwayScore > game.HomeScore) {
-            //[67]++ for long team name
-            SpannableString span1 = new SpannableString(bIsLongName
-                    ? game.AwayTeam.getName() : game.AwayTeam.getShortName());
-            span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
-            tv2.setText(span1);
+            if (game.AwayTeam != null) {//[67]++ for long team name
+                SpannableString span1 = new SpannableString(bIsLongName
+                        ? game.AwayTeam.getName() : game.AwayTeam.getShortName());
+                span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
+                tv2.setText(span1);
+            }
             //tv2.getPaint().setFakeBoldText(true);//http://goo.gl/sK7cN
             //[45]-- tv2.setBackgroundResource(R.drawable.ab_transparent_holo_green);
             SpannableString span2 = new SpannableString(String.valueOf(game.AwayScore));
@@ -163,8 +164,10 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             //[45]-- tv3.setBackgroundResource(R.drawable.ab_transparent_holo_green);//[45]++
         } else {
             //[67]++ for long team name
-            tv2.setText(bIsLongName ? game.AwayTeam.getName()
-                    : game.AwayTeam.getShortName());
+            if (game.AwayTeam != null) {
+                tv2.setText(bIsLongName ? game.AwayTeam.getName()
+                        : game.AwayTeam.getShortName());
+            }
             tv2.setBackgroundResource(android.R.color.transparent);//reset back
             //tv2.setBackgroundResource(android.R.color.holo_red_light);
             tv3.setText(String.valueOf(game.AwayScore));
@@ -187,19 +190,21 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             span2.setSpan(new StyleSpan(Typeface.BOLD), 0, span2.length(), 0);
             tv4.setText(span2);
             //[45]-- tv4.setBackgroundResource(R.drawable.ab_transparent_holo_green);//[45]++
-            //[67]++ for long team name
-            SpannableString span1 = new SpannableString(bIsLongName
-                    ? game.HomeTeam.getName() : game.HomeTeam.getShortName());
-            span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
-            tv5.setText(span1);
+            if (game.HomeTeam != null) {//[67]++ for long team name
+                SpannableString span1 = new SpannableString(bIsLongName
+                        ? game.HomeTeam.getName() : game.HomeTeam.getShortName());
+                span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
+                tv5.setText(span1);
+            }
             //tv5.getPaint().setFakeBoldText(true);//http://goo.gl/sK7cN
             //[45]-- tv5.setBackgroundResource(R.drawable.ab_transparent_holo_green);
         } else {
             tv4.setText(String.valueOf(game.HomeScore));
             tv4.setBackgroundResource(android.R.color.transparent);//[45]++ reset back
-            //[67]++ for long team name
-            tv5.setText(bIsLongName ? game.HomeTeam.getName()
-                    : game.HomeTeam.getShortName());
+            if (game.HomeTeam != null) {//[67]++ for long team name
+                tv5.setText(bIsLongName ? game.HomeTeam.getName()
+                        : game.HomeTeam.getShortName());
+            }
             tv5.setBackgroundResource(android.R.color.transparent);//reset back
             //tv5.setBackgroundResource(android.R.color.holo_red_light);
         }
@@ -270,13 +275,13 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         //team logo
         int year = game.StartTime.get(Calendar.YEAR);
         ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
-        if (ic1 != null) {
+        if (ic1 != null && game.AwayTeam != null) {
             ic1.setImageResource(game.AwayTeam.getLogo(year));
             ic1.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
             //ic1.setBackgroundResource(android.R.color.holo_red_light);
         }
         ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
-        if (ic2 != null) {
+        if (ic2 != null && game.HomeTeam != null) {
             ic2.setImageResource(game.HomeTeam.getLogo(year));
             ic2.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
             //ic2.setBackgroundResource(android.R.color.holo_red_light);
@@ -317,7 +322,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         }
     }
 
-    protected void updateGameNotification(ImageView icon, Game game) {
+    private void updateGameNotification(ImageView icon, Game game) {
         if (mAlarmHelper.hasAlarm(game)) {
             mAlarmHelper.removeGame(game);
             icon.setImageResource(R.drawable.ic_device_access_alarm);
@@ -339,10 +344,10 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     protected abstract void cancelAlarm(Game game);
 
-    public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
-                                                 boolean bIsTablet, boolean bShowLogo) {
-        //TODO: update NotifyDialog match up layout
-    }
+//    public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
+//                                                 boolean bIsTablet, boolean bShowLogo) {
+//        //TODO: update NotifyDialog match up layout
+//    }
 
     /**
      * check if the day is within a week

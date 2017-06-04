@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -74,6 +75,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     private View mBottomSheetBackground;
     private View mBottomSheetOption1, mBottomSheetOption2;
     private View mBottomSheetOption3, mBottomSheetOption4;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private AdView mAdView;
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -133,6 +135,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         mAdView = (AdView) findViewById(R.id.adView);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setEnabled(false);
+        }
 
         GameListFragment gameListFragment = (GameListFragment) getFragmentManager()
                 .findFragmentById(R.id.main_content_frame);
@@ -473,6 +479,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             }
         }
 
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(visible);
+        }
 //        //show offline mode indicator
 //        if (!visible && PreferenceUtils.isCacheMode(getBaseContext())) {
 //            showSnackbar(getString(R.string.action_cache_mode));

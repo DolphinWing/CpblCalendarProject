@@ -21,6 +21,9 @@ https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3
 使用上如有問題，歡迎直接寫信至 dolphinwing74+googleplay@gmail.com 給我，我會盡快回覆唷^^
 
 --
+[1017] @ 2017-05-30
+    update project to new Android Studio Canary 2
+
 [1016] @ 2017-05-24
     try proguard and shrink resources
 

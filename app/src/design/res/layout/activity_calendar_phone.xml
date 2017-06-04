@@ -39,6 +39,7 @@
             android:background="@color/holo_green_dark"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -46,21 +47,27 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/Theme.Holo_green.Toolbar.ModeIndicator"
                 android:id="@+id/mode_indicator"
+                style="@style/Theme.Holo_green.Toolbar.ModeIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <!-- The main content view -->
-            <fragment
-                android:id="@+id/main_content_frame"
-                android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                tools:layout="@layout/listview_empty_view" />
+                android:layout_weight="1">
 
+                <!-- The main content view -->
+                <fragment
+                    android:id="@+id/main_content_frame"
+                    android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout="@layout/listview_empty_view" />
+            </android.support.v4.widget.SwipeRefreshLayout>
         </LinearLayout>
 
         <ImageView
@@ -90,7 +97,11 @@
             app:layout_anchor="@+id/main_content_frame"
             app:layout_anchorGravity="bottom|right" />
 
-        <include layout="@layout/include_loading_frame" />
+        <View
+            android:id="@android:id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bottom_sheet_background" />
 
         <include layout="@layout/bottom_sheet_game" />
 

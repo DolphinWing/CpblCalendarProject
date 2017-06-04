@@ -493,7 +493,7 @@ public class Team {
         if (mShortName != null) {
             return mShortName;
         }
-        if (getId() != ID_UNKNOWN) {
+        if (mContext != null && getId() != ID_UNKNOWN) {
             return getShortName(mContext, mId);
         }
         return getName();

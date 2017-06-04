@@ -44,18 +44,6 @@
   public static final android.os.Parcelable$Creator *;
 }
 
-##---------------Begin: proguard configuration for ActionBarSherlock  ----------
--keep class android.support.v4.app.** { *; }
--keep interface android.support.v4.app.** { *; }
--keep class com.actionbarsherlock.** { *; }
--keep interface com.actionbarsherlock.** { *; }
-
--keepattributes *Annotation*
--keepclassmembers class **.R$* {
-    public static <fields>;
-}
-##---------------End:   proguard configuration for ActionBarSherlock  ----------
-
 #2013-01-04, first time got below errors
 #http://blog.csdn.net/lzqjfly/article/details/8073248
 -dontwarn android.support.v4.**

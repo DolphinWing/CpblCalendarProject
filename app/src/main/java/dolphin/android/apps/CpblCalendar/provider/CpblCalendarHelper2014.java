@@ -679,14 +679,14 @@ public class CpblCalendarHelper2014 extends CpblCalendarHelper {
         final String[] color = {"#F1EFE6", "#E6F1EF"};
         int c = 0;
         for (Stand stand : standing) {
-            standingHtml += TABLE_ROW_TEMPLATE
+            standingHtml = standingHtml.concat(TABLE_ROW_TEMPLATE
                     .replace("@style", "")
                     .replace("@bgcolor", color[(c++ % 2)])
                     .replace("@team", stand.getTeam().getName())
                     .replace("@win", String.valueOf(stand.getGamesWon()))
                     .replace("@lose", String.valueOf(stand.getGamesLost()))
                     .replace("@tie", String.valueOf(stand.getGamesTied()))
-                    .replace("@behind", String.valueOf(stand.getGamesBehind()));
+                    .replace("@behind", String.valueOf(stand.getGamesBehind())));
         }
         standingHtml += "</table>";
         return standingHtml;

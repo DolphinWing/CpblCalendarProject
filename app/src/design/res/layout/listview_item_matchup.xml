@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="@dimen/padding_medium"
-    android:paddingTop="@dimen/padding_small"
-    tools:context=".SplashActivity"
+    android:paddingTop="@dimen/padding_medium"
     tools:ignore="RtlSymmetry,RtlHardcoded">
 
     <FrameLayout
@@ -20,6 +19,8 @@
             android:id="@+id/icon_alarm"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="@null"
             android:padding="6dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_device_access_alarm" />
@@ -28,6 +29,7 @@
             android:id="@android:id/icon"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:contentDescription="@string/action_more"
             android:padding="6dp"
             android:src="@drawable/ic_action_more_vert" />
 
@@ -37,19 +39,20 @@
         android:id="@+id/match_title"
         style="@style/Theme.Holo_green.Match.Title"
         android:paddingLeft="16dp"
-        android:paddingRight="@dimen/padding_large">
+        android:paddingRight="8dp">
 
         <TextView
             android:id="@+id/textView1"
             style="@style/Theme.Holo_green.Match.Time"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textView9"
             style="@style/Theme.Holo_green.Match.GameId"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center_vertical|right" />
 
     </LinearLayout>
@@ -63,7 +66,6 @@
         android:orientation="vertical"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/padding_large"
-        android:paddingRight="@dimen/padding_medium"
         android:paddingTop="8dp">
 
         <LinearLayout
@@ -87,7 +89,7 @@
                 android:id="@+id/textView2"
                 style="@style/Theme.Holo_green.Match.Team"
                 android:layout_width="0dp"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_weight="1" />
 
             <TextView
@@ -120,7 +122,7 @@
                 android:id="@+id/textView5"
                 style="@style/Theme.Holo_green.Match.Team"
                 android:layout_width="0dp"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_weight="1" />
 
             <TextView
@@ -137,7 +139,7 @@
         android:layout_below="@+id/match_up"
         android:layout_gravity="left|center_vertical"
         android:layout_toLeftOf="@+id/item_control_pane"
-        android:gravity="right|center_vertical"
+        android:gravity="center_vertical"
         android:paddingLeft="16dp"
         android:paddingTop="@dimen/padding_small">
 
