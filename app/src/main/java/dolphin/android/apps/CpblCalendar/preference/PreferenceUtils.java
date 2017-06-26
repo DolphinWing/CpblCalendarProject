@@ -3,7 +3,6 @@ package dolphin.android.apps.CpblCalendar.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
@@ -11,8 +10,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import dolphin.android.apps.CpblCalendar.R;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2013/6/9.

@@ -18,6 +18,8 @@ import java.util.Calendar;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2013/6/3.

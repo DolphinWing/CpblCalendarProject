@@ -1,6 +1,9 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ArrayAdapter;
@@ -18,7 +21,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpHelper;
@@ -559,7 +562,9 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return cache dir
      */
     public static File getCacheDir(Context context) {
-        return SupportV4Utils.getCacheDir(context);
+        return (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                ? context.getExternalCacheDir() : context.getCacheDir();
     }
 
     private String getString(int id) {

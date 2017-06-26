@@ -1,17 +1,20 @@
 package dolphin.android.apps.CpblCalendar;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -25,12 +28,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar.provider.SupportV4Utils;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2015/02/07.
@@ -76,10 +80,11 @@ public class Utils {
     }
 
     //http://zxc22.idv.tw/rank_up.asp
-    final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
 
     @SuppressLint("InflateParams")
-    static AlertDialog buildLeaderBoardZxc22(Context context) {
+    public static AlertDialog buildLeaderBoardZxc22(Context context) {
         if (context == null) {
             return null;
         }
@@ -113,7 +118,7 @@ public class Utils {
         dialog.setView(view);//webView
         dialog.show();
 
-		//http://stackoverflow.com/a/15847580/2673859
+        //http://stackoverflow.com/a/15847580/2673859
         DisplayMetrics display = context.getResources().getDisplayMetrics();
         int width = (int) (display.widthPixels * (display.widthPixels > 1200 ? .8 : .95));
         width = width > 1600 ? 1600 : width;
@@ -182,8 +187,8 @@ public class Utils {
                 Game game = i.next();
                 if (teams.get(game.HomeTeam.getId()) == null
                         && teams.get(game.AwayTeam.getId()) == null) {
-                //if (!teams.containsKey(game.HomeTeam.getId())
-                //        && !teams.containsKey(game.AwayTeam.getId())) {
+                    //if (!teams.containsKey(game.HomeTeam.getId())
+                    //        && !teams.containsKey(game.AwayTeam.getId())) {
                     i.remove();//remove from the list
                 }
             }
@@ -222,7 +227,7 @@ public class Utils {
      * @param context Context
      * @param game    target game
      */
-    static void startGameActivity(Context context, Game game) {
+    public static void startGameActivity(Context context, Game game) {
         Calendar now = CpblCalendarHelper.getNowTime();
         String url = game.Url;//null;
 //        int year = game.StartTime.get(Calendar.YEAR);
@@ -286,7 +291,7 @@ public class Utils {
             Bundle extras = new Bundle();
             extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
             extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                    SupportV4Utils.getColor(context, R.color.holo_green_dark));
+                    ContextCompat.getColor(context, R.color.holo_green_dark));
             intent.putExtras(extras);
 //            if (!isGoogleChromeInstalled(context)) {//for non-chrome app
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -308,7 +313,7 @@ public class Utils {
      * @param context Context
      * @return true if installed
      */
-    static boolean isGoogleChromeInstalled(Context context) {
+    public static boolean isGoogleChromeInstalled(Context context) {
         if (context == null) {
             return false;
         }
@@ -324,5 +329,55 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @SuppressWarnings("WeakerAccess")
+    public static Context onAttach(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return updateResources(context, "zh_TW");
+        }
+        return updateResourcesLegacy(context, "zh_TW");
+    }
+
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @TargetApi(Build.VERSION_CODES.N)
+    private static Context updateResources(Context context, String language) {
+        Locale locale = new Locale(language);
+        if (language.contains("_")) {//http://blog.xuite.net/saso0704/wretch/379638793
+            String[] s = language.split("_");
+            locale = new Locale(s[0], s[1]);
+        }
+        Locale.setDefault(locale);
+
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        configuration.setLayoutDirection(locale);
+
+        return context.createConfigurationContext(configuration);
+    }
+
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @SuppressLint("ObsoleteSdkInt")
+    @SuppressWarnings("deprecation")
+    private static Context updateResourcesLegacy(Context context, String language) {
+        Locale locale = new Locale(language);
+        if (language.contains("_")) {//http://blog.xuite.net/saso0704/wretch/379638793
+            String[] s = language.split("_");
+            locale = new Locale(s[0], s[1]);
+        }
+        Locale.setDefault(locale);
+
+        Resources resources = context.getResources();
+
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLayoutDirection(locale);
+        }
+
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        return context;
     }
 }

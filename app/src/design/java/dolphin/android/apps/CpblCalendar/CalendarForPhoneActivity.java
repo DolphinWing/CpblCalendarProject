@@ -49,9 +49,11 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
-import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.HighlightActivity;
+import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.util.PackageUtils;
 
 /**
@@ -240,10 +242,10 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             if (mBottomSheetOption2 != null) {
                 mBottomSheetOption2.setOnClickListener(this);
             }
-            mBottomSheetOption3 = bottomSheet.findViewById(R.id.bottom_sheet_option3);
-            if (mBottomSheetOption3 != null) {
-                mBottomSheetOption3.setOnClickListener(this);
-            }
+//            mBottomSheetOption3 = bottomSheet.findViewById(R.id.bottom_sheet_option3);
+//            if (mBottomSheetOption3 != null) {
+//                mBottomSheetOption3.setOnClickListener(this);
+//            }
             mBottomSheetOption4 = bottomSheet.findViewById(R.id.bottom_sheet_option4);
             if (mBottomSheetOption4 != null) {
                 mBottomSheetOption4.setOnClickListener(this);
@@ -896,14 +898,14 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void updateNotification(View view, Game game) {
-        CpblApplication application = (CpblApplication) getApplication();
+//        CpblApplication application = (CpblApplication) getApplication();
         AlarmHelper helper = new AlarmHelper(getBaseContext());
         if (helper.hasAlarm(game)) {
             helper.removeGame(game);
-            AlarmProvider.cancelAlarmByGame(application, game);//cancelAlarm(game);
+//            AlarmProvider.cancelAlarmByGame(application, game);//cancelAlarm(game);
         } else {
             helper.addGame(game);
-            AlarmProvider.setAlarmByGame(application, game);//setAlarm(game);
+//            AlarmProvider.setAlarmByGame(application, game);//setAlarm(game);
         }
         //Log.d(TAG, "updateNotification: " + view);
         if (view instanceof ImageView) {

@@ -21,10 +21,11 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
-import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2014/7/5.
@@ -223,7 +224,7 @@ public class GameAdapter extends BaseGameAdapter {
             //alarm.add(Calendar.MINUTE, 10);
         }
         String key = AlarmHelper.getAlarmIdKey(game);
-        AlarmProvider.setAlarm(mApplication, alarm, key);
+//        AlarmProvider.setAlarm(mApplication, alarm, key);
     }
 
     @Override
@@ -248,7 +249,7 @@ public class GameAdapter extends BaseGameAdapter {
             }
         }
 
-        AlarmProvider.cancelAlarm(mApplication, key);
+//        AlarmProvider.cancelAlarm(mApplication, key);
         if (anotherGame != null) {//set alarm for another game
             Log.v(AlarmHelper.TAG, "set alarm for another game " + anotherGame.Id);
             setAlarm(anotherGame);

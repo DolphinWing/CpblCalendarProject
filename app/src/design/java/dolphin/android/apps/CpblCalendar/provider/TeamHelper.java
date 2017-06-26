@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.graphics.Palette;
 
-import dolphin.android.apps.CpblCalendar.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
 
 /**
  * Created by jimmyhu on 2017/3/17.

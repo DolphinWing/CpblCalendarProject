@@ -4,16 +4,16 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,9 +35,11 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
-import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.R;
+import dolphin.android.apps.CpblCalendar3.SettingsActivity;
 import dolphin.android.net.HttpHelper;
 
 /**
@@ -84,6 +86,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     Snackbar mSnackbar;
 
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(Utils.onAttach(newBase));
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         //supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -124,20 +132,20 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         super.onDestroy();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        registerReceiver(mRefreshListReceiver,
-                new IntentFilter(AlarmProvider.ACTION_DELETE_NOTIFICATION));
-    }
-
-    @Override
-    protected void onPause() {
-        unregisterReceiver(mRefreshListReceiver);
-
-        super.onPause();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        registerReceiver(mRefreshListReceiver,
+//                new IntentFilter(AlarmProvider.ACTION_DELETE_NOTIFICATION));
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        unregisterReceiver(mRefreshListReceiver);
+//
+//        super.onPause();
+//    }
 
     protected abstract AppCompatActivity getActivity();
 
@@ -727,16 +735,23 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     }
 
     private void showLeaderBoard2016() {
-        if (Utils.isGoogleChromeInstalled(mActivity)) {//[190]++ use Chrome Custom Tabs
-            //http://stackoverflow.com/a/15629199/2673859
-            Utils.startBrowserActivity(mActivity, Utils.LEADER_BOARD_URL);
-        } else {
-            try {
-                Utils.buildLeaderBoardZxc22(mActivity);
-            } catch (Exception e) {
-                Log.e(TAG, "showLeaderBoard: " + e.getMessage());
-            }
-        }
+//        if (Utils.isGoogleChromeInstalled(mActivity)) {//[190]++ use Chrome Custom Tabs
+//            //http://stackoverflow.com/a/15629199/2673859
+//            Utils.startBrowserActivity(mActivity, Utils.LEADER_BOARD_URL);
+//        } else {
+//            try {
+//                Utils.buildLeaderBoardZxc22(mActivity);
+//            } catch (Exception e) {
+//                Log.e(TAG, "showLeaderBoard: " + e.getMessage());
+//            }
+//        }
+
+        //https://goo.gl/GtBKgp
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_light));
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI);
+
         mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
         internalLoading(false);
         mIsQuery = false;
@@ -847,20 +862,20 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mAnalytics.sendTrackerException(action, label, evtValue);
     }
 
-    private final BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action != null && action.equals(AlarmProvider.ACTION_DELETE_NOTIFICATION)) {
-                //AlarmHelper helper = new AlarmHelper(context);
-                //helper.getAlarmList();
-                //mButtonQuery.performClick();
-                if (mGameList != null) {//only update the list when we have data in memory
-                    query_to_update(true);//[126]dolphin++ quick refresh
-                }
-            }
-        }
-    };
+//    private final BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (action != null && action.equals(AlarmProvider.ACTION_DELETE_NOTIFICATION)) {
+//                //AlarmHelper helper = new AlarmHelper(context);
+//                //helper.getAlarmList();
+//                //mButtonQuery.performClick();
+//                if (mGameList != null) {//only update the list when we have data in memory
+//                    query_to_update(true);//[126]dolphin++ quick refresh
+//                }
+//            }
+//        }
+//    };
 
     protected void showSnackbar(String message) {
         if (mSnackbar != null && mSnackbar.isShown()) {

@@ -1,23 +1,26 @@
 package dolphin.android.apps.CpblCalendar.preference;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import dolphin.android.apps.CpblCalendar.CpblApplication;
 import dolphin.android.apps.CpblCalendar.GoogleAnalyticsHelper;
-import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2013/6/8.
+ * Base implementations of PreferenceActivity
  */
+@SuppressLint("Registered")
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class PreferenceActivity extends android.preference.PreferenceActivity {
     //boolean bEnableNotify = true;

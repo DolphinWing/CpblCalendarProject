@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.util.DateUtils;
 
 @Keep

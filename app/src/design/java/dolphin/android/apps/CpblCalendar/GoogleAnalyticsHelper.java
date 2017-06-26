@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
@@ -99,7 +100,8 @@ public class GoogleAnalyticsHelper {
     public void sendGmsGoogleAnalyticsTiming(String path, String category, long value,
                                              String timingName, String label) {
         // Get tracker.
-        Tracker t = mApplication.getTracker(CpblApplication.TrackerName.APP_TRACKER);
+        Tracker t = mApplication.getDefaultTracker();
+            //.getTracker(CpblApplication.TrackerName.APP_TRACKER);
 
         // Set screen name.
         // Where path is a String representing the screen name.

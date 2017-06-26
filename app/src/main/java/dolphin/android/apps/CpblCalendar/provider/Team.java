@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 
-import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Team object

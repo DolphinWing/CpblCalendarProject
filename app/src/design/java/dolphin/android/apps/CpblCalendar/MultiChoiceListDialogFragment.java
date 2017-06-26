@@ -12,6 +12,7 @@ import android.util.SparseArray;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by jimmyhu on 2017/3/17.

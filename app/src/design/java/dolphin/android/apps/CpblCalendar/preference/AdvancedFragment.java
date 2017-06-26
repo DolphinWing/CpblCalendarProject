@@ -12,9 +12,9 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import dolphin.android.apps.CpblCalendar.CpblApplication;
-import dolphin.android.apps.CpblCalendar.R;
-import dolphin.android.apps.CpblCalendar.SplashActivity;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
+import dolphin.android.apps.CpblCalendar3.R;
+import dolphin.android.apps.CpblCalendar3.SplashActivity;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
