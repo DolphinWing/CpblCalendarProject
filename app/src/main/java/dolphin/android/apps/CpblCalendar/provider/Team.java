@@ -21,6 +21,7 @@ import dolphin.android.apps.CpblCalendar3.R;
  * Team object
  * Created by dolphin on 2013/6/8.
  */
+@SuppressWarnings("WeakerAccess")
 @Keep
 public class Team {
     public final static int ID_UNKNOWN = 0;
@@ -77,6 +78,7 @@ public class Team {
      * @param name team name
      * @return team id
      */
+    @SuppressWarnings("unused")
     public static int getTeamId(Context c, String name) {
         return getTeamId(c, name, CpblCalendarHelper.getNowTime().get(Calendar.YEAR));
     }
@@ -376,7 +378,7 @@ public class Team {
     }
 
     public static String getShortName(Context context, int id) {
-        int string_id = R.string.empty_data;
+        int string_id;// = R.string.empty_data;
         switch (id) {
             case ID_ELEPHANTS:
                 string_id = R.string.team_elephants_short2;

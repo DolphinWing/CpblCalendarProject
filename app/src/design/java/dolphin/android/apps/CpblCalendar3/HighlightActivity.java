@@ -133,7 +133,7 @@ public class HighlightActivity extends AppCompatActivity {
 
                 //https://goo.gl/GtBKgp
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
-                        .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_light));
+                        .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_dark));
                 CustomTabsIntent customTabsIntent = builder.build();
                 customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI);
                 return true;

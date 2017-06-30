@@ -338,6 +338,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
     };
 
+    @SuppressWarnings("SameParameterValue")
     private void query_to_update(boolean quick_refresh) {
         onLoading(true);
         mIsQuery = true;//Log.d(TAG, "onQueryClick");
@@ -748,7 +749,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         //https://goo.gl/GtBKgp
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_light));
+                .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_dark));
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI);
 
@@ -858,6 +859,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }).start();
     }
 
+    @SuppressWarnings("SameParameterValue")
     void sendTrackerException(String action, String label, long evtValue) {
         mAnalytics.sendTrackerException(action, label, evtValue);
     }
@@ -887,6 +889,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void showModeIndicator(boolean visible) {
         showModeIndicator(visible, null);
     }

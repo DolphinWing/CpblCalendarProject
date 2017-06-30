@@ -22,7 +22,7 @@ import dolphin.android.apps.CpblCalendar3.R;
 
 public class MultiChoiceListDialogFragment extends DialogFragment
         implements DialogInterface.OnMultiChoiceClickListener, DialogInterface.OnClickListener {
-    private final static String TAG = "MultiChoiceDialog";
+//    private final static String TAG = "MultiChoiceDialog";
     private int[] mTeams;
     private boolean[] mTeamChecked;
     private OnClickListener mOnClickListener;
@@ -70,14 +70,14 @@ public class MultiChoiceListDialogFragment extends DialogFragment
     public void onClick(DialogInterface dialogInterface, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                Log.d(TAG, "BUTTON_POSITIVE");
+//                Log.d(TAG, "BUTTON_POSITIVE");
                 saveFavTeams();
                 if (mOnClickListener != null) {
                     mOnClickListener.onOkay();
                 }
                 break;
             case DialogInterface.BUTTON_NEGATIVE:
-                Log.d(TAG, "BUTTON_NEGATIVE");
+//                Log.d(TAG, "BUTTON_NEGATIVE");
                 if (mOnClickListener != null) {
                     mOnClickListener.onCancel();
                 }

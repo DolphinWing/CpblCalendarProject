@@ -7,6 +7,8 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 
 /**
  * Created by dolphin on 2015/02/07.
+ * <p>
+ * Query action callback
  */
 public interface OnQueryCallback {
     void onQueryStart();

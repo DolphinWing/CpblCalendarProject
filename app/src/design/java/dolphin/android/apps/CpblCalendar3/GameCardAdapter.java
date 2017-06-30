@@ -28,11 +28,12 @@ import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
  * http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0722/3214.html
  */
 
-class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder> implements View.OnClickListener {
-    public final static int TYPE_RESULT = 1;
-    public final static int TYPE_UPCOMING = 2;
-    public final static int TYPE_LIVE = 3;
-    public final static int TYPE_MORE = 10;
+class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
+        implements View.OnClickListener {
+    private final static int TYPE_RESULT = 1;
+    private final static int TYPE_UPCOMING = 2;
+    final static int TYPE_LIVE = 3;
+    final static int TYPE_MORE = 10;
 
     private final Context mContext;
     private final ArrayList<Game> mGames;
@@ -74,7 +75,8 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder> i
                 break;
         }
         if (parent != null && layoutId != -1) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false));
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent,
+                    false));
         }
         return null;
     }
@@ -105,12 +107,14 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder> i
             holder.AwayLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.AwayTeam, year),
                     PorterDuff.Mode.SRC_IN);
             holder.AwayLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
+            holder.AwayLogo.setVisibility(View.INVISIBLE);//[1021]++
         }
         if (holder.HomeLogo != null) {
             holder.HomeLogo.setImageResource(R.drawable.ic_baseball);
             holder.HomeLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.HomeTeam, year),
                     PorterDuff.Mode.SRC_IN);
             holder.HomeLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
+            holder.HomeLogo.setVisibility(View.INVISIBLE);//[1021]++
         }
         holder.Field.setText(field);
         switch (getItemViewType(position)) {
@@ -184,7 +188,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder> i
 
     private GameCardAdapter.OnClickListener mListener;
 
-    public void setOnClickListener(GameCardAdapter.OnClickListener listener) {
+    void setOnClickListener(GameCardAdapter.OnClickListener listener) {
         mListener = listener;
     }
 

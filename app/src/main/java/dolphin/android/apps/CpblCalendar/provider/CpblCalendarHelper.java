@@ -21,11 +21,10 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.apps.CpblCalendar.Utils;
+import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpHelper;
-import dolphin.android.util.DateUtils;
 import dolphin.android.util.FileUtils;
 
 /**
@@ -403,7 +402,8 @@ public class CpblCalendarHelper extends HttpHelper {
      * @param day   day of month
      * @return Calendar
      */
-    static Calendar getGameTime(int year, int month, int day) {
+    @SuppressWarnings("SameParameterValue")
+    private static Calendar getGameTime(int year, int month, int day) {
         return getGameTime(year, month, day, 0, 0);
     }
 
@@ -417,7 +417,7 @@ public class CpblCalendarHelper extends HttpHelper {
      * @param minute minute
      * @return Calendar
      */
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
     static Calendar getGameTime(int year, int month, int day, int hour, int minute) {
         Calendar now = getNowTime();
         if (year > 0) {
@@ -486,7 +486,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return adapter;
     }
 
-    void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
+    private void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
         //store all data to local cache
         String delay_str = "";
         for (int i = 0; i < games.size(); i++) {
@@ -516,6 +516,7 @@ public class CpblCalendarHelper extends HttpHelper {
      * @param year    year
      * @return true if deleted
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean removeDelayGames2014(Context context, int year) {
         if (context != null) {
             File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
@@ -524,7 +525,7 @@ public class CpblCalendarHelper extends HttpHelper {
         return false;
     }
 
-    SparseArray<Game> restoreDelayGames2014(Context context, int year) {
+    private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
         if (context == null || getCacheDir(context) == null) {
             return delayedGames;//[160]++ avoid use NullPointer to File constructor
@@ -580,6 +581,7 @@ public class CpblCalendarHelper extends HttpHelper {
      * @param field field
      * @return list of games
      */
+    @SuppressWarnings("SameParameterValue")
     public ArrayList<Game> query2016(int year, int month, String kind, String field) {
         return query2016(year, month, kind, field, true, true);
     }

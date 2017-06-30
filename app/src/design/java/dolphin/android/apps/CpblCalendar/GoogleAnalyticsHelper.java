@@ -5,14 +5,15 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 
-import dolphin.android.apps.CpblCalendar3.CpblApplication;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.apps.CpblCalendar3.CpblApplication;
 
 /**
  * Created by dolphin on 2015/02/07.
- *
+ * <p>
  * Google Analytics helper class
  */
+@SuppressWarnings({"WeakerAccess", "unused", "SameParameterValue"})
 public class GoogleAnalyticsHelper {
     public final static String SCREEN_CALENDAR_ACTIVITY_BASE = "CpblCalendar.CalendarActivity";
     public final static String SCREEN_CALENDAR_ACTIVITY_PHONE =
@@ -101,7 +102,7 @@ public class GoogleAnalyticsHelper {
                                              String timingName, String label) {
         // Get tracker.
         Tracker t = mApplication.getDefaultTracker();
-            //.getTracker(CpblApplication.TrackerName.APP_TRACKER);
+        //.getTracker(CpblApplication.TrackerName.APP_TRACKER);
 
         // Set screen name.
         // Where path is a String representing the screen name.

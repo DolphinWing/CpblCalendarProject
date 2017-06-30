@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ListFragment;
@@ -96,6 +97,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
 
     private View mEmptyView = null;
 
+    @SuppressLint("InflateParams")
     private View getEmptyView(String year, String month) {
         //http://stackoverflow.com/a/15990955/2673859
         if (mEmptyView == null) {

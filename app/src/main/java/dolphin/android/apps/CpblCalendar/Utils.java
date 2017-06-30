@@ -3,7 +3,6 @@ package dolphin.android.apps.CpblCalendar;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,8 +11,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -216,10 +214,10 @@ public class Utils {
         return (System.currentTimeMillis() - c.getTimeInMillis() >= BaseGameAdapter.ONE_DAY);
     }
 
-    //https://developer.chrome.com/multidevice/android/customtabs
-    //https://github.com/GoogleChrome/custom-tabs-client
-    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
-    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
+//    //https://developer.chrome.com/multidevice/android/customtabs
+//    //https://github.com/GoogleChrome/custom-tabs-client
+//    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+//    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
 
     /**
      * start browser activity
@@ -284,27 +282,33 @@ public class Utils {
             return;
         }
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //[169]dolphin++ add Chrome Custom Tabs
-            Bundle extras = new Bundle();
-            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
-            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                    ContextCompat.getColor(context, R.color.holo_green_dark));
-            intent.putExtras(extras);
-//            if (!isGoogleChromeInstalled(context)) {//for non-chrome app
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            }
-        } else {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setData(Uri.parse(url));
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//            //[169]dolphin++ add Chrome Custom Tabs
+//            Bundle extras = new Bundle();
+//            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
+//            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+//                    ContextCompat.getColor(context, R.color.holo_green_dark));
+//            intent.putExtras(extras);
+////            if (!isGoogleChromeInstalled(context)) {//for non-chrome app
+////                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////            }
+//        } else {
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        }
+//
+//        try {//[97]dolphin++
+//            context.startActivity(intent);
+//        } catch (ActivityNotFoundException e) {
+//            Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
+//        }
 
-        try {//[97]dolphin++
-            context.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
-        }
+        //https://goo.gl/GtBKgp
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.holo_green_dark));
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(context, Uri.parse(url));
     }
 
     /**
@@ -313,6 +317,7 @@ public class Utils {
      * @param context Context
      * @return true if installed
      */
+    @SuppressWarnings("unused")
     public static boolean isGoogleChromeInstalled(Context context) {
         if (context == null) {
             return false;
@@ -341,6 +346,7 @@ public class Utils {
     }
 
     //http://gunhansancar.com/change-language-programmatically-in-android/
+    @SuppressWarnings("SameParameterValue")
     @TargetApi(Build.VERSION_CODES.N)
     private static Context updateResources(Context context, String language) {
         Locale locale = new Locale(language);
@@ -359,7 +365,7 @@ public class Utils {
 
     //http://gunhansancar.com/change-language-programmatically-in-android/
     @SuppressLint("ObsoleteSdkInt")
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "SameParameterValue"})
     private static Context updateResourcesLegacy(Context context, String language) {
         Locale locale = new Locale(language);
         if (language.contains("_")) {//http://blog.xuite.net/saso0704/wretch/379638793

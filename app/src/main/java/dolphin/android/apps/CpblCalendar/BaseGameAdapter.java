@@ -36,11 +36,11 @@ import dolphin.android.apps.CpblCalendar3.R;
 abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     private final Context mContext;
 
-    protected final static long ONE_DAY = 1000 * 60 * 60 * 24;
+    final static long ONE_DAY = 1000 * 60 * 60 * 24;
 
-    protected final static long ONE_WEEK = ONE_DAY * 7;
+    private final static long ONE_WEEK = ONE_DAY * 7;
 
-    protected final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
+    private final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
 
     private final LayoutInflater mInflater;
 
@@ -360,7 +360,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         return Math.abs(c.getTimeInMillis() - System.currentTimeMillis()) <= (ONE_WEEK);
     }
 
-    boolean isShowWinner() {
+    private boolean isShowWinner() {
         return bShowWinner;
     }
 
@@ -368,11 +368,11 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         return bShowLogo;
     }
 
-    boolean isShowToday() {
+    private boolean isShowToday() {
         return bShowToday;
     }
 
-    boolean isTablet() {
+    private boolean isTablet() {
         return bIsTablet;
     }
 
