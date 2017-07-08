@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.util.SparseArray;
@@ -19,7 +20,7 @@ import dolphin.android.apps.CpblCalendar3.R;
  * <p>
  * https://www.101apps.co.za/articles/making-a-list-coding-multiple-choice-list-dialogs.html
  */
-
+@Keep
 public class MultiChoiceListDialogFragment extends DialogFragment
         implements DialogInterface.OnMultiChoiceClickListener, DialogInterface.OnClickListener {
 //    private final static String TAG = "MultiChoiceDialog";

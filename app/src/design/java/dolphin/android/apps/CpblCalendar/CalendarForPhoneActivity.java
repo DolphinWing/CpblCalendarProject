@@ -1,20 +1,16 @@
 package dolphin.android.apps.CpblCalendar;
 
-import android.Manifest;
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CalendarContract;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -76,6 +72,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     private BottomSheetBehavior mBottomSheetBehavior;
     private View mBottomSheetBackground;
     private View mBottomSheetOption1, mBottomSheetOption2;
+    @SuppressWarnings("unused")
     private View mBottomSheetOption3, mBottomSheetOption4;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -95,6 +92,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         mDrawerList = findViewById(R.id.left_drawer);
         if (mDrawerList != null) {
             mDrawerList.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     return true;//used to avoid clicking objects behind drawer
@@ -191,26 +189,16 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             }
         });
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            //dolphin++@2017.05.19, check if we have cached data from HighlightActivity
-            //http://stackoverflow.com/a/19314677
-            final ArrayList<Game> list = (getIntent() != null && getIntent().hasExtra(HighlightActivity.KEY_CACHE))
-                    ? getIntent().<Game>getParcelableArrayListExtra(HighlightActivity.KEY_CACHE) : null;
-            if (list != null) {
-                autoLoadGames(savedInstanceState, false);
-                //Log.d(TAG, String.format("list %d", list.size()));
-                doHighlightCacheUpdate(list);
-            } else {
-                autoLoadGames(savedInstanceState, true);
-            }
-        } else {//ask user to grant permission
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                showRequestStorageRationale();
-            } else {
-                requestStoragePermission();
-            }
+        ArrayList<Game> list = (getIntent() != null && getIntent().hasExtra(HighlightActivity.KEY_CACHE))
+                ? getIntent().<Game>getParcelableArrayListExtra(HighlightActivity.KEY_CACHE) : null;
+        //dolphin++@2017.05.19, check if we have cached data from HighlightActivity
+        //http://stackoverflow.com/a/19314677
+        if (list != null) {//from HighlightActivity
+            autoLoadGames(savedInstanceState, false);
+            //Log.d(TAG, String.format("list %d", list.size()));
+            doHighlightCacheUpdate(list);
+        } else {//don't ask ever again
+            autoLoadGames(savedInstanceState, true);
         }
     }
 
@@ -224,6 +212,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
             if (mBottomSheetBackground != null) {
                 mBottomSheetBackground.setOnTouchListener(new View.OnTouchListener() {
+                    @SuppressLint("ClickableViewAccessibility")
                     @Override
                     public boolean onTouch(View view, MotionEvent motionEvent) {
                         if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
@@ -412,8 +401,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         FragmentTransaction trans = fmgr.beginTransaction();
         GameListFragment frag1 = (GameListFragment) fmgr.findFragmentById(R.id.main_content_frame);
         if (frag1 != null) {
-            String y = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString() : null;
-            String m = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItem().toString() : null;
+            String y = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString() : String.valueOf(year);
+            String m = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItem().toString() : String.valueOf(month);
             frag1.updateAdapter(gameArrayList, y, m);
             try {
                 trans.commitAllowingStateLoss();//[30]dolphin++
@@ -598,46 +587,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         super.onBackPressed();
     }
 
-    private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        boolean result;
-        if (permissions.length > 0) {
-            for (int i = 0; i < permissions.length; i++) {
-                result = (grantResults[i] == PackageManager.PERMISSION_GRANTED);
-                Log.v(TAG, "permission " + permissions[i] + (result ? " granted" : " denied"));
-            }
-        }
-        autoLoadGames(null, true);
-    }
-
-    private void showRequestStorageRationale() {
-        //show dialog to ask user to give permission
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(R.string.title_ask_permission)
-                .setMessage(R.string.message_ask_permission)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok_ask_permission, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        requestStoragePermission();
-                    }
-                })
-                .setNegativeButton(R.string.cancel_ask_permission, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        autoLoadGames(null, true);
-                    }
-                });
-        builder.show();
-    }
-
     private void showFavTeamsDialog() {
         //Log.d(TAG, "show fav teams dialog");
         new MultiChoiceListDialogFragment(getActivity(),
@@ -691,10 +640,12 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void setBottomSheetVisibility(boolean visible) {
         setBottomSheetVisibility(visible, null);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void setBottomSheetVisibility(boolean visible, Game game) {
         setBottomSheetVisibility(visible, game, null);
     }

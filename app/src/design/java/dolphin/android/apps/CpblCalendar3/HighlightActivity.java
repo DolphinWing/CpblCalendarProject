@@ -1,10 +1,16 @@
 package dolphin.android.apps.CpblCalendar3;
 
-import android.app.Activity;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -37,7 +43,8 @@ import dolphin.android.util.DateUtils;
  * New Activity to show highlights like Google-now style.
  */
 
-public class HighlightActivity extends AppCompatActivity {
+public class HighlightActivity extends AppCompatActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
     private final static String TAG = "HighlightActivity";
     private final static boolean DEBUG_LAYOUT = false;
     private final static boolean DEBUG_LOG = false;
@@ -77,13 +84,25 @@ public class HighlightActivity extends AppCompatActivity {
             if (DEBUG_LAYOUT) {
                 createDebugData();
             } else {
-                downloadCalendar();
+                if (ContextCompat.checkSelfPermission(this,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    downloadCalendar();
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        showRequestStorageRationale();
+                    } else {
+                        requestStoragePermission();
+                    }
+                }
             }
         }
 
         mProgress = findViewById(android.R.id.progress);
         if (mProgress != null) {//add dummy listener
             mProgress.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     return true;
@@ -191,7 +210,7 @@ public class HighlightActivity extends AppCompatActivity {
     }
 
     private void downloadCalendar() {
-        final Activity activity = this;
+        //final Activity activity = this;
         final boolean allowCache = mRemoteConfig.getBoolean("enable_delay_games_from_cache");
         final boolean allowDrive = mRemoteConfig.getBoolean("enable_delay_games_from_drive");
 
@@ -199,65 +218,69 @@ public class HighlightActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (mHelper == null) {//new object to start get data
-                    //we now query for ASP.NET, so reuse the same object
-                    mHelper = new CpblCalendarHelper(activity);
-                }
-
-                Calendar now = CpblCalendarHelper.getNowTime();
-                int year = now.get(Calendar.YEAR);
-                int month = now.get(Calendar.MONTH) + 1;
-                //int day = now.get(Calendar.DAY_OF_MONTH);
-                String kind = "01";
-                String field = "F00";
-                ArrayList<Game> gameList = new ArrayList<>();
-                tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month));
-                mCacheGames = mHelper.query2016(year, month, kind, field, allowCache, allowDrive);
-                //we cache it for CalendarActivity quick load, no more download again
-                if (mCacheGames != null && mCacheGames.size() > 0) {
-                    //check today and if we have games before and after
-                    Game g1 = mCacheGames.get(0);
-                    if (g1.StartTime.after(now)) {//upcoming, so we have to get previous month data
-                        if (month > Calendar.JANUARY) {//get last month
-                            tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month - 1));
-                            ArrayList<Game> list1 = mHelper.query2016(year, month - 1, kind, field,
-                                    allowCache, allowDrive);
-                            if (list1 != null && list1.size() > 0) {
-                                gameList.addAll(list1);
-                            }
-                        }
-                    }
-                    gameList.addAll(mCacheGames);
-                    Game g2 = mCacheGames.get(mCacheGames.size() - 1);
-                    if (g2.StartTime.before(now)) {//check if it is final
-                        boolean needMore = g2.IsFinal;
-                        if (mCacheGames.size() > 1) {//check if we have more games today
-                            Game g3 = mCacheGames.get(mCacheGames.size() - 2);//check another game
-                            if (g3.StartTime.equals(g2.StartTime)) {//same start time
-                                needMore |= g3.IsFinal;//we should
-                            }
-                        }
-                        if (needMore && month < Calendar.DECEMBER) {//get next month
-                            tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month + 1));
-                            ArrayList<Game> list3 = mHelper.query2016(year, month + 1, kind, field,
-                                    allowCache, allowDrive);
-                            if (list3 != null && list3.size() > 0) {
-                                gameList.addAll(list3);
-                            }
-                        }
-                    }
-                }
-
-                tryShowSnackbar(getString(R.string.title_download_complete));
-                final ArrayList<Game> list = cleanUpGameList(gameList);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateViews(list);
-                    }
-                });
+                doDownloadCalendar(allowCache, allowDrive);
             }
         }, "CpblCalendar").start();
+    }
+
+    private void doDownloadCalendar(boolean allowCache, boolean allowDrive) {
+        if (mHelper == null) {//new object to start get data
+            //we now query for ASP.NET, so reuse the same object
+            mHelper = new CpblCalendarHelper(this);
+        }
+
+        Calendar now = CpblCalendarHelper.getNowTime();
+        int year = now.get(Calendar.YEAR);
+        int month = now.get(Calendar.MONTH) + 1;
+        //int day = now.get(Calendar.DAY_OF_MONTH);
+        String kind = "01";
+        String field = "F00";
+        ArrayList<Game> gameList = new ArrayList<>();
+        tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month));
+        mCacheGames = mHelper.query2016(year, month, kind, field, allowCache, allowDrive);
+        //we cache it for CalendarActivity quick load, no more download again
+        if (mCacheGames != null && mCacheGames.size() > 0) {
+            //check today and if we have games before and after
+            Game g1 = mCacheGames.get(0);
+            if (g1.StartTime.after(now)) {//upcoming, so we have to get previous month data
+                if (month > Calendar.JANUARY) {//get last month
+                    tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month - 1));
+                    ArrayList<Game> list1 = mHelper.query2016(year, month - 1, kind, field,
+                            allowCache, allowDrive);
+                    if (list1 != null && list1.size() > 0) {
+                        gameList.addAll(list1);
+                    }
+                }
+            }
+            gameList.addAll(mCacheGames);
+            Game g2 = mCacheGames.get(mCacheGames.size() - 1);
+            if (g2.StartTime.before(now)) {//check if it is final
+                boolean needMore = g2.IsFinal;
+                if (mCacheGames.size() > 1) {//check if we have more games today
+                    Game g3 = mCacheGames.get(mCacheGames.size() - 2);//check another game
+                    if (g3.StartTime.equals(g2.StartTime)) {//same start time
+                        needMore |= g3.IsFinal;//we should
+                    }
+                }
+                if (needMore && month < Calendar.DECEMBER) {//get next month
+                    tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month + 1));
+                    ArrayList<Game> list3 = mHelper.query2016(year, month + 1, kind, field,
+                            allowCache, allowDrive);
+                    if (list3 != null && list3.size() > 0) {
+                        gameList.addAll(list3);
+                    }
+                }
+            }
+        }
+
+        tryShowSnackbar(getString(R.string.title_download_complete));
+        final ArrayList<Game> list = cleanUpGameList(gameList);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateViews(list);
+            }
+        });
     }
 
     //private final static long MAX_TIME_DIFF = (long) (1000 * 60 * 60 * 24 * 1.5);
@@ -414,5 +437,46 @@ public class HighlightActivity extends AppCompatActivity {
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setRefreshing(false);//we have our refreshing animation
         }
+    }
+
+    private void showRequestStorageRationale() {
+        //show dialog to ask user to give permission
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.title_ask_permission)
+                .setMessage(R.string.message_ask_permission)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok_ask_permission, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        requestStoragePermission();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_ask_permission, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        downloadCalendar();
+                    }
+                });
+        builder.show();
+    }
+
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        boolean result;
+        if (permissions.length > 0) {
+            for (int i = 0; i < permissions.length; i++) {
+                result = (grantResults[i] == PackageManager.PERMISSION_GRANTED);
+                Log.v(TAG, "permission " + permissions[i] + (result ? " granted" : " denied"));
+            }
+        }
+        //if not granted, just store in inner memory
+        downloadCalendar();//no matter the result is, we can continue
     }
 }

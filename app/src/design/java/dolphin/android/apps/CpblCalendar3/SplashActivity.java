@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -21,6 +19,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -32,7 +31,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity;
 import dolphin.android.apps.CpblCalendar.Utils;
@@ -58,21 +56,21 @@ public class SplashActivity extends Activity {
 
         myHandler = new MyHandler(this);
 
-        //http://stackoverflow.com/a/24290514
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-            Configuration configuration = new Configuration(Resources.getSystem().getConfiguration());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                configuration.setLocale(Locale.TAIWAN);
-            } else {
-                configuration.locale = Locale.TAIWAN; // or whichever locale you desire
-            }
-            Resources.getSystem().updateConfiguration(configuration, null);
-        }
-        try {//https://developer.android.com/reference/java/util/Locale.html
-            Locale.setDefault(Locale.TAIWAN);
-        } catch (SecurityException e) {
-            e.printStackTrace();//in case that device don't allow locale change
-        }
+//        //http://stackoverflow.com/a/24290514
+//        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+//            Configuration configuration = new Configuration(Resources.getSystem().getConfiguration());
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//                configuration.setLocale(Locale.TAIWAN);
+//            } else {
+//                configuration.locale = Locale.TAIWAN; // or whichever locale you desire
+//            }
+//            Resources.getSystem().updateConfiguration(configuration, null);
+//        }
+//        try {//https://developer.android.com/reference/java/util/Locale.html
+//            Locale.setDefault(Locale.TAIWAN);
+//        } catch (SecurityException e) {
+//            e.printStackTrace();//in case that device don't allow locale change
+//        }
 
         FirebaseAnalytics.getInstance(this);//initialize this
 
@@ -86,6 +84,14 @@ public class SplashActivity extends Activity {
             TextView textView = (TextView) findViewById(android.R.id.message);
             if (textView != null) {
                 textView.setText(googleAPI.getErrorString(result));
+            }
+            if (googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(this, result, 0, new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        finish();//no update, no start
+                    }
+                });
             }
             return;//don't show progress bar
         }
@@ -105,6 +111,14 @@ public class SplashActivity extends Activity {
                 //myHandler.sendEmptyMessage(0);
             }
         }).start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        Intent intent = new Intent(this, SplashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void showLoadingInProgress() {

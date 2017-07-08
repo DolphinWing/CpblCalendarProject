@@ -25,10 +25,10 @@
         <Preference
             android:key="res_asset_studio"
             android:title="@string/title_asset_studio" />
-        <Preference
+        <!--<Preference
             android:key="lib_evernote_android_job"
             android:title="@string/title_evernote_android_job"
-            android:summary="@string/summary_evernote_android_job" />
+            android:summary="@string/summary_evernote_android_job" />-->
     </PreferenceCategory>
 
 </PreferenceScreen>

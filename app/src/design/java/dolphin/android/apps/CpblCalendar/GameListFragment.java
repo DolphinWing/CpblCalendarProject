@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import dolphin.android.apps.CpblCalendar3.R;
  * <p/>
  * GameList implementation
  */
+@Keep
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class GameListFragment extends ListFragment implements ListView.OnItemLongClickListener {
 
