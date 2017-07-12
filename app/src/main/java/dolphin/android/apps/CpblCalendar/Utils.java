@@ -12,6 +12,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.StrictMode;
+import android.provider.CalendarContract;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
@@ -385,5 +386,39 @@ public class Utils {
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         return context;
+    }
+
+    public static Intent createAddToCalendarIntent(Context context, Game game) {
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setData(CalendarContract.Events.CONTENT_URI);
+        calIntent.setType("vnd.android.cursor.item/event");
+
+        String contentText = context.getString(R.string.msg_content_text,
+                game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
+        calIntent.putExtra(CalendarContract.Events.TITLE, contentText);
+
+        //FIXME: change to full game field name
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.Field);
+
+        String description = "";
+        if (game.DelayMessage != null && !game.DelayMessage.isEmpty()) {
+            description = game.DelayMessage.replaceAll("&nbsp;", " ")
+                    .replaceAll("<br>", "\n").replaceAll("<br />", "\n")
+                    .replaceAll("<[^>]*>", "");
+        }
+        if (game.Channel != null && !game.Channel.isEmpty()) {
+            description = description.isEmpty() ? game.Channel
+                    : description.concat("\n").concat(game.Channel);
+        }
+        if (!description.isEmpty()) {
+            calIntent.putExtra(CalendarContract.Events.DESCRIPTION, description);
+        }
+
+        long startTime = game.StartTime.getTimeInMillis();
+        long scheduledEndTime = (long) (startTime + 3.5 * 60 * 60 * 1000);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, scheduledEndTime);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+        return calIntent;
     }
 }

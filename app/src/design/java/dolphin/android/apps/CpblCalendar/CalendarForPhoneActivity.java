@@ -812,37 +812,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     //Android Essentials: Adding Events to the User’s Calendar
     //http://goo.gl/jyT75l
     private void addToCalendar(Game game) {
-        Intent calIntent = new Intent(Intent.ACTION_INSERT);
-        calIntent.setData(CalendarContract.Events.CONTENT_URI);
-        calIntent.setType("vnd.android.cursor.item/event");
-
-        String contentText = getString(R.string.msg_content_text,
-                game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
-        calIntent.putExtra(CalendarContract.Events.TITLE, contentText);
-
-        //FIXME: change to full game field name
-        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.Field);
-
-        String description = "";
-        if (game.DelayMessage != null && !game.DelayMessage.isEmpty()) {
-            description = game.DelayMessage.replaceAll("&nbsp;", " ")
-                    .replaceAll("<br>", "\n").replaceAll("<br />", "\n")
-                    .replaceAll("<[^>]*>", "");
-        }
-        if (game.Channel != null && !game.Channel.isEmpty()) {
-            description = description.isEmpty() ? game.Channel
-                    : description.concat("\n").concat(game.Channel);
-        }
-        if (!description.isEmpty()) {
-            calIntent.putExtra(CalendarContract.Events.DESCRIPTION, description);
-        }
-
-        long startTime = game.StartTime.getTimeInMillis();
-        long scheduledEndTime = (long) (startTime + 3.5 * 60 * 60 * 1000);
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, scheduledEndTime);
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
-
+        Intent calIntent = Utils.createAddToCalendarIntent(this, game);
         if (PackageUtils.isCallable(getActivity(), calIntent)) {
             startActivity(calIntent);
         }

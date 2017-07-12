@@ -43,8 +43,8 @@
             android:layout_gravity="left|center_vertical"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="12dp">
 
             <View
                 android:layout_width="16dp"
@@ -82,6 +82,34 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:visibility="visible" />
+
+        <!--<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#cccccc" />
+
+        <TextView
+            android:id="@+id/card_option1"
+            style="@style/Theme.Holo_green.Card.More2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_show_field_info" />-->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:background="#cccccc" />
+
+        <TextView
+            android:id="@+id/card_option2"
+            style="@style/Theme.Holo_green.Card.More2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_add_to_calendar" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

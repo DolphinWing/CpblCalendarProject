@@ -2,6 +2,7 @@ package dolphin.android.apps.CpblCalendar3;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
 import dolphin.android.util.DateUtils;
+import dolphin.android.util.PackageUtils;
 
 /**
  * Created by jimmyhu on 2017/5/16.
@@ -368,16 +370,27 @@ public class HighlightActivity extends AppCompatActivity
         //final ArrayList<Game> gameList = list;
         TeamHelper helper = new TeamHelper((CpblApplication) getApplication());
         final GameCardAdapter adapter = new GameCardAdapter(this, list, helper);
+        final Activity activity = this;
         adapter.setOnClickListener(new GameCardAdapter.OnClickListener() {
             @Override
             public void onClick(View view, Game game) {
                 if (game.Id == -1) {
-                    Intent intent = new Intent(HighlightActivity.this, CalendarForPhoneActivity.class);
+                    Intent intent = new Intent(activity, CalendarForPhoneActivity.class);
                     intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
                     //Log.d(TAG, String.format("list %d", mCacheGames.size()));
                     startActivity(intent);
+//                } else if (view.getId() == R.id.card_option1) {
+//                    game.getFieldId(getBaseContext());//update game field id
+//                    String url = CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId);
+//                    //Log.d(TAG, "url = " + url);
+//                    Utils.startBrowserActivity(activity, url);
+                } else if (view.getId() == R.id.card_option2) {
+                    Intent calIntent = Utils.createAddToCalendarIntent(activity, game);
+                    if (PackageUtils.isCallable(activity, calIntent)) {
+                        startActivity(calIntent);
+                    }
                 } else {
-                    Utils.startGameActivity(HighlightActivity.this, game);
+                    Utils.startGameActivity(activity, game);
                 }
             }
         });

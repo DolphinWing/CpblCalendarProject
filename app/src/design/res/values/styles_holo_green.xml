@@ -16,7 +16,7 @@
      limitations under the License.
 -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Theme.Holo_green" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/holo_green_dark</item>
@@ -221,6 +221,21 @@
         <item name="android:textColor">@android:color/holo_red_dark</item>
         <item name="android:visibility">gone</item>
         <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="Theme.Holo_green.Card" />
+
+    <style name="Theme.Holo_green.Card.More" parent="@style/Theme.Holo_green.TextMedium">
+        <item name="android:background">@drawable/selectable_card_item_background</item>
+        <item name="android:drawableLeft">@drawable/ic_action_arrow_forward</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+    </style>
+
+    <style name="Theme.Holo_green.Card.More2" parent="@style/Theme.Holo_green.Card.More">
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>

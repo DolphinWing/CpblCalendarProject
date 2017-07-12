@@ -107,21 +107,22 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             holder.AwayLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.AwayTeam, year),
                     PorterDuff.Mode.SRC_IN);
             holder.AwayLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
-            holder.AwayLogo.setVisibility(View.INVISIBLE);//[1021]++
+            holder.AwayLogo.setVisibility(View.GONE);//[1021]++
         }
         if (holder.HomeLogo != null) {
             holder.HomeLogo.setImageResource(R.drawable.ic_baseball);
             holder.HomeLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.HomeTeam, year),
                     PorterDuff.Mode.SRC_IN);
             holder.HomeLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
-            holder.HomeLogo.setVisibility(View.INVISIBLE);//[1021]++
+            holder.HomeLogo.setVisibility(View.GONE);//[1021]++
         }
         holder.Field.setText(field);
         switch (getItemViewType(position)) {
             case TYPE_LIVE:
                 //holder.GameTime.setText("");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    holder.GameTime.setText(Html.fromHtml(game.LiveMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                    holder.GameTime.setText(Html.fromHtml(game.LiveMessage,
+                            Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                 } else {
                     holder.GameTime.setText(Html.fromHtml(game.LiveMessage));
                 }
@@ -155,7 +156,21 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 //holder.GameTime.setVisibility(View.VISIBLE);
                 //holder.AwayTeamScore.setText("");//no score before game start
                 //holder.HomeTeamScore.setText("");//no score before game start
-                holder.Channel.setText(game.Channel);
+                if (game.Channel == null || game.Channel.isEmpty()) {
+                    holder.Channel.setVisibility(View.GONE);
+                } else {
+                    holder.Channel.setText(game.Channel);
+                    holder.Channel.setVisibility(View.VISIBLE);
+                }
+                //dolphin++@2017.07.10, add more buttons
+                if (holder.Option1 != null) {
+                    holder.Option1.setTag(game);
+                    holder.Option1.setOnClickListener(this);
+                }
+                if (holder.Option2 != null) {
+                    holder.Option2.setTag(game);
+                    holder.Option2.setOnClickListener(this);
+                }
                 break;
         }
     }
@@ -200,6 +215,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         TextView Channel, Field;
         TextView LiveText;
         ImageView HomeLogo, AwayLogo;
+        View Option1, Option2;
 
         ViewHolder(View parent) {
             super(parent);
@@ -215,6 +231,8 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             LiveText = (TextView) parent.findViewById(R.id.textView10);
             AwayLogo = (ImageView) parent.findViewById(android.R.id.icon1);
             HomeLogo = (ImageView) parent.findViewById(android.R.id.icon2);
+            //Option1 = parent.findViewById(R.id.card_option1);
+            Option2 = parent.findViewById(R.id.card_option2);
         }
     }
 
