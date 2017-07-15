@@ -1,16 +1,20 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.CalendarContract;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -18,18 +22,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar.provider.SupportV4Utils;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2015/02/07.
@@ -37,7 +41,7 @@ import dolphin.android.apps.CpblCalendar.provider.Team;
  * Collection of utils in CalendarActivity
  */
 public class Utils {
-    public static void enableStrictMode() {
+    static void enableStrictMode() {
         // http://goo.gl/cmG1V , solve android.os.NetworkOnMainThreadException
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
@@ -53,9 +57,9 @@ public class Utils {
     /**
      * generate a debug list for offline test
      */
-    public static ArrayList<Game> get_debug_list(Context context, int year, int month) {
+    static ArrayList<Game> get_debug_list(Context context, int year, int month) {
         //Log.d(TAG, "get_debug_list");
-        ArrayList<Game> gameList = new ArrayList<Game>();
+        ArrayList<Game> gameList = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             Game game = new Game();
             game.IsFinal = ((i % 3) != 0);
@@ -75,8 +79,10 @@ public class Utils {
     }
 
     //http://zxc22.idv.tw/rank_up.asp
-    public final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
 
+    @SuppressLint("InflateParams")
     public static AlertDialog buildLeaderBoardZxc22(Context context) {
         if (context == null) {
             return null;
@@ -111,14 +117,16 @@ public class Utils {
         dialog.setView(view);//webView
         dialog.show();
 
-		//http://stackoverflow.com/a/15847580/2673859
+        //http://stackoverflow.com/a/15847580/2673859
         DisplayMetrics display = context.getResources().getDisplayMetrics();
         int width = (int) (display.widthPixels * (display.widthPixels > 1200 ? .8 : .95));
         width = width > 1600 ? 1600 : width;
         int height = (int) (display.heightPixels * .9);
         //height = height < 480 ? 480 : height;
         //Log.d("CpblCalendarHelper", String.format("w=%d, h=%d", width, height));
-        dialog.getWindow().setLayout(width, height);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(width, height);
+        }
         return dialog;
     }
 
@@ -129,13 +137,13 @@ public class Utils {
      * @param listener positive button click listener
      * @return cache mode dialog
      */
-    public static AlertDialog buildEnableCacheModeDialog(Context context,
-                                                         DialogInterface.OnClickListener listener) {
+    static AlertDialog buildEnableCacheModeDialog(Context context,
+                                                  DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setCancelable(true)
                 .setMessage(R.string.title_cache_mode_enable_message)
                 .setTitle(R.string.action_cache_mode)
                 .setPositiveButton(R.string.title_cache_mode_start, listener)
-                .setNegativeButton(android.R.string.cancel,
+                .setNegativeButton(R.string.title_cache_mode_cancel,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -160,8 +168,8 @@ public class Utils {
         return matched;
     }
 
-    public static ArrayList<Game> cleanUpGameList(Context context, ArrayList<Game> gameList,
-                                                  int year, int fieldIndex) {
+    static ArrayList<Game> cleanUpGameList(Context context, ArrayList<Game> gameList,
+                                           int year, int fieldIndex) {
         if (context == null || context.getResources() == null || gameList == null) {
             return gameList;//don't do anything
         }
@@ -178,8 +186,8 @@ public class Utils {
                 Game game = i.next();
                 if (teams.get(game.HomeTeam.getId()) == null
                         && teams.get(game.AwayTeam.getId()) == null) {
-                //if (!teams.containsKey(game.HomeTeam.getId())
-                //        && !teams.containsKey(game.AwayTeam.getId())) {
+                    //if (!teams.containsKey(game.HomeTeam.getId())
+                    //        && !teams.containsKey(game.AwayTeam.getId())) {
                     i.remove();//remove from the list
                 }
             }
@@ -199,18 +207,18 @@ public class Utils {
         return gameList;
     }
 
-    private static boolean within3Days(Calendar c) {
-        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= BaseGameAdapter.ONE_DAY * 2);
-    }
+//    private static boolean within3Days(Calendar c) {
+//        return ((c.getTimeInMillis() - System.currentTimeMillis()) <= BaseGameAdapter.ONE_DAY * 2);
+//    }
 
     public static boolean passed1Day(Calendar c) {
         return (System.currentTimeMillis() - c.getTimeInMillis() >= BaseGameAdapter.ONE_DAY);
     }
 
-    //https://developer.chrome.com/multidevice/android/customtabs
-    //https://github.com/GoogleChrome/custom-tabs-client
-    public static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
-    public static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
+//    //https://developer.chrome.com/multidevice/android/customtabs
+//    //https://github.com/GoogleChrome/custom-tabs-client
+//    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+//    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
 
     /**
      * start browser activity
@@ -275,27 +283,33 @@ public class Utils {
             return;
         }
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //[169]dolphin++ add Chrome Custom Tabs
-            Bundle extras = new Bundle();
-            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
-            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                    SupportV4Utils.getColor(context, R.color.holo_green_dark));
-            intent.putExtras(extras);
-//            if (!isGoogleChromeInstalled(context)) {//for non-chrome app
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            }
-        } else {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setData(Uri.parse(url));
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//            //[169]dolphin++ add Chrome Custom Tabs
+//            Bundle extras = new Bundle();
+//            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
+//            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+//                    ContextCompat.getColor(context, R.color.holo_green_dark));
+//            intent.putExtras(extras);
+////            if (!isGoogleChromeInstalled(context)) {//for non-chrome app
+////                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////            }
+//        } else {
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        }
+//
+//        try {//[97]dolphin++
+//            context.startActivity(intent);
+//        } catch (ActivityNotFoundException e) {
+//            Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
+//        }
 
-        try {//[97]dolphin++
-            context.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
-        }
+        //https://goo.gl/GtBKgp
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.holo_green_dark));
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(context, Uri.parse(url));
     }
 
     /**
@@ -304,6 +318,7 @@ public class Utils {
      * @param context Context
      * @return true if installed
      */
+    @SuppressWarnings("unused")
     public static boolean isGoogleChromeInstalled(Context context) {
         if (context == null) {
             return false;
@@ -320,5 +335,90 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @SuppressWarnings("WeakerAccess")
+    public static Context onAttach(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return updateResources(context, "zh_TW");
+        }
+        return updateResourcesLegacy(context, "zh_TW");
+    }
+
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @SuppressWarnings("SameParameterValue")
+    @TargetApi(Build.VERSION_CODES.N)
+    private static Context updateResources(Context context, String language) {
+        Locale locale = new Locale(language);
+        if (language.contains("_")) {//http://blog.xuite.net/saso0704/wretch/379638793
+            String[] s = language.split("_");
+            locale = new Locale(s[0], s[1]);
+        }
+        Locale.setDefault(locale);
+
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        configuration.setLayoutDirection(locale);
+
+        return context.createConfigurationContext(configuration);
+    }
+
+    //http://gunhansancar.com/change-language-programmatically-in-android/
+    @SuppressLint("ObsoleteSdkInt")
+    @SuppressWarnings({"deprecation", "SameParameterValue"})
+    private static Context updateResourcesLegacy(Context context, String language) {
+        Locale locale = new Locale(language);
+        if (language.contains("_")) {//http://blog.xuite.net/saso0704/wretch/379638793
+            String[] s = language.split("_");
+            locale = new Locale(s[0], s[1]);
+        }
+        Locale.setDefault(locale);
+
+        Resources resources = context.getResources();
+
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLayoutDirection(locale);
+        }
+
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        return context;
+    }
+
+    public static Intent createAddToCalendarIntent(Context context, Game game) {
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setData(CalendarContract.Events.CONTENT_URI);
+        calIntent.setType("vnd.android.cursor.item/event");
+
+        String contentText = context.getString(R.string.msg_content_text,
+                game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
+        calIntent.putExtra(CalendarContract.Events.TITLE, contentText);
+
+        //FIXME: change to full game field name
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.Field);
+
+        String description = "";
+        if (game.DelayMessage != null && !game.DelayMessage.isEmpty()) {
+            description = game.DelayMessage.replaceAll("&nbsp;", " ")
+                    .replaceAll("<br>", "\n").replaceAll("<br />", "\n")
+                    .replaceAll("<[^>]*>", "");
+        }
+        if (game.Channel != null && !game.Channel.isEmpty()) {
+            description = description.isEmpty() ? game.Channel
+                    : description.concat("\n").concat(game.Channel);
+        }
+        if (!description.isEmpty()) {
+            calIntent.putExtra(CalendarContract.Events.DESCRIPTION, description);
+        }
+
+        long startTime = game.StartTime.getTimeInMillis();
+        long scheduledEndTime = (long) (startTime + 3.5 * 60 * 60 * 1000);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, scheduledEndTime);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+        return calIntent;
     }
 }

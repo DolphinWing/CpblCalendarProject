@@ -1,6 +1,7 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
 import android.content.Context;
+import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,12 +15,14 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 
-import dolphin.android.apps.CpblCalendar.R;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Team object
  * Created by dolphin on 2013/6/8.
  */
+@SuppressWarnings("WeakerAccess")
+@Keep
 public class Team {
     public final static int ID_UNKNOWN = 0;
     //ID_ELEPHANTS -> ID_CT_ELEPHANTS
@@ -57,6 +60,8 @@ public class Team {
     public final static int ID_MKT_SUNS = 16;
     //ID_ELEPHANTS -> ID_CT_ELEPHANTS
     public final static int ID_CT_ELEPHANTS = 17;
+    //
+    public final static int ID_FUBON_GUARDIANS = 18;
 
     public final static int ID_ALL_STAR_RED = 101;
     public final static int ID_ALL_STAR_WHITE = 102;
@@ -73,6 +78,7 @@ public class Team {
      * @param name team name
      * @return team id
      */
+    @SuppressWarnings("unused")
     public static int getTeamId(Context c, String name) {
         return getTeamId(c, name, CpblCalendarHelper.getNowTime().get(Calendar.YEAR));
     }
@@ -132,6 +138,9 @@ public class Team {
      * @return logo drawable of that year
      */
     public static int getTeamLogo(int id, int year) {
+        //if (year >= 2017) {
+        //    return R.drawable.no_logo;
+        //}
         switch (id) {
             case ID_ELEPHANTS:
                 return R.drawable.elephant_1990_2013;
@@ -139,7 +148,9 @@ public class Team {
                 return year > 2014 ? R.drawable.elephant_2015 : R.drawable.elephant_2014;
             case ID_UNI_LIONS:
             case ID_UNI_711_LIONS://[184]++
-                if (year >= 2009)
+                if (year >= 2017) {
+                    return R.drawable.lion_2017;
+                } else if (year >= 2009)
                     return R.drawable.lion_2009_2013;
                 else if (year >= 2007)
                     return R.drawable.lion_2007_2008;
@@ -150,6 +161,8 @@ public class Team {
                 else if (year >= 1991)
                     return R.drawable.lion_1991_1992;
                 return R.drawable.lion_1989_1990;
+            case ID_FUBON_GUARDIANS:
+                return R.drawable.fubon_2017;
             case ID_EDA_RHINOS:
                 return R.drawable.rhino_2013;
             case ID_W_DRAGONS:
@@ -177,7 +190,7 @@ public class Team {
             case ID_LANEW_BEARS:
                 return R.drawable.lanew_2004_2010;
             case ID_LAMIGO_MONKEYS:
-                return R.drawable.lamigo_2011_2013;
+                return (year >= 2017) ? R.drawable.lamigo_2017 : R.drawable.lamigo_2011_2013;
             case ID_ALL_STAR_RED://[161]++
                 return R.drawable.allstar_red;
             case ID_ALL_STAR_WHITE://[161]++
@@ -274,6 +287,9 @@ public class Team {
             case ID_CHINESE_TAIPEI://[181]++
                 string_id = R.string.team_chinese_taipei;
                 break;
+            case ID_FUBON_GUARDIANS:
+                string_id = R.string.team_fubon_guardians;
+                break;
         }
         return context.getString(string_id);
     }
@@ -354,6 +370,73 @@ public class Team {
             case ID_CHINESE_TAIPEI://[181]++
                 string_id = R.string.team_chinese_taipei;
                 break;
+            case ID_FUBON_GUARDIANS:
+                string_id = R.string.team_fubon_guardians_short;
+                break;
+        }
+        return context.getString(string_id);
+    }
+
+    public static String getShortName(Context context, int id) {
+        int string_id;// = R.string.empty_data;
+        switch (id) {
+            case ID_ELEPHANTS:
+                string_id = R.string.team_elephants_short2;
+                break;
+            case ID_UNI_LIONS:
+                string_id = R.string.team_711_lions_short2;
+                break;
+            case ID_UNI_711_LIONS:
+                string_id = R.string.team_711_lions_short2;
+                break;
+            case ID_EDA_RHINOS:
+                string_id = R.string.team_eda_rhinos_short2;
+                break;
+            case ID_W_DRAGONS:
+                string_id = R.string.team_dragons_short2;
+                break;
+            case ID_SS_TIGERS:
+                string_id = R.string.team_tigers_short2;
+                break;
+            case ID_JUNGO_BEARS:
+                string_id = R.string.team_jungo_bears_short2;
+                break;
+            case ID_SINON_BULLS:
+                string_id = R.string.team_sinon_bulls_short2;
+                break;
+            case ID_TIME_EAGLES:
+                string_id = R.string.team_eagles_short2;
+                break;
+            case ID_CT_WHALES:
+                string_id = R.string.team_ct_whales_short2;
+                break;
+            case ID_KG_WHALES:
+                string_id = R.string.team_kg_whales_short2;
+                break;
+            case ID_MKT_SUNS:
+            case ID_MKT_COBRAS:
+                string_id = R.string.team_makoto_sun_short2;
+                break;
+            case ID_MEDIA_T_REX:
+                string_id = R.string.team_media_t_rex_short3;
+                break;
+            case ID_FIRST_KINGO:
+                string_id = R.string.team_first_kinkon_short3;
+                break;
+            case ID_LANEW_BEARS:
+                string_id = R.string.team_lanew_bears_short2;
+                break;
+            case ID_LAMIGO_MONKEYS:
+                string_id = R.string.team_lamigo_monkeys_short3;
+                break;
+            case ID_CT_ELEPHANTS:
+                string_id = R.string.team_ct_elephants_short3;
+                break;
+            case ID_FUBON_GUARDIANS:
+                string_id = R.string.team_fubon_guardians_short;
+                break;
+            default:
+                return getTeamNameShort(context, id);
         }
         return context.getString(string_id);
     }
@@ -361,6 +444,8 @@ public class Team {
     private final int mId;
     private String mName;//[66]++
     private final Context mContext;
+    private String mShortName;
+    private int mLogoId;
 
     public Team(Context context, int id) {
         mContext = context;
@@ -370,6 +455,14 @@ public class Team {
     public Team(Context context, String name, int year) {
         this(context, getTeamId(context, name, year));
         mName = name;//[66]++
+    }
+
+    public Team(int id, String name, String shortName, int logo) {
+        mId = id;
+        mContext = null;
+        mName = name;
+        mShortName = shortName;
+        mLogoId = logo;
     }
 
     /**
@@ -387,8 +480,9 @@ public class Team {
      * @return team name
      */
     public String getName() {
-        if (getId() != ID_UNKNOWN)
+        if (mContext != null && getId() != ID_UNKNOWN) {
             return getTeamName(mContext, mId);
+        }
         return mName;
     }
 
@@ -398,9 +492,13 @@ public class Team {
      * @return team name
      */
     public String getShortName() {
-        if (getId() != ID_UNKNOWN)
-            return getTeamNameShort(mContext, mId);
-        return mName;
+        if (mShortName != null) {
+            return mShortName;
+        }
+        if (mContext != null && getId() != ID_UNKNOWN) {
+            return getShortName(mContext, mId);
+        }
+        return getName();
     }
 
     /**
@@ -410,12 +508,16 @@ public class Team {
      * @return logo drawable
      */
     public int getLogo(int year) {
-        if (getId() != ID_UNKNOWN)
+        if (mLogoId > 0) {
+            return mLogoId;
+        }
+        if (getId() != ID_UNKNOWN) {
             return getTeamLogo(mId, year);
+        }
         return R.drawable.no_logo;
     }
 
-    public static Team getTeam2014(Context context, String png, int year) {
+    static Team getTeam2014(Context context, String png, int year) {
         int id = ID_UNKNOWN;
         if (png.contains("E02")) {
             id = ID_CT_ELEPHANTS;
@@ -429,6 +531,8 @@ public class Team {
             } else {
                 id = ID_LAMIGO_MONKEYS;
             }
+        } else if (png.contains("B04")) {
+            id = ID_FUBON_GUARDIANS;
         } else if (png.contains("B03")) {
             id = ID_EDA_RHINOS;
         } else if (png.contains("E01")) {
@@ -468,10 +572,10 @@ public class Team {
     }
 
     //http://goo.gl/JeMgZh
-    public static class TeamTypeAdapter extends TypeAdapter<Team> {
+    private static class TeamTypeAdapter extends TypeAdapter<Team> {
         private final Context mContext;
 
-        public TeamTypeAdapter(Context context) {
+        TeamTypeAdapter(Context context) {
             super();
             mContext = context;
         }
@@ -514,6 +618,7 @@ public class Team {
         }
     }
 
+    @SuppressWarnings("unused")
     public static String toJson(Context context, Team team) {
         Type type = new TypeToken<Team>() {
         }.getType();
@@ -523,6 +628,7 @@ public class Team {
         return gson.toJson(team);
     }
 
+    @SuppressWarnings("unused")
     public static Team fromJson(Context context, String json) {
         Type type = new TypeToken<Team>() {
         }.getType();

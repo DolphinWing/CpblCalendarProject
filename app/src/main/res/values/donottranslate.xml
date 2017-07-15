@@ -5,18 +5,17 @@
     <string name="empty_data">(null)</string>
 
     <string-array name="cpbl_team_name">
-        <!--<item>兄弟象</item> [89]++ -->
-        <item>中信兄弟象</item>
+        <item>中信兄弟</item>
         <item>統一7-ELEVEn獅</item>
-        <item>義大犀牛</item>
-        <item>Lamigo桃猿</item>
+        <item>富邦悍將</item>
+        <item>LAMIGO桃猿</item>
     </string-array>
 
     <string-array name="cpbl_team_id">
         <!--<item>1</item> [89]++ -->
         <item>17</item>
-        <item>2</item>
-        <item>7</item>
+        <item>7112</item>
+        <item>18</item>
         <item>14</item>
     </string-array>
 
@@ -114,6 +113,7 @@
     <!-- Teams -->
     <string name="team_elephants">兄弟象</string>
     <string name="team_elephants_short">象</string>
+    <string name="team_elephants_short2">兄弟</string>
     <string name="team_ct_elephants">中信兄弟</string>
     <string name="team_ct_elephants_short">象</string>
     <string name="team_lions">統一獅</string>
@@ -127,36 +127,48 @@
     <string name="team_lamigo_monkeys_short2">猿</string>
     <string name="team_sinon_bulls">興農牛</string>
     <string name="team_sinon_bulls_short">牛</string>
+    <string name="team_sinon_bulls_short2">興農</string>
     <string name="team_lanew_bears">La New熊</string>
     <string name="team_lanew_bears_short">熊</string>
+    <string name="team_lanew_bears_short2">La New</string>
     <string name="team_first_kinkon">第一金剛</string>
     <string name="team_first_kinkon_short">金剛</string>
     <string name="team_first_kinkon_short2">金</string>
+    <string name="team_first_kinkon_short3">第一</string>
     <string name="team_jungo_bears">俊國熊</string>
     <string name="team_jungo_bears_short">熊</string>
+    <string name="team_jungo_bears_short2">俊國</string>
     <string name="team_eagles">時報鷹</string>
     <string name="team_eagles_short">鷹</string>
+    <string name="team_eagles_short2">時報</string>
     <string name="team_tigers">三商虎</string>
     <string name="team_tigers_short">虎</string>
+    <string name="team_tigers_short2">三商</string>
     <string name="team_dragons">味全龍</string>
     <string name="team_dragons_short">龍</string>
+    <string name="team_dragons_short2">味全</string>
     <string name="team_makoto_cobras">誠泰COBRAS</string>
     <string name="team_makoto_cobras_short">COBRAS</string>
     <string name="team_makoto_cobras_short2">蛇</string>
     <string name="team_makoto_sun">誠泰太陽</string>
     <string name="team_makoto_sun_short">太陽</string>
+    <string name="team_makoto_sun_short2">誠泰</string>
     <string name="team_media_t_rex">米迪亞暴龍</string>
     <string name="team_media_t_rex_short">暴龍</string>
     <string name="team_media_t_rex_short2">暴</string>
+    <string name="team_media_t_rex_short3">米迪亞</string>
     <string name="team_ct_whales">中信鯨</string>
     <string name="team_ct_whales_short">鯨</string>
+    <string name="team_ct_whales_short2">中信</string>
     <string name="team_kg_whales">和信鯨</string>
     <string name="team_kg_whales_short">鯨</string>
+    <string name="team_kg_whales_short2">和信</string>
     <!-- 2014-03-15++ different source -->
     <string name="team_lamigo_monkeys_short3">Lamigo</string>
     <string name="team_eda_rhinos_short2">義大</string>
     <string name="team_711_lions_short2">統一</string>
     <string name="team_ct_elephants_short2">中信兄弟</string>
+    <string name="team_ct_elephants_short3">中信</string>
     <!-- 2015-07-29++ ALL STAR GAMES -->
     <string name="team_all_star_red">明星紅</string>
     <string name="team_all_star_white">明星白</string>
@@ -167,6 +179,10 @@
     <!-- 2016-03-27++ warm up games -->
     <string name="team_south_korea">韓國隊</string>
     <string name="team_chinese_taipei">中華隊</string>
+    <!-- 2017-03-16++ -->
+    <string name="team_south_japan">日本隊</string>
+    <string name="team_fubon_guardians">富邦悍將</string>
+    <string name="team_fubon_guardians_short">富邦</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">
@@ -195,14 +211,14 @@
     <string name="summary_actionbarsherlock">Copyright 2012 Jake Wharton</string>
 
     <string name="title_asset_studio">Android Asset Studio</string>
-    <string name="summary_asset_studio">Creative Commons 3.0 BY</string>
+    <string name="summary_asset_studio">Created by Roman Nurik</string>
 
     <string name="title_floating_action_button">FloatingActionButton</string>
     <string name="summary_floating_action_button">Copyright &#169; 2014 Oleksandr Melnykov</string>
     <string name="title_circle_image_view">CircleImageView</string>
     <string name="summary_circle_image_view">Copyright 2014 &#8211; 2015 Henning Dodenhof</string>
     <string name="title_evernote_android_job">Android-Job</string>
-    <string name="summary_evernote_android_job">Copyright &#169; 2007&#8211;2015 by Evernote Corporation, All rights reserved.</string>
+    <string name="summary_evernote_android_job">Copyright &#169; 2007&#8211;2016 by Evernote Corporation, All rights reserved.</string>
 
     <string-array name="notify_music_value">
         <item>theme.mp3</item>

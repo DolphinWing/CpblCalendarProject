@@ -2,8 +2,12 @@ package dolphin.android.apps.CpblCalendar;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -20,23 +24,23 @@ import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
-import dolphin.android.apps.CpblCalendar.provider.AlarmProvider;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2015/02/07.
  * <p/>
  * common implementation for game adapter
  */
-public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
+abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     private final Context mContext;
 
-    public final static long ONE_DAY = 1000 * 60 * 60 * 24;
+    final static long ONE_DAY = 1000 * 60 * 60 * 24;
 
-    public final static long ONE_WEEK = ONE_DAY * 7;
+    private final static long ONE_WEEK = ONE_DAY * 7;
 
-    public final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
+    private final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
 
     private final LayoutInflater mInflater;
 
@@ -52,7 +56,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     private final Calendar mNow;
 
-    public BaseGameAdapter(Context context, List<Game> objects) {
+    BaseGameAdapter(Context context, List<Game> objects) {
         super(context, android.R.layout.activity_list_item, objects);
 
         mContext = context;
@@ -67,8 +71,9 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         mNow = CpblCalendarHelper.getNowTime();
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         //Log.d(TAG, "getView: " + position);
         Game game = getItem(position);
         //Log.d(TAG, String.format("game id = %d", game.Id));
@@ -83,11 +88,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         return convertView;//super.getView(position, convertView, parent);
     }
 
-    protected void decorate(View convertView, Game game) {
-        //[67]++ for long team name
-        boolean bIsLongName = supportLongName(game);
-
-        //game time
+    private boolean isLiveNow(Game game) {
         Calendar c = game.StartTime;
         boolean bNoScoreNoLive = (game.Source == Game.SOURCE_CPBL_2013
                 && c.get(Calendar.YEAR) >= 2014);
@@ -96,9 +97,12 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         bLiveNow &= !bNoScoreNoLive;//[87]dolphin++
         //Log.d("GameAdapter", c.toString() + " live=" + bLiveNow);
         bLiveNow &= ((mNow.getTimeInMillis() - game.StartTime.getTimeInMillis()) < LONGEST_GAME);
-        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
+        return bLiveNow;
+    }
 
-        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
+    String getGameDateStr(Game game) {
+        Calendar c = game.StartTime;
+        boolean bLiveNow = isLiveNow(game);
         String date_str = String.format(Locale.TAIWAN, "%s, %02d:%02d",
                 //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
                 //[53]dolphin++ use DAY_OF_WEEK to all devices
@@ -107,7 +111,7 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 //time
                 //DateFormat.getTimeFormat(getSherlockActivity()).format(c.getTime()));
                 c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
-        date_str = bIsTablet && withinOneWeek(c) //[53]dolphin++ only tablets
+        date_str = isTablet() && withinOneWeek(c) //[53]dolphin++ only tablets
                 ? String.format("%s (%s)", date_str,
                 //relative time span to have better date idea
                 DateUtils.getRelativeTimeSpanString(c.getTimeInMillis(),
@@ -115,24 +119,44 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                 : date_str;
         date_str = game.IsFinal || bLiveNow ? new SimpleDateFormat("MMM d (E)",
                 Locale.TAIWAN).format(c.getTime()) : date_str;//[70]++
+        return date_str;
+    }
+
+    protected void decorate(View convertView, Game game) {
+        //[67]++ for long team name
+        boolean bIsLongName = supportLongName(game);
+
+        //game time
+        Calendar c = game.StartTime;
+        boolean bNoScoreNoLive = (game.Source == Game.SOURCE_CPBL_2013 && c.get(Calendar.YEAR) >= 2014);
+        //[84]dolphin++//live channel
+        boolean bLiveNow = isLiveNow(game);
+        //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
+
+        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
+        String date_str = getGameDateStr(game);
         if (game.IsLive) {//[181]++
             date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
-            tv1.setText(Html.fromHtml(date_str));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tv1.setText(Html.fromHtml(date_str, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                tv1.setText(Html.fromHtml(date_str));
+            }
         } else {
             tv1.setText(date_str);
         }
-
 
         //match up
         TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
         TextView tv3 = (TextView) convertView.findViewById(R.id.textView3);
         //[13]++ add highlight winning team
-        if (bShowWinner && game.AwayScore > game.HomeScore) {
-            //[67]++ for long team name
-            SpannableString span1 = new SpannableString(bIsLongName
-                    ? game.AwayTeam.getName() : game.AwayTeam.getShortName());
-            span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
-            tv2.setText(span1);
+        if (isShowWinner() && game.AwayScore > game.HomeScore) {
+            if (game.AwayTeam != null) {//[67]++ for long team name
+                SpannableString span1 = new SpannableString(bIsLongName
+                        ? game.AwayTeam.getName() : game.AwayTeam.getShortName());
+                span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
+                tv2.setText(span1);
+            }
             //tv2.getPaint().setFakeBoldText(true);//http://goo.gl/sK7cN
             //[45]-- tv2.setBackgroundResource(R.drawable.ab_transparent_holo_green);
             SpannableString span2 = new SpannableString(String.valueOf(game.AwayScore));
@@ -141,15 +165,18 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             //[45]-- tv3.setBackgroundResource(R.drawable.ab_transparent_holo_green);//[45]++
         } else {
             //[67]++ for long team name
-            tv2.setText(bIsLongName ? game.AwayTeam.getName()
-                    : game.AwayTeam.getShortName());
+            if (game.AwayTeam != null) {
+                tv2.setText(bIsLongName ? game.AwayTeam.getName()
+                        : game.AwayTeam.getShortName());
+            }
             tv2.setBackgroundResource(android.R.color.transparent);//reset back
+            //tv2.setBackgroundResource(android.R.color.holo_red_light);
             tv3.setText(String.valueOf(game.AwayScore));
             tv3.setBackgroundResource(android.R.color.transparent);//[45]++ reset back
         }
-        tv3.setTextColor(mContext.getResources().getColor(game.IsFinal || bLiveNow
-                ? android.R.color.primary_text_light
-                : android.R.color.secondary_text_light_nodisable));
+        tv3.setTextColor(ContextCompat.getColor(mContext,
+                game.IsFinal || bLiveNow ? android.R.color.primary_text_light
+                        : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
         //[87]dolphin++ CPBL_2013 source no score
         if (bNoScoreNoLive || (!game.IsFinal && !game.IsLive)) {
@@ -159,29 +186,32 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         TextView tv4 = (TextView) convertView.findViewById(R.id.textView4);
         TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
         //[13]++ add highlight winning team
-        if (bShowWinner && game.HomeScore > game.AwayScore) {
+        if (isShowWinner() && game.HomeScore > game.AwayScore) {
             SpannableString span2 = new SpannableString(String.valueOf(game.HomeScore));
             span2.setSpan(new StyleSpan(Typeface.BOLD), 0, span2.length(), 0);
             tv4.setText(span2);
             //[45]-- tv4.setBackgroundResource(R.drawable.ab_transparent_holo_green);//[45]++
-            //[67]++ for long team name
-            SpannableString span1 = new SpannableString(bIsLongName
-                    ? game.HomeTeam.getName() : game.HomeTeam.getShortName());
-            span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
-            tv5.setText(span1);
+            if (game.HomeTeam != null) {//[67]++ for long team name
+                SpannableString span1 = new SpannableString(bIsLongName
+                        ? game.HomeTeam.getName() : game.HomeTeam.getShortName());
+                span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
+                tv5.setText(span1);
+            }
             //tv5.getPaint().setFakeBoldText(true);//http://goo.gl/sK7cN
             //[45]-- tv5.setBackgroundResource(R.drawable.ab_transparent_holo_green);
         } else {
             tv4.setText(String.valueOf(game.HomeScore));
             tv4.setBackgroundResource(android.R.color.transparent);//[45]++ reset back
-            //[67]++ for long team name
-            tv5.setText(bIsLongName ? game.HomeTeam.getName()
-                    : game.HomeTeam.getShortName());
+            if (game.HomeTeam != null) {//[67]++ for long team name
+                tv5.setText(bIsLongName ? game.HomeTeam.getName()
+                        : game.HomeTeam.getShortName());
+            }
             tv5.setBackgroundResource(android.R.color.transparent);//reset back
+            //tv5.setBackgroundResource(android.R.color.holo_red_light);
         }
-        tv4.setTextColor(mContext.getResources().getColor(game.IsFinal || bLiveNow
-                ? android.R.color.primary_text_light
-                : android.R.color.secondary_text_light_nodisable));
+        tv4.setTextColor(ContextCompat.getColor(mContext,
+                game.IsFinal || bLiveNow ? android.R.color.primary_text_light
+                        : android.R.color.secondary_text_light_nodisable));
         //[72]dolphin++ no score
         //[87]dolphin++ CPBL_2013 source no score
         if (bNoScoreNoLive || (!game.IsFinal && !game.IsLive)) {
@@ -198,23 +228,37 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 //        } else
         if (game.Channel != null) {
             tv6.setVisibility(View.VISIBLE);
-            tv6.setText(bLiveNow ? Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
-                    mContext.getString(R.string.title_live_now), game.Channel)) : game.Channel);
+            Spanned spanned;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                spanned = Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
+                        mContext.getString(R.string.title_live_now), game.Channel),
+                        Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL);
+            } else {
+                spanned = Html.fromHtml(String.format("<b><font color='red'>%s</font></b> %s",
+                        mContext.getString(R.string.title_live_now), game.Channel));
+            }
+            tv6.setText(bLiveNow ? spanned : game.Channel);
         } else {
             tv6.setVisibility(View.INVISIBLE);
         }
 
         //game field
         TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
-        tv7.setText(game.Source == Game.SOURCE_CPBL ||
-                !game.Field.contains(mContext.getString(R.string.title_at))
-                ? String.format("%s%s", mContext.getString(R.string.title_at),
-                game.Field) : game.Field);
+        if (tv7 != null) {
+            tv7.setText(game.Source == Game.SOURCE_CPBL ||
+                    !game.Field.contains(mContext.getString(R.string.title_at))
+                    ? String.format("%s%s", mContext.getString(R.string.title_at),
+                    game.Field) : game.Field);
+        }
 
         //delay message
         TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
         if (game.DelayMessage != null && game.DelayMessage.length() > 0) {
-            tv8.setText(Html.fromHtml(game.DelayMessage));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tv8.setText(Html.fromHtml(game.DelayMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                tv8.setText(Html.fromHtml(game.DelayMessage));
+            }
             tv8.setVisibility(View.VISIBLE);
         } else {
             tv8.setVisibility(View.GONE);
@@ -225,20 +269,29 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
         //url indicator
         ImageView iv1 = (ImageView) convertView.findViewById(android.R.id.icon);
-        iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
+        if (iv1 != null) {
+            iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
+        }
 
         //team logo
+        int year = game.StartTime.get(Calendar.YEAR);
         ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
-        ic1.setImageResource(game.AwayTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
-        ic1.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
+        if (ic1 != null && game.AwayTeam != null) {
+            ic1.setImageResource(game.AwayTeam.getLogo(year));
+            ic1.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
+            //ic1.setBackgroundResource(android.R.color.holo_red_light);
+        }
         ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
-        ic2.setImageResource(game.HomeTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
-        ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
+        if (ic2 != null && game.HomeTeam != null) {
+            ic2.setImageResource(game.HomeTeam.getLogo(year));
+            ic2.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
+            //ic2.setBackgroundResource(android.R.color.holo_red_light);
+        }
 
         //[23]dolphin++ add a background layer id
         View bg = convertView.findViewById(R.id.match_title);
         if (bg != null) {//[22]dolphin++
-            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && bShowToday)
+            convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && isShowToday())
                     ? R.drawable.item_highlight_background_holo_light
                     : android.R.color.transparent);
         }
@@ -256,19 +309,8 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                     public void onClick(View view) {
                         Game g = (Game) view.getTag();
                         //Log.d(TAG, "id = " + g.Id);
-
                         ImageView img = (ImageView) view;
-                        if (mAlarmHelper.hasAlarm(g)) {
-                            mAlarmHelper.removeGame(g);
-                            img.setImageResource(R.drawable.ic_device_access_alarm);
-                            cancelAlarm(g);
-                        } else {
-                            mAlarmHelper.addGame(g);
-                            img.setImageResource(R.drawable.ic_device_access_alarmed);
-                            setAlarm(g);
-                        }
-
-                        //AlarmProvider.setNextAlarm(mContext);
+                        updateGameNotification(img, g);
                     }
                 });
 
@@ -281,6 +323,20 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         }
     }
 
+    private void updateGameNotification(ImageView icon, Game game) {
+        if (mAlarmHelper.hasAlarm(game)) {
+            mAlarmHelper.removeGame(game);
+            icon.setImageResource(R.drawable.ic_device_access_alarm);
+            cancelAlarm(game);
+        } else {
+            mAlarmHelper.addGame(game);
+            icon.setImageResource(R.drawable.ic_device_access_alarmed);
+            setAlarm(game);
+        }
+
+        //AlarmProvider.setNextAlarm(mContext);
+    }
+
     protected abstract int getLayoutResId(Game game);
 
     protected abstract boolean supportLongName(Game game);
@@ -289,10 +345,10 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
 
     protected abstract void cancelAlarm(Game game);
 
-    public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
-                                                 boolean bIsTablet, boolean bShowLogo) {
-        //TODO: update NotifyDialog match up layout
-    }
+//    public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
+//                                                 boolean bIsTablet, boolean bShowLogo) {
+//        //TODO: update NotifyDialog match up layout
+//    }
 
     /**
      * check if the day is within a week
@@ -304,23 +360,23 @@ public abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         return Math.abs(c.getTimeInMillis() - System.currentTimeMillis()) <= (ONE_WEEK);
     }
 
-    public boolean isShowWinner() {
+    private boolean isShowWinner() {
         return bShowWinner;
     }
 
-    public boolean isShowLogo() {
+    boolean isShowLogo() {
         return bShowLogo;
     }
 
-    public boolean isShowToday() {
+    private boolean isShowToday() {
         return bShowToday;
     }
 
-    public boolean isTablet() {
+    private boolean isTablet() {
         return bIsTablet;
     }
 
-    public AlarmHelper getAlarmHelper() {
+    AlarmHelper getAlarmHelper() {
         return mAlarmHelper;
     }
 }

@@ -1,0 +1,103 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
+
+    <!-- The navigation drawer -->
+    <include
+        android:id="@+id/left_drawer"
+        layout="@layout/layout_query_pane"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginRight="@dimen/navigation_drawer_width"
+        android:layout_toLeftOf="@id/left_drawer"
+        android:background="@color/holo_green_dark"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/navigation_drawer_width"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/mode_indicator"
+            style="@style/Theme.Holo_green.Toolbar.ModeIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="@dimen/activity_horizontal_margin"
+                android:layout_height="match_parent"
+                android:alpha="0.4"
+                android:background="@color/shadow_background"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:scaleX="-1"
+                android:src="@drawable/drawer_shadow" />
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <!-- The main content view -->
+                <fragment
+                    android:id="@+id/main_content_frame"
+                    android:name="dolphin.android.apps.CpblCalendar.GameListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout="@layout/listview_empty_view" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <ImageView
+                android:layout_width="@dimen/activity_horizontal_margin"
+                android:layout_height="match_parent"
+                android:alpha="0.4"
+                android:background="@color/shadow_background"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/drawer_shadow" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="@dimen/navigation_drawer_width"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:alpha="0.4"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/drawer_shadow_vert" />
+
+    <View
+        android:id="@android:id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bottom_sheet_background" />
+
+    <include layout="@layout/bottom_sheet_game" />
+
+</android.support.design.widget.CoordinatorLayout>

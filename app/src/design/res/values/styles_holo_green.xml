@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?><!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <style name="Theme.Holo_green" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/holo_green_dark</item>
+        <item name="toolbarStyle">@style/Theme.Holo_green.Toolbar</item>
+    </style>
+
+    <style name="Theme.Holo_green.SplashTheme" parent="Theme.Holo_green">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <!-- http://developer.android.com/reference/android/R.attr.html#windowEnterAnimation -->
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="Theme.Holo_green.Toolbar" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/holo_green_dark</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="Theme.Holo_green.Settings" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/holo_green_dark</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog.WindowTitle" parent="@style/TextAppearance.AppCompat.Title.Inverse">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@color/holo_green_dark</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog.ButtonBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <!--<item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>-->
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+    </style>
+
+    <style name="Theme.Holo_green.Dialog.Button" parent="@style/TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:textColor">@color/holo_green_dark</item>
+        <item name="android:background">@drawable/selectable_background_holo_green</item>
+        <item name="android:minWidth">80dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Match row style -->
+    <style name="Theme.Holo_green.TextLarge" parent="@style/TextAppearance.AppCompat.Large" />
+
+    <style name="Theme.Holo_green.TextMedium" parent="@style/TextAppearance.AppCompat.Medium" />
+
+    <style name="Theme.Holo_green.TextSmall" parent="@style/TextAppearance.AppCompat.Small" />
+
+    <style name="Theme.Holo_green.LoadingText" parent="@style/TextAppearance.AppCompat.Medium.Inverse">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">96dp</item>
+        <item name="android:layout_gravity">center_horizontal|bottom</item>
+        <item name="android:padding">@dimen/padding_medium</item>
+        <item name="android:background">#66001100</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="Theme.Holo_green.LoadingIcon" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <!-- match style -->
+    <style name="Theme.Holo_green.Match.Main" parent="@style/TextAppearance.AppCompat.Title" />
+
+    <style name="Theme.Holo_green.Match.Extra" parent="Theme.Holo_green.TextSmall" />
+
+    <style name="Theme.Holo_green.Match.Base" />
+
+    <style name="Theme.Holo_green.Match.Title" parent="Theme.Holo_green.Match.Base">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/padding_medium</item>
+        <item name="android:paddingRight">@dimen/padding_small</item>
+        <!--<item name="android:paddingBottom">@dimen/padding_small</item>-->
+    </style>
+
+    <style name="Theme.Holo_green.Match.Team" parent="Theme.Holo_green.Match.Main">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <!--<item name="android:layout_weight">0.8</item>-->
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:text">@string/empty_data</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.Score" parent="Theme.Holo_green.Match.Team">
+        <!--<item name="android:layout_weight">0.2</item>-->
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:minWidth">48dp</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.GameId" parent="Theme.Holo_green.Match.Extra">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:text">@string/empty_data</item>
+        <item name="android:autoText">false</item>
+        <!--<item name="android:textStyle">bold</item>-->
+    </style>
+
+    <style name="Theme.Holo_green.Match.Field" parent="Theme.Holo_green.Match.Extra">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:text">@string/title_game_field</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:lines">1</item>
+    </style>
+
+    <style name="Theme.Holo_green.Match.ExtraMsg" parent="Theme.Holo_green.Match.Extra">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:text">@string/empty_data</item>
+        <!--<item name="android:textColor">?android:attr/textColorSecondary</item>-->
+    </style>
+
+    <style name="Theme.Holo_green.Match.Channel" parent="Theme.Holo_green.TextSmall">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--<item name="android:layout_weight">1</item>-->
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:text">@string/empty_data</item>
+        <!--<item name="android:paddingTop">8dp</item>-->
+    </style>
+
+    <!-- Query Panel style -->
+    <style name="Theme.Holo_green.QueryPane" />
+
+    <style name="Theme.Holo_green.QueryPane.Title" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:paddingTop">@dimen/padding_medium</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+    </style>
+
+    <style name="Theme.Holo_green.QueryPane.Spinner" parent="@style/Widget.AppCompat.Spinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:spinnerMode">dropdown</item>
+    </style>
+
+    <style name="Theme.Holo_green.QueryPane.Text" parent="@style/Theme.Holo_green.Match.Time">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Holo AlertDialog-->
+    <style name="WindowTitleHolo_green" parent="android:TextAppearance.DialogWindowTitle">
+        <item name="android:textColor">@color/holo_green_dark</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Bottom Sheet -->
+    <style name="Theme.Holo_green.BottomSheet" />
+
+    <style name="Theme.Holo_green.BottomSheet.Option" parent="Theme.Holo_green.Match.Team">
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <!-- mode indicator -->
+    <style name="Theme.Holo_green.Toolbar.ModeIndicator" parent="@style/Theme.Holo_green.TextSmall">
+        <item name="android:background">@color/bottom_sheet_background</item>
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="Theme.Holo_green.Card" />
+
+    <style name="Theme.Holo_green.Card.More" parent="@style/Theme.Holo_green.TextMedium">
+        <item name="android:background">@drawable/selectable_card_item_background</item>
+        <item name="android:drawableLeft">@drawable/ic_action_arrow_forward</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+    </style>
+
+    <style name="Theme.Holo_green.Card.More2" parent="@style/Theme.Holo_green.Card.More">
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <!--<item name="android:textSize">14sp</item>-->
+    </style>
+
+</resources>

@@ -3,6 +3,9 @@ package dolphin.android.apps.CpblCalendar.provider;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,7 +22,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class Game {
+import dolphin.android.apps.CpblCalendar3.R;
+import dolphin.android.util.DateUtils;
+
+@Keep
+public class Game implements Parcelable {
     public int Id = 0;
     public String Kind = null;
 
@@ -30,7 +37,7 @@ public class Game {
     public int AwayScore = 0;
 
     public String Field = null;
-    //public int FieldId;
+    public String FieldId;
 
     public Calendar StartTime;
     public boolean IsFinal = false;
@@ -51,6 +58,94 @@ public class Game {
 
     public boolean IsLive = false;//[181]++
     public String LiveMessage = null;//[181]++
+
+    public Game() {
+        StartTime = Calendar.getInstance();
+    }
+
+    public Game(int id) {
+        this();
+        Id = id;
+    }
+
+    protected Game(Parcel in) {
+        this(in.readInt());
+
+        Kind = in.readString();
+
+        HomeTeam = new Team(in.readInt(), in.readString(), in.readString(), in.readInt());
+        HomeScore = in.readInt();
+        AwayTeam = new Team(in.readInt(), in.readString(), in.readString(), in.readInt());
+        AwayScore = in.readInt();
+
+        Field = in.readString();
+        FieldId = in.readString();
+
+        StartTime.setTimeInMillis(in.readLong());
+
+        IsFinal = in.readByte() != 0;
+        Url = in.readString();
+        Channel = in.readString();
+        IsDelay = in.readByte() != 0;
+        DelayMessage = in.readString();
+        Source = in.readInt();
+        People = in.readInt();
+        IsLive = in.readByte() != 0;
+        LiveMessage = in.readString();
+    }
+
+    public static final Creator<Game> CREATOR = new Creator<Game>() {
+        @Override
+        public Game createFromParcel(Parcel in) {
+            return new Game(in);
+        }
+
+        @Override
+        public Game[] newArray(int size) {
+            return new Game[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        int year = StartTime.get(Calendar.YEAR);
+        parcel.writeInt(Id);
+        parcel.writeString(Kind);
+
+        //Home
+        parcel.writeInt(HomeTeam.getId());
+        parcel.writeString(HomeTeam.getName());
+        parcel.writeString(HomeTeam.getShortName());
+        parcel.writeInt(HomeTeam.getLogo(year));
+        parcel.writeInt(HomeScore);
+
+        //Away
+        parcel.writeInt(AwayTeam.getId());
+        parcel.writeString(AwayTeam.getName());
+        parcel.writeString(AwayTeam.getShortName());
+        parcel.writeInt(AwayTeam.getLogo(year));
+        parcel.writeInt(AwayScore);
+
+        parcel.writeString(Field);
+        parcel.writeString(FieldId);
+
+        parcel.writeLong(StartTime.getTimeInMillis());//time in millis
+
+        parcel.writeByte((byte) (IsFinal ? 1 : 0));
+        parcel.writeString(Url);
+        parcel.writeString(Channel);
+        parcel.writeByte((byte) (IsDelay ? 1 : 0));
+        parcel.writeString(DelayMessage);
+        parcel.writeInt(Source);
+        parcel.writeInt(People);
+        parcel.writeByte((byte) (IsLive ? 1 : 0));
+        parcel.writeString(LiveMessage);
+    }
 
     @Override
     public String toString() {
@@ -79,12 +174,14 @@ public class Game {
                 game.Field, game.Channel, game.StartTime.getTimeInMillis(), game.Kind);
     }
 
+
     /**
      * Format Calendar as proper time display string
      *
      * @param calendar Calendar
      * @return time display string
      */
+    @SuppressWarnings("WeakerAccess")
     public static String getDisplayDate(Calendar calendar) {
         return String.format(Locale.US, "%04d/%02d/%02d %02d:%02d", calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH),
@@ -100,10 +197,13 @@ public class Game {
         return getDisplayDate(StartTime);
     }
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     /**
      * convert from string to Game object
+     *
+     * @param context Context
+     * @param str     to json str
      */
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public static Game fromPrefString(Context context, String str) {
         String[] gInfo = str.split(";");
         //Log.d("dolphin", "size: " + gInfo.length);
@@ -122,10 +222,10 @@ public class Game {
     }
 
     //http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/TypeAdapter.html
-    public static class GameTypeAdapter extends TypeAdapter<Game> {
+    private static class GameTypeAdapter extends TypeAdapter<Game> {
         private final Context mContext;
 
-        public GameTypeAdapter(Context context) {
+        GameTypeAdapter(Context context) {
             super();
             mContext = context;
         }
@@ -140,7 +240,7 @@ public class Game {
             writeOneGame(jsonWriter, game);
         }
 
-        public static void writeOneGame(JsonWriter jsonWriter, Game game) throws IOException {
+        static void writeOneGame(JsonWriter jsonWriter, Game game) throws IOException {
             jsonWriter.beginObject();
 
             jsonWriter.name("Id").value(game.Id);
@@ -148,15 +248,18 @@ public class Game {
             jsonWriter.name("StartTime").value(game.StartTime.getTimeInMillis());
 
             jsonWriter.name("AwayTeamId").value(game.AwayTeam.getId());
-            if (game.AwayTeam.getId() == Team.ID_UNKNOWN)
+            if (game.AwayTeam.getId() == Team.ID_UNKNOWN) {
                 jsonWriter.name("AwayTeamName").value(game.AwayTeam.getName());
+            }
             jsonWriter.name("HomeTeamId").value(game.HomeTeam.getId());
-            if (game.HomeTeam.getId() == Team.ID_UNKNOWN)
+            if (game.HomeTeam.getId() == Team.ID_UNKNOWN) {
                 jsonWriter.name("HomeTeamName").value(game.HomeTeam.getName());
+            }
 
             jsonWriter.name("Source").value(game.Source);
-            if (game.Source == Game.SOURCE_ZXC22)
+            if (game.Source == Game.SOURCE_ZXC22) {
                 jsonWriter.name("People").value(game.People);
+            }
 
             jsonWriter.name("IsFinal").value(game.IsFinal);
             if (game.IsFinal) {
@@ -164,12 +267,15 @@ public class Game {
                 jsonWriter.name("HomeScore").value(game.HomeScore);
             }
 
-            if (game.Field != null)
+            if (game.Field != null) {
                 jsonWriter.name("Field").value(game.Field);
-            if (game.Channel != null)
+            }
+            if (game.Channel != null) {
                 jsonWriter.name("Channel").value(game.Channel);
-            if (game.Url != null)
+            }
+            if (game.Url != null) {
                 jsonWriter.name("Url").value(game.Url);
+            }
 
             jsonWriter.name("IsDelay").value(game.IsDelay);
             if (game.IsDelay) {
@@ -187,48 +293,64 @@ public class Game {
             return readOneGame(mContext, jsonReader);
         }
 
-        public static Game readOneGame(Context context, JsonReader jsonReader) throws IOException {
+        static Game readOneGame(Context context, JsonReader jsonReader) throws IOException {
             Game game = new Game();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
                 String name = jsonReader.nextName();
-                if (name.equals("Id")) {
-                    game.Id = jsonReader.nextInt();
-                } else if (name.equals("Kind")) {
-                    game.Kind = jsonReader.nextString();
-                } else if (name.equals("StartTime")) {
-                    game.StartTime = CpblCalendarHelper.getNowTime();
-                    game.StartTime.setTimeInMillis(jsonReader.nextLong());
-                } else if (name.equals("Source")) {
-                    game.Source = jsonReader.nextInt();
-                } else if (name.equals("Field")) {
-                    game.Field = jsonReader.nextString();
-                } else if (name.equals("AwayTeamId")) {
-                    game.AwayTeam = new Team(context, jsonReader.nextInt());
-                } else if (name.equals("HomeTeamId")) {
-                    game.HomeTeam = new Team(context, jsonReader.nextInt());
-                } else if (name.equals("IsFinal")) {
-                    game.IsFinal = jsonReader.nextBoolean();
-                } else if (name.equals("AwayScore")) {
-                    game.AwayScore = jsonReader.nextInt();
-                } else if (name.equals("HomeScore")) {
-                    game.HomeScore = jsonReader.nextInt();
-                } else if (name.equals("People")) {
-                    game.People = jsonReader.nextInt();
-                } else if (name.equals("Url")) {
-                    game.Url = jsonReader.nextString();
-                } else if (name.equals("IsDelay")) {
-                    game.IsDelay = jsonReader.nextBoolean();
-                } else if (name.equals("Kind")) {
-                    game.Kind = jsonReader.nextString();
-                } else if (name.equals("Channel")) {
-                    game.Channel = jsonReader.nextString();
-                } else if (name.equals("DelayMessage")) {
-                    game.DelayMessage = jsonReader.nextString();
-                } else if (name.equals("HomeTeamName")) {//this may override the HomeTeam
-                    game.HomeTeam = new Team(context, jsonReader.nextString(), 2014);
-                } else if (name.equals("AwayTeamName")) {//this may override the AwayTeam
-                    game.AwayTeam = new Team(context, jsonReader.nextString(), 2014);
+                switch (name) {
+                    case "Id":
+                        game.Id = jsonReader.nextInt();
+                        break;
+                    case "Kind":
+                        game.Kind = jsonReader.nextString();
+                        break;
+                    case "StartTime":
+                        game.StartTime = CpblCalendarHelper.getNowTime();
+                        game.StartTime.setTimeInMillis(jsonReader.nextLong());
+                        break;
+                    case "Source":
+                        game.Source = jsonReader.nextInt();
+                        break;
+                    case "Field":
+                        game.Field = jsonReader.nextString();
+                        break;
+                    case "AwayTeamId":
+                        game.AwayTeam = new Team(context, jsonReader.nextInt());
+                        break;
+                    case "HomeTeamId":
+                        game.HomeTeam = new Team(context, jsonReader.nextInt());
+                        break;
+                    case "IsFinal":
+                        game.IsFinal = jsonReader.nextBoolean();
+                        break;
+                    case "AwayScore":
+                        game.AwayScore = jsonReader.nextInt();
+                        break;
+                    case "HomeScore":
+                        game.HomeScore = jsonReader.nextInt();
+                        break;
+                    case "People":
+                        game.People = jsonReader.nextInt();
+                        break;
+                    case "Url":
+                        game.Url = jsonReader.nextString();
+                        break;
+                    case "IsDelay":
+                        game.IsDelay = jsonReader.nextBoolean();
+                        break;
+                    case "Channel":
+                        game.Channel = jsonReader.nextString();
+                        break;
+                    case "DelayMessage":
+                        game.DelayMessage = jsonReader.nextString();
+                        break;
+                    case "HomeTeamName": //this may override the HomeTeam
+                        game.HomeTeam = new Team(context, jsonReader.nextString(), 2014);
+                        break;
+                    case "AwayTeamName": //this may override the AwayTeam
+                        game.AwayTeam = new Team(context, jsonReader.nextString(), 2014);
+                        break;
                 }
             }
             jsonReader.endObject();
@@ -251,10 +373,10 @@ public class Game {
         return gson.fromJson(json, type);
     }
 
-    public static class GameListTypeAdapter extends TypeAdapter<ArrayList<Game>> {
+    private static class GameListTypeAdapter extends TypeAdapter<ArrayList<Game>> {
         private final Context mContext;
 
-        public GameListTypeAdapter(Context context) {
+        GameListTypeAdapter(Context context) {
             super();
             mContext = context;
         }
@@ -290,18 +412,57 @@ public class Game {
         }
     }
 
-    public static String listToJson(Context context, ArrayList<Game> games) {
+    static String listToJson(Context context, ArrayList<Game> games) {
         //Type type = new TypeToken<List<Game>>() {
         //}.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(ArrayList.class, new GameListTypeAdapter(context)).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(ArrayList.class,
+                new GameListTypeAdapter(context)).create();
         //Log.d(TAG, gson.toJson(games));
         return gson.toJson(games);
     }
 
-    public static ArrayList<Game> listFromJson(Context context, String json) {
+    static ArrayList<Game> listFromJson(Context context, String json) {
         Type type = new TypeToken<List<Game>>() {
         }.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(type, new GameListTypeAdapter(context)).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(type,
+                new GameListTypeAdapter(context)).create();
         return gson.fromJson(json, type);
+    }
+
+    public boolean canOpenUrl() {
+        if (Url == null || Url.isEmpty()) {
+            return false;
+        }
+        Calendar now = CpblCalendarHelper.getNowTime();
+        boolean enabled = Url.contains("box.html") && StartTime.before(now);//past
+        enabled |= StartTime.after(now) && Url.contains("starters.html");//future
+        enabled |= Url.contains("play_by_play.html");//live
+        return enabled;
+    }
+
+    public String getFieldId(Context context) {
+        return getFieldId(context, this);
+    }
+
+    public static String getFieldId(Context context, Game game) {
+        if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F19))) {
+            game.FieldId = "F19";
+        } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F23))) {
+            game.FieldId = "F23";
+        } else {//check list
+            String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_name);
+            String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);
+            for (int i = 0; i < fieldIds.length; i++) {
+                if (game.Field.equals(fields[i])) {
+                    game.FieldId = fieldIds[i];
+                    break;
+                }
+            }
+        }
+        return game.FieldId;
+    }
+
+    public boolean isToday() {
+        return DateUtils.isToday(StartTime);
     }
 }

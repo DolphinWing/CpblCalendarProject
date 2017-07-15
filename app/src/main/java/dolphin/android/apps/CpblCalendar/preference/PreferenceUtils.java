@@ -1,11 +1,8 @@
 package dolphin.android.apps.CpblCalendar.preference;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
@@ -13,9 +10,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import dolphin.android.apps.CpblCalendar.R;
-import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.apps.CpblCalendar3.R;
 
 /**
  * Created by dolphin on 2013/6/9.
@@ -26,78 +22,78 @@ public class PreferenceUtils {
     public static final String TAG = "Preference";
 
     //GeneralFragment
-    public static final String KEY_APP_VERSION = "app_version";
-    public static final String KEY_CPBL_WEB = "data_from_cpbl";
-    public static final String KEY_TWBALL_WIKI = "data_from_twbsball";
-    public static final String KEY_ZXC22 = "data_from_zxc22";
-    public static final String KEY_LIB_ABS_WEB = "lib_actionbarsherlock";
-    public static final String KEY_LIB_ABDT_GIT = "lib_npombourcq";
-    public static final String KEY_RES_AAS = "res_asset_studio";//[13]++
-    public static final String KEY_RES_ICONIC = "res_iconic_set";//[13]++
-    public static final String KEY_LIB_SHOWCASE = "lib_showcaseview";//[18]++
-    public static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
-    public static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
-    public static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
-    public static final String KEY_LIB_EVERNOTE_JOB = "lib_evernote_android_job";//[168]++
+    static final String KEY_APP_VERSION = "app_version";
+    static final String KEY_CPBL_WEB = "data_from_cpbl";
+    static final String KEY_TWBALL_WIKI = "data_from_twbsball";
+    static final String KEY_ZXC22 = "data_from_zxc22";
+    static final String KEY_LIB_ABS_WEB = "lib_actionbarsherlock";
+    static final String KEY_LIB_ABDT_GIT = "lib_npombourcq";
+    static final String KEY_RES_AAS = "res_asset_studio";//[13]++
+    static final String KEY_RES_ICONIC = "res_iconic_set";//[13]++
+    static final String KEY_LIB_SHOWCASE = "lib_showcaseview";//[18]++
+    static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
+    static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
+    static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
+    static final String KEY_LIB_EVERNOTE_JOB = "lib_evernote_android_job";//[168]++
 
     //DisplayFragment
-    public final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
-    public final static String KEY_UPCOMING_ON = "upcoming_game";
-    public final static String KEY_TEAM_LOGO_ON = "team_logo";
-    public final static String KEY_HIGHLIGHT_WIN = "highlight_win";
-    public final static String KEY_HIGHLIGHT_TODAY = "highlight_today";
-    public final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
-    public final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
-    public final static String KEY_FAVORITE_TEAMS = "favorite_teams";
+    final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
+    private final static String KEY_UPCOMING_ON = "upcoming_game";
+    private final static String KEY_TEAM_LOGO_ON = "team_logo";
+    private final static String KEY_HIGHLIGHT_WIN = "highlight_win";
+    private final static String KEY_HIGHLIGHT_TODAY = "highlight_today";
+    final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
+    final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
+    final static String KEY_FAVORITE_TEAMS = "favorite_teams";
 
     @Deprecated //ShowcaseView
-    public final static String KEY_SHOWCASE_PHONE = "showcase_phone";
+    final static String KEY_SHOWCASE_PHONE = "showcase_phone";
     //public final static String KEY_SHOWCASE_TABLET = "showcase_tablet";
 
     //ActionBar
-    public final static String KEY_CACHE_MODE = "cache_mode";
+    private final static String KEY_CACHE_MODE = "cache_mode";
 
     //[50]dolphin++ Notifications
-    public final static String KEY_ENABLE_NOTIFICATION = "enable_notification";
-    public final static String KEY_NOTIFICATION_GROUP = "notification_group";
-    public final static String KEY_NOTIFY_TEAMS = "notify_teams";
-    public final static String KEY_MANUAL_GAME_NOTIFY = "manual_game_notify";
-    public final static String KEY_NOTIFY_ALARM = "notify_alarm";
-    public final static String KEY_NOTIFY_RINGTONE = "notify_ringtone";//[183]++
-    public final static String KEY_NOTIFY_PENDING_ACTION = "notify_pending_action";
-    public final static String KEY_NOTIFY_DIALOG = "enable_notify_dialog";//[51]++
-    public final static String KEY_NOTIFY_SONG = "enable_notify_song";//[122]++
-    public final static String KEY_NOTIFY_SONG_LIST = "notify_song_list";//[139]++
-    public final static String KEY_NOTIFY_VIBRATE = "enable_notify_vibrate";//[62]++
+    final static String KEY_ENABLE_NOTIFICATION = "enable_notification";
+    final static String KEY_NOTIFICATION_GROUP = "notification_group";
+    final static String KEY_NOTIFY_TEAMS = "notify_teams";
+    final static String KEY_MANUAL_GAME_NOTIFY = "manual_game_notify";
+    final static String KEY_NOTIFY_ALARM = "notify_alarm";
+    final static String KEY_NOTIFY_RINGTONE = "notify_ringtone";//[183]++
+    final static String KEY_NOTIFY_PENDING_ACTION = "notify_pending_action";
+    private final static String KEY_NOTIFY_DIALOG = "enable_notify_dialog";//[51]++
+    final static String KEY_NOTIFY_SONG = "enable_notify_song";//[122]++
+    final static String KEY_NOTIFY_SONG_LIST = "notify_song_list";//[139]++
+    private final static String KEY_NOTIFY_VIBRATE = "enable_notify_vibrate";//[62]++
 
     //to start some key website
-    public final static String URL_CPBL_OFFICAL_WEBSITE = "http://www.cpbl.com.tw/";
-    public final static String URL_TW_BASEBALL_WIKI = "http://twbsball.dils.tku.edu.tw/";
-    public final static String URL_ZXC22 = "http://zxc22.idv.tw/";
-    public final static String URL_ACTIONBAR_SHERLOCK =
+    final static String URL_CPBL_OFFICAL_WEBSITE = "http://www.cpbl.com.tw/";
+    final static String URL_TW_BASEBALL_WIKI = "http://twbsball.dils.tku.edu.tw/";
+    final static String URL_ZXC22 = "http://zxc22.idv.tw/";
+    final static String URL_ACTIONBAR_SHERLOCK =
             "http://actionbarsherlock.com/index.html";
-    public final static String URL_ACTIONBAR_DRAWER_TOGGLE =
+    final static String URL_ACTIONBAR_DRAWER_TOGGLE =
             "https://gist.github.com/npombourcq/5636121";
-    public final static String URL_ANDROID_ASSET_STUDIO = //[13]dolphin++
-            "http://android-ui-utils.googlecode.com/hg/asset-studio/dist/index.html";
-    public final static String URL_ICONIC_ICON_SET = //[13]dolphin++
+    final static String URL_ANDROID_ASSET_STUDIO = //[13]dolphin++
+            "https://romannurik.github.io/AndroidAssetStudio/";
+    final static String URL_ICONIC_ICON_SET = //[13]dolphin++
             "http://somerandomdude.com/work/iconic/";
     //[18]dolphin++ ShowcaseView
-    public final static String URL_SHOWCASE_VIEW =
+    final static String URL_SHOWCASE_VIEW =
             "http://espiandev.github.io/ShowcaseView/";
     //[18]dolphin++ NineOldAndroids
-    public final static String URL_NINEOLD_ANDROID = "http://nineoldandroids.com/";
+    final static String URL_NINEOLD_ANDROID = "http://nineoldandroids.com/";
 
     //[129]dolphin++ FloatingActionButton
-    public final static String URL_FLOATING_ACTION_BUTTON =
+    final static String URL_FLOATING_ACTION_BUTTON =
             "https://github.com/makovkastar/FloatingActionButton";
 
     //[129]dolphin++ FloatingActionButton
-    public final static String URL_CIRCLE_IMAGE_VIEW =
+    final static String URL_CIRCLE_IMAGE_VIEW =
             "https://github.com/hdodenhof/CircleImageView";
 
     //[188]dolphin++ Evernote Android Job library
-    public final static String URL_EVERNOTE_ANDROID_JOB =
+    final static String URL_EVERNOTE_ANDROID_JOB =
             "https://blog.evernote.com/tech/2015/10/26/unified-job-library-android/";
 
     /**
@@ -155,25 +151,27 @@ public class PreferenceUtils {
     public static SparseArray<Team> getFavoriteTeams(Context context) {
         SparseArray<Team> teams = new SparseArray<>();
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {//SDK > 11
-                dolphin.android.preference.PreferenceUtils utils =
-                        new dolphin.android.preference.PreferenceUtils(context);
-                Set<String> teamSet = getFavoriteTeams_pre(utils);
-                if (teamSet != null) {
-                    for (String team : teamSet) {
-                        int id = Integer.parseInt(team);
-                        //Log.d("PreferenceUtils", "id = " + id);
-                        if (id == Team.ID_ELEPHANTS) {
-                            id = Team.ID_ELEPHANTS;
-                        } else if (id == Team.ID_UNI_LIONS) {//[184]++
-                            id = Team.ID_UNI_711_LIONS;
-                        }
-                        teams.put(id, new Team(context, id));
+            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {//SDK > 11
+            dolphin.android.preference.PreferenceUtils utils =
+                    new dolphin.android.preference.PreferenceUtils(context);
+            Set<String> teamSet = getFavoriteTeams_pre(utils);
+            if (teamSet != null) {
+                for (String team : teamSet) {
+                    int id = Integer.parseInt(team);
+                    //Log.d("PreferenceUtils", "id = " + id);
+                    if (id == Team.ID_ELEPHANTS) {
+                        id = Team.ID_ELEPHANTS;
+                    } else if (id == Team.ID_UNI_LIONS) {//[184]++
+                        id = Team.ID_UNI_711_LIONS;
+                    } else if (id == Team.ID_EDA_RHINOS) {
+                        id = Team.ID_FUBON_GUARDIANS;
                     }
-                } else
-                    throw new Exception("pre HONEYCOMB");
+                    teams.put(id, new Team(context, id));
+                }
             } else
                 throw new Exception("pre HONEYCOMB");
+            //} else
+            //    throw new Exception("pre HONEYCOMB");
         } catch (Exception e) {
             //pre-Honeycomb devices, no favorite team options
             String[] teamSet = context.getResources().getStringArray(R.array.cpbl_team_id);
@@ -208,6 +206,8 @@ public class PreferenceUtils {
                     newSet.add(String.valueOf(Team.ID_CT_ELEPHANTS));
                 } else if (id == Team.ID_UNI_LIONS) {//[184]++
                     newSet.add(String.valueOf(Team.ID_UNI_711_LIONS));
+                } else if (id == Team.ID_EDA_RHINOS) {
+                    newSet.add(String.valueOf(Team.ID_FUBON_GUARDIANS));
                 } else {
                     newSet.add(String.valueOf(id));
                 }
@@ -216,6 +216,36 @@ public class PreferenceUtils {
             return newSet;
         }
         return null;
+    }
+
+    public static void setFavoriteTeams(Context context, SparseArray<Team> teams) {
+        Set<String> newSet = new HashSet<>();
+        for (int i = 0; i < teams.size(); i++) {
+            Team team = teams.valueAt(i);
+            newSet.add(String.valueOf(team.getId()));
+        }
+        dolphin.android.preference.PreferenceUtils utils =
+                new dolphin.android.preference.PreferenceUtils(context);
+        utils.putStringSet(KEY_FAVORITE_TEAMS, newSet);
+    }
+
+    public static String getFavoriteTeamSummary(Context context) {
+        String summary = "";
+        SparseArray<Team> teamMap = PreferenceUtils.getFavoriteTeams(context);
+        if (teamMap != null && teamMap.size() > 0) {
+            if (context.getResources().getStringArray(R.array.cpbl_team_id).length == teamMap.size()) {
+                summary = context.getString(R.string.title_favorite_teams_all);
+            } else {//show the team names one by one
+                for (int i = 0; i < teamMap.size(); i++) {
+                    Team team = teamMap.valueAt(i);
+                    summary += team.getName() + " ";
+                }
+                summary = summary.trim();
+            }
+        } else {//[34]dolphin++ no team games to show
+            summary = context.getString(R.string.no_favorite_teams);
+        }
+        return summary;
     }
 
     /**
@@ -230,19 +260,19 @@ public class PreferenceUtils {
                 context.getResources().getBoolean(R.bool.def_highlight_today));
     }
 
-    /**
-     * show leader board layout in main screen
-     *
-     * @param context Context
-     * @return true if we should include leader board on main UI
-     */
-    @Deprecated
-    public static boolean isIncludeLeaderBoard(Context context) {
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-//        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
-//                context.getResources().getBoolean(R.bool.def_include_lead_board));
-        return false;//[88]dolphin++ force to use menu item
-    }
+//    /**
+//     * show leader board layout in main screen
+//     *
+//     * @param context Context
+//     * @return true if we should include leader board on main UI
+//     */
+//    @Deprecated
+//    public static boolean isIncludeLeaderBoard(Context context) {
+////        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+////        return isEngineerMode(context) ? true : pref.getBoolean(KEY_INCLUDE_LEADER,
+////                context.getResources().getBoolean(R.bool.def_include_lead_board));
+//        return false;//[88]dolphin++ force to use menu item
+//    }
 
     /**
      * enable notification
@@ -251,9 +281,9 @@ public class PreferenceUtils {
      * @return true if user enables notification
      */
     public static boolean isEnableNotification(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//SDK < 11
-            return false;
-        }
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {//SDK < 11
+//            return false;
+//        }
         if (!context.getResources().getBoolean(R.bool.feature_notify))//[74]++
             return false;//not enabled function
 
