@@ -229,13 +229,19 @@
         <item name="android:background">@drawable/selectable_card_item_background</item>
         <item name="android:drawableLeft">@drawable/ic_action_arrow_forward</item>
         <item name="android:drawablePadding">8dp</item>
-        <item name="android:padding">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
         <item name="android:gravity">center_vertical|left</item>
     </style>
 
     <style name="Theme.Holo_green.Card.More2" parent="@style/Theme.Holo_green.Card.More">
-        <item name="android:padding">4dp</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <!--<item name="android:textSize">14sp</item>-->
     </style>
 
 </resources>

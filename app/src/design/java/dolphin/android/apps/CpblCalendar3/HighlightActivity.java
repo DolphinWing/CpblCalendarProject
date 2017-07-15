@@ -16,8 +16,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -396,19 +396,21 @@ public class HighlightActivity extends AppCompatActivity
         });
 
         final int columnPerRow = getResources().getBoolean(R.bool.config_tablet) ? 2 : 1;
-        final GridLayoutManager layoutManager = new GridLayoutManager(this, columnPerRow);
-        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                switch (adapter.getItemViewType(position)) {
-                    case GameCardAdapter.TYPE_LIVE:
-                    case GameCardAdapter.TYPE_MORE:
-                        return columnPerRow;
-                }
-                return 1;
-            }
-        });
+//        final GridLayoutManager layoutManager = new GridLayoutManager(this, columnPerRow);
+//        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//                switch (adapter.getItemViewType(position)) {
+//                    case GameCardAdapter.TYPE_LIVE:
+//                    case GameCardAdapter.TYPE_MORE:
+//                        return columnPerRow;
+//                }
+//                return 1;
+//            }
+//        });
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(columnPerRow,
+                StaggeredGridLayoutManager.VERTICAL);
         mList.setLayoutManager(layoutManager);
         mList.setAdapter(adapter);
         hideSnackbar();

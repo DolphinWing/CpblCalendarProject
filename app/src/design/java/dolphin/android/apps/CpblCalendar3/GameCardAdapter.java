@@ -32,8 +32,8 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         implements View.OnClickListener {
     private final static int TYPE_RESULT = 1;
     private final static int TYPE_UPCOMING = 2;
-    final static int TYPE_LIVE = 3;
-    final static int TYPE_MORE = 10;
+    private final static int TYPE_LIVE = 3;
+    private final static int TYPE_MORE = 10;
 
     private final Context mContext;
     private final ArrayList<Game> mGames;
@@ -146,6 +146,9 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 //holder.GameTime.setVisibility(View.GONE);
                 holder.AwayTeamScore.setText(String.valueOf(game.AwayScore));
                 holder.HomeTeamScore.setText(String.valueOf(game.HomeScore));
+                //always use long name
+                holder.AwayTeamName.setText(game.AwayTeam.getName());
+                holder.HomeTeamName.setText(game.HomeTeam.getName());
                 break;
             case TYPE_UPCOMING:
                 if (game.isToday()) {

@@ -1,3 +1,15 @@
+[1024] @ 2017-07-17
+    change GridLayoutManager to StaggeredGridLayoutManager
+    update layout and card design
+    always use long team name for upcoming games
+
+    CardView reference data
+    http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1025/3621.html
+
+[1023] @ 2017-07-07
+    add card action buttons
+    remove duplicate files in design flavor
+
 [1022] @ 2017-07-03
     move check permission to HighlightActivity
     fix CalendarForPhoneActivity inflate fragment failed
