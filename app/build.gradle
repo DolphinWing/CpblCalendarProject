@@ -12,6 +12,7 @@ android {
         applicationId "dolphin.android.apps.CpblCalendar3"
         resConfigs /*"zh",*/ "zh_TW"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -30,7 +31,7 @@ android {
             minSdkVersion 16
             targetSdkVersion 25
             versionName '3.0.2'
-            versionCode 1024
+            versionCode 1025
             dimension "mode"
         }
     }

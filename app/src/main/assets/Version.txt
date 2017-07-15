@@ -1,4 +1,9 @@
-[1024] @ 2017-07-17
+[1025] @ 2017-07-15
+    fix Kitkat will crush app because of aapt2
+        https://stackoverflow.com/a/45031035/2673859
+    fix possible crush in parsing
+
+[1024] @ 2017-07-14
     change GridLayoutManager to StaggeredGridLayoutManager
     update layout and card design
     always use long team name for upcoming games
