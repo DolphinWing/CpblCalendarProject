@@ -1,0 +1,19 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/padding_small"
+    android:layout_marginLeft="@dimen/padding_medium"
+    android:layout_marginRight="@dimen/padding_medium"
+    android:layout_marginTop="@dimen/padding_small"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
+
+    <TextView
+        android:id="@+id/textView10"
+        style="@style/Theme.Holo_green.Card.More"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_info_outline"
+        android:text="@string/app_name" />
+
+</android.support.v7.widget.CardView>

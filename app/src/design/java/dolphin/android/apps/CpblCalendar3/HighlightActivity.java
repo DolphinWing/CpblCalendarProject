@@ -69,7 +69,7 @@ public class HighlightActivity extends AppCompatActivity
 
         mRemoteConfig = FirebaseRemoteConfig.getInstance();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
@@ -81,7 +81,7 @@ public class HighlightActivity extends AppCompatActivity
             //actionBar.setDisplayHomeAsUpEnabled(false);
         }
 
-        mList = (RecyclerView) findViewById(android.R.id.list);
+        mList = findViewById(android.R.id.list);
         if (mList != null) {
             if (DEBUG_LAYOUT) {
                 createDebugData();
@@ -114,7 +114,7 @@ public class HighlightActivity extends AppCompatActivity
         }
 
         //http://sapandiwakar.in/pull-to-refresh-for-android-recyclerview-or-any-other-vertically-scrolling-view/
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -237,6 +237,12 @@ public class HighlightActivity extends AppCompatActivity
         //int day = now.get(Calendar.DAY_OF_MONTH);
         String kind = "01";
         String field = "F00";
+        if (mRemoteConfig.getBoolean("override_start_enabled")) {
+            year = Integer.parseInt(mRemoteConfig.getString("override_start_year"));
+            month = Integer.parseInt(mRemoteConfig.getString("override_start_month"));
+            kind = mRemoteConfig.getString("override_start_kind");
+        }
+
         ArrayList<Game> gameList = new ArrayList<>();
         tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month));
         mCacheGames = mHelper.query2016(year, month, kind, field, allowCache, allowDrive);
@@ -277,6 +283,28 @@ public class HighlightActivity extends AppCompatActivity
 
         tryShowSnackbar(getString(R.string.title_download_complete));
         final ArrayList<Game> list = cleanUpGameList(gameList);
+        //check if we need to add new announcements
+        String keys = mRemoteConfig.getString("add_highlight_card");
+        if (keys != null && !keys.isEmpty()) {
+            String[] ids = keys.split(";");
+            for (String id : ids) {
+                String msg = mRemoteConfig.getString("add_highlight_card_".concat(id));
+                if (msg != null && id.length() >= 6) {
+                    Calendar cal = CpblCalendarHelper.getNowTime();
+                    cal.set(Calendar.YEAR, Integer.parseInt(id.substring(0, 4)));
+                    cal.set(Calendar.MONTH, Integer.parseInt(id.substring(4, 5)));
+                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(id.substring(5, 6)));
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);
+                    if (cal.after(now)) {
+                        continue;//check if the announcement is expired
+                    }
+
+                    list.add(0, GameCardAdapter.createAnnouncementCard(msg));
+                }
+            }
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -338,7 +366,7 @@ public class HighlightActivity extends AppCompatActivity
         }
 
         boolean lived = false;
-        for (i = beforeIndex; i < list.size(); i++) {
+        for (i = beforeIndex >= 0 ? beforeIndex : 0; i < list.size(); i++) {
             Game game = list.get(i);
             if (game.StartTime.before(now)) {//final or live
                 if (DEBUG_LOG) {
@@ -364,9 +392,18 @@ public class HighlightActivity extends AppCompatActivity
     }
 
     private void updateViews(ArrayList<Game> list) {
-        Game more = new Game();
-        more.Id = -1;
-        list.add(more);//add a more button to last row
+        if (list.size() == 0) {//no games, bypass it now
+            Intent intent = new Intent(this, CalendarForPhoneActivity.class);
+            intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
+            overridePendingTransition(0, 0);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
+            overridePendingTransition(0, 0);
+            return;
+        }
+
+        list.add(GameCardAdapter.createMoreCard());//add a more button to last row
         //final ArrayList<Game> gameList = list;
         TeamHelper helper = new TeamHelper((CpblApplication) getApplication());
         final GameCardAdapter adapter = new GameCardAdapter(this, list, helper);
@@ -374,7 +411,7 @@ public class HighlightActivity extends AppCompatActivity
         adapter.setOnClickListener(new GameCardAdapter.OnClickListener() {
             @Override
             public void onClick(View view, Game game) {
-                if (game.Id == -1) {
+                if (GameCardAdapter.isMoreCard(game)) {
                     Intent intent = new Intent(activity, CalendarForPhoneActivity.class);
                     intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
                     //Log.d(TAG, String.format("list %d", mCacheGames.size()));

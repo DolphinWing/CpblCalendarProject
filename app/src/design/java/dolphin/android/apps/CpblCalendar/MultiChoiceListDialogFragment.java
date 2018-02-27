@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.util.SparseArray;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
@@ -48,6 +48,7 @@ public class MultiChoiceListDialogFragment extends DialogFragment
         mOnClickListener = listener;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         SparseArray<Team> teams = PreferenceUtils.getFavoriteTeams(getActivity());

@@ -13,7 +13,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_r"
         android:theme="@style/Theme.Holo_green"
-        tools:replace="android:theme">
+        tools:replace="android:theme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name="dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity"
             android:screenOrientation="locked" />
@@ -35,6 +36,23 @@
         <activity
             android:name=".HighlightActivity"
             android:screenOrientation="locked" />
+
+        <meta-data
+            android:name="WindowManagerPreference:FreeformWindowSize"
+            android:value="phone" />
+        <meta-data
+            android:name="WindowManagerPreference:FreeformWindowOrientation"
+            android:value="portrait" />
+
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="locked">
+            <layout
+                android:defaultHeight="720dp"
+                android:defaultWidth="480dp"
+                android:gravity="center_horizontal|center_vertical"
+                tools:targetApi="n" />
+        </activity>
 
     </application>
 

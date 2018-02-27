@@ -33,7 +33,6 @@ import dolphin.android.apps.CpblCalendar3.R;
  * game adapter implementation
  */
 public class GameAdapter extends BaseGameAdapter {
-    private final CpblApplication mApplication;
     private final TeamHelper mTeamHelper;
     private boolean ENABLE_BOTTOM_SHEET = false;
     private OnOptionClickListener mListener;
@@ -44,8 +43,7 @@ public class GameAdapter extends BaseGameAdapter {
 
     public GameAdapter(Context context, List<Game> objects, CpblApplication application) {
         super(context, objects);
-        mApplication = application;
-        mTeamHelper = new TeamHelper(mApplication);
+        mTeamHelper = new TeamHelper(application);
         ENABLE_BOTTOM_SHEET = FirebaseRemoteConfig.getInstance()
                 .getBoolean("enable_bottom_sheet_options");
     }
@@ -59,7 +57,7 @@ public class GameAdapter extends BaseGameAdapter {
         super.decorate(convertView, game);
 
         //more action
-        ImageView moreAction = (ImageView) convertView.findViewById(android.R.id.icon);
+        ImageView moreAction = convertView.findViewById(android.R.id.icon);
         if (moreAction != null) {
             if (ENABLE_BOTTOM_SHEET) {
                 moreAction.setVisibility(View.VISIBLE);
@@ -96,8 +94,8 @@ public class GameAdapter extends BaseGameAdapter {
 //            fieldText.setText(game.Field);
 //        }
 
-        TextView timeText = (TextView) convertView.findViewById(R.id.textView1);
-        TextView liveText = (TextView) convertView.findViewById(R.id.textView10);
+        TextView timeText = convertView.findViewById(R.id.textView1);
+        TextView liveText = convertView.findViewById(R.id.textView10);
         if (timeText != null) {
             String date_str = getGameDateStr(game);
             if (game.IsLive) {
@@ -127,7 +125,7 @@ public class GameAdapter extends BaseGameAdapter {
         }
 
         //delay message
-        TextView extraText = (TextView) convertView.findViewById(R.id.textView8);
+        TextView extraText = convertView.findViewById(R.id.textView8);
         if (extraText != null) {
             if (game.DelayMessage != null && game.DelayMessage.length() > 0) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -142,7 +140,7 @@ public class GameAdapter extends BaseGameAdapter {
             }
         }
 
-        TextView channelText = (TextView) convertView.findViewById(R.id.textView6);
+        TextView channelText = convertView.findViewById(R.id.textView6);
         if (channelText != null) {////don't use INVISIBLE in design flavor
             channelText.setVisibility((game.Channel != null) ? View.VISIBLE : View.GONE);
         }
@@ -157,14 +155,14 @@ public class GameAdapter extends BaseGameAdapter {
         //team logo
         int year = game.StartTime.get(Calendar.YEAR);
         //Log.d("GameAdapter", String.format("year = %d", year));
-        ImageView awayLogo = (ImageView) convertView.findViewById(android.R.id.icon1);
+        ImageView awayLogo = convertView.findViewById(android.R.id.icon1);
         if (awayLogo != null) {
             awayLogo.setImageResource(R.drawable.ic_baseball);
             awayLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.AwayTeam, year),
                     PorterDuff.Mode.SRC_IN);
             awayLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
         }
-        ImageView homeLogo = (ImageView) convertView.findViewById(android.R.id.icon2);
+        ImageView homeLogo = convertView.findViewById(android.R.id.icon2);
         if (homeLogo != null) {
             homeLogo.setImageResource(R.drawable.ic_baseball);
             homeLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.HomeTeam, year),
@@ -223,7 +221,7 @@ public class GameAdapter extends BaseGameAdapter {
             //Log.d(AlarmHelper.TAG, "demo alarm: " + alarm.getTime().toString());
             //alarm.add(Calendar.MINUTE, 10);
         }
-        String key = AlarmHelper.getAlarmIdKey(game);
+//        String key = AlarmHelper.getAlarmIdKey(game);
 //        AlarmProvider.setAlarm(mApplication, alarm, key);
     }
 
@@ -256,6 +254,7 @@ public class GameAdapter extends BaseGameAdapter {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void updateNotifyDialogMatchUp(Context context, ViewGroup convertView, Game game,
                                                  boolean bIsTablet, boolean bShowLogo) {
         convertView.findViewById(R.id.textView3).setVisibility(View.GONE);
@@ -264,7 +263,7 @@ public class GameAdapter extends BaseGameAdapter {
         convertView.findViewById(android.R.id.icon).setVisibility(View.GONE);
         convertView.findViewById(R.id.icon_alarm).setVisibility(View.GONE);
 
-        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
+        TextView tv1 = convertView.findViewById(R.id.textView1);
         Calendar c = game.StartTime;
         tv1.setText(String.format("%s, %s",
                 //date //[47] use Taiwan only, add tablet DAY_OF_WEEK
@@ -274,12 +273,12 @@ public class GameAdapter extends BaseGameAdapter {
                 DateFormat.getTimeFormat(context).format(c.getTime())
         ));
 
-        TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
+        TextView tv2 = convertView.findViewById(R.id.textView2);
         tv2.setText(game.AwayTeam.getName());
-        TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
+        TextView tv5 = convertView.findViewById(R.id.textView5);
         tv5.setText(game.HomeTeam.getName());
 
-        TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
+        TextView tv6 = convertView.findViewById(R.id.textView6);
         if (game.Channel != null) {
             tv6.setVisibility(View.VISIBLE);
             tv6.setText(game.Channel);
@@ -287,17 +286,17 @@ public class GameAdapter extends BaseGameAdapter {
             tv6.setVisibility(View.GONE);
         }
 
-        TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
+        TextView tv7 = convertView.findViewById(R.id.textView7);
         tv7.setText(game.Field);
 
-        TextView tv9 = (TextView) convertView.findViewById(R.id.textView9);
+        TextView tv9 = convertView.findViewById(R.id.textView9);
         tv9.setText(String.valueOf(game.Id));//game number as id
 
         //team logo
-        ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
+        ImageView ic1 = convertView.findViewById(android.R.id.icon1);
         ic1.setImageResource(game.AwayTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
         ic1.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
-        ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
+        ImageView ic2 = convertView.findViewById(android.R.id.icon2);
         ic2.setImageResource(game.HomeTeam.getLogo(game.StartTime.get(Calendar.YEAR)));
         ic2.setVisibility(bShowLogo ? View.VISIBLE : View.GONE);
     }
