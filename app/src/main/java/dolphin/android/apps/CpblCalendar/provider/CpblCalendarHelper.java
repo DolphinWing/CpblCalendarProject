@@ -837,32 +837,37 @@ public class CpblCalendarHelper extends HttpHelper {
             //    Log.w(TAG, "need to calculate new game time");
         }
 
-        if (html.contains("class=\"schedule_team")) {
-            String matchUpPlace = html.substring(html.indexOf("class=\"schedule_team"));
-            matchUpPlace = matchUpPlace.substring(0, matchUpPlace.indexOf("</table"));
-            String[] tds = matchUpPlace.split("<td");
-            //Log.d(TAG, "tds = " + tds.length);
-            if (tds.length > 3) {
-                String awayTeam = tds[1];//                     0123456789012345
-                //Log.d(TAG, "  away = " + awayTeam);
-                awayTeam = awayTeam.substring(awayTeam.indexOf("images/team/"));
-                awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
-                //Log.d(TAG, "  away = " + awayTeam);
-                game.AwayTeam = getTeamByPng(awayTeam, year);
-                String place = tds[2];
-                //Log.d(TAG, "  place = " + place);
-                place = place.substring(place.indexOf(">") + 1, place.indexOf("</td>"));
-                //Log.d(TAG, "  place = " + place);
-                game.Field = place.trim();
-                String homeTeam = tds[3];//                     0123456789012345
-                //Log.d(TAG, "  home = " + homeTeam);
-                homeTeam = homeTeam.substring(homeTeam.indexOf("images/team/"));
-                homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
-                //Log.d(TAG, "  home = " + homeTeam);
-                game.HomeTeam = getTeamByPng(homeTeam, year);
-            } else {
-                Log.w(TAG, "no match up");
+        try {
+            if (html.contains("class=\"schedule_team")) {
+                String matchUpPlace = html.substring(html.indexOf("class=\"schedule_team"));
+                matchUpPlace = matchUpPlace.substring(0, matchUpPlace.indexOf("</table"));
+                String[] tds = matchUpPlace.split("<td");
+                //Log.d(TAG, "tds = " + tds.length);
+                if (tds.length > 3) {
+                    String awayTeam = tds[1];//                     0123456789012345
+                    //Log.d(TAG, "  away = " + awayTeam);
+                    awayTeam = awayTeam.substring(awayTeam.indexOf("images/team/"));
+                    awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
+                    //Log.d(TAG, "  away = " + awayTeam);
+                    game.AwayTeam = getTeamByPng(awayTeam, year);
+                    String place = tds[2];
+                    //Log.d(TAG, "  place = " + place);
+                    place = place.substring(place.indexOf(">") + 1, place.indexOf("</td>"));
+                    //Log.d(TAG, "  place = " + place);
+                    game.Field = place.trim();
+                    String homeTeam = tds[3];//                     0123456789012345
+                    //Log.d(TAG, "  home = " + homeTeam);
+                    homeTeam = homeTeam.substring(homeTeam.indexOf("images/team/"));
+                    homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
+                    //Log.d(TAG, "  home = " + homeTeam);
+                    game.HomeTeam = getTeamByPng(homeTeam, year);
+                } else {
+                    Log.w(TAG, "no match up");
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "parse game teams: " + e.getMessage());
+            return null;
         }
 
         //<img src="http://cpbl-elta.cdn.hinet.net/phone/images/team/B03_logo_01.png"
@@ -1011,7 +1016,7 @@ public class CpblCalendarHelper extends HttpHelper {
                 for (int i = 1; i < games; i++) {
                     int d = parseGame2016TestGameDay(dayMap, one_block[i]);
                     Game game = parseOneGameHtml2016(one_block[i], year, month, d, "01");
-                    if (game.IsDelay && !game.IsFinal && game.StartTime.before(now)) {
+                    if (game != null && game.IsDelay && !game.IsFinal && game.StartTime.before(now)) {
                         //Log.w(TAG, String.format("bypass %d @ %s", game.Id, game.getDisplayDate()));
                         game.StartTime.set(Calendar.HOUR_OF_DAY, 0);
                         game.StartTime.set(Calendar.MINUTE, 0);
