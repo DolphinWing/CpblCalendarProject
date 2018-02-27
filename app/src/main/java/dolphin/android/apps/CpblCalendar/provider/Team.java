@@ -430,7 +430,7 @@ public class Team {
                 string_id = R.string.team_lamigo_monkeys_short3;
                 break;
             case ID_CT_ELEPHANTS:
-                string_id = R.string.team_ct_elephants_short3;
+                string_id = R.string.team_ct_elephants_short2;
                 break;
             case ID_FUBON_GUARDIANS:
                 string_id = R.string.team_fubon_guardians_short;

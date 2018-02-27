@@ -215,6 +215,10 @@
         <item name="android:padding">8dp</item>
     </style>
 
+    <style name="Theme.Holo_green.BottomSheet.Title" parent="Theme.Holo_green.Match.Time">
+        <item name="android:padding">8dp</item>
+    </style>
+
     <!-- mode indicator -->
     <style name="Theme.Holo_green.Toolbar.ModeIndicator" parent="@style/Theme.Holo_green.TextSmall">
         <item name="android:background">@color/bottom_sheet_background</item>

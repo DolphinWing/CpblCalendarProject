@@ -86,6 +86,7 @@ public class GameAdapter extends BaseGameAdapter {
             } else {
                 moreAction.setVisibility(View.INVISIBLE);
             }
+            moreAction.setVisibility(View.INVISIBLE);//disable all
         }
 
 //        //game field
@@ -168,6 +169,22 @@ public class GameAdapter extends BaseGameAdapter {
             homeLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.HomeTeam, year),
                     PorterDuff.Mode.SRC_IN);
             homeLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Calendar now = CpblCalendarHelper.getNowTime();
+            String url = game.Url;//null;
+            if (game.StartTime.after(now) && url.contains("box.html")) {
+                url = null;
+            }
+            if (url == null) {//no further information
+                convertView.setOnContextClickListener(new View.OnContextClickListener() {
+                    @Override
+                    public boolean onContextClick(View view) {
+                        return true;
+                    }
+                });
+            }
         }
     }
 

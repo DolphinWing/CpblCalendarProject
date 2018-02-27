@@ -133,7 +133,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         boolean bLiveNow = isLiveNow(game);
         //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
 
-        TextView tv1 = (TextView) convertView.findViewById(R.id.textView1);
+        TextView tv1 = convertView.findViewById(R.id.textView1);
         String date_str = getGameDateStr(game);
         if (game.IsLive) {//[181]++
             date_str = String.format("%s&nbsp;&nbsp;%s", date_str, game.LiveMessage);
@@ -147,8 +147,8 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         }
 
         //match up
-        TextView tv2 = (TextView) convertView.findViewById(R.id.textView2);
-        TextView tv3 = (TextView) convertView.findViewById(R.id.textView3);
+        TextView tv2 = convertView.findViewById(R.id.textView2);
+        TextView tv3 = convertView.findViewById(R.id.textView3);
         //[13]++ add highlight winning team
         if (isShowWinner() && game.AwayScore > game.HomeScore) {
             if (game.AwayTeam != null) {//[67]++ for long team name
@@ -183,8 +183,8 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv3.setText("-");//no score
         }
 
-        TextView tv4 = (TextView) convertView.findViewById(R.id.textView4);
-        TextView tv5 = (TextView) convertView.findViewById(R.id.textView5);
+        TextView tv4 = convertView.findViewById(R.id.textView4);
+        TextView tv5 = convertView.findViewById(R.id.textView5);
         //[13]++ add highlight winning team
         if (isShowWinner() && game.HomeScore > game.AwayScore) {
             SpannableString span2 = new SpannableString(String.valueOf(game.HomeScore));
@@ -218,7 +218,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv4.setText("-");//no score
         }
 
-        TextView tv6 = (TextView) convertView.findViewById(R.id.textView6);
+        TextView tv6 = convertView.findViewById(R.id.textView6);
 //        if (mNow.get(Calendar.YEAR) >= 2014 && game.Channel == null) {//CPBL TV live!
 //            tv6.setVisibility(bLiveNow ? View.VISIBLE : View.GONE);
 //            tv6.setText(bLiveNow ? mContext.getString(R.string.title_live_on_cpbltv) : "");
@@ -243,7 +243,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         }
 
         //game field
-        TextView tv7 = (TextView) convertView.findViewById(R.id.textView7);
+        TextView tv7 = convertView.findViewById(R.id.textView7);
         if (tv7 != null) {
             tv7.setText(game.Source == Game.SOURCE_CPBL ||
                     !game.Field.contains(mContext.getString(R.string.title_at))
@@ -252,7 +252,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         }
 
         //delay message
-        TextView tv8 = (TextView) convertView.findViewById(R.id.textView8);
+        TextView tv8 = convertView.findViewById(R.id.textView8);
         if (game.DelayMessage != null && game.DelayMessage.length() > 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 tv8.setText(Html.fromHtml(game.DelayMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
@@ -264,24 +264,24 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv8.setVisibility(View.GONE);
         }
 
-        TextView tv9 = (TextView) convertView.findViewById(R.id.textView9);
+        TextView tv9 = convertView.findViewById(R.id.textView9);
         tv9.setText(String.valueOf(game.Id));//game number as id
 
         //url indicator
-        ImageView iv1 = (ImageView) convertView.findViewById(android.R.id.icon);
+        ImageView iv1 = convertView.findViewById(android.R.id.icon);
         if (iv1 != null) {
             iv1.setVisibility(game.IsFinal ? View.VISIBLE : View.INVISIBLE);
         }
 
         //team logo
         int year = game.StartTime.get(Calendar.YEAR);
-        ImageView ic1 = (ImageView) convertView.findViewById(android.R.id.icon1);
+        ImageView ic1 = convertView.findViewById(android.R.id.icon1);
         if (ic1 != null && game.AwayTeam != null) {
             ic1.setImageResource(game.AwayTeam.getLogo(year));
             ic1.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
             //ic1.setBackgroundResource(android.R.color.holo_red_light);
         }
-        ImageView ic2 = (ImageView) convertView.findViewById(android.R.id.icon2);
+        ImageView ic2 = convertView.findViewById(android.R.id.icon2);
         if (ic2 != null && game.HomeTeam != null) {
             ic2.setImageResource(game.HomeTeam.getLogo(year));
             ic2.setVisibility(isShowLogo() ? View.VISIBLE : View.GONE);
@@ -293,7 +293,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         if (bg != null) {//[22]dolphin++
             convertView.setBackgroundResource((DateUtils.isToday(c.getTimeInMillis()) && isShowToday())
                     ? R.drawable.item_highlight_background_holo_light
-                    : android.R.color.transparent);
+                    : R.drawable.selectable_background_holo_green);
         }
         //}//[24]++ fix darker highlight when enable highlightToday
 

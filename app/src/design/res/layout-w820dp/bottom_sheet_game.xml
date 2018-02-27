@@ -15,7 +15,7 @@
 
     <LinearLayout
         android:id="@+id/bottom_sheet"
-        android:layout_width="240dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginRight="@dimen/navigation_drawer_width"
@@ -23,6 +23,19 @@
         android:orientation="vertical"
         android:padding="8dp"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <TextView
+            android:id="@+id/bottom_sheet_title"
+            style="@style/Theme.Holo_green.BottomSheet.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:background="#cccccc" />
 
         <TextView
             android:id="@+id/bottom_sheet_option1"

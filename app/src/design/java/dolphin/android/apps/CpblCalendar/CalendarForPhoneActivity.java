@@ -69,6 +69,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     //private ArrayList<Game> mGameList = null;
     private FloatingActionButton mFab;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private TextView mBottomSheetTitle;
     private View mBottomSheetBackground;
     private View mBottomSheetOption1, mBottomSheetOption2;
     @SuppressWarnings("unused")
@@ -208,6 +209,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             mBottomSheetBehavior.setPeekHeight(0);
             mBottomSheetBehavior.setHideable(true);
             //override parent class
+            mBottomSheetTitle = findViewById(R.id.bottom_sheet_title);
             mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
             if (mBottomSheetBackground != null) {
                 mBottomSheetBackground.setOnTouchListener(new View.OnTouchListener() {
@@ -724,6 +726,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
 //        int accountHeight = 0;//accountTextView.getHeight();
         if (game != null) {//check option visibility
+            if (mBottomSheetTitle != null) {
+                mBottomSheetTitle.setText(String.format(Locale.US, "G%d %s", game.Id,
+                        getString(R.string.msg_content_text, game.AwayTeam.getShortName(),
+                                game.HomeTeam.getShortName())));
+            }
             if (mBottomSheetOption1 != null) {
                 if (game.canOpenUrl()) {
                     mBottomSheetOption1.setVisibility(View.VISIBLE);
