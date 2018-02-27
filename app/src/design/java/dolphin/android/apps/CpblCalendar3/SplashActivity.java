@@ -81,7 +81,7 @@ public class SplashActivity extends Activity {
         int result = googleAPI.isGooglePlayServicesAvailable(this);
         if (result != ConnectionResult.SUCCESS) {
             Log.e(TAG, googleAPI.getErrorString(result));
-            TextView textView = (TextView) findViewById(android.R.id.message);
+            TextView textView = findViewById(android.R.id.message);
             if (textView != null) {
                 textView.setText(googleAPI.getErrorString(result));
             }
@@ -284,7 +284,7 @@ public class SplashActivity extends Activity {
         String summary = mRemoteConfig.getString("latest_version_summary");
         summary = summary != null && !summary.isEmpty() ? summary
                 : getString(R.string.new_version_available_message);
-        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        TextView textView = dialog.findViewById(android.R.id.message);
         if (textView != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 textView.setText(Html.fromHtml(summary, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));

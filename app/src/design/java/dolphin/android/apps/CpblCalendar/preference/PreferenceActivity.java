@@ -74,9 +74,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
             }
         }
         //don't directly remove by iterator
-        for (Header header : toRemoved) {
-            target.remove(header);
-        }
+        target.removeAll(toRemoved);
     }
 
 }

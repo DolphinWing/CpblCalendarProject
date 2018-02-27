@@ -34,6 +34,10 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
     private final static int TYPE_UPCOMING = 2;
     private final static int TYPE_LIVE = 3;
     private final static int TYPE_MORE = 10;
+    private final static int TYPE_ANNOUNCE = 11;
+
+    private final static int ID_MORE = -TYPE_MORE;
+    private final static int ID_ANNOUNCE = -TYPE_ANNOUNCE;
 
     private final Context mContext;
     private final ArrayList<Game> mGames;
@@ -73,6 +77,9 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             case TYPE_MORE:
                 layoutId = R.layout.recyclerview_item_more;
                 break;
+            case TYPE_ANNOUNCE:
+                layoutId = R.layout.recyclerview_item_announce;
+                break;
         }
         if (parent != null && layoutId != -1) {
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent,
@@ -86,7 +93,15 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         holder.Container.setOnClickListener(this);
         Game game = mGames.get(position);
         holder.Container.setTag(game);
-        if (game.Id == -1) {
+        if (game.Id < 0) {
+            if (holder.LiveText != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    holder.LiveText.setText(Html.fromHtml(game.LiveMessage,
+                            Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                } else {
+                    holder.LiveText.setText(Html.fromHtml(game.LiveMessage));
+                }
+            }
             return;//don't update UI
         }
         String date_str = new SimpleDateFormat("MMM d (E)", Locale.TAIWAN)
@@ -190,8 +205,10 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             return TYPE_RESULT;
         } else if (game.IsLive) {
             return TYPE_LIVE;
-        } else if (game.Id == -1) {
+        } else if (game.Id == ID_MORE) {
             return TYPE_MORE;
+        } else if (game.Id == ID_ANNOUNCE) {
+            return TYPE_ANNOUNCE;
         }
         return TYPE_UPCOMING;//super.getItemViewType(position);
     }
@@ -199,7 +216,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
     @Override
     public void onClick(View view) {
         Game game = (Game) view.getTag();
-        if (mListener != null) {
+        if (mListener != null && game.Id != ID_ANNOUNCE) {
             mListener.onClick(view, game);
         }
     }
@@ -223,17 +240,17 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         ViewHolder(View parent) {
             super(parent);
             Container = parent;
-            GameTime = (TextView) parent.findViewById(R.id.textView1);
-            GameId = (TextView) parent.findViewById(R.id.textView9);
-            AwayTeamName = (TextView) parent.findViewById(R.id.textView2);
-            AwayTeamScore = (TextView) parent.findViewById(R.id.textView3);
-            HomeTeamName = (TextView) parent.findViewById(R.id.textView5);
-            HomeTeamScore = (TextView) parent.findViewById(R.id.textView4);
-            Channel = (TextView) parent.findViewById(R.id.textView6);
-            Field = (TextView) parent.findViewById(R.id.textView7);
-            LiveText = (TextView) parent.findViewById(R.id.textView10);
-            AwayLogo = (ImageView) parent.findViewById(android.R.id.icon1);
-            HomeLogo = (ImageView) parent.findViewById(android.R.id.icon2);
+            GameTime = parent.findViewById(R.id.textView1);
+            GameId = parent.findViewById(R.id.textView9);
+            AwayTeamName = parent.findViewById(R.id.textView2);
+            AwayTeamScore = parent.findViewById(R.id.textView3);
+            HomeTeamName = parent.findViewById(R.id.textView5);
+            HomeTeamScore = parent.findViewById(R.id.textView4);
+            Channel = parent.findViewById(R.id.textView6);
+            Field = parent.findViewById(R.id.textView7);
+            LiveText = parent.findViewById(R.id.textView10);
+            AwayLogo = parent.findViewById(android.R.id.icon1);
+            HomeLogo = parent.findViewById(android.R.id.icon2);
             //Option1 = parent.findViewById(R.id.card_option1);
             Option2 = parent.findViewById(R.id.card_option2);
         }
@@ -241,5 +258,19 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
 
     public interface OnClickListener {
         void onClick(View view, Game game);
+    }
+
+    static Game createMoreCard() {
+        return new Game(ID_MORE);
+    }
+
+    static boolean isMoreCard(Game game) {
+        return game != null && game.Id == ID_MORE;
+    }
+
+    static Game createAnnouncementCard(String message) {
+        Game announcement = new Game(ID_ANNOUNCE);
+        announcement.LiveMessage = message;
+        return announcement;
     }
 }

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.CalendarContract;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -88,7 +87,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 .getBoolean("enable_bottom_sheet_options");
         //Log.d(TAG, "ENABLE_BOTTOM_SHEET: " + ENABLE_BOTTOM_SHEET);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
         if (mDrawerList != null) {
             mDrawerList.setOnTouchListener(new View.OnTouchListener() {
@@ -105,7 +104,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             //if (getResources().getBoolean(R.bool.config_tablet)) {
@@ -123,7 +122,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         View favTeamLayout = findViewById(R.id.layout3);
         if (favTeamLayout != null) {
             favTeamLayout.setVisibility(View.VISIBLE);
-            mFavTeams = (TextView) findViewById(R.id.textView6);
+            mFavTeams = findViewById(R.id.textView6);
             mFavTeams.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -133,9 +132,9 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             updateFavTeamsSummary();
         }
 
-        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setEnabled(false);
         }
@@ -161,7 +160,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             }
         }
 
-        mFab = (FloatingActionButton) findViewById(R.id.button_floating_action);
+        mFab = findViewById(R.id.button_floating_action);
         if (mFab != null) {
             mFab.setOnClickListener(
                     new View.OnClickListener() {

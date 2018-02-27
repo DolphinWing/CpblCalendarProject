@@ -132,7 +132,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
                     }
                 });
             }
-            TextView text2 = (TextView) mEmptyView.findViewById(android.R.id.text2);
+            TextView text2 = mEmptyView.findViewById(android.R.id.text2);
             if (text2 != null) {
                 text2.setText(String.format("%s %s", year, month));
             }
