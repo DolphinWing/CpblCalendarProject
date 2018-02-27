@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
@@ -305,6 +307,15 @@ public class HighlightActivity extends AppCompatActivity
                 }
             }
         }
+        //check latest version
+        PackageInfo info = PackageUtils.getPackageInfo(this, SplashActivity.class);
+        int versionCode = info != null ? info.versionCode : 0;
+        if (versionCode < mRemoteConfig.getLong("latest_version_code")) {
+            String summary = mRemoteConfig.getString("latest_version_summary");
+            summary = summary != null && !summary.isEmpty() ? summary
+                    : getString(R.string.new_version_available_message);
+            list.add(0, GameCardAdapter.createUpdateCard(summary));
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -416,6 +427,16 @@ public class HighlightActivity extends AppCompatActivity
                     intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
                     //Log.d(TAG, String.format("list %d", mCacheGames.size()));
                     startActivity(intent);
+                } else if (GameCardAdapter.isUpdateCard(game) && view.getId() == R.id.card_option2) {
+                    String appPackageName = getPackageName();
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
+                    finish();
 //                } else if (view.getId() == R.id.card_option1) {
 //                    game.getFieldId(getBaseContext());//update game field id
 //                    String url = CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId);

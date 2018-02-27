@@ -171,7 +171,11 @@ public class SplashActivity extends Activity {
                             // Once the config is successfully fetched it must be activated before
                             // newly fetched values are returned.
                             mRemoteConfig.activateFetched();
-                            checkLatestVersion();
+                            if (PreferenceUtils.isCacheMode(getBaseContext())) {
+                                checkLatestVersion();
+                            } else {//we can show it on HighlightActivity
+                                startNextActivity();
+                            }
                         } else {
                             Log.e(TAG, "Fetch failed");
                             startNextActivity();

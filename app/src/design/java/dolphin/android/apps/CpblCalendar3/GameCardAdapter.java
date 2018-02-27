@@ -35,9 +35,11 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
     private final static int TYPE_LIVE = 3;
     private final static int TYPE_MORE = 10;
     private final static int TYPE_ANNOUNCE = 11;
+    private final static int TYPE_UPDATE = 12;
 
     private final static int ID_MORE = -TYPE_MORE;
     private final static int ID_ANNOUNCE = -TYPE_ANNOUNCE;
+    private final static int ID_UPDATE = -TYPE_UPDATE;
 
     private final Context mContext;
     private final ArrayList<Game> mGames;
@@ -80,6 +82,9 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             case TYPE_ANNOUNCE:
                 layoutId = R.layout.recyclerview_item_announce;
                 break;
+            case TYPE_UPDATE:
+                layoutId = R.layout.recyclerview_item_update_info;
+                break;
         }
         if (parent != null && layoutId != -1) {
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent,
@@ -94,13 +99,17 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         Game game = mGames.get(position);
         holder.Container.setTag(game);
         if (game.Id < 0) {
-            if (holder.LiveText != null) {
+            if (holder.LiveText != null) {//for TYPE_UPDATE and TYPE_ANNOUNCE
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     holder.LiveText.setText(Html.fromHtml(game.LiveMessage,
                             Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                 } else {
                     holder.LiveText.setText(Html.fromHtml(game.LiveMessage));
                 }
+            }
+            if (holder.Option2 != null) {//for TYPE_UPDATE
+                holder.Option2.setTag(game);
+                holder.Option2.setOnClickListener(this);
             }
             return;//don't update UI
         }
@@ -205,10 +214,8 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             return TYPE_RESULT;
         } else if (game.IsLive) {
             return TYPE_LIVE;
-        } else if (game.Id == ID_MORE) {
-            return TYPE_MORE;
-        } else if (game.Id == ID_ANNOUNCE) {
-            return TYPE_ANNOUNCE;
+        } else if (game.Id < 0) {
+            return -game.Id;//because we use minus type value as id
         }
         return TYPE_UPCOMING;//super.getItemViewType(position);
     }
@@ -269,8 +276,18 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
     }
 
     static Game createAnnouncementCard(String message) {
-        Game announcement = new Game(ID_ANNOUNCE);
-        announcement.LiveMessage = message;
-        return announcement;
+        Game card = new Game(ID_ANNOUNCE);
+        card.LiveMessage = message;
+        return card;
+    }
+
+    static Game createUpdateCard(String message) {
+        Game card = new Game(ID_UPDATE);
+        card.LiveMessage = message;
+        return card;
+    }
+
+    static boolean isUpdateCard(Game game) {
+        return game != null && game.Id == ID_UPDATE;
     }
 }

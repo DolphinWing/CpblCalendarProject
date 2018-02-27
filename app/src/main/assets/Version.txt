@@ -1,3 +1,9 @@
+[1026] @ 2018-02-27
+    fix pre-season open app may crush the app
+    update build tool
+    add Frebase Remote Config support new announcements
+    add show latest version as card, not dialog
+
 [1025] @ 2017-07-15
     fix Kitkat will crush app because of aapt2
         https://stackoverflow.com/a/45031035/2673859

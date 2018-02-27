@@ -145,7 +145,7 @@
     <string name="action_remove_notification">移除提醒</string>
 
     <!-- New version notification -->
-    <string name="new_version_available_title">有新版本</string>
+    <string name="new_version_available_title">有新版本!</string>
     <string name="new_version_available_message">要前往 Google Play 更新嗎？</string>
     <string name="new_version_available_go">更新</string>
     <string name="new_version_available_later">稍後</string>

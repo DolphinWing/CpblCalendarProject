@@ -16,6 +16,6 @@
 
 [DolphinWing's App play yard](https://plus.google.com/u/0/communities/117125774226013120188)
 
-~~[Google Play Store](https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3)~~
+[Google Play Store](https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3)
 
 \#中華職棒 \#CPBL \#中職

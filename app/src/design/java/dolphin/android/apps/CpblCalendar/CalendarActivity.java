@@ -153,10 +153,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
      * initial the query pane
      */
     void initQueryPane() {
-        mSpinnerField = (Spinner) findViewById(R.id.spinner1);
-        mSpinnerKind = (Spinner) findViewById(R.id.spinner2);
-        mSpinnerYear = (Spinner) findViewById(R.id.spinner3);
-        mSpinnerMonth = (Spinner) findViewById(R.id.spinner4);
+        mSpinnerField = findViewById(R.id.spinner1);
+        mSpinnerKind = findViewById(R.id.spinner2);
+        mSpinnerYear = findViewById(R.id.spinner3);
+        mSpinnerMonth = findViewById(R.id.spinner4);
 
         mProgressView = findViewById(android.R.id.progress);
         if (mProgressView != null) {
@@ -168,12 +168,17 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 }
             });
         }
-        mProgressText = (TextView) findViewById(android.R.id.message);
+        mProgressText = findViewById(android.R.id.message);
 
         final Calendar now = CpblCalendarHelper.getNowTime();
         mYear = now.get(Calendar.YEAR);//[78]dolphin++ add initial value
         mYear = (mYear > 2013) ? mYear : 2014;//[89]dolphin++ set initial value
         mMonth = now.get(Calendar.MONTH) + 1;//[78]dolphin++ add initial value
+        if (mRemoteConfig.getBoolean("override_start_enabled")) {
+            mYear = Integer.parseInt(mRemoteConfig.getString("override_start_year"));
+            mMonth = Integer.parseInt(mRemoteConfig.getString("override_start_month"));
+            //kind = mRemoteConfig.getString("override_start_kind");
+        }
 
         if (mSpinnerYear != null) {
             mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
@@ -184,7 +189,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
         }
 
-        mButtonQuery = (Button) findViewById(android.R.id.button1);
+        mButtonQuery = findViewById(android.R.id.button1);
         if (mButtonQuery != null) {
             mButtonQuery.setOnClickListener(onQueryClick);
         }
@@ -895,7 +900,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     }
 
     private void showModeIndicator(boolean visible, String text) {
-        TextView modeIndicator = (TextView) findViewById(R.id.mode_indicator);
+        TextView modeIndicator = findViewById(R.id.mode_indicator);
         if (modeIndicator != null) {
             modeIndicator.setVisibility(visible ? View.VISIBLE : View.GONE);
             if (text != null) {
