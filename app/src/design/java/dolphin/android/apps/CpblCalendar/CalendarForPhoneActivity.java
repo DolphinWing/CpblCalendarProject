@@ -244,6 +244,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void autoLoadGames(Bundle savedInstanceState, final boolean performQuery) {
+        Calendar now = CpblCalendarHelper.getNowTime();
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        boolean overrideValues = config.getBoolean("override_start_enabled");
+        int y = overrideValues ? Integer.parseInt(config.getString("override_start_year")) : 0;
+        int m = overrideValues ? Integer.parseInt(config.getString("override_start_month")) : 0;
         //[39]dolphin++ for rotation
         final int kind = (savedInstanceState != null)
                 ? savedInstanceState.getInt(KEY_GAME_KIND)
@@ -251,10 +256,11 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         final int field = (savedInstanceState != null)
                 ? savedInstanceState.getInt(KEY_GAME_FIELD) : 0;
         final int year = (savedInstanceState != null)
-                ? savedInstanceState.getInt(KEY_GAME_YEAR) : 0;
+                ? savedInstanceState.getInt(KEY_GAME_YEAR)
+                : overrideValues ? now.get(Calendar.YEAR) - y : 0;
         final int month = (savedInstanceState != null)
                 ? savedInstanceState.getInt(KEY_GAME_MONTH)
-                : Calendar.getInstance().get(Calendar.MONTH);
+                : overrideValues ? m - 1 : now.get(Calendar.MONTH);
         final boolean debugMode = getResources().getBoolean(R.bool.pref_engineer_mode);
         new Handler().post(new Runnable() {
             @Override
