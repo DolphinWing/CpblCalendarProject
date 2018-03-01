@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/holo_green_dark</color>
+    <color name="colorPrimaryDark">@color/holo_green_dark_darker</color>
+    <color name="colorAccent">#FF9966FF</color>
 
-    <color name="holo_green_light_light">#ffddffaa</color>
-    <color name="pressed_holo_green_light_light">#ccddffaa</color>
+    <color name="holo_green_light_lighter">#ffddffaa</color>
+    <color name="pressed_holo_green_light_lighter">#ccddffaa</color>
     <color name="holo_green_light">#FF99CC00</color>
     <color name="pressed_holo_green_light">#CC99CC00</color>
     <color name="holo_green_dark">#FF669900</color>
+    <color name="holo_green_dark_darker">#FF336600</color>
 
     <color name="shadow_background">#20000000</color>
 

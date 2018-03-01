@@ -1,3 +1,7 @@
+[1028] @ 2018-03-01
+    update app styles
+    add game field full name
+
 [1027] @ 2018-02-27
     fix no auto select override year and month
     update styles for chromebooks

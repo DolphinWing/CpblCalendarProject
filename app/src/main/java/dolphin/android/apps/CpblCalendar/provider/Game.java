@@ -444,7 +444,7 @@ public class Game implements Parcelable {
         return getFieldId(context, this);
     }
 
-    public static String getFieldId(Context context, Game game) {
+    private static String getFieldId(Context context, Game game) {
         if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F19))) {
             game.FieldId = "F19";
         } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F23))) {
@@ -460,6 +460,18 @@ public class Game implements Parcelable {
             }
         }
         return game.FieldId;
+    }
+
+    public String getFieldFullName(Context context) {
+        String id = getFieldId(context);
+        String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_full_name);
+        String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);
+        for (int i = 0; i < fieldIds.length; i++) {
+            if (id.equals(fieldIds[i])) {
+                return fields[i];
+            }
+        }
+        return Field;//use original name as it
     }
 
     public boolean isToday() {

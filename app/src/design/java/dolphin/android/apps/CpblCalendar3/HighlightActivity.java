@@ -3,6 +3,7 @@ package dolphin.android.apps.CpblCalendar3;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -78,9 +79,9 @@ public class HighlightActivity extends AppCompatActivity
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setLogo(R.mipmap.ic_launcher);
-            //actionBar.setDisplayHomeAsUpEnabled(false);
+            //actionBar.setDisplayUseLogoEnabled(true);
+            //actionBar.setLogo(R.mipmap.ic_launcher);
+            actionBar.setDisplayHomeAsUpEnabled(false);
         }
 
         mList = findViewById(android.R.id.list);
@@ -427,6 +428,10 @@ public class HighlightActivity extends AppCompatActivity
                     intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
                     //Log.d(TAG, String.format("list %d", mCacheGames.size()));
                     startActivity(intent);
+                    //ActivityOptions options = ActivityOptions.makeCustomAnimation(activity,
+                    //        android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                    ////startActivity(intent, options.toBundle());
+                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                 } else if (GameCardAdapter.isUpdateCard(game) && view.getId() == R.id.card_option2) {
                     String appPackageName = getPackageName();
                     try {

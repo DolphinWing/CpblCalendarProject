@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Holo_green" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/holo_green_dark</item>
+        <item name="colorPrimaryDark">@color/holo_green_dark_darker</item>
+        <item name="toolbarStyle">@style/Theme.Holo_green.Toolbar</item>
+        <item name="android:navigationBarColor">@color/holo_green_dark_darker</item>
+    </style>
+
+</resources>

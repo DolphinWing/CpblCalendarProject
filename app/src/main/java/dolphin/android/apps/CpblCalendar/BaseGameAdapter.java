@@ -248,7 +248,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             tv7.setText(game.Source == Game.SOURCE_CPBL ||
                     !game.Field.contains(mContext.getString(R.string.title_at))
                     ? String.format("%s%s", mContext.getString(R.string.title_at),
-                    game.Field) : game.Field);
+                    game.getFieldFullName(getContext())) : game.Field);
         }
 
         //delay message

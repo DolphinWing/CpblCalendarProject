@@ -35,6 +35,7 @@ import dolphin.android.apps.CpblCalendar3.R;
 public class GameAdapter extends BaseGameAdapter {
     private final TeamHelper mTeamHelper;
     private boolean ENABLE_BOTTOM_SHEET = false;
+    private boolean mOnChromebook = false;
     private OnOptionClickListener mListener;
 
     interface OnOptionClickListener {
@@ -46,6 +47,7 @@ public class GameAdapter extends BaseGameAdapter {
         mTeamHelper = new TeamHelper(application);
         ENABLE_BOTTOM_SHEET = FirebaseRemoteConfig.getInstance()
                 .getBoolean("enable_bottom_sheet_options");
+        mOnChromebook = context.getPackageManager().hasSystemFeature("org.chromium.arc.device_management");
     }
 
     void setOnOptionClickListener(OnOptionClickListener listener) {
@@ -59,7 +61,7 @@ public class GameAdapter extends BaseGameAdapter {
         //more action
         ImageView moreAction = convertView.findViewById(android.R.id.icon);
         if (moreAction != null) {
-            if (ENABLE_BOTTOM_SHEET) {
+            if (ENABLE_BOTTOM_SHEET && !mOnChromebook) {
                 moreAction.setVisibility(View.VISIBLE);
                 View control = convertView.findViewById(R.id.item_control_pane);
                 if (control != null) {
@@ -86,7 +88,6 @@ public class GameAdapter extends BaseGameAdapter {
             } else {
                 moreAction.setVisibility(View.INVISIBLE);
             }
-            moreAction.setVisibility(View.INVISIBLE);//disable all
         }
 
 //        //game field

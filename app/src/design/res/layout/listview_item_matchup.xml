@@ -41,6 +41,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="8dp">
 
+
         <TextView
             android:id="@+id/textView1"
             style="@style/Theme.Holo_green.Match.Time"
@@ -53,8 +54,8 @@
             style="@style/Theme.Holo_green.Match.GameId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|right" />
-
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp" />
     </LinearLayout>
 
     <LinearLayout

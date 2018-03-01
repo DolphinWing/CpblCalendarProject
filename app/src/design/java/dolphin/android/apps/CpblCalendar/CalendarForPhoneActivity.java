@@ -114,8 +114,8 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         }
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setLogo(R.mipmap.ic_launcher);
+            //actionBar.setDisplayUseLogoEnabled(true);
+            //actionBar.setLogo(R.mipmap.ic_launcher);
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
 
@@ -182,21 +182,26 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
 
         prepareBottomSheet();
 
-        new Handler().post(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 loadAds();//load ads in the background
             }
-        });
+        }, 500);
 
-        ArrayList<Game> list = (getIntent() != null && getIntent().hasExtra(HighlightActivity.KEY_CACHE))
+        final ArrayList<Game> list = (getIntent() != null && getIntent().hasExtra(HighlightActivity.KEY_CACHE))
                 ? getIntent().<Game>getParcelableArrayListExtra(HighlightActivity.KEY_CACHE) : null;
         //dolphin++@2017.05.19, check if we have cached data from HighlightActivity
         //http://stackoverflow.com/a/19314677
         if (list != null) {//from HighlightActivity
             autoLoadGames(savedInstanceState, false);
             //Log.d(TAG, String.format("list %d", list.size()));
-            doHighlightCacheUpdate(list);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doHighlightCacheUpdate(list);
+                }
+            }, 100);
         } else {//don't ask ever again
             autoLoadGames(savedInstanceState, true);
         }

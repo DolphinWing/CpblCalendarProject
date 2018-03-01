@@ -397,8 +397,8 @@ public class Utils {
                 game.AwayTeam.getShortName(), game.HomeTeam.getShortName());
         calIntent.putExtra(CalendarContract.Events.TITLE, contentText);
 
-        //FIXME: change to full game field name
-        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.Field);
+        //change to full game field name
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, game.getFieldFullName(context));
 
         String description = "";
         if (game.DelayMessage != null && !game.DelayMessage.isEmpty()) {
