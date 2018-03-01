@@ -39,6 +39,7 @@
         <item>F17</item>
         <item>F19</item>
         <item>F23</item>
+        <item>F26</item>
     </string-array>
 
     <string-array name="cpbl_game_field_name">
@@ -61,10 +62,34 @@
         <item>台東</item>
         <item>台中洲際</item>
         <item>桃園國際</item>
+        <item>園區</item>
     </string-array>
 
     <string name="cpbl_game_field_name_F19">洲際</string>
     <string name="cpbl_game_field_name_F23">桃園</string>
+
+    <string-array name="cpbl_game_field_full_name">
+        <item>所有球場</item>
+        <item>宜蘭縣立羅東運動公園棒球場</item>
+        <item>新竹市中正棒球場</item>
+        <item>國立台灣體育運動大學台中棒球場</item>
+        <item>台南市立棒球場</item>
+        <item>高雄市立德棒球場</item>
+        <item>屏東縣立體育棒球場</item>
+        <item>嘉義市立體育棒球場</item>
+        <item>新北市立新莊棒球場</item>
+        <item>高雄市澄清湖棒球場</item>
+        <item>天母棒球場</item>
+        <item>龍潭棒球場</item>
+        <item>花蓮縣立德興棒球場</item>
+        <item>雲林縣斗六棒球場</item>
+        <item>嘉義縣立棒球場</item>
+        <item>台北市立棒球場</item>
+        <item>台東縣立棒球場</item>
+        <item>台中洲際棒球場</item>
+        <item>桃園國際棒球場</item>
+        <item>中國信託公益園區棒球場</item>
+    </string-array>
 
     <string-array name="cpbl_game_kind_id">
         <item>07</item>
