@@ -1,7 +1,12 @@
+[1027] @ 2018-02-27
+    fix no auto select override year and month
+    update styles for chromebooks
+    add 2016/2017 delay games list to Google Drive
+
 [1026] @ 2018-02-27
     fix pre-season open app may crush the app
     update build tool
-    add Frebase Remote Config support new announcements
+    add Firebase Remote Config support new announcements
     add show latest version as card, not dialog
 
 [1025] @ 2017-07-15
