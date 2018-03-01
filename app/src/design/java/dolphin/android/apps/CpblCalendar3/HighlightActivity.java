@@ -431,7 +431,7 @@ public class HighlightActivity extends AppCompatActivity
                     //ActivityOptions options = ActivityOptions.makeCustomAnimation(activity,
                     //        android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                     ////startActivity(intent, options.toBundle());
-                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                    //overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                 } else if (GameCardAdapter.isUpdateCard(game) && view.getId() == R.id.card_option2) {
                     String appPackageName = getPackageName();
                     try {

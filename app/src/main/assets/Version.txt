@@ -1,3 +1,6 @@
+[1029] @ 2018-03-01
+    fix activity transition
+
 [1028] @ 2018-03-01
     update app styles
     add game field full name
