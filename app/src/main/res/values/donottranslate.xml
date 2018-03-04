@@ -62,11 +62,12 @@
         <item>台東</item>
         <item>台中洲際</item>
         <item>桃園國際</item>
-        <item>園區</item>
+        <item>中信園區</item>
     </string-array>
 
     <string name="cpbl_game_field_name_F19">洲際</string>
     <string name="cpbl_game_field_name_F23">桃園</string>
+    <string name="cpbl_game_field_name_F26">園區</string>
 
     <string-array name="cpbl_game_field_full_name">
         <item>所有球場</item>
@@ -210,7 +211,9 @@
     <string name="team_fubon_guardians_short">富邦</string>
     <!-- 2018-03-04++ -->
     <string name="team_all_star_red_2016">臺銀紅</string>
-    <string name="team_all_star_white_2016">三商白</string>
+    <string name="team_all_star_white_2016">三商美邦白</string>
+    <string name="team_unknown_away">客隊</string>
+    <string name="team_unknown_away">主隊</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">
