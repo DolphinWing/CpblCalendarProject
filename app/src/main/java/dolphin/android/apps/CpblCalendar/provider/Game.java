@@ -449,6 +449,8 @@ public class Game implements Parcelable {
             game.FieldId = "F19";
         } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F23))) {
             game.FieldId = "F23";
+        } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F26))) {
+            game.FieldId = "F26";
         } else {//check list
             String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_name);
             String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);

@@ -151,7 +151,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         TextView tv3 = convertView.findViewById(R.id.textView3);
         //[13]++ add highlight winning team
         if (isShowWinner() && game.AwayScore > game.HomeScore) {
-            if (game.AwayTeam != null) {//[67]++ for long team name
+            if (game.AwayTeam != null && !game.AwayTeam.getName().isEmpty()) {//[67]++ for long team name
                 SpannableString span1 = new SpannableString(bIsLongName
                         ? game.AwayTeam.getName() : game.AwayTeam.getShortName());
                 span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);
@@ -191,7 +191,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
             span2.setSpan(new StyleSpan(Typeface.BOLD), 0, span2.length(), 0);
             tv4.setText(span2);
             //[45]-- tv4.setBackgroundResource(R.drawable.ab_transparent_holo_green);//[45]++
-            if (game.HomeTeam != null) {//[67]++ for long team name
+            if (game.HomeTeam != null && !game.HomeTeam.getName().isEmpty()) {//[67]++ for long team name
                 SpannableString span1 = new SpannableString(bIsLongName
                         ? game.HomeTeam.getName() : game.HomeTeam.getShortName());
                 span1.setSpan(new StyleSpan(Typeface.BOLD), 0, span1.length(), 0);

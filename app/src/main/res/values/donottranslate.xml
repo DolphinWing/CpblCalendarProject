@@ -213,7 +213,7 @@
     <string name="team_all_star_red_2016">臺銀紅</string>
     <string name="team_all_star_white_2016">三商美邦白</string>
     <string name="team_unknown_away">客隊</string>
-    <string name="team_unknown_away">主隊</string>
+    <string name="team_unknown_home">主隊</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">

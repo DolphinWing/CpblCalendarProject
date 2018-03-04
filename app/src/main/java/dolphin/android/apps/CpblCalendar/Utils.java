@@ -165,6 +165,9 @@ public class Utils {
         if (fieldId.equals("F23")) {
             matched |= game.Field.contains(context.getString(R.string.cpbl_game_field_name_F23));
         }
+        if (fieldId.equals("F26")) {
+            matched |= game.Field.contains(context.getString(R.string.cpbl_game_field_name_F26));
+        }
         return matched;
     }
 

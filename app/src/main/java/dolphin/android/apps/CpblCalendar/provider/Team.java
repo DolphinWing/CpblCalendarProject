@@ -25,6 +25,8 @@ import dolphin.android.apps.CpblCalendar3.R;
 @Keep
 public class Team {
     public final static int ID_UNKNOWN = 0;
+    public final static int ID_UNKNOWN_AWAY = -1;
+    public final static int ID_UNKNOWN_HOME = -2;
     //ID_ELEPHANTS -> ID_CT_ELEPHANTS
     public final static int ID_ELEPHANTS = 1;
     //
@@ -300,6 +302,12 @@ public class Team {
             case ID_FUBON_GUARDIANS:
                 string_id = R.string.team_fubon_guardians;
                 break;
+            case ID_UNKNOWN_AWAY:
+                string_id = R.string.team_unknown_away;
+                break;
+            case ID_UNKNOWN_HOME:
+                string_id = R.string.team_unknown_home;
+                break;
         }
         return context.getString(string_id);
     }
@@ -459,10 +467,16 @@ public class Team {
     private final Context mContext;
     private String mShortName;
     private int mLogoId;
+    private boolean mHomeTeam = false;
 
     public Team(Context context, int id) {
         mContext = context;
         mId = id;
+    }
+
+    public Team(Context context, int id, boolean home) {
+        this(context, id);
+        setIsHomeTeam(home);
     }
 
     public Team(Context context, String name, int year) {
@@ -494,7 +508,10 @@ public class Team {
      */
     public String getName() {
         if (mContext != null && getId() != ID_UNKNOWN) {
-            return getTeamName(mContext, mId);
+            mName = getTeamName(mContext, mId);
+        }
+        if (mName != null && mName.isEmpty()) {
+            mName = getTeamName(mContext, isHomeTeam() ? ID_UNKNOWN_HOME : ID_UNKNOWN_AWAY);
         }
         return mName;
     }
@@ -509,7 +526,7 @@ public class Team {
             return mShortName;
         }
         if (mContext != null && getId() != ID_UNKNOWN) {
-            return getShortName(mContext, mId);
+            mShortName = getShortName(mContext, mId);
         }
         return getName();
     }
@@ -530,7 +547,7 @@ public class Team {
         return R.drawable.no_logo;
     }
 
-    static Team getTeam2014(Context context, String png, int year) {
+    static Team getTeam2014(Context context, String png, int year, boolean isHomeTeam) {
         int id = ID_UNKNOWN;
         if (png.contains("E02")) {
             id = ID_CT_ELEPHANTS;
@@ -652,5 +669,13 @@ public class Team {
         Gson gson = new GsonBuilder().registerTypeAdapter(type,
                 new TeamTypeAdapter(context)).create();
         return gson.fromJson(json, type);
+    }
+
+    public void setIsHomeTeam(boolean enabled) {
+        mHomeTeam = enabled;
+    }
+
+    public boolean isHomeTeam() {
+        return mHomeTeam;
     }
 }

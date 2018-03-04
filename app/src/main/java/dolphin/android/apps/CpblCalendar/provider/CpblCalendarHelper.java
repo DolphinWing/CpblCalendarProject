@@ -691,8 +691,8 @@ public class CpblCalendarHelper extends HttpHelper {
      * @param year year
      * @return Team object
      */
-    private Team getTeamByPng(String png, int year) {
-        return Team.getTeam2014(getContext(), png, year);
+    private Team getTeamByPng(String png, int year, boolean isHomeTeam) {
+        return Team.getTeam2014(getContext(), png, year, isHomeTeam);
     }
 
     /**
@@ -849,7 +849,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     awayTeam = awayTeam.substring(awayTeam.indexOf("images/team/"));
                     awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
                     //Log.d(TAG, "  away = " + awayTeam);
-                    game.AwayTeam = getTeamByPng(awayTeam, year);
+                    game.AwayTeam = getTeamByPng(awayTeam, year, false);
                     String place = tds[2];
                     //Log.d(TAG, "  place = " + place);
                     place = place.substring(place.indexOf(">") + 1, place.indexOf("</td>"));
@@ -860,7 +860,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     homeTeam = homeTeam.substring(homeTeam.indexOf("images/team/"));
                     homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
                     //Log.d(TAG, "  home = " + homeTeam);
-                    game.HomeTeam = getTeamByPng(homeTeam, year);
+                    game.HomeTeam = getTeamByPng(homeTeam, year, true);
                 } else {
                     Log.w(TAG, "no match up");
                 }
