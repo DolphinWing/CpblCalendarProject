@@ -1,5 +1,6 @@
 [1030] @ 2018-03-04
     fix all star game display
+    fix possible crush when team name is empty
 
 [1029] @ 2018-03-01
     fix activity transition
