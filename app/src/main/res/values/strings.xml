@@ -11,6 +11,8 @@
     <string name="action_leave_cache_mode">離開離線模式</string>
     <string name="title_fast_rewind">上個月</string>
     <string name="title_fast_forward">下個月</string>
+    <string name="title_fast_rewind_y">上一年</string>
+    <string name="title_fast_forward_y">下一年</string>
 
     <!-- general string -->
     <string name="title_game_field">比賽球場</string>

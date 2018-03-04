@@ -20,6 +20,24 @@
             android:paddingLeft="@dimen/navigation_drawer_padding"
             android:paddingRight="@dimen/navigation_drawer_padding">
 
+            <LinearLayout
+                android:id="@+id/layout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/Theme.Holo_green.QueryPane.Title"
+                    android:text="@string/title_game_kind" />
+
+                <Spinner
+                    android:id="@+id/spinner2"
+                    style="@style/Theme.Holo_green.QueryPane.Spinner"
+                    android:entries="@array/cpbl_game_kind_name_2014" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/textView3"
                 style="@style/Theme.Holo_green.QueryPane.Title"
@@ -54,24 +72,6 @@
                     android:id="@+id/spinner1"
                     style="@style/Theme.Holo_green.QueryPane.Spinner"
                     android:entries="@array/cpbl_game_field_name" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/textView2"
-                    style="@style/Theme.Holo_green.QueryPane.Title"
-                    android:text="@string/title_game_kind" />
-
-                <Spinner
-                    android:id="@+id/spinner2"
-                    style="@style/Theme.Holo_green.QueryPane.Spinner"
-                    android:entries="@array/cpbl_game_kind_name_2014" />
             </LinearLayout>
 
             <LinearLayout

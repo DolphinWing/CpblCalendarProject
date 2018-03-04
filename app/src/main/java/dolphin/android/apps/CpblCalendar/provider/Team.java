@@ -67,6 +67,8 @@ public class Team {
     public final static int ID_ALL_STAR_WHITE = 102;
     public final static int ID_ALL_STAR_SPEED_WHITE = 103;
     public final static int ID_ALL_STAR_POWER_RED = 104;
+    public final static int ID_ALL_STAR_WHITE_2016 = 105;
+    public final static int ID_ALL_STAR_RED_2016 = 106;
 
     public final static int ID_SOUTH_KOREA = 203;
     public final static int ID_CHINESE_TAIPEI = 204;
@@ -74,7 +76,7 @@ public class Team {
     /**
      * get the team id from raw data
      *
-     * @param c context
+     * @param c    context
      * @param name team name
      * @return team id
      */
@@ -86,7 +88,7 @@ public class Team {
     /**
      * get the team id from raw data
      *
-     * @param c context
+     * @param c    context
      * @param name team name
      * @param year year
      * @return team id
@@ -133,7 +135,7 @@ public class Team {
     /**
      * get team logo resource id from team id
      *
-     * @param id team id
+     * @param id   team id
      * @param year year
      * @return logo drawable of that year
      */
@@ -196,8 +198,10 @@ public class Team {
             case ID_ALL_STAR_WHITE://[161]++
                 return R.drawable.allstar_white;
             case ID_ALL_STAR_POWER_RED://[161]++
+            case ID_ALL_STAR_RED_2016:
                 return R.drawable.allstar_power_red;
             case ID_ALL_STAR_SPEED_WHITE://[161]++
+            case ID_ALL_STAR_WHITE_2016:
                 return R.drawable.allstar_speed_white;
             case ID_CHINESE_TAIPEI://[181]++
                 return R.drawable.z04_logo_01;
@@ -209,7 +213,7 @@ public class Team {
      * get full team name
      *
      * @param context context
-     * @param id team id
+     * @param id      team id
      * @return team name
      */
     public static String getTeamName(Context context, int id) {
@@ -281,6 +285,12 @@ public class Team {
             case ID_ALL_STAR_SPEED_WHITE://[161]++
                 string_id = R.string.team_all_star_speed_white;
                 break;
+            case ID_ALL_STAR_RED_2016:
+                string_id = R.string.team_all_star_red_2016;
+                break;
+            case ID_ALL_STAR_WHITE_2016:
+                string_id = R.string.team_all_star_white_2016;
+                break;
             case ID_SOUTH_KOREA://[181]++
                 string_id = R.string.team_south_korea;
                 break;
@@ -298,7 +308,7 @@ public class Team {
      * get short team name
      *
      * @param context context
-     * @param id team id
+     * @param id      team id
      * @return team name
      */
     public static String getTeamNameShort(Context context, int id) {
@@ -358,12 +368,15 @@ public class Team {
                 break;
             case ID_ALL_STAR_RED://[161]++
             case ID_ALL_STAR_POWER_RED://[161]++
-                string_id = R.string.team_all_star_red_short;
-                break;
+            case ID_ALL_STAR_RED_2016:
+//                string_id = R.string.team_all_star_red_short;
+//                break;
             case ID_ALL_STAR_WHITE://[161]++
             case ID_ALL_STAR_SPEED_WHITE://[161]++
-                string_id = R.string.team_all_star_white_short;
-                break;
+            case ID_ALL_STAR_WHITE_2016:
+//                string_id = R.string.team_all_star_white_short;
+//                break;
+                return getTeamName(context, id);
             case ID_SOUTH_KOREA://[181]++
                 string_id = R.string.team_south_korea;
                 break;
@@ -526,7 +539,7 @@ public class Team {
         } else if (png.contains("A02")) {
             if (year <= 2003) {
                 id = ID_FIRST_KINGO;
-            } else if (year <= 2010){
+            } else if (year <= 2010) {
                 id = ID_LANEW_BEARS;
             } else {
                 id = ID_LAMIGO_MONKEYS;
@@ -563,6 +576,10 @@ public class Team {
             id = ID_ALL_STAR_SPEED_WHITE;
         } else if (png.contains("S05")) {
             id = ID_ALL_STAR_POWER_RED;
+        } else if (png.contains("S03")) {
+            id = ID_ALL_STAR_RED_2016;
+        } else if (png.contains("S06")) {
+            id = ID_ALL_STAR_WHITE_2016;
         } else if (png.contains("z03")) {//[181]++
             id = ID_SOUTH_KOREA;
         } else if (png.contains("z04")) {//[181]++

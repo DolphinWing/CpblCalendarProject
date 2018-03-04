@@ -18,10 +18,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,17 +56,14 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     final static String TAG = "CalendarActivity";
 
     private final static boolean OFFLINE_DEBUG = false;
+    private final static int KIND_ALLSTAR_INDEX = 3;
 
     private String[] mGameField;
-
     private String[] mGameKind;
 
     final static String KEY_GAME_KIND = "kind";
-
     final static String KEY_GAME_FIELD = "field";
-
     final static String KEY_GAME_YEAR = "year";
-
     final static String KEY_GAME_MONTH = "month";
 
     Spinner mSpinnerKind;
@@ -80,9 +79,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     private FirebaseAnalytics mFirebaseAnalytics;//[198]++
     private FirebaseRemoteConfig mRemoteConfig;//[199]++
 
-    private SparseArray<SparseArray<Game>> mDelayGames2014;//[118]dolphin++
-
-    private SparseArray<ArrayList<Game>> mAllGamesCache;//[146]++
+    private final SparseArray<SparseArray<Game>> mDelayGames2014 = new SparseArray<>();//[118]dolphin++
+    private final SparseArray<ArrayList<Game>> mAllGamesCache = new SparseArray<>();//[146]++
+    private final SparseIntArray mAllStarSpecialMonth = new SparseIntArray();
 
     Snackbar mSnackbar;
 
@@ -105,7 +104,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancelAll();//[51]dolphin++ clear all notifications
+        if (mNotifyMgr != null) {
+            mNotifyMgr.cancelAll();//[51]dolphin++ clear all notifications
+        }
 
         mGameField = getResources().getStringArray(R.array.cpbl_game_field_id);
         mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id_2014);
@@ -122,8 +123,16 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_BASE);
         mRemoteConfig = FirebaseRemoteConfig.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mDelayGames2014 = new SparseArray<>();
-        mAllGamesCache = new SparseArray<>();//[146]++
+//        mDelayGames2014 = new SparseArray<>();
+//        mAllGamesCache = new SparseArray<>();//[146]++
+
+        //create a allstar year/month mapping
+        for (String allstar : getResources().getString(R.string.allstar_month_override).split(";")) {
+            String[] data = allstar.split("/");
+            if (data.length >= 2) {
+                mAllStarSpecialMonth.put(Integer.parseInt(data[0]), Integer.parseInt(data[1]));
+            }
+        }
     }
 
     @Override
@@ -189,10 +198,37 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
         }
 
+        if (mSpinnerKind != null) {
+            mSpinnerKind.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                    if (mSpinnerMonth != null && position == KIND_ALLSTAR_INDEX) {
+                        mSpinnerMonth.setSelection(getAllstarMonthPositionByYearPosition());
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }
+
         mButtonQuery = findViewById(android.R.id.button1);
         if (mButtonQuery != null) {
             mButtonQuery.setOnClickListener(onQueryClick);
         }
+    }
+
+    protected int getAllstarMonthPositionByYearPosition() {
+        if (mSpinnerYear != null) {
+            int position = mSpinnerYear.getSelectedItemPosition();
+            //int size = mSpinnerYear.getCount();
+            if (mAllStarSpecialMonth.get(position) != 0) {
+                return mAllStarSpecialMonth.get(position) - 1;
+            }
+        }
+        return 6;//July
     }
 
     @Override
@@ -230,14 +266,28 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         //[154]dolphin++ add check if to show quick month chooser
-        int month = mSpinnerMonth.getSelectedItemPosition() + 1;
+        int month = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItemPosition() + 1 : 3;
+        int year = mSpinnerYear != null ? mSpinnerYear.getSelectedItemPosition() : 0;
+        int yearSize = mSpinnerYear != null ? mSpinnerYear.getCount() : 0;
         item = menu.findItem(R.id.action_fast_rewind);
         if (item != null) {
-            item.setVisible(month > 1 && month <= 12);
+            if (mKind == KIND_ALLSTAR_INDEX) {
+                item.setEnabled(year < yearSize - 1);
+                item.setTitle(R.string.title_fast_rewind_y);
+            } else {
+                item.setEnabled(month > 1 && month <= 12);
+                item.setTitle(R.string.title_fast_rewind);
+            }
         }
         item = menu.findItem(R.id.action_fast_forward);
         if (item != null) {
-            item.setVisible(month < 12);
+            if (mKind == KIND_ALLSTAR_INDEX) {
+                item.setEnabled(year > 0);
+                item.setTitle(R.string.title_fast_forward_y);
+            } else {
+                item.setEnabled(month < 12);
+                item.setTitle(R.string.title_fast_forward);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -300,40 +350,64 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 return true;
             case R.id.action_fast_rewind://[154]dolphin++
                 //select previous one, and do query
+                if (mKind == KIND_ALLSTAR_INDEX) {
+                    if (mSpinnerYear != null &&
+                            mSpinnerYear.getSelectedItemPosition() < mSpinnerYear.getCount() - 1) {
+                        mSpinnerYear.setSelection(mSpinnerYear.getSelectedItemPosition() + 1);
+                        if (mSpinnerMonth != null) {
+                            mSpinnerMonth.setSelection(getAllstarMonthPositionByYearPosition());
+                        }
+                        if (mButtonQuery != null) {
+                            mButtonQuery.performClick();
+                        }
+                        sendFirebaseAnalyticsQuickAccess("fast_rewind", R.string.title_fast_rewind_y);
+                    }
+                    break;
+                }
                 if (mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() > 0) {
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() - 1);
                     if (mButtonQuery != null) {
                         mButtonQuery.performClick();
                     }
-                    if (mFirebaseAnalytics != null) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "fast_rewind");
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                                getString(R.string.title_fast_rewind));
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-                    }
+                    sendFirebaseAnalyticsQuickAccess("fast_rewind", R.string.title_fast_rewind);
                 }
                 break;
             case R.id.action_fast_forward://[154]dolphin++
-                //select preceeding one, and do query
+                //select proceeding one, and do query
+                if (mKind == KIND_ALLSTAR_INDEX) {
+                    if (mSpinnerYear != null && mSpinnerYear.getSelectedItemPosition() > 0) {
+                        mSpinnerYear.setSelection(mSpinnerYear.getSelectedItemPosition() - 1);
+                        if (mSpinnerMonth != null) {
+                            mSpinnerMonth.setSelection(getAllstarMonthPositionByYearPosition());
+                        }
+
+                        if (mButtonQuery != null) {
+                            mButtonQuery.performClick();
+                        }
+                        sendFirebaseAnalyticsQuickAccess("fast_forward", R.string.title_fast_forward_y);
+                    }
+                    break;
+                }
                 if (mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() < 12) {
                     mSpinnerMonth.setSelection(mSpinnerMonth.getSelectedItemPosition() + 1);
                     if (mButtonQuery != null) {
                         mButtonQuery.performClick();
                     }
-                    if (mFirebaseAnalytics != null) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "fast_forward");
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                                getString(R.string.title_fast_forward));
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-                    }
+                    sendFirebaseAnalyticsQuickAccess("fast_forward", R.string.title_fast_forward);
                 }
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendFirebaseAnalyticsQuickAccess(String id, int valueResId) {
+        if (mFirebaseAnalytics != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getString(valueResId));
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        }
     }
 
     private final Button.OnClickListener onQueryClick = new Button.OnClickListener() {
@@ -405,8 +479,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         } else if (quick_refresh) {//do a quick refresh from local variable
             doQueryCallback(mGameList, false);//[126]dolphin++
         } else if (HttpHelper.checkNetworkConnected(activity)/* && !bDemoCache*/) {
-            doWebQuery(activity, mSpinnerKind != null ? mSpinnerKind.getSelectedItemPosition() : 1,
-                    year, month, fieldId, getOnQueryCallback());
+            int kindPos = mSpinnerKind != null ? mSpinnerKind.getSelectedItemPosition() : 1;
+            doWebQuery(activity, kindPos, year, month, fieldId, getOnQueryCallback());
         } else {//[35]dolphin++ check network
             Toast.makeText(activity, R.string.no_available_network,
                     Toast.LENGTH_LONG).show();//[47] change SHORT to LONG

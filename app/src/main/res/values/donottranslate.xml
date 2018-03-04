@@ -208,6 +208,9 @@
     <string name="team_south_japan">日本隊</string>
     <string name="team_fubon_guardians">富邦悍將</string>
     <string name="team_fubon_guardians_short">富邦</string>
+    <!-- 2018-03-04++ -->
+    <string name="team_all_star_red_2016">臺銀紅</string>
+    <string name="team_all_star_white_2016">三商白</string>
 
     <!-- alarm before game start -->
     <string-array name="notify_time_value">
@@ -292,5 +295,7 @@
     </string-array>
 
     <string name="aspnet_month_template">%d月 </string>
+
+    <string name="allstar_month_override">4/6;6/11;8/6;10/8;11/8;13/6;</string>
 
 </resources>
