@@ -192,6 +192,20 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         if (mSpinnerYear != null) {
             mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
             mSpinnerYear.setEnabled(!mCacheMode);
+            mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (mSpinnerMonth != null && mSpinnerKind != null &&
+                            mSpinnerKind.getSelectedItemPosition() == KIND_ALLSTAR_INDEX) {
+                        mSpinnerMonth.setSelection(getAllstarMonthPositionByYearPosition());
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
         }
 
         if (mSpinnerMonth != null) {
@@ -223,9 +237,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     protected int getAllstarMonthPositionByYearPosition() {
         if (mSpinnerYear != null) {
             int position = mSpinnerYear.getSelectedItemPosition();
-            //int size = mSpinnerYear.getCount();
-            if (mAllStarSpecialMonth.get(position) != 0) {
-                return mAllStarSpecialMonth.get(position) - 1;
+            int length = mSpinnerYear.getCount();
+            int index = length - position;
+            if (mAllStarSpecialMonth.get(index) != 0) {
+                return mAllStarSpecialMonth.get(index) - 1;
             }
         }
         return 6;//July
