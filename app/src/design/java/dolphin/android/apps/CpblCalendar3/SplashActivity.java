@@ -19,7 +19,6 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -53,6 +52,9 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* force a crash to test implementation */
+        //Crashlytics.getInstance().crash();//make a crash here
 
         myHandler = new MyHandler(this);
 

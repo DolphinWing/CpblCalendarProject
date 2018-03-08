@@ -1,3 +1,7 @@
+[1032] @ 2018-03-08
+    update library
+    replace Firebase Crash Report with Firebase Crashlytics (fabric)
+
 [1031] @ 2018-03-05
     fix all star games auto selection
 
@@ -14,7 +18,7 @@
 
 [1027] @ 2018-02-27
     fix no auto select override year and month
-    update styles for chromebooks
+    update styles for desktop mode
     add 2016/2017 delay games list to Google Drive
 
 [1026] @ 2018-02-27
