@@ -1,3 +1,6 @@
+[1033] @ 2018-03-09
+    fix team name may now show correctly
+
 [1032] @ 2018-03-08
     update library
     replace Firebase Crash Report with Firebase Crashlytics (fabric)

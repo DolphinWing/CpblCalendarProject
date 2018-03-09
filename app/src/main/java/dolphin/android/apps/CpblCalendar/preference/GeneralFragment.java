@@ -4,8 +4,6 @@ package dolphin.android.apps.CpblCalendar.preference;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,7 +28,7 @@ public class GeneralFragment extends PreferenceFragment {
     private final static String TAG = "GeneralFragment";
 
     public static final String KEY_APP_VERSION = "app_version";
-    public static final String VERSION_FILE = "Version.txt";
+    public static final String VERSION_FILE = "version.txt";
     public static final String VERSION_FILE_ENCODE = "UTF-8";
 
     private final static int TAPS_TO_BE_A_DEVELOPER = 5;
