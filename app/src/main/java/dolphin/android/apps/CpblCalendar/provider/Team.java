@@ -219,7 +219,7 @@ public class Team {
      * @return team name
      */
     public static String getTeamName(Context context, int id) {
-        int string_id = R.string.empty_data;
+        int string_id = -1;//R.string.empty_data;
         switch (id) {
             case ID_ELEPHANTS:
                 string_id = R.string.team_elephants;
@@ -309,7 +309,7 @@ public class Team {
                 string_id = R.string.team_unknown_home;
                 break;
         }
-        return context.getString(string_id);
+        return string_id > 0 ? context.getString(string_id) : null;
     }
 
     /**
@@ -384,6 +384,8 @@ public class Team {
             case ID_ALL_STAR_WHITE_2016:
 //                string_id = R.string.team_all_star_white_short;
 //                break;
+            case ID_UNKNOWN_AWAY:
+            case ID_UNKNOWN_HOME:
                 return getTeamName(context, id);
             case ID_SOUTH_KOREA://[181]++
                 string_id = R.string.team_south_korea;
@@ -510,7 +512,7 @@ public class Team {
         if (mContext != null && getId() != ID_UNKNOWN) {
             mName = getTeamName(mContext, mId);
         }
-        if (mName != null && mName.isEmpty()) {
+        if (mName == null || mName.isEmpty()) {//fix the empty name
             mName = getTeamName(mContext, isHomeTeam() ? ID_UNKNOWN_HOME : ID_UNKNOWN_AWAY);
         }
         return mName;

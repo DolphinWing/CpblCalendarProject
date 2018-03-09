@@ -81,17 +81,19 @@ public class DisplayFragment extends PreferenceFragment
     public boolean onPreferenceChange(Preference preference, Object o) {
         //refresh();
         if (preference instanceof FixedMultiSelectListPreference) {
-            String summary = "";
+            String summary;
             Set<String> teamSet =
                     ((FixedMultiSelectListPreference) preference).getCheckedValues();
             if (teamSet != null && teamSet.size() > 0) {
                 if (mCpblTeams.length == teamSet.size()) {
                     summary = getString(R.string.title_favorite_teams_all);
                 } else {//show the team names one by one
+                    StringBuilder summaryBuilder = new StringBuilder();
                     for (String aTeamSet : teamSet) {
                         int id = Integer.parseInt(aTeamSet);
-                        summary += Team.getTeamName(getActivity(), id) + " ";
+                        summaryBuilder.append(Team.getTeamName(getActivity(), id)).append(" ");
                     }
+                    summary = summaryBuilder.toString();
                 }
             } else {
                 summary = getString(R.string.no_favorite_teams);
