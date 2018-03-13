@@ -648,7 +648,7 @@ public class CpblCalendarHelper extends HttpHelper {
                                 : String.format("<b><font color='red'>%s</font></b> %s",
                                 d_date, game.DelayMessage);
                     }
-                    if (kind.equals("07") && Utils.passed1Day(game.StartTime)) {
+                    if (!game.IsFinal && kind.equals("07") && Utils.passed1Day(game.StartTime)) {
                         game.IsFinal = true;
                         game.IsDelay = true;
                         game.DelayMessage = getString(R.string.delayed_game_cancelled);
