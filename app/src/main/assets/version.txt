@@ -1,3 +1,7 @@
+[1034] @ 2018-03-14
+    fix #3 warm up game shows extra messages
+        don't show score when it cancelled
+
 [1033] @ 2018-03-09
     fix team name may now show correctly
 

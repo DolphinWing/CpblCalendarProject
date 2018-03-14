@@ -488,13 +488,13 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
         //store all data to local cache
-        String delay_str = "";
+        StringBuilder delay_str = new StringBuilder();
         for (int i = 0; i < games.size(); i++) {
             Game g = games.valueAt(i);
-            delay_str += String.format(Locale.US, "%d/%s;", g.Id,
-                    new SimpleDateFormat("MM/dd", Locale.TAIWAN).format(g.StartTime.getTime()));
+            delay_str.append(String.format(Locale.US, "%d/%s;", g.Id,
+                    new SimpleDateFormat("MM/dd", Locale.TAIWAN).format(g.StartTime.getTime())));
         }
-        storeDelayGames2014(context, year, delay_str);
+        storeDelayGames2014(context, year, delay_str.toString());
     }
 
     //@Deprecated
