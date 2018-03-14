@@ -132,6 +132,10 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         //[84]dolphin++//live channel
         boolean bLiveNow = isLiveNow(game);
         //Log.d("GameAdapter", game.StartTime.getTime().toString() + " " + bLiveNow);
+        if (game.Kind.equals("07") && game.DelayMessage != null && //dolphin++@2018-03-14, don't show score
+                game.DelayMessage.equals(mContext.getString(R.string.delayed_game_cancelled))) {
+            bNoScoreNoLive = true;//warm up game cancelled
+        }
 
         TextView tv1 = convertView.findViewById(R.id.textView1);
         String date_str = getGameDateStr(game);
