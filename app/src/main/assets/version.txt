@@ -1,3 +1,7 @@
+[1035] @ 2018-03-27
+    use new logo png (#4)
+    update Android Studio 3.1
+
 [1034] @ 2018-03-14
     fix #3 warm up game shows extra messages
         don't show score when it cancelled
