@@ -29,8 +29,8 @@ android {
         design {
             minSdkVersion 16
             targetSdkVersion 27
-            versionName '3.0.6'
-            versionCode 1035
+            versionName '3.0.7'
+            versionCode 1036
             dimension "mode"
         }
     }

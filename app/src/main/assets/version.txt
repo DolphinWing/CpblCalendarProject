@@ -1,3 +1,7 @@
+[1036] @ 2018-04-06
+    update Google Play Service 12.0.1
+        to fix 12.0.0 that includes user-permission we don't need
+
 [1035] @ 2018-03-27
     use new logo png (#4)
     update Android Studio 3.1
