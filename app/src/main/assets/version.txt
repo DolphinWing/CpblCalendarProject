@@ -1,3 +1,6 @@
+[1037] @ 2018-04-09
+    update new logo for 2001-2004 Whales color (#4)
+
 [1036] @ 2018-04-06
     update Google Play Service 12.0.1
         to fix 12.0.0 that includes user-permission we don't need
