@@ -1,5 +1,6 @@
 [1037] @ 2018-04-09
     update new logo for 2001-2004 Whales color (#4)
+    fix announcement expired check
 
 [1036] @ 2018-04-06
     update Google Play Service 12.0.1

@@ -289,8 +289,14 @@ public class HighlightActivity extends AppCompatActivity
         //check if we need to add new announcements
         String keys = mRemoteConfig.getString("add_highlight_card");
         if (keys != null && !keys.isEmpty()) {
+            if (DEBUG_LOG) {
+                Log.w(TAG, "check new announce");
+            }
             String[] ids = keys.split(";");
             for (String id : ids) {
+                if (DEBUG_LOG) {
+                    Log.d(TAG, "  " + id);
+                }
                 String msg = mRemoteConfig.getString("add_highlight_card_".concat(id));
                 if (msg != null && id.length() >= 6) {
                     Calendar cal = CpblCalendarHelper.getNowTime();
@@ -300,7 +306,7 @@ public class HighlightActivity extends AppCompatActivity
                     cal.set(Calendar.HOUR_OF_DAY, 0);
                     cal.set(Calendar.MINUTE, 0);
                     cal.set(Calendar.SECOND, 0);
-                    if (cal.after(now)) {
+                    if (cal.before(now)) {
                         continue;//check if the announcement is expired
                     }
 
@@ -310,8 +316,10 @@ public class HighlightActivity extends AppCompatActivity
         }
         //check latest version
         PackageInfo info = PackageUtils.getPackageInfo(this, SplashActivity.class);
-        int versionCode = info != null ? info.versionCode : 0;
-        if (versionCode < mRemoteConfig.getLong("latest_version_code")) {
+        int versionCode = info != null ? info.versionCode : Integer.MAX_VALUE;
+        long latestCode = mRemoteConfig.getLong("latest_version_code");
+        Log.v(TAG, String.format("versionCode: %d, play: %d", versionCode, latestCode));
+        if (versionCode < latestCode) {
             String summary = mRemoteConfig.getString("latest_version_summary");
             summary = summary != null && !summary.isEmpty() ? summary
                     : getString(R.string.new_version_available_message);
