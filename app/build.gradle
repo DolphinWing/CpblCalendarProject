@@ -30,7 +30,7 @@ android {
             minSdkVersion 16
             targetSdkVersion 27
             versionName '3.0.7'
-            versionCode 1037
+            versionCode 1038
             dimension "mode"
         }
     }

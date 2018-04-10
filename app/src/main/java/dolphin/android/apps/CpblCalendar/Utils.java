@@ -3,6 +3,7 @@ package dolphin.android.apps.CpblCalendar;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -286,8 +287,20 @@ public class Utils {
             return;
         }
 
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setData(Uri.parse(url));
+        if (isGoogleChromeInstalled(context)) {
+            //https://goo.gl/GtBKgp
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
+                    .setToolbarColor(ContextCompat.getColor(context, R.color.holo_green_dark));
+            CustomTabsIntent customTabsIntent = builder.build();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
+                        Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + context.getPackageName()));
+            }
+            customTabsIntent.launchUrl(context, Uri.parse(url));
+        } else {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 //            //[169]dolphin++ add Chrome Custom Tabs
 //            Bundle extras = new Bundle();
@@ -299,20 +312,15 @@ public class Utils {
 ////                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 ////            }
 //        } else {
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        }
-//
-//        try {//[97]dolphin++
-//            context.startActivity(intent);
-//        } catch (ActivityNotFoundException e) {
-//            Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
-//        }
-
-        //https://goo.gl/GtBKgp
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(context, R.color.holo_green_dark));
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(context, Uri.parse(url));
+            try {//[97]dolphin++
+                context.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+//                Toast.makeText(context, R.string.query_error, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
