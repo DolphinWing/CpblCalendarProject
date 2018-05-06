@@ -131,14 +131,14 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             holder.AwayLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.AwayTeam, year),
                     PorterDuff.Mode.SRC_IN);
             holder.AwayLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
-            holder.AwayLogo.setVisibility(View.GONE);//[1021]++
+            //holder.AwayLogo.setVisibility(View.GONE);//[1021]++
         }
         if (holder.HomeLogo != null) {
             holder.HomeLogo.setImageResource(R.drawable.ic_baseball);
             holder.HomeLogo.setColorFilter(mTeamHelper.getLogoColorFilter(game.HomeTeam, year),
                     PorterDuff.Mode.SRC_IN);
             holder.HomeLogo.setVisibility(isShowLogo() ? View.VISIBLE : View.INVISIBLE);
-            holder.HomeLogo.setVisibility(View.GONE);//[1021]++
+            //holder.HomeLogo.setVisibility(View.GONE);//[1021]++
         }
         holder.Field.setText(field);
         switch (getItemViewType(position)) {
