@@ -1,3 +1,12 @@
+[1041] @ 2018-05-13
+    add new flavor flexible
+        use new FlexibleAdapter for RecyclerView
+        use new query panel design
+TODO:
+    1. auto search different kinds in months
+    2. check cache mode
+    3. remove useless strings and resources (from old versions)
+
 [1040] @ 2018-05-06
     revert old Google Play Services
     show team logo in highlight page

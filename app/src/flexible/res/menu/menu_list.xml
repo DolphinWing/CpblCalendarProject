@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_leader_board"
+        android:title="@string/action_leader_board"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_cache_mode"
+        android:icon="@drawable/btn_check_holo_light"
+        android:title="@string/action_cache_mode" />
+    <!-- android:checkable="true" -->
+
+    <item
+        android:id="@+id/action_go_to_cpbl"
+        android:icon="@drawable/ic_action_more_horiz"
+        android:title="@string/action_go_to_website" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_action_settings_dark"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="withText" />
+
+</menu>
