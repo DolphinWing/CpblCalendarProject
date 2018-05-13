@@ -432,10 +432,7 @@ public class HighlightActivity extends AppCompatActivity
             @Override
             public void onClick(View view, Game game) {
                 if (GameCardAdapter.isMoreCard(game)) {
-                    Intent intent = new Intent(activity, CalendarForPhoneActivity.class);
-                    intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
-                    //Log.d(TAG, String.format("list %d", mCacheGames.size()));
-                    startActivity(intent);
+                    startGameListActivity(mCacheGames);
                     //ActivityOptions options = ActivityOptions.makeCustomAnimation(activity,
                     //        android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                     ////startActivity(intent, options.toBundle());
@@ -564,5 +561,12 @@ public class HighlightActivity extends AppCompatActivity
         }
         //if not granted, just store in inner memory
         downloadCalendar();//no matter the result is, we can continue
+    }
+
+    protected void startGameListActivity(ArrayList<Game> list) {
+        Intent intent = new Intent(this, CalendarForPhoneActivity.class);
+        intent.putParcelableArrayListExtra(KEY_CACHE, list);
+        //Log.d(TAG, String.format("list %d", mCacheGames.size()));
+        startActivity(intent);
     }
 }

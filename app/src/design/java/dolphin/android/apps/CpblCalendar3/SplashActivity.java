@@ -201,7 +201,7 @@ public class SplashActivity extends Activity {
         }
     }
 
-    private void startNextActivity() {
+    protected void startNextActivity() {
         overridePendingTransition(0, 0);
         Intent intent;// = new Intent(this, HighlightActivity.class);
         if (PreferenceUtils.isCacheMode(this)) {
