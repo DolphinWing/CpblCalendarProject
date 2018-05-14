@@ -1,3 +1,6 @@
+[1042] @ 2018-05-14
+    add adapter and recycler view
+
 [1041] @ 2018-05-13
     add new flavor flexible
         use new FlexibleAdapter for RecyclerView

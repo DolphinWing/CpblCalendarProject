@@ -6,5 +6,6 @@
     <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#10000000"/>
 </android.support.v4.widget.SwipeRefreshLayout>
