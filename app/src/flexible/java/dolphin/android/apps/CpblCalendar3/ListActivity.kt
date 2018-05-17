@@ -3,10 +3,13 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -14,18 +17,19 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.util.SparseArray
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import dolphin.android.apps.CpblCalendar.Utils
+import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper
+import dolphin.android.util.DateUtils
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -50,6 +54,9 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mSpinnerYear: Spinner
     private lateinit var mSpinnerField: Spinner
     private lateinit var mSpinnerTeam: Spinner
+    private lateinit var mTextViewYear: TextView
+    private lateinit var mTextViewField: TextView
+    private lateinit var mTextViewTeam: TextView
 
     private lateinit var helper: CpblCalendarHelper
     private lateinit var teamHelper: TeamHelper
@@ -86,23 +93,37 @@ class ListActivity : AppCompatActivity() {
         pager.currentItem = mMonth - 2
         tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(pager))
 
-        mFilterListPane = findViewById(R.id.filter_list_pane)
-        mFilterControlBg = findViewById(R.id.filter_control_background)
-        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
-        mFilterControlPane = findViewById(R.id.filter_control_pane)
-        findViewById<View>(R.id.filter_control_button)?.setOnClickListener {
-            Log.d(TAG, "visible: $filterPaneVisible")
-            filterPaneVisible = !filterPaneVisible
-        }
-        filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
-
         mSpinnerYear = findViewById(R.id.spinner3)
         mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
         mSpinnerField = findViewById(R.id.spinner1)
         mSpinnerTeam = findViewById(R.id.spinner2)
+        mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                arrayOf(getString(R.string.title_favorite_teams_all),
+                        *resources.getStringArray(R.array.cpbl_team_name))).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        mTextViewYear = findViewById(android.R.id.button1)
+        mTextViewYear.setOnClickListener { filterPaneVisible = !filterPaneVisible }
+        mTextViewField = findViewById(android.R.id.button2)
+        mTextViewField.setOnClickListener { filterPaneVisible = !filterPaneVisible }
+        mTextViewTeam = findViewById(android.R.id.button3)
+        mTextViewTeam.setOnClickListener { filterPaneVisible = !filterPaneVisible }
 
-        findViewById<View>(android.R.id.button1)?.setOnClickListener {
+        mFilterListPane = findViewById(R.id.filter_list_pane)
+        //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
+        mFilterControlBg = findViewById(R.id.filter_control_background)
+        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
+        mFilterControlPane = findViewById(R.id.filter_control_pane)
+        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
+            //Log.d(TAG, "visible: $filterPaneVisible")
+            filterPaneVisible = !filterPaneVisible
+        }
+        filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
+
+        findViewById<View>(android.R.id.custom)?.setOnClickListener {
+            //hide filter panel
             filterPaneVisible = false
+            //start query
             doQueryAction()
         }
     }
@@ -110,6 +131,29 @@ class ListActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_list, menu)
         return true //super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_leader_board -> {
+                //https://goo.gl/GtBKgp
+                val builder = CustomTabsIntent.Builder()
+                        .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_dark))
+                val customTabsIntent = builder.build()
+                customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI)
+                return true
+            }
+            R.id.action_go_to_cpbl -> {
+                CpblCalendarHelper.startActivityToCpblSchedule(this@ListActivity, mYear,
+                        mMonth + 1, "01", "F00")
+                return true
+            }
+            R.id.action_settings -> {
+                startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private var filterPaneVisible: Boolean = false
@@ -159,11 +203,12 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun doWebQuery() {
+        //FIXME: if year is different, change the month adapter if necessary
         val year = mYear
         val month = mMonth
         thread {
             Log.d(TAG, "start query $year/${month + 1}")
-            val list = helper.query2016(mYear, month + 1, "01", "F00")
+            val list = helper.query2016(year, month + 1, "01", "F00")
             Log.d(TAG, "list size = ${list.size}")
             mAllGamesCache.put(year * 12 + month, list)
             runOnUiThread { updateGameList(month - 2, list) }
@@ -172,11 +217,16 @@ class ListActivity : AppCompatActivity() {
 
     private fun updateGameList(index: Int, list: ArrayList<Game>? = null) {
         Log.d(TAG, "update index $index")
+        //FIXME: add filter options
         mAdapter.getChildFragment(index)?.let {
             if (it is MonthViewFragment) {
                 it.updateAdapter(list, teamHelper)
             }
         }
+        //apply to view the value
+        mTextViewYear.text = mSpinnerYear.selectedItem.toString()
+        mTextViewField.text = mSpinnerField.selectedItem.toString()
+        mTextViewTeam.text = mSpinnerTeam.selectedItem.toString()
     }
 
     class SimplePageAdapter(a: AppCompatActivity, private var months: ArrayList<String>) :
@@ -196,8 +246,8 @@ class ListActivity : AppCompatActivity() {
     internal class MonthViewFragment : Fragment() {
         private lateinit var container: SwipeRefreshLayout
         private lateinit var list: RecyclerView
-        var index = -1
-        var month: String? = null
+        private var index = -1
+        private var month: String? = null
 
         override fun setArguments(args: Bundle?) {
             super.setArguments(args)
@@ -220,6 +270,7 @@ class ListActivity : AppCompatActivity() {
         }
 
         fun startUpdating() {
+            this.container.isEnabled = true
             this.container.isRefreshing = true
         }
 
@@ -230,7 +281,18 @@ class ListActivity : AppCompatActivity() {
             list?.forEach { adapterList.add(MyItemView(activity!!, it, helper)) }
             this.list.adapter = ItemAdapter(adapterList)
             this.list.setHasFixedSize(true)
+            if (list != null)
+                for (i in 0 until list.size) {
+                    if (DateUtils.isToday(list[i].StartTime)) {
+                        this.list.scrollToPosition(i)
+                        break//break when the upcoming game if found
+                    } else if (!list[i].IsFinal) {
+                        this.list.scrollToPosition(i)
+                        break//break when the upcoming game if found
+                    }
+                }
             this.container.isRefreshing = false
+            this.container.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
         }
     }
 

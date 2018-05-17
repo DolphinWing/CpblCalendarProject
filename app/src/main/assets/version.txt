@@ -1,3 +1,9 @@
+[1043] @ 2018-05-17
+    change settings activity
+    add pull to refresh control
+    add option menu
+    add filter
+
 [1042] @ 2018-05-14
     add adapter and recycler view
 

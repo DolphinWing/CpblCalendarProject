@@ -1,1 +1,3 @@
-<resources></resources>
+<resources>
+    <string name="title_enable_pull_to_refresh">Enable pull to refresh</string>
+</resources>

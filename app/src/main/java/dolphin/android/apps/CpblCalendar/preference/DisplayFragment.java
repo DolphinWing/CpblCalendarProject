@@ -12,6 +12,7 @@ import java.util.Set;
 import dolphin.android.apps.CpblCalendar3.CpblApplication;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.apps.CpblCalendar.provider.Team;
+import dolphin.android.apps.CpblCalendar3.SettingsActivity;
 import se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference;
 
 /**

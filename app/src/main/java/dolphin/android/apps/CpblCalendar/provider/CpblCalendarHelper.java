@@ -129,7 +129,8 @@ public class CpblCalendarHelper extends HttpHelper {
 ////        Intent intent = new Intent(Intent.ACTION_VIEW);
         String url = URL_SCHEDULE_2016.replace("@year", String.valueOf(year))
                 .replace("@month", String.valueOf(month))
-                .replace("@kind", kind).replace("@field", field.equals("F00") ? "" : field);
+                .replace("@kind", kind).replace("@field",
+                        field == null || field.equals("F00") ? "" : field);
 //        intent.setData(Uri.parse(url));//URL_SCHEDULE_2014
 //        if (newTask) {//[170]++
 //            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

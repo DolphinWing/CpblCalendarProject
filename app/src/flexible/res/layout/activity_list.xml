@@ -19,7 +19,7 @@
         android:id="@+id/filter_view_pane"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/holo_green_dark"
+        android:background="@android:color/white"
         android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="8dp"
-            android:text="@string/app_name" />
+            android:text="@string/title_query" />
 
         <HorizontalScrollView
             android:id="@+id/filter_list_pane"
@@ -47,39 +47,51 @@
                 app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
                 <TextView
+                    android:id="@android:id/button1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_corner"
                     android:text="@string/title_game_year" />
 
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp" />
+
                 <TextView
+                    android:id="@android:id/button2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_corner"
                     android:text="@string/title_game_field" />
 
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp" />
+
                 <TextView
+                    android:id="@android:id/button3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_corner"
                     android:text="@string/title_favorite_teams" />
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
+                <!-- <View
+                     android:layout_width="0dp"
+                     android:layout_height="1dp"
+                     android:layout_weight="1" />-->
 
             </LinearLayout>
         </HorizontalScrollView>
 
         <ImageView
             android:id="@+id/filter_control_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:src="@mipmap/ic_launcher" />
+            android:contentDescription="@null"
+            android:src="@drawable/ic_action_filter_list" />
     </LinearLayout>
 
     <android.support.design.widget.TabLayout
@@ -88,6 +100,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/filter_view_pane"
         app:tabGravity="center"
+        app:tabIndicatorColor="@color/holo_green_dark"
+        app:tabIndicatorHeight="4dp"
         app:tabMode="scrollable" />
 
     <android.support.v4.view.ViewPager
@@ -114,7 +128,7 @@
             android:id="@+id/filter_control_pane"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/holo_green_dark"
+            android:background="@android:color/white"
             android:elevation="4dp"
             android:orientation="vertical"
             android:padding="16dp">
@@ -150,7 +164,7 @@
                 android:layout_height="16dp" />
 
             <Button
-                android:id="@android:id/button1"
+                android:id="@android:id/custom"
                 style="@style/ButtonHolo_green"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
