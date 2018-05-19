@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -244,13 +245,27 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
+    private var snackbar: Snackbar? = null
+
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
+        if (snackbar != null) {
+            snackbar!!.setText(getString(R.string.title_download_from_cpbl, newYear, newMonth))
+        } else {
+            snackbar = Snackbar.make(findViewById<View>(R.id.main_content_frame),
+                    getString(R.string.title_download_from_cpbl, newYear, newMonth),
+                    Snackbar.LENGTH_INDEFINITE);
+        }
+        snackbar!!.show()
         thread {
             Log.d(TAG, "start query $newYear/${newMonth + 1}")
             val list = helper.query2016(newYear, newMonth + 1, "01", "F00")
             Log.d(TAG, "list size = ${list.size}")
             mAllGamesCache.put(newYear * 12 + newMonth, list)
-            runOnUiThread { updateGameList(newMonth - 2, list) }
+            runOnUiThread {
+                updateGameList(newMonth - 2, list)
+                snackbar?.dismiss()
+                snackbar = null
+            }
 //            viewModel.query(helper, year, month, "01", "F01").observe(this,
 //                    Observer<ArrayList<Game>> {
 //                        updateGameList(index = month - 2, list = it)
