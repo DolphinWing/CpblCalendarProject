@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.util.SparseArray
+import android.util.SparseIntArray
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -62,10 +63,12 @@ class ListActivity : AppCompatActivity() {
 
     private lateinit var helper: CpblCalendarHelper
     private lateinit var teamHelper: TeamHelper
-    private val mAllGamesCache = SparseArray<ArrayList<Game>>()
+    private val mAllGamesCache = SparseArray<List<Game>>()
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
 //    private lateinit var viewModel: MyViewModel
+
+    private val specialAllstarMonth = SparseIntArray()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +77,12 @@ class ListActivity : AppCompatActivity() {
         helper = CpblCalendarHelper(this)
         teamHelper = TeamHelper(application as CpblApplication)
 //        viewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
+        for (allstar in resources.getString(R.string.allstar_month_override).split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            val data = allstar.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (data.size >= 2) {
+                specialAllstarMonth.put(data[0].toInt(), data[1].toInt() - 1)
+            }
+        }
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
 
@@ -112,8 +121,12 @@ class ListActivity : AppCompatActivity() {
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
             //hide filter panel
             filterPaneVisible = false
-            //start query
-            pager.currentItem = mSpinnerMonth.selectedItemPosition//doQueryAction()
+            //start query, page change will cause query actions
+            if (pager.currentItem != mSpinnerMonth.selectedItemPosition) {
+                pager.currentItem = mSpinnerMonth.selectedItemPosition
+            } else {
+                doQueryAction()
+            }
         }
 
         //prepare month list
@@ -247,22 +260,37 @@ class ListActivity : AppCompatActivity() {
 
     private var snackbar: Snackbar? = null
 
+    private fun getMonthOfAllStarGame(year: Int): Int {
+        val index = year - 1989
+        return if (specialAllstarMonth[index] != 0) specialAllstarMonth[index] else Calendar.JULY
+    }
+
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
         if (snackbar != null) {
             snackbar!!.setText(getString(R.string.title_download_from_cpbl, newYear, newMonth))
         } else {
             snackbar = Snackbar.make(findViewById<View>(R.id.main_content_frame),
-                    getString(R.string.title_download_from_cpbl, newYear, newMonth),
-                    Snackbar.LENGTH_INDEFINITE);
+                    getString(R.string.title_download_from_cpbl, newYear, newMonth + 1),
+                    Snackbar.LENGTH_INDEFINITE)
         }
         snackbar!!.show()
         thread {
             Log.d(TAG, "start query $newYear/${newMonth + 1}")
             val list = helper.query2016(newYear, newMonth + 1, "01", "F00")
-            Log.d(TAG, "list size = ${list.size}")
-            mAllGamesCache.put(newYear * 12 + newMonth, list)
+            //TODO: check if we have warm up games here
+            //TODO: check if we have all star games here
+            if (newMonth == getMonthOfAllStarGame(newYear)) {
+                list.addAll(helper.query2016(newYear, newMonth + 1, "02", "F00"))
+            }
+            //TODO: check if we have challenger games here
+            //TODO: check if we have championship games here
+
+            //TODO: sort games by time and id
+            val sortedList = list.sortedWith(compareBy(Game::StartTime, Game::Id))
+            Log.d(TAG, "list size = ${sortedList.size}")
+            mAllGamesCache.put(newYear * 12 + newMonth, sortedList)
             runOnUiThread {
-                updateGameList(newMonth - 2, list)
+                updateGameList(newMonth - 2, sortedList)
                 snackbar?.dismiss()
                 snackbar = null
             }
@@ -273,7 +301,7 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateGameList(index: Int, list: ArrayList<Game>? = null) {
+    private fun updateGameList(index: Int, list: List<Game>? = null) {
         Log.d(TAG, "update index $index")
         //FIXME: add filter options
         mAdapter.getChildFragment(index)?.let {
@@ -332,7 +360,7 @@ class ListActivity : AppCompatActivity() {
             this.container.isRefreshing = true
         }
 
-        fun updateAdapter(list: ArrayList<Game>? = null, helper: TeamHelper) {
+        fun updateAdapter(list: List<Game>? = null, helper: TeamHelper) {
             Log.d(TAG, "we have ${list?.size} games in $month ($index)")
             if (activity == null) return
             val adapterList = ArrayList<MyItemView>()

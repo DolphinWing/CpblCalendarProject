@@ -37,8 +37,8 @@ android {
             minSdkVersion 21
             targetSdkVersion 27
             dimension "mode"
-            versionName '3.1.0'
-            versionCode 1043
+            versionName '3.2.0'
+            versionCode 1044
         }
     }
     compileOptions {
@@ -90,6 +90,7 @@ dependencies {
     flexibleImplementation 'eu.davidea:flexible-adapter:5.0.3'
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
+    flexibleImplementation 'android.arch.lifecycle:extensions:1.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
