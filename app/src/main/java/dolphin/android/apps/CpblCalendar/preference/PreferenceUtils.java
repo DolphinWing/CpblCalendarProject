@@ -45,7 +45,8 @@ public class PreferenceUtils {
     final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
     final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
     final static String KEY_FAVORITE_TEAMS = "favorite_teams";
-    final static String KEY_ENABLE_PULL_TO_REFRESH = "pull_to_refresh";
+    private final static String KEY_ENABLE_PULL_TO_REFRESH = "pull_to_refresh";
+    private final static String KEY_USE_OLD_DRAWER = "use_drawer_menu";
 
     @Deprecated //ShowcaseView
     final static String KEY_SHOWCASE_PHONE = "showcase_phone";
@@ -251,8 +252,13 @@ public class PreferenceUtils {
 
     public static boolean isPullToRefreshEnabled(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return isEngineerMode(context) || pref.getBoolean(KEY_ENABLE_PULL_TO_REFRESH,
+        return /*isEngineerMode(context) ||*/ pref.getBoolean(KEY_ENABLE_PULL_TO_REFRESH,
                 context.getResources().getBoolean(R.bool.def_enable_pull_to_refresh));
+    }
+
+    public static boolean isOnlyOldDrawerMenu(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return /*isEngineerMode(context) ||*/ pref.getBoolean(KEY_USE_OLD_DRAWER, false);
     }
 
     /**

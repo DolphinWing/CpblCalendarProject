@@ -1,3 +1,8 @@
 <resources>
     <string name="title_enable_pull_to_refresh">Enable pull to refresh</string>
+    <string name="summary_pull_to_refresh_on">Enable pull to refresh in main list</string>
+    <string name="summary_pull_to_refresh_off">Unable to  pull to refresh in main list</string>
+    <string name="title_use_drawer_menu">Old style drawer menu</string>
+    <string name="summary_use_drawer_menu_on">Use old style drawer menu</string>
+    <string name="summary_use_drawer_menu_off">Use new style filter menu</string>
 </resources>

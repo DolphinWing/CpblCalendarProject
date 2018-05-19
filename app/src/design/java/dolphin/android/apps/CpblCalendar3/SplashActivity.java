@@ -31,6 +31,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 
+import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity;
 import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
@@ -204,7 +205,7 @@ public class SplashActivity extends Activity {
         overridePendingTransition(0, 0);
         Intent intent;// = new Intent(this, HighlightActivity.class);
         if (PreferenceUtils.isCacheMode(this)) {
-            intent = new Intent(this, CacheModeListActivity.class);
+            intent = new Intent(this, CalendarForPhoneActivity.class);
         } else {
             intent = new Intent(this, HighlightActivity.class);
         }
