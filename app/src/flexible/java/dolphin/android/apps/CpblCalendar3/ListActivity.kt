@@ -52,6 +52,7 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mAdapter: SimplePageAdapter
 
     private lateinit var mSpinnerYear: Spinner
+    private lateinit var mSpinnerMonth: Spinner
     private lateinit var mSpinnerField: Spinner
     private lateinit var mSpinnerTeam: Spinner
     private lateinit var mTextViewYear: TextView
@@ -75,9 +76,13 @@ class ListActivity : AppCompatActivity() {
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
 
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+        val pager: ViewPager = findViewById(R.id.viewpager)
+
         //prepare filter pane
         mSpinnerYear = findViewById(R.id.spinner3)
         mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
+        mSpinnerMonth = findViewById(R.id.spinner4)
         mSpinnerField = findViewById(R.id.spinner1)
         mSpinnerTeam = findViewById(R.id.spinner2)
         mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
@@ -107,13 +112,10 @@ class ListActivity : AppCompatActivity() {
             //hide filter panel
             filterPaneVisible = false
             //start query
-            doQueryAction()
+            pager.currentItem = mSpinnerMonth.selectedItemPosition//doQueryAction()
         }
 
-        //prepare month lust
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        val pager: ViewPager = findViewById(R.id.viewpager)
-
+        //prepare month list
         val months = ArrayList(Arrays.asList(*DateFormatSymbols(Locale.TAIWAN).months))
         months.removeAt(months.size - 1)
         months.removeAt(0)
@@ -125,12 +127,17 @@ class ListActivity : AppCompatActivity() {
         pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 mMonth = position + 2
+                runOnUiThread { mSpinnerMonth.setSelection(position) }
                 Log.d(TAG, "selected month = ${mMonth + 1}")
                 doQueryAction()
             }
         })
         pager.currentItem = mMonth - 2
         tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(pager))
+        mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                months).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -178,6 +185,7 @@ class ListActivity : AppCompatActivity() {
     private fun restoreFilter() {
         runOnUiThread {
             mSpinnerYear.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mYear)
+            mSpinnerMonth.setSelection(mMonth - 2)
         }
     }
 
@@ -214,36 +222,35 @@ class ListActivity : AppCompatActivity() {
     private fun doQueryAction() {
         val year = CpblCalendarHelper.getNowTime()
                 .get(Calendar.YEAR) - mSpinnerYear.selectedItemPosition
-        val key = year * 12 + mMonth
+        val month = mSpinnerMonth.selectedItemPosition + 2
+        val key = year * 12 + month
         if (year != mYear) {//clear all months
             for (i in 3..12) {
                 updateGameList(i - 3, mAllGamesCache.get(year * 12 + i - 1))
             }
         }
         //show loading
-        mAdapter.getChildFragment(mMonth - 2)?.let {
+        mAdapter.getChildFragment(month - 2)?.let {
             if (it is MonthViewFragment) {
                 it.startUpdating()
             }
         }
         //start downloading new data
         mAllGamesCache.get(key)?.let {
-            updateGameList(mMonth - 2, it)
+            updateGameList(month - 2, it)
         } ?: kotlin.run {
             //try download from website
-            doWebQuery(newYear = year)
+            doWebQuery(newYear = year, newMonth = month)
         }
     }
 
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
-        val year = mYear
-        val month = mMonth
         thread {
-            Log.d(TAG, "start query $year/${month + 1}")
-            val list = helper.query2016(year, month + 1, "01", "F00")
+            Log.d(TAG, "start query $newYear/${newMonth + 1}")
+            val list = helper.query2016(newYear, newMonth + 1, "01", "F00")
             Log.d(TAG, "list size = ${list.size}")
-            mAllGamesCache.put(year * 12 + month, list)
-            runOnUiThread { updateGameList(month - 2, list) }
+            mAllGamesCache.put(newYear * 12 + newMonth, list)
+            runOnUiThread { updateGameList(newMonth - 2, list) }
 //            viewModel.query(helper, year, month, "01", "F01").observe(this,
 //                    Observer<ArrayList<Game>> {
 //                        updateGameList(index = month - 2, list = it)

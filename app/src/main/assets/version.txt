@@ -1,5 +1,8 @@
 [1044] @ 2018-05-19
     add new cache mode activity
+    add month to filter list if someone wants to jump to some month of some year
+
+TODO: add snack bar, add auto load other kind of games, add entry to old style
 
 [1043] @ 2018-05-17
     change settings activity

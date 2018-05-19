@@ -143,6 +143,14 @@
 
             <TextView
                 style="@style/Theme.Holo_green.QueryPane.Title"
+                android:text="@string/title_game_month" />
+
+            <Spinner
+                android:id="@+id/spinner4"
+                style="@style/Theme.Holo_green.QueryPane.Spinner" />
+
+            <TextView
+                style="@style/Theme.Holo_green.QueryPane.Title"
                 android:text="@string/title_game_field" />
 
             <Spinner
