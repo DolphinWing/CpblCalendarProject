@@ -1,3 +1,6 @@
+[1044] @ 2018-05-19
+    add new cache mode activity
+
 [1043] @ 2018-05-17
     change settings activity
     add pull to refresh control

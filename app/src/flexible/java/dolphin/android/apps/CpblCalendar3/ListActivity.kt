@@ -63,6 +63,7 @@ class ListActivity : AppCompatActivity() {
     private val mAllGamesCache = SparseArray<ArrayList<Game>>()
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
+//    private lateinit var viewModel: MyViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,8 +71,46 @@ class ListActivity : AppCompatActivity() {
 
         helper = CpblCalendarHelper(this)
         teamHelper = TeamHelper(application as CpblApplication)
+//        viewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
+
+        //prepare filter pane
+        mSpinnerYear = findViewById(R.id.spinner3)
+        mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
+        mSpinnerField = findViewById(R.id.spinner1)
+        mSpinnerTeam = findViewById(R.id.spinner2)
+        mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                arrayOf(getString(R.string.title_favorite_teams_all),
+                        *resources.getStringArray(R.array.cpbl_team_name))).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        mTextViewYear = findViewById(android.R.id.button1)
+        mTextViewYear.setOnClickListener { filterPaneVisible = true }
+        mTextViewField = findViewById(android.R.id.button2)
+        mTextViewField.setOnClickListener { filterPaneVisible = true }
+        mTextViewTeam = findViewById(android.R.id.button3)
+        mTextViewTeam.setOnClickListener { filterPaneVisible = true }
+
+        mFilterListPane = findViewById(R.id.filter_list_pane)
+        //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
+        mFilterControlBg = findViewById(R.id.filter_control_background)
+        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
+        mFilterControlPane = findViewById(R.id.filter_control_pane)
+        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
+            restoreFilter()
+            filterPaneVisible = !filterPaneVisible
+        }
+        filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
+
+        findViewById<View>(android.R.id.custom)?.setOnClickListener {
+            //hide filter panel
+            filterPaneVisible = false
+            //start query
+            doQueryAction()
+        }
+
+        //prepare month lust
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val pager: ViewPager = findViewById(R.id.viewpager)
 
@@ -92,40 +131,6 @@ class ListActivity : AppCompatActivity() {
         })
         pager.currentItem = mMonth - 2
         tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(pager))
-
-        mSpinnerYear = findViewById(R.id.spinner3)
-        mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
-        mSpinnerField = findViewById(R.id.spinner1)
-        mSpinnerTeam = findViewById(R.id.spinner2)
-        mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-                arrayOf(getString(R.string.title_favorite_teams_all),
-                        *resources.getStringArray(R.array.cpbl_team_name))).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        mTextViewYear = findViewById(android.R.id.button1)
-        mTextViewYear.setOnClickListener { filterPaneVisible = !filterPaneVisible }
-        mTextViewField = findViewById(android.R.id.button2)
-        mTextViewField.setOnClickListener { filterPaneVisible = !filterPaneVisible }
-        mTextViewTeam = findViewById(android.R.id.button3)
-        mTextViewTeam.setOnClickListener { filterPaneVisible = !filterPaneVisible }
-
-        mFilterListPane = findViewById(R.id.filter_list_pane)
-        //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
-        mFilterControlBg = findViewById(R.id.filter_control_background)
-        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
-        mFilterControlPane = findViewById(R.id.filter_control_pane)
-        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
-            //Log.d(TAG, "visible: $filterPaneVisible")
-            filterPaneVisible = !filterPaneVisible
-        }
-        filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
-
-        findViewById<View>(android.R.id.custom)?.setOnClickListener {
-            //hide filter panel
-            filterPaneVisible = false
-            //start query
-            doQueryAction()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -141,6 +146,14 @@ class ListActivity : AppCompatActivity() {
                         .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_dark))
                 val customTabsIntent = builder.build()
                 customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI)
+                return true
+            }
+            R.id.action_cache_mode -> {
+                PreferenceUtils.setCacheMode(this@ListActivity, true)
+                startActivity(Intent(this@ListActivity, CacheModeListActivity::class.java).apply {
+                    putExtra("cache_init", false)
+                })
+                finish()
                 return true
             }
             R.id.action_go_to_cpbl -> {
@@ -161,6 +174,12 @@ class ListActivity : AppCompatActivity() {
             runOnUiThread { showFilterPane(value) }
             field = value
         }
+
+    private fun restoreFilter() {
+        runOnUiThread {
+            mSpinnerYear.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mYear)
+        }
+    }
 
     private fun showFilterPane(visible: Boolean) {
         mFilterControlPane.apply {
@@ -193,17 +212,30 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun doQueryAction() {
+        val year = CpblCalendarHelper.getNowTime()
+                .get(Calendar.YEAR) - mSpinnerYear.selectedItemPosition
+        val key = year * 12 + mMonth
+        if (year != mYear) {//clear all months
+            for (i in 3..12) {
+                updateGameList(i - 3, mAllGamesCache.get(year * 12 + i - 1))
+            }
+        }
+        //show loading
         mAdapter.getChildFragment(mMonth - 2)?.let {
             if (it is MonthViewFragment) {
                 it.startUpdating()
             }
         }
-        mAllGamesCache.get(mYear * 12 + mMonth)?.let { updateGameList(mMonth - 2, it) }
-                ?: kotlin.run { doWebQuery() }
+        //start downloading new data
+        mAllGamesCache.get(key)?.let {
+            updateGameList(mMonth - 2, it)
+        } ?: kotlin.run {
+            //try download from website
+            doWebQuery(newYear = year)
+        }
     }
 
-    private fun doWebQuery() {
-        //FIXME: if year is different, change the month adapter if necessary
+    private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
         val year = mYear
         val month = mMonth
         thread {
@@ -212,6 +244,10 @@ class ListActivity : AppCompatActivity() {
             Log.d(TAG, "list size = ${list.size}")
             mAllGamesCache.put(year * 12 + month, list)
             runOnUiThread { updateGameList(month - 2, list) }
+//            viewModel.query(helper, year, month, "01", "F01").observe(this,
+//                    Observer<ArrayList<Game>> {
+//                        updateGameList(index = month - 2, list = it)
+//                    })
         }
     }
 
@@ -376,4 +412,25 @@ class ListActivity : AppCompatActivity() {
     }
 
     internal class ItemAdapter(items: MutableList<MyItemView>?) : FlexibleAdapter<MyItemView>(items)
+
+//    internal class MyViewModel : ViewModel() {
+//        //var helper: CpblCalendarHelper
+//        private val mAllGames = SparseArray<GameListLiveData>()
+//
+//        fun query(helper: CpblCalendarHelper, year: Int, month: Int, kind: String, field: String,
+//                  cached: Boolean = true): GameListLiveData {
+//            val key = year * 12 + month
+//            if (!cached || mAllGames[key] == null) {
+//                mAllGames.put(key, GameListLiveData(helper, year, month, kind, field))
+//            }
+//            return mAllGames[key]
+//        }
+//    }
+//
+//    internal class GameListLiveData(helper: CpblCalendarHelper, year: Int, month: Int, kind: String,
+//                                    field: String) : LiveData<ArrayList<Game>>() {
+//        init {
+//            value = helper.query2016(year, month, kind, field)
+//        }
+//    }
 }

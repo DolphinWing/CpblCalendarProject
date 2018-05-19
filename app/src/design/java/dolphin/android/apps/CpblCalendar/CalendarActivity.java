@@ -66,11 +66,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     final static String KEY_GAME_YEAR = "year";
     final static String KEY_GAME_MONTH = "month";
 
-    Spinner mSpinnerKind;
-    Spinner mSpinnerField;
-    Spinner mSpinnerYear;
-    Spinner mSpinnerMonth;
-    Button mButtonQuery;
+    protected Spinner mSpinnerKind;
+    protected Spinner mSpinnerField;
+    protected Spinner mSpinnerYear;
+    protected Spinner mSpinnerMonth;
+    protected Button mButtonQuery;
 
     private View mProgressView;
     private TextView mProgressText;//[84]dolphin++
@@ -83,7 +83,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     private final SparseArray<ArrayList<Game>> mAllGamesCache = new SparseArray<>();//[146]++
     private final SparseIntArray mAllStarSpecialMonth = new SparseIntArray();
 
-    Snackbar mSnackbar;
+    protected Snackbar mSnackbar;
 
     //http://gunhansancar.com/change-language-programmatically-in-android/
     @Override
@@ -161,7 +161,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     /**
      * initial the query pane
      */
-    void initQueryPane() {
+    protected void initQueryPane() {
         mSpinnerField = findViewById(R.id.spinner1);
         mSpinnerKind = findViewById(R.id.spinner2);
         mSpinnerYear = findViewById(R.id.spinner3);
@@ -232,6 +232,17 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         if (mButtonQuery != null) {
             mButtonQuery.setOnClickListener(onQueryClick);
         }
+    }
+
+    protected void performQuery() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mButtonQuery != null) {
+                    mButtonQuery.performClick();
+                }
+            }
+        });
     }
 
     protected int getAllstarMonthPositionByYearPosition() {
@@ -530,11 +541,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     private boolean mCacheMode = false;
 
-    boolean IsQuery() {
+    protected boolean IsQuery() {
         return mIsQuery;
     }
 
-    TextView getProgressText() {
+    protected TextView getProgressText() {
         return mProgressText;
     }
 
@@ -559,7 +570,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         //setProgressBarIndeterminateVisibility(is_load);
     }
 
-    void onLoading(boolean is_load) {
+    protected void onLoading(boolean is_load) {
         internalLoading(is_load);
     }
 
@@ -883,7 +894,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         dialog.show();
     }
 
-    private void runDownloadCache() {
+    protected void runDownloadCache() {
         onLoading(true);
         mIsQuery = true;//[88]dolphin++ indicate now is loading
         invalidateOptionsMenu();

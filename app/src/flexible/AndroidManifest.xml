@@ -38,6 +38,10 @@
             android:enabled="false" />
 
         <activity
+            android:name=".CacheModeListActivity"
+            android:screenOrientation="locked" />
+
+        <activity
             android:name=".SplashActivity3"
             android:label="@string/app_name"
             android:screenOrientation="locked"
