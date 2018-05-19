@@ -151,7 +151,7 @@ class ListActivity : AppCompatActivity() {
             R.id.action_cache_mode -> {
                 PreferenceUtils.setCacheMode(this@ListActivity, true)
                 startActivity(Intent(this@ListActivity, CacheModeListActivity::class.java).apply {
-                    putExtra("cache_init", false)
+                    putExtra("cache_init", true)
                 })
                 finish()
                 return true

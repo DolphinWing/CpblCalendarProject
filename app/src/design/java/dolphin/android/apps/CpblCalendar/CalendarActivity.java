@@ -234,11 +234,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
     }
 
-    protected void performQuery() {
+    protected void performButtonQuery() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mButtonQuery != null) {
+                if (getActivity() != null && mButtonQuery != null) {
                     mButtonQuery.performClick();
                 }
             }
@@ -745,7 +745,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     }
 
     private void doQueryStateUpdateCallback(final String message) {
-        if (mActivity != null && mQueryCallback != null) {
+        if (getActivity() != null && mQueryCallback != null) {
             CalendarActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -899,7 +899,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mIsQuery = true;//[88]dolphin++ indicate now is loading
         invalidateOptionsMenu();
 
-        mHelper = new CpblCalendarHelper(mActivity);
+        mYear = CpblCalendarHelper.getNowTime().get(Calendar.YEAR);
+        mHelper = new CpblCalendarHelper(getActivity());
+        mQueryCallback = getOnQueryCallback();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -913,15 +915,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                             (r ? "success" : "failed")));
                 }
                 doQueryStateUpdateCallback(R.string.title_download_complete);
-
-                if (mActivity != null) {//[91]dolphin++
-                    CalendarActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mButtonQuery.performClick();
-                        }
-                    });
-                }
+                performButtonQuery();
             }
         }).start();
     }

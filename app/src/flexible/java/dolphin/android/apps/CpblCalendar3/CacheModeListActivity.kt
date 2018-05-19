@@ -47,7 +47,7 @@ class CacheModeListActivity : CalendarActivity() {
         if (intent?.getBooleanExtra("cache_init", false) == true) {
             Handler().postDelayed({ runDownloadCache() }, 500)
         } else {
-            performQuery()
+            performButtonQuery()
         }
     }
 
@@ -86,7 +86,7 @@ class CacheModeListActivity : CalendarActivity() {
     override fun onLoading(is_load: Boolean) {
         super.onLoading(is_load)
         mSpinnerYear?.isEnabled = false
-        progressText?.visibility = /*if (is_load) View.VISIBLE else*/ View.GONE
+        progressText?.visibility = if (is_load) View.VISIBLE else View.GONE
         if (mSnackbar != null && !is_load) {
             mSnackbar.dismiss()
             mSnackbar = null
