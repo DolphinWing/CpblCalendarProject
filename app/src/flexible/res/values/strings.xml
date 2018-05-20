@@ -1,12 +1,12 @@
 <resources>
-    <string name="title_enable_pull_to_refresh">Enable pull to refresh</string>
-    <string name="summary_pull_to_refresh_on">Enable pull to refresh in main list</string>
-    <string name="summary_pull_to_refresh_off">Unable to  pull to refresh in main list</string>
-    <string name="title_use_drawer_menu">Old style drawer menu</string>
-    <string name="summary_use_drawer_menu_on">Use old style drawer menu</string>
-    <string name="summary_use_drawer_menu_off">Use new style filter menu</string>
-    <string name="id_prefix_warm_up">W %d</string>
-    <string name="id_prefix_challenge">CL %d</string>
-    <string name="id_prefix_champion">CP %d</string>
-    <string name="id_prefix_all_star">AS %d</string>
+    <string name="title_enable_pull_to_refresh">下拉更新</string>
+    <string name="summary_pull_to_refresh_on">在完整比賽列表啟用下拉更新</string>
+    <string name="summary_pull_to_refresh_off">在完整比賽列表停用下拉更新</string>
+    <string name="title_use_drawer_menu">使用舊式查詢頁面</string>
+    <string name="summary_use_drawer_menu_on">使用舊的右側滑出式選單</string>
+    <string name="summary_use_drawer_menu_off">使用新的下滑式選單</string>
+    <string name="id_prefix_warm_up">熱身 %d</string>
+    <string name="id_prefix_challenge">挑戰 %d</string>
+    <string name="id_prefix_champion">冠軍 %d</string>
+    <string name="id_prefix_all_star">明星 %d</string>
 </resources>

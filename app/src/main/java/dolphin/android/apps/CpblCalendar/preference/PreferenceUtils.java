@@ -44,7 +44,7 @@ public class PreferenceUtils {
     private final static String KEY_HIGHLIGHT_TODAY = "highlight_today";
     final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
     final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
-    final static String KEY_FAVORITE_TEAMS = "favorite_teams";
+    public final static String KEY_FAVORITE_TEAMS = "favorite_teams";
     private final static String KEY_ENABLE_PULL_TO_REFRESH = "pull_to_refresh";
     private final static String KEY_USE_OLD_DRAWER = "use_drawer_menu";
 

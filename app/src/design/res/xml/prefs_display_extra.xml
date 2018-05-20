@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="preference_screen">
+
+    <PreferenceCategory
+        android:key="display_extra_group"
+        android:title="@string/title_display_favorite">
+        <se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference
+            android:defaultValue="@array/cpbl_team_id"
+            android:entries="@array/cpbl_team_name"
+            android:entryValues="@array/cpbl_team_id"
+            android:key="favorite_teams"
+            android:title="@string/title_favorite_teams" />
+        <!--
+            MultiSelectListPreference example
+            http://stackoverflow.com/a/11777632
+        -->
+    </PreferenceCategory>
+</PreferenceScreen>

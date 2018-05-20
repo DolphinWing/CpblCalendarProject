@@ -18,7 +18,7 @@
 
     <header
         android:id="@+id/display_settings"
-        android:fragment="dolphin.android.apps.CpblCalendar.preference.DisplayFragment"
+        android:fragment="dolphin.android.apps.CpblCalendar3.DisplayFragment3"
         android:summary="@string/summary_display_settings"
         android:title="@string/title_display_settings" />
 
