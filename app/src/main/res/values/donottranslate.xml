@@ -300,5 +300,28 @@
     <string name="aspnet_month_template">%d月 </string>
 
     <string name="allstar_month_override">4/6;6/11;8/6;10/8;11/8;13/6;</string>
+    <string name="season_month_start_override">8/2;9/2;15/2;19/3;</string>
+    <string name="warmup_month_start_override">19/2;</string>
+    <string-array name="challenge_month">
+        <item>1998/10/11</item>
+        <item>1999/10</item>
+        <item>2005/10</item>
+        <item>2006/10</item>
+        <item>2007/10</item>
+        <item>2008/10</item>
+    </string-array>
+    <string-array name="champ_month_override">
+        <item>1991/11</item>
+        <item>1992/0</item>
+        <item>1994/0</item>
+        <item>1995/0</item>
+        <item>1996/10/11</item>
+        <item>1998/11</item>
+        <item>1999/11</item>
+        <item>2004/11</item>
+        <item>2005/10/11</item>
+        <item>2008/10/11</item><!-- 2008 -->
+        <item>2017/10/11</item><!-- 2017 -->
+    </string-array>
 
 </resources>

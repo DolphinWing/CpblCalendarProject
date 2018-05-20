@@ -1,3 +1,6 @@
+[1045] @ 2018-05-20
+    add auto load other kinds of games
+
 [1044] @ 2018-05-19
     add new cache mode activity
     add month to filter list if someone wants to jump to some month of some year

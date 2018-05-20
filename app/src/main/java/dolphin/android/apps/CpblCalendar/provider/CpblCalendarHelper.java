@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -661,6 +662,10 @@ public class CpblCalendarHelper extends HttpHelper {
         long cost = System.currentTimeMillis() - start;
         Log.v(TAG, String.format("query %04d/%02d cost %d ms", year, month, cost));
         return gameList;
+    }
+
+    public List<Game> query2018(int year, int monthOfJava, String kind) {
+        return query2016(year, monthOfJava + 1, kind, "F00");
     }
 
     /**
