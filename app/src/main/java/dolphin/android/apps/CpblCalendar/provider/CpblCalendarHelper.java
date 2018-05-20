@@ -3,9 +3,11 @@ package dolphin.android.apps.CpblCalendar.provider;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.widget.ArrayAdapter;
 
 import java.io.File;
@@ -53,9 +55,33 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private boolean mUseCache = false;
 
+    private final SparseIntArray mAllStarMonth = new SparseIntArray();
+    private final SparseIntArray mWarmUpMonth = new SparseIntArray();
+    private final SparseArray<String> mChallengeMonth = new SparseArray<>();
+    private final SparseArray<String> mChampionMonth = new SparseArray<>();
+
     public CpblCalendarHelper(Context context) {
         mContext = context;
-        mUseCache = mContext.getResources().getBoolean(R.bool.feature_cache);
+        Resources resources = getContext().getResources();
+        mUseCache = resources.getBoolean(R.bool.feature_cache);
+        for (String allStar : getString(R.string.allstar_month_override).split(";")) {
+            String[] data = allStar.split("/");
+            if (data.length >= 2) {
+                mAllStarMonth.put(Integer.parseInt(data[0]), Integer.parseInt(data[1]) - 1);
+            }
+        }
+        for (String warmUp : getString(R.string.warmup_month_start_override).split(";")) {
+            String[] data = warmUp.split("/");
+            if (data.length >= 2) {
+                mWarmUpMonth.put(Integer.parseInt(data[0]), Integer.parseInt(data[1]) - 1);
+            }
+        }
+        for (String c : resources.getStringArray(R.array.challenge_month)) {
+            mChallengeMonth.put(Integer.parseInt(c.split("/")[0]), c.substring(5));
+        }
+        for (String c : resources.getStringArray(R.array.champ_month_override)) {
+            mChampionMonth.put(Integer.parseInt(c.split("/")[0]), c.substring(5));
+        }
     }
 
     /**
@@ -99,6 +125,50 @@ public class CpblCalendarHelper extends HttpHelper {
             k++;
         }
         return 0;
+    }
+
+    public boolean isWarmUpMonth(int year, int monthOfJava) {
+        if (year < 2006) {
+            return false;
+        }
+        int index = year - 1989;
+        return mWarmUpMonth.get(index) > 0 && mWarmUpMonth.get(index) == monthOfJava;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public int getAllStarMonth(int year) {
+        if (mAllStarMonth.get(year - 1989) > 0) {
+            return mAllStarMonth.get(year - 1989);
+        }
+        return Calendar.JULY;
+    }
+
+    public boolean isAllStarMonth(int year, int monthOfJava) {
+        return getAllStarMonth(year) == monthOfJava;
+    }
+
+    public boolean isChallengeMonth(int year, int monthOfJava) {
+        if (mChallengeMonth.get(year) != null) {
+            for (String m : mChallengeMonth.get(year).split("/")) {
+                if (Integer.parseInt(m) == (monthOfJava + 1)) {
+                    return true;
+                }
+            }
+        }//if no data, there is no challenge games
+        return false;
+    }
+
+    public boolean isChampionMonth(int year, int monthOfJava) {
+        if (mChampionMonth.get(year) != null) {
+            for (String m : mChampionMonth.get(year).split("/")) {
+                if (Integer.parseInt(m) == (monthOfJava + 1)) {
+                    return true;
+                }
+            }
+        } else {
+            return monthOfJava == Calendar.OCTOBER;
+        }
+        return false;
     }
 
     /**

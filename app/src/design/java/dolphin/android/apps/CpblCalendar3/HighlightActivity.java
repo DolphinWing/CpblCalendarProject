@@ -238,17 +238,17 @@ public class HighlightActivity extends AppCompatActivity
         int year = now.get(Calendar.YEAR);
         int month = now.get(Calendar.MONTH) + 1;
         //int day = now.get(Calendar.DAY_OF_MONTH);
-        String kind = "01";
-        String field = "F00";
+        //String kind = "01";
+        //String field = "F00";
         if (mRemoteConfig.getBoolean("override_start_enabled")) {
             year = Integer.parseInt(mRemoteConfig.getString("override_start_year"));
             month = Integer.parseInt(mRemoteConfig.getString("override_start_month"));
-            kind = mRemoteConfig.getString("override_start_kind");
+            //kind = mRemoteConfig.getString("override_start_kind");
         }
 
         ArrayList<Game> gameList = new ArrayList<>();
         tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month));
-        mCacheGames = mHelper.query2016(year, month, kind, field, allowCache, allowDrive);
+        mCacheGames = getGamesOfTheMonth(year, month - 1);
         //we cache it for CalendarActivity quick load, no more download again
         if (mCacheGames != null && mCacheGames.size() > 0) {
             //check today and if we have games before and after
@@ -256,8 +256,7 @@ public class HighlightActivity extends AppCompatActivity
             if (g1.StartTime.after(now)) {//upcoming, so we have to get previous month data
                 if (month > Calendar.JANUARY) {//get last month
                     tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month - 1));
-                    ArrayList<Game> list1 = mHelper.query2016(year, month - 1, kind, field,
-                            allowCache, allowDrive);
+                    ArrayList<Game> list1 = getGamesOfTheMonth(year, month - 2);
                     if (list1 != null && list1.size() > 0) {
                         gameList.addAll(list1);
                     }
@@ -275,8 +274,7 @@ public class HighlightActivity extends AppCompatActivity
                 }
                 if (needMore && month < Calendar.DECEMBER) {//get next month
                     tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, month + 1));
-                    ArrayList<Game> list3 = mHelper.query2016(year, month + 1, kind, field,
-                            allowCache, allowDrive);
+                    ArrayList<Game> list3 = getGamesOfTheMonth(year, month);
                     if (list3 != null && list3.size() > 0) {
                         gameList.addAll(list3);
                     }
@@ -331,6 +329,12 @@ public class HighlightActivity extends AppCompatActivity
                 updateViews(list);
             }
         });
+    }
+
+    protected ArrayList<Game> getGamesOfTheMonth(int year, int monthOfJava) {
+        return mHelper.query2016(year, monthOfJava + 1, "01", "F01",
+                mRemoteConfig.getBoolean("enable_delay_games_from_cache"),
+                mRemoteConfig.getBoolean("enable_delay_games_from_drive"));
     }
 
     //private final static long MAX_TIME_DIFF = (long) (1000 * 60 * 60 * 24 * 1.5);

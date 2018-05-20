@@ -68,11 +68,6 @@ class ListActivity : AppCompatActivity() {
     private var mMonth: Int = Calendar.MAY
 //    private lateinit var viewModel: MyViewModel
 
-    private val specialAllStarMonth = SparseIntArray()
-    private val warmUpMonth = SparseIntArray() //warm up game starts @ 2006
-    private val challengeMonth = SparseArray<String>()
-    private val championMonth = SparseArray<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
@@ -80,24 +75,6 @@ class ListActivity : AppCompatActivity() {
         helper = CpblCalendarHelper(this)
         teamHelper = TeamHelper(application as CpblApplication)
 //        viewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
-        for (allStar in resources.getString(R.string.allstar_month_override).split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-            val data = allStar.split("/".toRegex()).toTypedArray()
-            if (data.size >= 2) {
-                specialAllStarMonth.put(data[0].toInt(), data[1].toInt() - 1)
-            }
-        }
-        for (warmUp in getString(R.string.warmup_month_start_override).split(";").dropLastWhile { it.isEmpty() }) {
-            val data = warmUp.split("/")
-            if (data.size >= 2) {
-                warmUpMonth.put(data[0].toInt(), data[1].toInt() - 1)
-            }
-        }
-        for (chan in resources.getStringArray(R.array.challenge_month)) {
-            challengeMonth.put(chan.split("/")[0].toInt(), chan.substring(5))
-        }
-        for (champ in resources.getStringArray(R.array.champ_month_override)) {
-            championMonth.put(champ.split("/")[0].toInt(), champ.substring(5))
-        }
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
 
@@ -275,46 +252,6 @@ class ListActivity : AppCompatActivity() {
 
     private var snackbar: Snackbar? = null
 
-    private fun getMonthOfAllStarGame(year: Int): Int {
-        val index = year - 1989
-        return if (specialAllStarMonth[index] != 0) specialAllStarMonth[index] else Calendar.JULY
-    }
-
-    private fun getMonthOfWarmUp(year: Int) = when {
-        year < 2006 -> -1
-        warmUpMonth.get(year - 1989) > 0 -> warmUpMonth.get(year - 1989)
-        else -> Calendar.MARCH
-    }
-
-    private fun isWarmUpMonth(year: Int, month: Int): Boolean {
-        if (getMonthOfWarmUp(year) >= 0) {
-            return getMonthOfWarmUp(year) == month
-        }
-        return false
-    }
-
-    private fun isChallengeMonth(year: Int, month: Int): Boolean {
-        if (challengeMonth.get(year) != null) {
-            for (m in challengeMonth.get(year).split("/")) {
-                if (m.toInt() == (month + 1)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    private fun isChampionMonth(year: Int, month: Int): Boolean {
-        if (championMonth.get(year) != null) {
-            for (m in championMonth.get(year).split("/")) {
-                if (m.toInt() == (month + 1)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
         if (snackbar != null) {
             snackbar!!.setText(getString(R.string.title_download_from_cpbl, newYear, newMonth))
@@ -328,19 +265,19 @@ class ListActivity : AppCompatActivity() {
             Log.d(TAG, "start query $newYear/${newMonth + 1}")
             val list = helper.query2018(newYear, newMonth, "01")
             //check if we have warm up games here
-            if (isWarmUpMonth(newYear, newMonth)) {
+            if (helper.isWarmUpMonth(newYear, newMonth)) {
                 list.addAll(helper.query2018(newYear, newMonth, "07"))
             }
             //check if we have all star games here
-            if (newMonth == getMonthOfAllStarGame(newYear)) {
+            if (helper.isAllStarMonth(newYear, newMonth)) {
                 list.addAll(helper.query2018(newYear, newMonth, "02"))
             }
             //check if we have challenger games here
-            if (isChallengeMonth(newYear, newMonth)) {
+            if (helper.isChallengeMonth(newYear, newMonth)) {
                 list.addAll(helper.query2018(newYear, newMonth, "05"))
             }
             //check if we have championship games here
-            if (isChampionMonth(newYear, newMonth)) {
+            if (helper.isChampionMonth(newYear, newMonth)) {
                 list.addAll(helper.query2018(newYear, newMonth, "03"))
             }
             //sort games by time and id
