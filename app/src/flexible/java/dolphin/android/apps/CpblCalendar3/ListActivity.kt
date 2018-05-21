@@ -2,6 +2,10 @@
 
 package dolphin.android.apps.CpblCalendar3
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
@@ -18,7 +22,6 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.util.SparseArray
-import android.util.SparseIntArray
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -63,10 +66,10 @@ class ListActivity : AppCompatActivity() {
 
     private lateinit var helper: CpblCalendarHelper
     private lateinit var teamHelper: TeamHelper
-    private val mAllGamesCache = SparseArray<List<Game>>()
+    //    private val mAllGamesCache = SparseArray<List<Game>>()
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
-//    private lateinit var viewModel: MyViewModel
+    private lateinit var viewModel: MyViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +77,7 @@ class ListActivity : AppCompatActivity() {
 
         helper = CpblCalendarHelper(this)
         teamHelper = TeamHelper(application as CpblApplication)
-//        viewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(MyViewModel::class.java)
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
 
@@ -144,6 +147,7 @@ class ListActivity : AppCompatActivity() {
                 months).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
+        mSpinnerMonth.setSelection(pager.currentItem)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -229,10 +233,16 @@ class ListActivity : AppCompatActivity() {
         val year = CpblCalendarHelper.getNowTime()
                 .get(Calendar.YEAR) - mSpinnerYear.selectedItemPosition
         val month = mSpinnerMonth.selectedItemPosition + 1
-        val key = year * 12 + month
         if (year != mYear) {//clear all months
             for (i in 1..10) {//Feb. to Nov.
-                updateGameList(i - 1, mAllGamesCache.get(year * 12 + i - 1))
+                if (viewModel.hasData(year, i)) {
+                    viewModel.query(helper, year, i, fetch = false)
+                            .observe(this, Observer<List<Game>> {
+                                runOnUiThread {
+                                    updateGameList(i - 1, it)
+                                }
+                            })
+                }
             }
         }
         //show loading
@@ -241,13 +251,13 @@ class ListActivity : AppCompatActivity() {
                 it.startUpdating()
             }
         }
-        //start downloading new data
-        mAllGamesCache.get(key)?.let {
-            updateGameList(month - 1, it)
-        } ?: kotlin.run {
-            //try download from website
-            doWebQuery(newYear = year, newMonth = month)
-        }
+//        //start downloading new data
+//        mAllGamesCache.get(key)?.let {
+//            updateGameList(month - 1, it)
+//        } ?: kotlin.run {
+        //try download from website
+        doWebQuery(newYear = year, newMonth = month)
+//        }
     }
 
     private var snackbar: Snackbar? = null
@@ -263,36 +273,14 @@ class ListActivity : AppCompatActivity() {
         snackbar!!.show()
         thread {
             Log.d(TAG, "start query $newYear/${newMonth + 1}")
-            val list = helper.query2018(newYear, newMonth, "01")
-            //check if we have warm up games here
-            if (helper.isWarmUpMonth(newYear, newMonth)) {
-                list.addAll(helper.query2018(newYear, newMonth, "07"))
-            }
-            //check if we have all star games here
-            if (helper.isAllStarMonth(newYear, newMonth)) {
-                list.addAll(helper.query2018(newYear, newMonth, "02"))
-            }
-            //check if we have challenger games here
-            if (helper.isChallengeMonth(newYear, newMonth)) {
-                list.addAll(helper.query2018(newYear, newMonth, "05"))
-            }
-            //check if we have championship games here
-            if (helper.isChampionMonth(newYear, newMonth)) {
-                list.addAll(helper.query2018(newYear, newMonth, "03"))
-            }
-            //sort games by time and id
-            val sortedList = list.sortedWith(compareBy(Game::StartTime, Game::Id))
-            Log.d(TAG, "list size = ${sortedList.size}")
-            mAllGamesCache.put(newYear * 12 + newMonth, sortedList)
-            runOnUiThread {
-                updateGameList(newMonth - 1, sortedList)
-                snackbar?.dismiss()
-                snackbar = null
-            }
-//            viewModel.query(helper, year, month, "01", "F01").observe(this,
-//                    Observer<ArrayList<Game>> {
-//                        updateGameList(index = month - 2, list = it)
-//                    })
+            viewModel.query(helper, newYear, newMonth)
+                    .observe(this, Observer<List<Game>> {
+                        runOnUiThread {
+                            updateGameList(newMonth - 1, it)
+                            snackbar?.dismiss()
+                            snackbar = null
+                        }
+                    })
         }
     }
 
@@ -465,24 +453,50 @@ class ListActivity : AppCompatActivity() {
 
     internal class ItemAdapter(items: MutableList<MyItemView>?) : FlexibleAdapter<MyItemView>(items)
 
-//    internal class MyViewModel : ViewModel() {
-//        //var helper: CpblCalendarHelper
-//        private val mAllGames = SparseArray<GameListLiveData>()
-//
-//        fun query(helper: CpblCalendarHelper, year: Int, month: Int, kind: String, field: String,
-//                  cached: Boolean = true): GameListLiveData {
-//            val key = year * 12 + month
-//            if (!cached || mAllGames[key] == null) {
-//                mAllGames.put(key, GameListLiveData(helper, year, month, kind, field))
-//            }
-//            return mAllGames[key]
-//        }
-//    }
-//
-//    internal class GameListLiveData(helper: CpblCalendarHelper, year: Int, month: Int, kind: String,
-//                                    field: String) : LiveData<ArrayList<Game>>() {
-//        init {
-//            value = helper.query2016(year, month, kind, field)
-//        }
-//    }
+    internal class MyViewModel : ViewModel() {
+        //var helper: CpblCalendarHelper
+        private val mAllGames = SparseArray<GameListLiveData>()
+
+        fun hasData(year: Int, monthOfJava: Int) = mAllGames[year * 12 + monthOfJava] != null
+
+        fun query(helper: CpblCalendarHelper, year: Int, monthOfJava: Int, fetch: Boolean = true): GameListLiveData {
+            val key = year * 12 + monthOfJava
+            if (fetch && mAllGames[key] == null) {
+                mAllGames.put(key, GameListLiveData(helper, year, monthOfJava))
+            }
+            return mAllGames[key]
+        }
+    }
+
+    internal class GameListLiveData(helper: CpblCalendarHelper, year: Int, monthOfJava: Int) : LiveData<List<Game>>() {
+        init {
+            val list = helper.query2018(year, monthOfJava, "01")
+            //check if we have warm up games here
+            if (helper.isWarmUpMonth(year, monthOfJava)) {
+                Log.v(TAG, "find warm up games")
+                list.addAll(helper.query2018(year, monthOfJava, "07"))
+            }
+            //check if we have all star games here
+            if (helper.isAllStarMonth(year, monthOfJava)) {
+                Log.v(TAG, "find all-star games")
+                list.addAll(helper.query2018(year, monthOfJava, "02"))
+            }
+            //check if we have challenger games here
+            if (helper.isChallengeMonth(year, monthOfJava)) {
+                Log.v(TAG, "find challenger games")
+                list.addAll(helper.query2018(year, monthOfJava, "05"))
+            }
+            //check if we have championship games here
+            if (helper.isChampionMonth(year, monthOfJava)) {
+                Log.v(TAG, "find championship games")
+                list.addAll(helper.query2018(year, monthOfJava, "03"))
+            }
+            //sort games by time and id
+            val sortedList = list.sortedWith(compareBy(Game::StartTime, Game::Id))
+            Log.d(TAG, "list size = ${sortedList.size}")
+            //mAllGamesCache.put(year * 12 + monthOfJava, sortedList)
+
+            postValue(sortedList)
+        }
+    }
 }

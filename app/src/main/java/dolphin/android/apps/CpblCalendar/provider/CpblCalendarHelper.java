@@ -132,7 +132,8 @@ public class CpblCalendarHelper extends HttpHelper {
             return false;
         }
         int index = year - 1989;
-        return mWarmUpMonth.get(index) > 0 && mWarmUpMonth.get(index) == monthOfJava;
+        if (mWarmUpMonth.get(index) > 0) return mWarmUpMonth.get(index) == monthOfJava;
+        return monthOfJava == Calendar.MARCH;
     }
 
     @SuppressWarnings("WeakerAccess")
