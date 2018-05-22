@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
@@ -41,7 +42,6 @@ import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.thread
 
 class ListActivity : AppCompatActivity() {
     companion object {
@@ -113,7 +113,7 @@ class ListActivity : AppCompatActivity() {
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
             //hide filter panel
             filterPaneVisible = false
-            //start query, page change will cause query actions
+            //start fetch, page change will cause fetch actions
             if (pager.currentItem != mSpinnerMonth.selectedItemPosition) {
                 pager.currentItem = mSpinnerMonth.selectedItemPosition
             } else {
@@ -138,13 +138,14 @@ class ListActivity : AppCompatActivity() {
                 doQueryAction()
             }
         })
-        pager.currentItem = mMonth - 1
+        //pager.currentItem = mMonth - 1
         tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(pager))
         mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
                 months).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
         mSpinnerMonth.setSelection(pager.currentItem)
+        Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -227,23 +228,34 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun doQueryAction() {
-        val year = CpblCalendarHelper.getNowTime()
-                .get(Calendar.YEAR) - mSpinnerYear.selectedItemPosition
+        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mSpinnerYear.selectedItemPosition
         val month = mSpinnerMonth.selectedItemPosition + 1
+        Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
+            Log.d(TAG, "clear $mYear data")
             for (i in 1..10) {//Feb. to Nov.
-                viewModel.query(helper, year, i, fetch = false)?.observe(this,
-                        Observer<List<Game>> {
-                            runOnUiThread {
-                                updateGameList(i - 1, it)
-                            }
-                        })
+//                viewModel.fetch(helper, year, i, fetchFromWeb = false)?.observe(this,
+//                        Observer<List<Game>> {
+//                            //runOnUiThread {
+//                            updateGameList(i - 1, it)
+//                            //}
+//                        })
+                mAdapter.getChildFragment(i - 1)?.arguments = Bundle().apply {
+                    putBoolean("clear", true)
+                }
             }
         }
+        mYear = year
         //show loading
         mAdapter.getChildFragment(month - 1)?.let {
-            if (it is MonthViewFragment) {
-                it.startUpdating()
+            //            if (it is MonthViewFragment) {
+//                it.startUpdating()
+//            }
+            it.arguments = Bundle().apply {
+                Log.d(TAG, "notify fragment to update $year/${month + 1}")
+                putBoolean("refresh", true)
+                putInt("year", year)
+                putInt("month", month)
             }
         }
 //        //start downloading new data
@@ -251,7 +263,7 @@ class ListActivity : AppCompatActivity() {
 //            updateGameList(month - 1, it)
 //        } ?: kotlin.run {
         //try download from website
-        doWebQuery(newYear = year, newMonth = month)
+//        doWebQuery(newYear = year, newMonth = month)
 //        }
     }
 
@@ -267,8 +279,8 @@ class ListActivity : AppCompatActivity() {
         }
         snackbar!!.show()
         //thread {
-        Log.d(TAG, "start query $newYear/${newMonth + 1}")
-        viewModel.query(helper, newYear, newMonth)?.observe(this,
+        Log.d(TAG, "start fetch $newYear/${newMonth + 1}")
+        viewModel.fetch(helper, newYear, newMonth)?.observe(this,
                 Observer<List<Game>> {
                     //runOnUiThread {
                     updateGameList(newMonth - 1, it)
@@ -281,12 +293,12 @@ class ListActivity : AppCompatActivity() {
 
     private fun updateGameList(index: Int, list: List<Game>? = null) {
         Log.d(TAG, "update index $index")
-        //FIXME: add filter options
-        mAdapter.getChildFragment(index)?.let {
-            if (it is MonthViewFragment) {
-                it.updateAdapter(list, teamHelper)
-            }
-        }
+//        //FIXME: add filter options
+//        mAdapter.getChildFragment(index)?.let {
+//            if (it is MonthViewFragment) {
+//                it.updateAdapter(list, teamHelper)
+//            }
+//        }
         //apply to view the value
         mTextViewYear.text = mSpinnerYear.selectedItem.toString()
         mTextViewField.text = mSpinnerField.selectedItem.toString()
@@ -308,22 +320,53 @@ class ListActivity : AppCompatActivity() {
     }
 
     internal class MonthViewFragment : Fragment() {
-        private lateinit var container: SwipeRefreshLayout
+        private var container: SwipeRefreshLayout? = null
         private lateinit var list: RecyclerView
         private var index = -1
         private var month: String? = null
+        private lateinit var cpblHelper: CpblCalendarHelper
+        private lateinit var helper: TeamHelper
+        private lateinit var viewModel: GameViewModel
 
         override fun setArguments(args: Bundle?) {
             super.setArguments(args)
-            index = args?.getInt("index", -1) ?: -1
-            month = args?.getString("title")
+            if (args?.containsKey("index") == true) {
+                index = args.getInt("index", -1)
+                Log.d(TAG, "fragment index = $index")
+            }
+            if (args?.containsKey("title") == true) {
+                month = args.getString("title")
+                Log.d(TAG, "title: $month")
+            }
+            if (args?.getBoolean("refresh", false) == true) {
+                startRefreshing(true)
+                val y = args.getInt("year", 2018)
+                val m = args.getInt("month", 0)
+                Log.d(TAG, "refreshing $y/${m + 1}")
+                viewModel.fetch(cpblHelper, y, m)?.observe(this,
+                        Observer<List<Game>> { updateAdapter(it, helper) })
+                //} else {
+                //    startRefreshing(false)
+            }
+            if (args?.getBoolean("clear", false) == true) {
+                Log.d(TAG, "clear adapter")
+                updateAdapter(null, helper)
+            }
+        }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            //Log.d(TAG, "Fragment onCreate")
+            viewModel = ViewModelProviders.of(activity!!).get(GameViewModel::class.java)
+            cpblHelper = CpblCalendarHelper(activity!!)
+            helper = TeamHelper(activity!!.application as CpblApplication)
         }
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             val view = inflater.inflate(R.layout.fragment_recycler_view, container, false)
             this.container = view.findViewById(R.id.swipeRefreshLayout)
-            this.container.isRefreshing = true
-            this.container.setOnRefreshListener {
+            this.container!!.isRefreshing = true
+            this.container!!.setOnRefreshListener {
                 if (activity is ListActivity) {
                     (activity as ListActivity).doWebQuery()
                 }
@@ -333,13 +376,13 @@ class ListActivity : AppCompatActivity() {
             return view //super.onCreateView(inflater, container, savedInstanceState)
         }
 
-        fun startUpdating() {
-            this.container.isEnabled = true
-            this.container.isRefreshing = true
+        private fun startRefreshing(enabled: Boolean) {
+            this.container?.isEnabled = enabled
+            this.container?.isRefreshing = if (enabled) true else PreferenceUtils.isPullToRefreshEnabled(activity)
         }
 
-        fun updateAdapter(list: List<Game>? = null, helper: TeamHelper) {
-            Log.d(TAG, "we have ${list?.size} games in $month ($index)")
+        private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper) {
+            Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
             if (activity == null) return
             val adapterList = ArrayList<MyItemView>()
             list?.forEach { adapterList.add(MyItemView(activity!!, it, helper)) }
@@ -355,8 +398,7 @@ class ListActivity : AppCompatActivity() {
                         break//break when the upcoming game if found
                     }
                 }
-            this.container.isRefreshing = false
-            this.container.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
+            startRefreshing(false)
         }
     }
 

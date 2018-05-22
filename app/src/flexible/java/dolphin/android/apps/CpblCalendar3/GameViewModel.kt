@@ -8,13 +8,16 @@ internal class GameViewModel : ViewModel() {
     //var helper: CpblCalendarHelper
     private val mAllGames = SparseArray<GameListLiveData>()
 
-    //fun hasData(year: Int, monthOfJava: Int) = mAllGames[year * 12 + monthOfJava] != null
+    private fun gkey(year: Int, monthOfJava: Int) = year * 12 + monthOfJava
 
-    fun query(helper: CpblCalendarHelper, year: Int, monthOfJava: Int, fetch: Boolean = true): GameListLiveData? {
-        val key = year * 12 + monthOfJava
-        if (fetch && mAllGames[key] == null) {
+    fun fetch(helper: CpblCalendarHelper, year: Int, monthOfJava: Int,
+              fetchFromWeb: Boolean = true): GameListLiveData? {
+        val key = gkey(year, monthOfJava)
+        if (fetchFromWeb && mAllGames[key] == null) {
             mAllGames.put(key, GameListLiveData(helper, year, monthOfJava))
         }
         return mAllGames[key]
     }
+
+    fun query(year: Int, monthOfJava: Int): GameListLiveData? = mAllGames[gkey(year, monthOfJava)]
 }
