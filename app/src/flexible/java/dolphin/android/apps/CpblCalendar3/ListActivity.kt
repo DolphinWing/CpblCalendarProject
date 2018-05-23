@@ -23,10 +23,7 @@ import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
@@ -84,6 +81,20 @@ class ListActivity : AppCompatActivity() {
         //prepare filter pane
         mSpinnerYear = findViewById(R.id.spinner3)
         mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
+        mSpinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                //won't happen
+            }
+
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if (p2 == 0) {
+                    mSpinnerTeam.isEnabled = true
+                } else {
+                    mSpinnerTeam.isEnabled = false
+                    mSpinnerTeam.setSelection(0)
+                }
+            }
+        }
         mSpinnerMonth = findViewById(R.id.spinner4)
         mSpinnerField = findViewById(R.id.spinner1)
         mSpinnerTeam = findViewById(R.id.spinner2)
@@ -226,12 +237,23 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
+    private var selectedFieldId: String = "F00"
+        get() {
+            val f = mSpinnerField.selectedItemPosition
+            return resources.getStringArray(R.array.cpbl_game_field_id)[f]
+        }
+
+    private var selectedTeamId: Int = 0
+        get() {
+            val t = mSpinnerTeam.selectedItemPosition
+            val team = if (t == 0) "0" else resources.getStringArray(R.array.cpbl_team_id)[t - 1]
+            return team.toInt()
+        }
+
     private fun doQueryAction() {
         val y = mSpinnerYear.selectedItemPosition
         val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - y
         val month = mSpinnerMonth.selectedItemPosition + 1
-        val f = mSpinnerField.selectedItemPosition
-        val field = resources.getStringArray(R.array.cpbl_game_field_id)[f]
         Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
             Log.d(TAG, "clear $mYear data")
@@ -248,11 +270,12 @@ class ListActivity : AppCompatActivity() {
         //show loading
         mAdapter.getChildFragment(month - 1)?.let {
             it.arguments = Bundle().apply {
-                Log.d(TAG, "notify fragment to update $year/${month + 1} $field")
+                Log.d(TAG, "notify fragment to update $year/${month + 1} $selectedFieldId")
                 putBoolean("refresh", true)
                 putInt("year", year)
                 putInt("month", month)
-                putString("field", field)
+                putString("field_id", selectedFieldId)
+                putInt("team_id", selectedTeamId)
             }
         }
 
@@ -270,6 +293,8 @@ class ListActivity : AppCompatActivity() {
             putInt("year", newYear)
             putInt("month", newMonth)
             putBoolean("refresh", true)
+            putString("field_id", selectedFieldId)
+            putInt("team_id", selectedTeamId)
         }
     }
 
@@ -324,11 +349,12 @@ class ListActivity : AppCompatActivity() {
             if (args?.getBoolean("refresh", false) == true) {
                 val y = args.getInt("year", 2018)
                 val m = args.getInt("month", 0)
-                val field = args.getString("field", "F00")
+                val fieldId = args.getString("field_id", "F00")
+                val teamId = args.getInt("team_id", 0)
                 startRefreshing(true, y, m)
-                Log.d(TAG, "refreshing $y/${m + 1}")
+                Log.d(TAG, "refreshing $y/${m + 1} @$fieldId $teamId")
                 viewModel.fetch(cpblHelper, y, m)?.observe(this,
-                        Observer<List<Game>> { updateAdapter(it, helper, field) })
+                        Observer<List<Game>> { updateAdapter(it, helper, fieldId, teamId) })
                 //} else {
                 //    startRefreshing(false)
             }
@@ -379,12 +405,13 @@ class ListActivity : AppCompatActivity() {
         }
 
         private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper,
-                                  field: String = "F00") {
+                                  field: String = "F00", team: Int = 0) {
             Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
             if (activity == null) return
             val adapterList = ArrayList<MyItemView>()
             list?.forEach {
-                if (field == "F00" || it.FieldId == field) {
+                if ((field == "F00" || it.FieldId == field) &&
+                        (team == 0 || it.HomeTeam.id == team || it.AwayTeam.id == team)) {
                     adapterList.add(MyItemView(activity!!, it, helper))
                 }
             }
