@@ -121,7 +121,7 @@
         android:background="@color/bottom_sheet_background"
         android:elevation="4dp"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filter_view_pane">
 

@@ -11,8 +11,11 @@ internal class GameViewModel : ViewModel() {
     private fun gkey(year: Int, monthOfJava: Int) = year * 12 + monthOfJava
 
     fun fetch(helper: CpblCalendarHelper, year: Int, monthOfJava: Int,
-              fetchFromWeb: Boolean = true): GameListLiveData? {
+              fetchFromWeb: Boolean = true, clearCached: Boolean = false): GameListLiveData? {
         val key = gkey(year, monthOfJava)
+        if (clearCached) {
+            mAllGames.remove(key)
+        }
         if (fetchFromWeb && mAllGames[key] == null) {
             mAllGames.put(key, GameListLiveData(helper, year, monthOfJava))
         }

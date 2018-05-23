@@ -199,7 +199,6 @@ class ListActivity : AppCompatActivity() {
 
     private fun showFilterPane(visible: Boolean) {
         mFilterControlPane.apply {
-            //FIXME: change elevation before animation
             if (visible) {
                 this.animate()
                         .translationY(0f)
@@ -228,29 +227,24 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun doQueryAction() {
-        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mSpinnerYear.selectedItemPosition
+        val sel = mSpinnerYear.selectedItemPosition
+        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - sel
         val month = mSpinnerMonth.selectedItemPosition + 1
         Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
             Log.d(TAG, "clear $mYear data")
             for (i in 1..10) {//Feb. to Nov.
-//                viewModel.fetch(helper, year, i, fetchFromWeb = false)?.observe(this,
-//                        Observer<List<Game>> {
-//                            //runOnUiThread {
-//                            updateGameList(i - 1, it)
-//                            //}
-//                        })
                 mAdapter.getChildFragment(i - 1)?.arguments = Bundle().apply {
+                    //putInt("year", mYear)
+                    //putInt("month", i)
                     putBoolean("clear", true)
                 }
             }
         }
+
         mYear = year
         //show loading
         mAdapter.getChildFragment(month - 1)?.let {
-            //            if (it is MonthViewFragment) {
-//                it.startUpdating()
-//            }
             it.arguments = Bundle().apply {
                 Log.d(TAG, "notify fragment to update $year/${month + 1}")
                 putBoolean("refresh", true)
@@ -258,47 +252,41 @@ class ListActivity : AppCompatActivity() {
                 putInt("month", month)
             }
         }
-//        //start downloading new data
-//        mAllGamesCache.get(key)?.let {
-//            updateGameList(month - 1, it)
-//        } ?: kotlin.run {
-        //try download from website
-//        doWebQuery(newYear = year, newMonth = month)
-//        }
+
+        mTextViewYear.text = mSpinnerYear.selectedItem.toString()
+        mTextViewField.text = mSpinnerField.selectedItem.toString()
+        mTextViewTeam.text = mSpinnerTeam.selectedItem.toString()
     }
 
     private var snackbar: Snackbar? = null
 
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
-        if (snackbar != null) {
-            snackbar!!.setText(getString(R.string.title_download_from_cpbl, newYear, newMonth))
-        } else {
-            snackbar = Snackbar.make(findViewById<View>(R.id.main_content_frame),
-                    getString(R.string.title_download_from_cpbl, newYear, newMonth + 1),
-                    Snackbar.LENGTH_INDEFINITE)
-        }
-        snackbar!!.show()
-        //thread {
         Log.d(TAG, "start fetch $newYear/${newMonth + 1}")
-        viewModel.fetch(helper, newYear, newMonth)?.observe(this,
-                Observer<List<Game>> {
-                    //runOnUiThread {
-                    updateGameList(newMonth - 1, it)
-                    snackbar?.dismiss()
-                    snackbar = null
-                    //}
-                })
-        //}
+        viewModel.fetch(helper, newYear, newMonth, clearCached = true)
+        mAdapter.getChildFragment(newMonth - 1)?.arguments = Bundle().apply {
+            putInt("year", newYear)
+            putInt("month", newMonth)
+            putBoolean("refresh", true)
+        }
+    }
+
+    private fun showSnackBar(visible: Boolean, text: String? = null) {
+        if (visible && text != null) {
+            if (snackbar != null) {
+                snackbar!!.setText(text)
+            } else {
+                snackbar = Snackbar.make(findViewById<View>(R.id.main_content_frame), text,
+                        Snackbar.LENGTH_INDEFINITE)
+            }
+            snackbar!!.show()
+        } else {
+            snackbar?.dismiss()
+            snackbar = null
+        }
     }
 
     private fun updateGameList(index: Int, list: List<Game>? = null) {
         Log.d(TAG, "update index $index")
-//        //FIXME: add filter options
-//        mAdapter.getChildFragment(index)?.let {
-//            if (it is MonthViewFragment) {
-//                it.updateAdapter(list, teamHelper)
-//            }
-//        }
         //apply to view the value
         mTextViewYear.text = mSpinnerYear.selectedItem.toString()
         mTextViewField.text = mSpinnerField.selectedItem.toString()
@@ -339,9 +327,9 @@ class ListActivity : AppCompatActivity() {
                 Log.d(TAG, "title: $month")
             }
             if (args?.getBoolean("refresh", false) == true) {
-                startRefreshing(true)
                 val y = args.getInt("year", 2018)
                 val m = args.getInt("month", 0)
+                startRefreshing(true, y, m)
                 Log.d(TAG, "refreshing $y/${m + 1}")
                 viewModel.fetch(cpblHelper, y, m)?.observe(this,
                         Observer<List<Game>> { updateAdapter(it, helper) })
@@ -367,6 +355,7 @@ class ListActivity : AppCompatActivity() {
             this.container = view.findViewById(R.id.swipeRefreshLayout)
             this.container!!.isRefreshing = true
             this.container!!.setOnRefreshListener {
+                Log.d(TAG, "pull to refresh")
                 if (activity is ListActivity) {
                     (activity as ListActivity).doWebQuery()
                 }
@@ -376,9 +365,21 @@ class ListActivity : AppCompatActivity() {
             return view //super.onCreateView(inflater, container, savedInstanceState)
         }
 
-        private fun startRefreshing(enabled: Boolean) {
-            this.container?.isEnabled = enabled
-            this.container?.isRefreshing = if (enabled) true else PreferenceUtils.isPullToRefreshEnabled(activity)
+        private fun startRefreshing(enabled: Boolean, year: Int = 2018, monthOfJava: Int = 0) {
+            if (enabled) {
+                this.container?.isEnabled = true
+                this.container?.isRefreshing = true
+                if (activity is ListActivity) {
+                    (activity as ListActivity).showSnackBar(true,
+                            getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
+                }
+            } else {
+                if (activity is ListActivity) {
+                    (activity as ListActivity).showSnackBar(false)
+                }
+                this.container?.isRefreshing = false
+                this.container?.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
+            }
         }
 
         private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper) {
@@ -407,9 +408,9 @@ class ListActivity : AppCompatActivity() {
             AbstractFlexibleItem<MyItemView.ViewHolder>() {
         override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
                                     holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
-            val date_str = SimpleDateFormat("MMM d (E) ", Locale.TAIWAN)
+            val dateStr = SimpleDateFormat("MMM d (E) ", Locale.TAIWAN)
                     .format(game.StartTime.time)
-            val time_str = SimpleDateFormat("HH:mm", Locale.TAIWAN)
+            val timeStr = SimpleDateFormat("HH:mm", Locale.TAIWAN)
                     .format(game.StartTime.time)
             val field = if (game.Source == Game.SOURCE_CPBL || !game.Field.contains(context.getString(R.string.title_at)))
                 String.format("%s%s", context.getString(R.string.title_at), game.Field)
@@ -427,9 +428,9 @@ class ListActivity : AppCompatActivity() {
                     else -> game.Id.toString()
                 }
                 gameTime?.text = when {
-                    game.IsFinal -> date_str
+                    game.IsFinal -> dateStr
                     game.IsLive -> "LIVE"
-                    else -> date_str + time_str
+                    else -> dateStr + timeStr
                 }
                 gameField?.text = field
                 teamAwayName?.text = game.AwayTeam.name
