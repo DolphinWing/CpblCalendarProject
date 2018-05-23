@@ -227,9 +227,11 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun doQueryAction() {
-        val sel = mSpinnerYear.selectedItemPosition
-        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - sel
+        val y = mSpinnerYear.selectedItemPosition
+        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - y
         val month = mSpinnerMonth.selectedItemPosition + 1
+        val f = mSpinnerField.selectedItemPosition
+        val field = resources.getStringArray(R.array.cpbl_game_field_id)[f]
         Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
             Log.d(TAG, "clear $mYear data")
@@ -246,10 +248,11 @@ class ListActivity : AppCompatActivity() {
         //show loading
         mAdapter.getChildFragment(month - 1)?.let {
             it.arguments = Bundle().apply {
-                Log.d(TAG, "notify fragment to update $year/${month + 1}")
+                Log.d(TAG, "notify fragment to update $year/${month + 1} $field")
                 putBoolean("refresh", true)
                 putInt("year", year)
                 putInt("month", month)
+                putString("field", field)
             }
         }
 
@@ -283,14 +286,6 @@ class ListActivity : AppCompatActivity() {
             snackbar?.dismiss()
             snackbar = null
         }
-    }
-
-    private fun updateGameList(index: Int, list: List<Game>? = null) {
-        Log.d(TAG, "update index $index")
-        //apply to view the value
-        mTextViewYear.text = mSpinnerYear.selectedItem.toString()
-        mTextViewField.text = mSpinnerField.selectedItem.toString()
-        mTextViewTeam.text = mSpinnerTeam.selectedItem.toString()
     }
 
     class SimplePageAdapter(a: AppCompatActivity, private var months: ArrayList<String>) :
@@ -329,10 +324,11 @@ class ListActivity : AppCompatActivity() {
             if (args?.getBoolean("refresh", false) == true) {
                 val y = args.getInt("year", 2018)
                 val m = args.getInt("month", 0)
+                val field = args.getString("field", "F00")
                 startRefreshing(true, y, m)
                 Log.d(TAG, "refreshing $y/${m + 1}")
                 viewModel.fetch(cpblHelper, y, m)?.observe(this,
-                        Observer<List<Game>> { updateAdapter(it, helper) })
+                        Observer<List<Game>> { updateAdapter(it, helper, field) })
                 //} else {
                 //    startRefreshing(false)
             }
@@ -382,11 +378,17 @@ class ListActivity : AppCompatActivity() {
             }
         }
 
-        private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper) {
+        private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper,
+                                  field: String = "F00") {
             Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
             if (activity == null) return
             val adapterList = ArrayList<MyItemView>()
-            list?.forEach { adapterList.add(MyItemView(activity!!, it, helper)) }
+            list?.forEach {
+                if (field == "F00" || it.FieldId == field) {
+                    adapterList.add(MyItemView(activity!!, it, helper))
+                }
+            }
+            Log.d(TAG, "field = $field, ${adapterList.size} games")
             this.list.adapter = ItemAdapter(adapterList)
             this.list.setHasFixedSize(true)
             if (list != null)

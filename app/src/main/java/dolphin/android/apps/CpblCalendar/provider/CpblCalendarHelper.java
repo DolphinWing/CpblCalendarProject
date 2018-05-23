@@ -927,11 +927,14 @@ public class CpblCalendarHelper extends HttpHelper {
                     awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
                     //Log.d(TAG, "  away = " + awayTeam);
                     game.AwayTeam = getTeamByPng(awayTeam, year, false);
+
                     String place = tds[2];
                     //Log.d(TAG, "  place = " + place);
                     place = place.substring(place.indexOf(">") + 1, place.indexOf("</td>"));
                     //Log.d(TAG, "  place = " + place);
                     game.Field = place.trim();
+                    game.getFieldId(getContext());//refresh field id
+
                     String homeTeam = tds[3];//                     0123456789012345
                     //Log.d(TAG, "  home = " + homeTeam);
                     homeTeam = homeTeam.substring(homeTeam.indexOf("images/team/"));
