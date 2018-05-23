@@ -1,3 +1,9 @@
+[1046] @ 2018-05-23
+    add Architecture Components: LiveData and ViewModel
+    move data to new structures
+    add game field and team filters
+    remove favorite teams in preference
+
 [1045] @ 2018-05-20
     add auto load other kinds of games
     fix preference in flexible build

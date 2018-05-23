@@ -327,14 +327,17 @@ class ListActivity : AppCompatActivity() {
         override fun getCount() = months.size
     }
 
-    internal class MonthViewFragment : Fragment() {
+    internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListener,
+            FlexibleAdapter.OnItemLongClickListener {
+
         private var container: SwipeRefreshLayout? = null
         private lateinit var list: RecyclerView
         private var index = -1
-        private var month: String? = null
         private lateinit var cpblHelper: CpblCalendarHelper
         private lateinit var helper: TeamHelper
         private lateinit var viewModel: GameViewModel
+        private var year = 2018
+        private var month = Calendar.MAY
 
         override fun setArguments(args: Bundle?) {
             super.setArguments(args)
@@ -343,17 +346,16 @@ class ListActivity : AppCompatActivity() {
                 Log.d(TAG, "fragment index = $index")
             }
             if (args?.containsKey("title") == true) {
-                month = args.getString("title")
-                Log.d(TAG, "title: $month")
+                Log.d(TAG, "title: ${args.getString("title")}")
             }
             if (args?.getBoolean("refresh", false) == true) {
-                val y = args.getInt("year", 2018)
-                val m = args.getInt("month", 0)
+                year = args.getInt("year", 2018)
+                month = args.getInt("month", 0)
                 val fieldId = args.getString("field_id", "F00")
                 val teamId = args.getInt("team_id", 0)
-                startRefreshing(true, y, m)
-                Log.d(TAG, "refreshing $y/${m + 1} @$fieldId $teamId")
-                viewModel.fetch(cpblHelper, y, m)?.observe(this,
+                startRefreshing(true, year, month)
+                Log.d(TAG, "refreshing $year/${month + 1} @$fieldId $teamId")
+                viewModel.fetch(cpblHelper, year, month)?.observe(this,
                         Observer<List<Game>> { updateAdapter(it, helper, fieldId, teamId) })
                 //} else {
                 //    startRefreshing(false)
@@ -403,12 +405,13 @@ class ListActivity : AppCompatActivity() {
                 this.container?.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
             }
         }
-
+        private val adapterList = ArrayList<MyItemView>()
         private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper,
                                   field: String = "F00", team: Int = 0) {
             Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
             if (activity == null) return
-            val adapterList = ArrayList<MyItemView>()
+            //val adapterList = ArrayList<MyItemView>()
+            adapterList.clear()
             list?.forEach {
                 if ((field == "F00" || it.FieldId == field) &&
                         (team == 0 || it.HomeTeam.id == team || it.AwayTeam.id == team)) {
@@ -416,7 +419,7 @@ class ListActivity : AppCompatActivity() {
                 }
             }
             Log.d(TAG, "field = $field, ${adapterList.size} games")
-            this.list.adapter = ItemAdapter(adapterList)
+            this.list.adapter = ItemAdapter(adapterList, this)
             this.list.setHasFixedSize(true)
             if (list != null)
                 for (i in 0 until list.size) {
@@ -429,6 +432,15 @@ class ListActivity : AppCompatActivity() {
                     }
                 }
             startRefreshing(false)
+        }
+
+        override fun onItemClick(view: View?, position: Int): Boolean {
+            Log.d(TAG, "onItemClick $position ${adapterList[position].game.Id}")
+            return false
+        }
+
+        override fun onItemLongClick(position: Int) {
+            Log.d(TAG, "onItemLongClick $position")
         }
     }
 
@@ -518,5 +530,6 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    internal class ItemAdapter(items: MutableList<MyItemView>?) : FlexibleAdapter<MyItemView>(items)
+    internal class ItemAdapter(items: MutableList<MyItemView>?, listener: Any? = null)
+        : FlexibleAdapter<MyItemView>(items, listener)
 }

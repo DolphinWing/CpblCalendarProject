@@ -4,6 +4,9 @@ import android.arch.lifecycle.LiveData
 import android.util.Log
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.concurrent.thread
 
 internal class GameListLiveData(private val helper: CpblCalendarHelper,
@@ -13,6 +16,8 @@ internal class GameListLiveData(private val helper: CpblCalendarHelper,
         private const val TAG = "GameListLiveData"
     }
 
+    private val executor = Executors.newSingleThreadExecutor()
+
     override fun onInactive() {
         super.onInactive()
         Log.d(TAG, "onInactive $year/${monthOfJava + 1}")
@@ -21,10 +26,12 @@ internal class GameListLiveData(private val helper: CpblCalendarHelper,
     override fun onActive() {
         super.onActive()
         Log.d(TAG, "onActive $year/${monthOfJava + 1}")
-        thread { fetch() }
+
+        executor.submit { if (value == null) fetch() }
     }
 
     private fun fetch() {
+        Log.v(TAG, "fetch $year/${monthOfJava + 1}")
         val list = helper.query2018(year, monthOfJava, "01")
         //check if we have warm up games here
         if (helper.isWarmUpMonth(year, monthOfJava)) {
