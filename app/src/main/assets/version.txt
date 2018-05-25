@@ -1,3 +1,7 @@
+[1047] @ 2018-05-25
+    add extra messages
+    add click event
+
 [1046] @ 2018-05-23
     add Architecture Components: LiveData and ViewModel
     move data to new structures

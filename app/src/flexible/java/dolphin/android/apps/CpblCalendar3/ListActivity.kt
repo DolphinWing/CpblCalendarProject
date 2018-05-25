@@ -5,8 +5,10 @@ package dolphin.android.apps.CpblCalendar3
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.customtabs.CustomTabsIntent
@@ -16,9 +18,11 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.text.Html
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -30,6 +34,7 @@ import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper
 import dolphin.android.util.DateUtils
+import dolphin.android.util.PackageUtils
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -405,6 +410,7 @@ class ListActivity : AppCompatActivity() {
                 this.container?.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
             }
         }
+
         private val adapterList = ArrayList<MyItemView>()
         private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper,
                                   field: String = "F00", team: Int = 0) {
@@ -435,12 +441,37 @@ class ListActivity : AppCompatActivity() {
         }
 
         override fun onItemClick(view: View?, position: Int): Boolean {
-            Log.d(TAG, "onItemClick $position ${adapterList[position].game.Id}")
+            val game = adapterList[position].game
+            Log.d(TAG, "onItemClick $position ${game.Id}")
+            if (game.Url != null && activity != null) {
+                Utils.startGameActivity(activity, game)
+                return true
+            }
             return false
         }
 
         override fun onItemLongClick(position: Int) {
-            Log.d(TAG, "onItemLongClick $position")
+            val game = adapterList[position].game
+            Log.d(TAG, "onItemLongClick $position ${game.Id}")
+            if (!game.IsFinal && !game.IsLive && activity != null) {
+                AlertDialog.Builder(activity!!)
+                        .setItems(arrayOf(getString(R.string.action_add_to_calendar),
+                                getString(R.string.action_show_field_info)), { _, i ->
+                            Log.d(TAG, "selected $i")
+                            when (i) {
+                                0 -> {
+                                    val calIntent = Utils.createAddToCalendarIntent(activity, game)
+                                    if (PackageUtils.isCallable(activity, calIntent)) {
+                                        startActivity(calIntent)
+                                    }
+                                }
+                                1 -> {
+                                    Utils.startBrowserActivity(activity,
+                                            CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId))
+                                }
+                            }
+                        }).show()
+            }
         }
     }
 
@@ -453,10 +484,6 @@ class ListActivity : AppCompatActivity() {
                     .format(game.StartTime.time)
             val timeStr = SimpleDateFormat("HH:mm", Locale.TAIWAN)
                     .format(game.StartTime.time)
-            val field = if (game.Source == Game.SOURCE_CPBL || !game.Field.contains(context.getString(R.string.title_at)))
-                String.format("%s%s", context.getString(R.string.title_at), game.Field)
-            else
-                game.Field
             val year = game.StartTime.get(Calendar.YEAR)
 
             holder?.apply {
@@ -468,12 +495,23 @@ class ListActivity : AppCompatActivity() {
                     "07" -> context.getString(R.string.id_prefix_warm_up, game.Id)
                     else -> game.Id.toString()
                 }
-                gameTime?.text = when {
+                val displayTime = when {
                     game.IsFinal -> dateStr
-                    game.IsLive -> "LIVE"
+                    game.IsLive -> "$dateStr&nbsp;&nbsp;${game.LiveMessage}"
                     else -> dateStr + timeStr
                 }
-                gameField?.text = field
+                gameTime?.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Html.fromHtml(displayTime, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                } else {
+                    Html.fromHtml(displayTime)
+                }
+                gameField?.text = if (game.Source == Game.SOURCE_CPBL ||
+                        !game.Field.contains(context.getString(R.string.title_at))) {
+                    String.format("%s%s", context.getString(R.string.title_at),
+                            game.getFieldFullName(context))
+                } else {
+                    game.getFieldFullName(context)
+                }
                 teamAwayName?.text = game.AwayTeam.name
                 teamAwayScore?.text = if (game.IsFinal) game.AwayScore.toString() else "-"
                 teamAwayLogo?.apply {
@@ -488,7 +526,19 @@ class ListActivity : AppCompatActivity() {
                     setColorFilter(helper.getLogoColorFilter(game.HomeTeam, year),
                             PorterDuff.Mode.SRC_IN)
                 }
-                extraMessage?.text = ""
+                extraMessage?.apply {
+                    if (game.DelayMessage.isNullOrEmpty()) {
+                        visibility = View.GONE
+                    } else {
+                        visibility = View.VISIBLE
+                        text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Html.fromHtml(game.DelayMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                        } else {
+                            Html.fromHtml(game.DelayMessage)
+                        }
+                    }
+
+                }
                 liveChannel?.apply {
                     visibility = if (game.IsFinal || game.Channel.isNullOrEmpty())
                         View.GONE else View.VISIBLE
