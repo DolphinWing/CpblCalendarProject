@@ -12,8 +12,8 @@ class SplashActivity3 : SplashActivity() {
         } else if (PreferenceUtils.isCacheMode(this)) {
             Intent(this, CacheModeListActivity::class.java)
         } else {
-            //Intent(this, HighlightActivity3::class.java)
-            Intent(this, ListActivity::class.java)
+            Intent(this, HighlightActivity3::class.java)
+            //Intent(this, ListActivity::class.java)
         }
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
 //        val intent = Intent(this, ListActivity::class.java).apply {

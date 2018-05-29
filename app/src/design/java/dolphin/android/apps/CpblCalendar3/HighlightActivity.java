@@ -32,6 +32,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity;
 import dolphin.android.apps.CpblCalendar.Utils;
@@ -214,7 +215,7 @@ public class HighlightActivity extends AppCompatActivity
         updateViews(list);
     }
 
-    private void downloadCalendar() {
+    protected void downloadCalendar() {
         //final Activity activity = this;
         final boolean allowCache = mRemoteConfig.getBoolean("enable_delay_games_from_cache");
         final boolean allowDrive = mRemoteConfig.getBoolean("enable_delay_games_from_drive");
@@ -285,6 +286,29 @@ public class HighlightActivity extends AppCompatActivity
         tryShowSnackbar(getString(R.string.title_download_complete));
         final ArrayList<Game> list = cleanUpGameList(gameList);
         //check if we need to add new announcements
+        list.addAll(getAnnouncementCards());
+        //check latest version
+        Game card = getNewVersionCard();
+        if (card != null) {
+            list.add(0, card);
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateViews(list);
+            }
+        });
+    }
+
+    private ArrayList<Game> getGamesOfTheMonth(int year, int monthOfJava) {
+        return mHelper.query2016(year, monthOfJava + 1, "01", "F01",
+                mRemoteConfig.getBoolean("enable_delay_games_from_cache"),
+                mRemoteConfig.getBoolean("enable_delay_games_from_drive"));
+    }
+
+    protected List<Game> getAnnouncementCards() {
+        List<Game> list = new ArrayList<>();
+        Calendar now = CpblCalendarHelper.getNowTime();
         String keys = mRemoteConfig.getString("add_highlight_card");
         if (keys != null && !keys.isEmpty()) {
             if (DEBUG_LOG) {
@@ -312,7 +336,10 @@ public class HighlightActivity extends AppCompatActivity
                 }
             }
         }
-        //check latest version
+        return list;
+    }
+
+    protected Game getNewVersionCard() {
         PackageInfo info = PackageUtils.getPackageInfo(this, SplashActivity.class);
         int versionCode = info != null ? info.versionCode : Integer.MAX_VALUE;
         long latestCode = mRemoteConfig.getLong("latest_version_code");
@@ -321,25 +348,14 @@ public class HighlightActivity extends AppCompatActivity
             String summary = mRemoteConfig.getString("latest_version_summary");
             summary = summary != null && !summary.isEmpty() ? summary
                     : getString(R.string.new_version_available_message);
-            list.add(0, GameCardAdapter.createUpdateCard(summary));
+            return GameCardAdapter.createUpdateCard(summary);
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateViews(list);
-            }
-        });
-    }
-
-    protected ArrayList<Game> getGamesOfTheMonth(int year, int monthOfJava) {
-        return mHelper.query2016(year, monthOfJava + 1, "01", "F01",
-                mRemoteConfig.getBoolean("enable_delay_games_from_cache"),
-                mRemoteConfig.getBoolean("enable_delay_games_from_drive"));
+        return null;
     }
 
     //private final static long MAX_TIME_DIFF = (long) (1000 * 60 * 60 * 24 * 1.5);
 
-    private ArrayList<Game> cleanUpGameList(ArrayList<Game> list) {
+    protected ArrayList<Game> cleanUpGameList(ArrayList<Game> list) {
         ArrayList<Game> gameList = new ArrayList<>();
         //see if we have new games and upcoming games
         Calendar now = CpblCalendarHelper.getNowTime();
@@ -415,7 +431,7 @@ public class HighlightActivity extends AppCompatActivity
         return gameList;
     }
 
-    private void updateViews(ArrayList<Game> list) {
+    protected void updateViews(ArrayList<Game> list) {
         if (list.size() == 0) {//no games, bypass it now
             Intent intent = new Intent(this, CalendarForPhoneActivity.class);
             intent.putParcelableArrayListExtra(KEY_CACHE, mCacheGames);
@@ -488,7 +504,7 @@ public class HighlightActivity extends AppCompatActivity
         hideSnackbar();
     }
 
-    private void tryShowSnackbar(final String message) {
+    protected void tryShowSnackbar(final String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

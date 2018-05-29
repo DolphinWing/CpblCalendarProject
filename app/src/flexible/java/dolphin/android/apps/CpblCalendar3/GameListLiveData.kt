@@ -11,7 +11,8 @@ import kotlin.concurrent.thread
 
 internal class GameListLiveData(private val helper: CpblCalendarHelper,
                                 private val year: Int,
-                                private val monthOfJava: Int) : LiveData<List<Game>>() {
+                                private val monthOfJava: Int,
+                                private val debugMode: Boolean = false) : LiveData<List<Game>>() {
     companion object {
         private const val TAG = "GameListLiveData"
     }

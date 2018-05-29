@@ -5,7 +5,7 @@ import android.util.SparseArray
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 
 internal class GameViewModel : ViewModel() {
-    //var helper: CpblCalendarHelper
+    var debugMode: Boolean = false
     private val mAllGames = SparseArray<GameListLiveData>()
 
     private fun gkey(year: Int, monthOfJava: Int) = year * 12 + monthOfJava
@@ -17,7 +17,7 @@ internal class GameViewModel : ViewModel() {
             mAllGames.remove(key)
         }
         if (fetchFromWeb && mAllGames[key] == null) {
-            mAllGames.put(key, GameListLiveData(helper, year, monthOfJava))
+            mAllGames.put(key, GameListLiveData(helper, year, monthOfJava, debugMode))
         }
         return mAllGames[key]
     }
