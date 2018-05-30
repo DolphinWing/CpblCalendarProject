@@ -284,11 +284,11 @@ public class HighlightActivity extends AppCompatActivity
         }
 
         tryShowSnackbar(getString(R.string.title_download_complete));
-        final ArrayList<Game> list = cleanUpGameList(gameList);
+        final ArrayList<Game> list = CpblCalendarHelper.getHighlightGameList(gameList);
         //check if we need to add new announcements
-        list.addAll(getAnnouncementCards());
+        list.addAll(GameCardAdapter.getAnnouncementCards(this, mRemoteConfig));
         //check latest version
-        Game card = getNewVersionCard();
+        Game card = GameCardAdapter.getNewVersionCard(this, mRemoteConfig);
         if (card != null) {
             list.add(0, card);
         }
@@ -304,131 +304,6 @@ public class HighlightActivity extends AppCompatActivity
         return mHelper.query2016(year, monthOfJava + 1, "01", "F01",
                 mRemoteConfig.getBoolean("enable_delay_games_from_cache"),
                 mRemoteConfig.getBoolean("enable_delay_games_from_drive"));
-    }
-
-    protected List<Game> getAnnouncementCards() {
-        List<Game> list = new ArrayList<>();
-        Calendar now = CpblCalendarHelper.getNowTime();
-        String keys = mRemoteConfig.getString("add_highlight_card");
-        if (keys != null && !keys.isEmpty()) {
-            if (DEBUG_LOG) {
-                Log.w(TAG, "check new announce");
-            }
-            String[] ids = keys.split(";");
-            for (String id : ids) {
-                if (DEBUG_LOG) {
-                    Log.d(TAG, "  " + id);
-                }
-                String msg = mRemoteConfig.getString("add_highlight_card_".concat(id));
-                if (msg != null && id.length() >= 6) {
-                    Calendar cal = CpblCalendarHelper.getNowTime();
-                    cal.set(Calendar.YEAR, Integer.parseInt(id.substring(0, 4)));
-                    cal.set(Calendar.MONTH, Integer.parseInt(id.substring(4, 5)));
-                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(id.substring(5, 6)));
-                    cal.set(Calendar.HOUR_OF_DAY, 0);
-                    cal.set(Calendar.MINUTE, 0);
-                    cal.set(Calendar.SECOND, 0);
-                    if (cal.before(now)) {
-                        continue;//check if the announcement is expired
-                    }
-
-                    list.add(0, GameCardAdapter.createAnnouncementCard(msg));
-                }
-            }
-        }
-        return list;
-    }
-
-    protected Game getNewVersionCard() {
-        PackageInfo info = PackageUtils.getPackageInfo(this, SplashActivity.class);
-        int versionCode = info != null ? info.versionCode : Integer.MAX_VALUE;
-        long latestCode = mRemoteConfig.getLong("latest_version_code");
-        Log.v(TAG, String.format("versionCode: %d, play: %d", versionCode, latestCode));
-        if (versionCode < latestCode) {
-            String summary = mRemoteConfig.getString("latest_version_summary");
-            summary = summary != null && !summary.isEmpty() ? summary
-                    : getString(R.string.new_version_available_message);
-            return GameCardAdapter.createUpdateCard(summary);
-        }
-        return null;
-    }
-
-    //private final static long MAX_TIME_DIFF = (long) (1000 * 60 * 60 * 24 * 1.5);
-
-    protected ArrayList<Game> cleanUpGameList(ArrayList<Game> list) {
-        ArrayList<Game> gameList = new ArrayList<>();
-        //see if we have new games and upcoming games
-        Calendar now = CpblCalendarHelper.getNowTime();
-        long beforeDiff = Long.MIN_VALUE, afterDiff = Long.MAX_VALUE;
-        int beforeIndex = -1, afterIndex = -1;
-        int i;
-        for (i = 0; i < list.size(); i++) {
-            Game game = list.get(i);
-            long diff = game.StartTime.getTimeInMillis() - now.getTimeInMillis();
-            if (game.StartTime.before(now)) {//final or live
-                if (game.isToday() && beforeDiff != 0) {//show all games today, final or live
-                    beforeIndex = i;
-                    beforeDiff = 0;//get all today games in the list
-                } else if (diff > beforeDiff) {//no games today, try to get the closest games
-                    beforeDiff = diff;
-                    beforeIndex = i;
-                } else if (diff == beforeDiff) {//add to list later
-                    if (DEBUG_LOG) {
-                        Log.d(TAG, String.format("before. same day game %d, %d", beforeIndex, i));
-                    }
-                }//don't care those
-            } else if (game.StartTime.after(now)) {//upcoming games
-                //Log.d(TAG, String.format("after: %d, %s", game.Id, game.getDisplayDate()));
-                if (game.isToday()) {//show all games today
-                    afterIndex = i;
-                    afterDiff = diff;
-                } else if (afterIndex != -1 && DateUtils.sameDay(list.get(afterIndex).StartTime, game.StartTime)) {
-                    afterDiff = diff;
-                    //Log.d(TAG, String.format("one more game %d", game.Id));
-                } else if (diff < afterDiff) {//no games today, try to find the closest games
-                    afterDiff = diff;
-                    afterIndex = i;
-                    if (DEBUG_LOG) {
-                        Log.d(TAG, String.format("afterIndex=%d, afterDiff=%d", afterIndex, afterDiff));
-                    }
-                } else if (diff == afterDiff) {//same start time
-                    if (DEBUG_LOG) {
-                        Log.d(TAG, String.format("after. same day game %d, %d", afterIndex, i));
-                    }
-                } else {//stop here, don't have to check again
-                    //Log.d(TAG, "stop here, don't have to check again");
-                    break;
-                }
-            }
-        }
-        if (DEBUG_LOG) {
-            Log.d(TAG, String.format("before=%d, after=%d", beforeIndex, afterIndex));
-        }
-
-        boolean lived = false;
-        for (i = beforeIndex >= 0 ? beforeIndex : 0; i < list.size(); i++) {
-            Game game = list.get(i);
-            if (game.StartTime.before(now)) {//final or live
-                if (DEBUG_LOG) {
-                    Log.d(TAG, String.format("%d: %s, %s", game.Id, game.getDisplayDate(), game.IsLive));
-                }
-                gameList.add(game);//add all of them
-                lived |= game.IsLive;//only no live games that we will show upcoming games
-            } else if (!lived) {//don't show upcoming when games are live
-                long diff = game.StartTime.getTimeInMillis() - now.getTimeInMillis();
-                //Log.d(TAG, String.format("after: diff=%d", diff));
-                if (diff > afterDiff) {//ignore all except the closest upcoming games
-                    //Log.d(TAG, "ignore all except the closest upcoming games");
-                    break;
-                }
-                gameList.add(game);
-                if (DEBUG_LOG) {
-                    Log.d(TAG, String.format("%d: %s", game.Id, game.getDisplayDate()));
-                }
-            }
-        }
-
-        return gameList;
     }
 
     protected void updateViews(ArrayList<Game> list) {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import java.util.*
@@ -75,10 +76,11 @@ class HighlightActivity3 : HighlightActivity() {
     }
 
     private fun downloadExtraCards(list: ArrayList<Game>) {
-        //FIXME: maybe we have to sort the data
-        val gameList = cleanUpGameList(list)
-        gameList.addAll(0, announcementCards)
-        newVersionCard?.let { gameList.add(0, it) }
+        tryShowSnackbar(getString(R.string.title_download_complete))
+        val config = FirebaseRemoteConfig.getInstance()
+        val gameList = CpblCalendarHelper.getHighlightGameList(list)
+        gameList.addAll(0, GameCardAdapter.getAnnouncementCards(this, config))
+        GameCardAdapter.getNewVersionCard(this, config)?.let { gameList.add(0, it) }
         updateViews(gameList)
     }
 

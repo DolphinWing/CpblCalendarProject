@@ -60,12 +60,17 @@ public class Game implements Parcelable {
     public String LiveMessage = null;//[181]++
 
     public Game() {
-        StartTime = Calendar.getInstance();
+        this(-1);
     }
 
     public Game(int id) {
-        this();
+        this(id, Calendar.getInstance());
+    }
+
+    public Game(int id, Calendar time) {
         Id = id;
+        StartTime = CpblCalendarHelper.getNowTime();
+        StartTime.setTimeInMillis(time.getTimeInMillis());//copy it
     }
 
     protected Game(Parcel in) {
@@ -445,7 +450,9 @@ public class Game implements Parcelable {
     }
 
     private static String getFieldId(Context context, Game game) {
-        if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F19))) {
+        if (context == null || game == null || game.Field == null) {
+            return "F00";//maybe we can random it... XDDD
+        } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F19))) {
             game.FieldId = "F19";
         } else if (game.Field.equals(context.getString(R.string.cpbl_game_field_name_F23))) {
             game.FieldId = "F23";
@@ -465,7 +472,7 @@ public class Game implements Parcelable {
     }
 
     public String getFieldFullName(Context context) {
-        String id = getFieldId(context);
+        String id = FieldId == null || FieldId.isEmpty() ? getFieldId(context) : FieldId;
         String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_full_name);
         String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);
         for (int i = 0; i < fieldIds.length; i++) {

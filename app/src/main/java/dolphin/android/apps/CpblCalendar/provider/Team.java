@@ -309,7 +309,7 @@ public class Team {
                 string_id = R.string.team_unknown_home;
                 break;
         }
-        return string_id > 0 ? context.getString(string_id) : null;
+        return string_id > 0 && context != null ? context.getString(string_id) : null;
     }
 
     /**
@@ -397,7 +397,7 @@ public class Team {
                 string_id = R.string.team_fubon_guardians_short;
                 break;
         }
-        return context.getString(string_id);
+        return context != null ? context.getString(string_id) : null;
     }
 
     public static String getShortName(Context context, int id) {
@@ -461,7 +461,7 @@ public class Team {
             default:
                 return getTeamNameShort(context, id);
         }
-        return context.getString(string_id);
+        return context != null ? context.getString(string_id) : null;
     }
 
     private final int mId;
@@ -492,6 +492,10 @@ public class Team {
         mName = name;
         mShortName = shortName;
         mLogoId = logo;
+    }
+
+    public Team(int id) {
+        this(id, "", "", 0);
     }
 
     /**

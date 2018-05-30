@@ -1,25 +1,32 @@
 package dolphin.android.apps.CpblCalendar3;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
+import dolphin.android.util.PackageUtils;
 
 /**
  * Created by jimmyhu on 2017/5/17.
@@ -275,16 +282,63 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         return game != null && game.Id == ID_MORE;
     }
 
-    static Game createAnnouncementCard(String message) {
+    private static Game createAnnouncementCard(String message) {
         Game card = new Game(ID_ANNOUNCE);
         card.LiveMessage = message;
         return card;
     }
 
-    static Game createUpdateCard(String message) {
+    static List<Game> getAnnouncementCards(Context context, FirebaseRemoteConfig config) {
+        List<Game> list = new ArrayList<>();
+        Calendar now = CpblCalendarHelper.getNowTime();
+        String keys = config.getString("add_highlight_card");
+        if (keys != null && !keys.isEmpty()) {
+//            if (DEBUG_LOG) {
+//                Log.w(TAG, "check new announce");
+//            }
+            String[] ids = keys.split(";");
+            for (String id : ids) {
+//                if (DEBUG_LOG) {
+//                    Log.d(TAG, "  " + id);
+//                }
+                String msg = config.getString("add_highlight_card_".concat(id));
+                if (msg != null && id.length() >= 6) {
+                    Calendar cal = CpblCalendarHelper.getNowTime();
+                    cal.set(Calendar.YEAR, Integer.parseInt(id.substring(0, 4)));
+                    cal.set(Calendar.MONTH, Integer.parseInt(id.substring(4, 5)));
+                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(id.substring(5, 6)));
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);
+                    if (cal.before(now)) {
+                        continue;//check if the announcement is expired
+                    }
+
+                    list.add(0, GameCardAdapter.createAnnouncementCard(msg));
+                }
+            }
+        }
+        return list;
+    }
+
+    private static Game createUpdateCard(String message) {
         Game card = new Game(ID_UPDATE);
         card.LiveMessage = message;
         return card;
+    }
+
+    static Game getNewVersionCard(Context context, FirebaseRemoteConfig config) {
+        PackageInfo info = PackageUtils.getPackageInfo(context, SplashActivity.class);
+        int versionCode = info != null ? info.versionCode : Integer.MAX_VALUE;
+        long latestCode = config.getLong("latest_version_code");
+        Log.v("CpblCalendar3", String.format("versionCode: %d, play: %d", versionCode, latestCode));
+        if (versionCode < latestCode) {
+            String summary = config.getString("latest_version_summary");
+            summary = summary != null && !summary.isEmpty() ? summary
+                    : context.getString(R.string.new_version_available_message);
+            return createUpdateCard(summary);
+        }
+        return null;
     }
 
     static boolean isUpdateCard(Game game) {

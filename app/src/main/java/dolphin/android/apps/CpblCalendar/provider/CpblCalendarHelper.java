@@ -28,6 +28,7 @@ import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.net.GoogleDriveHelper;
 import dolphin.android.net.HttpHelper;
+import dolphin.android.util.DateUtils;
 import dolphin.android.util.FileUtils;
 
 /**
@@ -39,6 +40,7 @@ import dolphin.android.util.FileUtils;
 public class CpblCalendarHelper extends HttpHelper {
 
     private final static String TAG = "CpblCalendarHelper";
+    private final static boolean DEBUG_LOG = false;
 
     public final static String URL_BASE = "http://www.cpbl.com.tw";
 
@@ -491,7 +493,7 @@ public class CpblCalendarHelper extends HttpHelper {
      * @return Calendar
      */
     @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
-    static Calendar getGameTime(int year, int month, int day, int hour, int minute) {
+    public static Calendar getGameTime(int year, int month, int day, int hour, int minute) {
         Calendar now = getNowTime();
         if (year > 0) {
             now.set(Calendar.YEAR, year);
@@ -1139,5 +1141,81 @@ public class CpblCalendarHelper extends HttpHelper {
     private SparseArray<Game> restoreDelayGames2016(int year) {
         //use previous data format
         return restoreDelayGames2014(getContext(), year);
+    }
+
+    public static ArrayList<Game> getHighlightGameList(ArrayList<Game> list) {
+        ArrayList<Game> gameList = new ArrayList<>();
+        //see if we have new games and upcoming games
+        Calendar now = getNowTime();
+        long beforeDiff = Long.MIN_VALUE, afterDiff = Long.MAX_VALUE;
+        int beforeIndex = -1, afterIndex = -1;
+        int i;
+        for (i = 0; i < list.size(); i++) {
+            Game game = list.get(i);
+            long diff = game.StartTime.getTimeInMillis() - now.getTimeInMillis();
+            if (game.StartTime.before(now)) {//final or live
+                if (game.isToday() && beforeDiff != 0) {//show all games today, final or live
+                    beforeIndex = i;
+                    beforeDiff = 0;//get all today games in the list
+                } else if (diff > beforeDiff) {//no games today, try to get the closest games
+                    beforeDiff = diff;
+                    beforeIndex = i;
+                } else if (diff == beforeDiff) {//add to list later
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, String.format("before. same day game %d, %d", beforeIndex, i));
+                    }
+                }//don't care those
+            } else if (game.StartTime.after(now)) {//upcoming games
+                //Log.d(TAG, String.format("after: %d, %s", game.Id, game.getDisplayDate()));
+                if (game.isToday()) {//show all games today
+                    afterIndex = i;
+                    afterDiff = diff;
+                } else if (afterIndex != -1 && DateUtils.sameDay(list.get(afterIndex).StartTime, game.StartTime)) {
+                    afterDiff = diff;
+                    //Log.d(TAG, String.format("one more game %d", game.Id));
+                } else if (diff < afterDiff) {//no games today, try to find the closest games
+                    afterDiff = diff;
+                    afterIndex = i;
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, String.format("afterIndex=%d, afterDiff=%d", afterIndex, afterDiff));
+                    }
+                } else if (diff == afterDiff) {//same start time
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, String.format("after. same day game %d, %d", afterIndex, i));
+                    }
+                } else {//stop here, don't have to check again
+                    //Log.d(TAG, "stop here, don't have to check again");
+                    break;
+                }
+            }
+        }
+        if (DEBUG_LOG) {
+            Log.d(TAG, String.format("before=%d, after=%d", beforeIndex, afterIndex));
+        }
+
+        boolean lived = false;
+        for (i = beforeIndex >= 0 ? beforeIndex : 0; i < list.size(); i++) {
+            Game game = list.get(i);
+            if (game.StartTime.before(now)) {//final or live
+                if (DEBUG_LOG) {
+                    Log.d(TAG, String.format("%d: %s, %s", game.Id, game.getDisplayDate(), game.IsLive));
+                }
+                gameList.add(game);//add all of them
+                lived |= game.IsLive;//only no live games that we will show upcoming games
+            } else if (!lived) {//don't show upcoming when games are live
+                long diff = game.StartTime.getTimeInMillis() - now.getTimeInMillis();
+                //Log.d(TAG, String.format("after: diff=%d", diff));
+                if (diff > afterDiff) {//ignore all except the closest upcoming games
+                    //Log.d(TAG, "ignore all except the closest upcoming games");
+                    break;
+                }
+                gameList.add(game);
+                if (DEBUG_LOG) {
+                    Log.d(TAG, String.format("%d: %s", game.Id, game.getDisplayDate()));
+                }
+            }
+        }
+
+        return gameList;
     }
 }
