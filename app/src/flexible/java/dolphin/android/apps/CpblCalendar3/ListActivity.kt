@@ -2,16 +2,18 @@
 
 package dolphin.android.apps.CpblCalendar3
 
+import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.customtabs.CustomTabsIntent
+import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.BottomSheetDialogFragment
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -20,6 +22,7 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Html
@@ -28,6 +31,7 @@ import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.*
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
@@ -53,6 +57,7 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mFilterListPane: View
     private lateinit var mFilterControlPane: View
     private lateinit var mFilterControlBg: View
+    private lateinit var mPager: ViewPager
     private lateinit var mAdapter: SimplePageAdapter
 
     private lateinit var mSpinnerYear: Spinner
@@ -62,6 +67,7 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mTextViewYear: TextView
     private lateinit var mTextViewField: TextView
     private lateinit var mTextViewTeam: TextView
+    private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
 
     private lateinit var helper: CpblCalendarHelper
     private lateinit var teamHelper: TeamHelper
@@ -77,11 +83,12 @@ class ListActivity : AppCompatActivity() {
         helper = CpblCalendarHelper(this)
         teamHelper = TeamHelper(application as CpblApplication)
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
+        viewModel.debugMode = false
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        val pager: ViewPager = findViewById(R.id.viewpager)
+        mPager = findViewById(R.id.viewpager)
 
         //prepare filter pane
         mSpinnerYear = findViewById(R.id.spinner3)
@@ -124,14 +131,14 @@ class ListActivity : AppCompatActivity() {
             restoreFilter()
             filterPaneVisible = !filterPaneVisible
         }
-        filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
+        //filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
 
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
             //hide filter panel
             filterPaneVisible = false
             //start fetch, page change will cause fetch actions
-            if (pager.currentItem != mSpinnerMonth.selectedItemPosition) {
-                pager.currentItem = mSpinnerMonth.selectedItemPosition
+            if (mPager.currentItem != mSpinnerMonth.selectedItemPosition) {
+                mPager.currentItem = mSpinnerMonth.selectedItemPosition
             } else {
                 doQueryAction()
             }
@@ -144,9 +151,9 @@ class ListActivity : AppCompatActivity() {
         //months.removeAt(0)
         months.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
         mAdapter = SimplePageAdapter(this, months)
-        pager.adapter = mAdapter
-        pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-        pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+        mPager.adapter = mAdapter
+        mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 mMonth = position + 1
                 runOnUiThread { mSpinnerMonth.setSelection(position) }
@@ -155,13 +162,21 @@ class ListActivity : AppCompatActivity() {
             }
         })
         //pager.currentItem = mMonth - 1
-        tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(pager))
+        tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
         mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
                 months).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        mSpinnerMonth.setSelection(pager.currentItem)
-        Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
+        //mSpinnerMonth.setSelection(pager.currentItem)
+        mSpinnerMonth.setSelection(mMonth - 1)
+        //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
+        val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        //HighlightFragment().show(supportFragmentManager, "highlight")
+        bottomSheet.setOnTouchListener { _, _ -> true }
+        //thread { prepareHighlightCards() }
+        prepareHighlightCards()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -303,7 +318,7 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSnackBar(visible: Boolean, text: String? = null) {
+    private fun showSnackBar(text: String? = null, visible: Boolean = !text.isNullOrEmpty()) {
         if (visible && text != null) {
             if (snackbar != null) {
                 snackbar!!.setText(text)
@@ -399,12 +414,12 @@ class ListActivity : AppCompatActivity() {
                 this.container?.isEnabled = true
                 this.container?.isRefreshing = true
                 if (activity is ListActivity) {
-                    (activity as ListActivity).showSnackBar(true,
+                    (activity as ListActivity).showSnackBar(
                             getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
                 }
             } else {
                 if (activity is ListActivity) {
-                    (activity as ListActivity).showSnackBar(false)
+                    (activity as ListActivity).showSnackBar(visible = false)
                 }
                 this.container?.isRefreshing = false
                 this.container?.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
@@ -581,5 +596,138 @@ class ListActivity : AppCompatActivity() {
     }
 
     internal class ItemAdapter(items: MutableList<MyItemView>?, listener: Any? = null)
-        : FlexibleAdapter<MyItemView>(items, listener)
+        : FlexibleAdapter<MyItemView>(items, listener) {
+        init {
+            //isOnlyEntryAnimation = true
+            setAnimationOnForwardScrolling(true)
+        }
+    }
+
+    class HighlightFragment : BottomSheetDialogFragment() {
+        var rootView: View? = null
+//        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+//            val contentView = inflater.inflate(R.layout.layout_query_pane, container, false)
+//            //val behavior = BottomSheetBehavior.from(contentView)
+//            //contentView.post { behavior.peekHeight = contentView.height }
+//            return contentView
+//        }
+
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            val dialog = super.onCreateDialog(savedInstanceState)
+            if (rootView == null) {
+                rootView = View.inflate(context, R.layout.layout_query_pane, null)
+            }
+            dialog.setContentView(rootView)
+            val behavior = BottomSheetBehavior.from(rootView!!.parent as View)
+            rootView!!.post { behavior.peekHeight = rootView!!.height - 100 }
+            return dialog
+        }
+    }
+
+    override fun onBackPressed() {
+        Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
+        if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            //mPager.currentItem = mMonth - 1
+            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            return
+        }
+        super.onBackPressed()
+    }
+
+    private fun prepareHighlightCards() {
+        val list = ArrayList<Game>()
+        val now = CpblCalendarHelper.getNowTime()
+        val year = now.get(Calendar.YEAR)
+        val monthOfJava = now.get(Calendar.MONTH)
+        showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
+        viewModel.fetch(helper, year, monthOfJava)?.observe(this@ListActivity,
+                Observer {
+                    if (it?.isNotEmpty() == true) {//we have data
+                        list.addAll(it)
+                        //mSpinnerMonth.setSelection(monthOfJava - 1)
+                        mPager.currentItem = monthOfJava - 1
+
+                        if (it.first().StartTime.after(now) && monthOfJava > Calendar.JANUARY) {
+                            //get previous month data
+                            preparePreviousMonth(list, year, monthOfJava - 1)
+                            return@Observer
+                        } else if (it.last().StartTime.before(now)) {//already started
+                            //check if it is final
+                            var more = it.last().IsFinal
+                            if (it.size > 1 && it.last().StartTime == it.dropLast(1).last().StartTime) {
+                                more = more or it.dropLast(1).last().IsFinal
+                            }
+                            if (more && monthOfJava < Calendar.DECEMBER) {
+                                prepareNextMonth(list, year, monthOfJava + 1)
+                                return@Observer
+                            }
+                        }
+                    }
+                    prepareExtraCards(list)
+                })
+    }
+
+    private fun preparePreviousMonth(list: ArrayList<Game>, year: Int, previousMonth: Int) {
+        showSnackBar(getString(R.string.title_download_from_cpbl, year, previousMonth + 1))
+        viewModel.fetch(helper, year, previousMonth)?.observe(this@ListActivity,
+                Observer {
+                    if (it?.isNotEmpty() == true) list.addAll(0, it)
+                    prepareExtraCards(list)
+                })
+    }
+
+    private fun prepareNextMonth(list: ArrayList<Game>, year: Int, nextMonth: Int) {
+        showSnackBar(getString(R.string.title_download_from_cpbl, year, nextMonth + 1))
+        viewModel.fetch(helper, year, nextMonth)?.observe(this@ListActivity,
+                Observer {
+                    if (it?.isNotEmpty() == true) list.addAll(it)
+                    prepareExtraCards(list)
+                })
+    }
+
+    private fun prepareExtraCards(list: ArrayList<Game>) {
+        showSnackBar(getString(R.string.title_download_complete))
+        val config = FirebaseRemoteConfig.getInstance()
+        val gameList = CpblCalendarHelper.getHighlightGameList(list)
+        gameList.addAll(0, GameCardAdapter.getAnnouncementCards(this, config))
+        GameCardAdapter.getNewVersionCard(this, config)?.let { gameList.add(0, it) }
+        updateHighlightList(gameList)
+    }
+
+    private fun updateHighlightList(list: ArrayList<Game>) {
+        list.add(GameCardAdapter.createMoreCard())//add a more button to last row
+
+        val adapter = GameCardAdapter(this, list, TeamHelper(application as CpblApplication))
+        adapter.setOnClickListener { view, game ->
+            when {
+                GameCardAdapter.isMoreCard(game) -> {
+                    //mPager.currentItem = mMonth - 1
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                view.id == R.id.card_option2 -> if (GameCardAdapter.isUpdateCard(game)) {
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=$packageName")))
+                    } catch (anfe: android.content.ActivityNotFoundException) {
+                        startActivity(Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                    }
+
+                    finish()
+                } else {
+                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
+                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
+                        startActivity(calIntent)
+                    }
+                }
+                else -> Utils.startGameActivity(this@ListActivity, game)
+            }
+        }
+        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
+            this.adapter = adapter
+            layoutManager = LinearLayoutManager(this@ListActivity)
+            setHasFixedSize(true)
+        }
+        showSnackBar(visible = false)
+    }
 }

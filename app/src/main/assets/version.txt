@@ -1,3 +1,12 @@
+[1049] @ 2018-05-31
+    put highlights into bottom sheet and merge to ListActivity
+
+[1048] @ 2018-05-30
+    add debug data
+    add ViewModel to HighlightActivity3
+        we can't share ViewMode between activities,
+        so if we want to share, we need to put them together
+
 [1047] @ 2018-05-25
     add extra messages
     add click event

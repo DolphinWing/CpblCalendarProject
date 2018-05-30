@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.graphics.PorterDuff;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -70,8 +71,9 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         return mShowLogo;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         int layoutId = -1;
         switch (viewType) {
             case TYPE_RESULT:
@@ -84,6 +86,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 layoutId = R.layout.recyclerview_item_matchup_upcoming;
                 break;
             case TYPE_MORE:
+            default:
                 layoutId = R.layout.recyclerview_item_more;
                 break;
             case TYPE_ANNOUNCE:
@@ -93,15 +96,14 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 layoutId = R.layout.recyclerview_item_update_info;
                 break;
         }
-        if (parent != null && layoutId != -1) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent,
-                    false));
-        }
-        return null;
+        //if (/*parent != null &&*/ layoutId != -1) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false));
+        //}
+        //return null;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.Container.setOnClickListener(this);
         Game game = mGames.get(position);
         holder.Container.setTag(game);
