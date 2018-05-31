@@ -172,10 +172,20 @@ class ListActivity : AppCompatActivity() {
         //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
         val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        mBottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                //do nothing
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+            }
+        })
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         //HighlightFragment().show(supportFragmentManager, "highlight")
         bottomSheet.setOnTouchListener { _, _ -> true }
-        //thread { prepareHighlightCards() }
         prepareHighlightCards()
     }
 
@@ -186,6 +196,13 @@ class ListActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.action_refresh -> {
+                if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    prepareHighlightCards(refresh = true)
+                } else {
+                    doWebQuery()
+                }
+            }
             R.id.action_leader_board -> {
                 //https://goo.gl/GtBKgp
                 val builder = CustomTabsIntent.Builder()
@@ -603,26 +620,26 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    class HighlightFragment : BottomSheetDialogFragment() {
-        var rootView: View? = null
-//        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//            val contentView = inflater.inflate(R.layout.layout_query_pane, container, false)
-//            //val behavior = BottomSheetBehavior.from(contentView)
-//            //contentView.post { behavior.peekHeight = contentView.height }
-//            return contentView
+//    class HighlightFragment : BottomSheetDialogFragment() {
+//        var rootView: View? = null
+////        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+////            val contentView = inflater.inflate(R.layout.layout_query_pane, container, false)
+////            //val behavior = BottomSheetBehavior.from(contentView)
+////            //contentView.post { behavior.peekHeight = contentView.height }
+////            return contentView
+////        }
+//
+//        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+//            val dialog = super.onCreateDialog(savedInstanceState)
+//            if (rootView == null) {
+//                rootView = View.inflate(context, R.layout.layout_query_pane, null)
+//            }
+//            dialog.setContentView(rootView)
+//            val behavior = BottomSheetBehavior.from(rootView!!.parent as View)
+//            rootView!!.post { behavior.peekHeight = rootView!!.height - 100 }
+//            return dialog
 //        }
-
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            val dialog = super.onCreateDialog(savedInstanceState)
-            if (rootView == null) {
-                rootView = View.inflate(context, R.layout.layout_query_pane, null)
-            }
-            dialog.setContentView(rootView)
-            val behavior = BottomSheetBehavior.from(rootView!!.parent as View)
-            rootView!!.post { behavior.peekHeight = rootView!!.height - 100 }
-            return dialog
-        }
-    }
+//    }
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
@@ -634,14 +651,18 @@ class ListActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    private fun prepareHighlightCards() {
+    private fun prepareHighlightCards(refresh: Boolean = false) {
+        findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.apply {
+            isEnabled = true
+            isRefreshing = true
+        }
         val list = ArrayList<Game>()
         val now = CpblCalendarHelper.getNowTime()
         val year = now.get(Calendar.YEAR)
         val monthOfJava = now.get(Calendar.MONTH)
         showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
-        viewModel.fetch(helper, year, monthOfJava)?.observe(this@ListActivity,
-                Observer {
+        viewModel.fetch(helper, year, monthOfJava, clearCached = refresh)
+                ?.observe(this@ListActivity, Observer {
                     if (it?.isNotEmpty() == true) {//we have data
                         list.addAll(it)
                         //mSpinnerMonth.setSelection(monthOfJava - 1)
@@ -729,5 +750,9 @@ class ListActivity : AppCompatActivity() {
             setHasFixedSize(true)
         }
         showSnackBar(visible = false)
+        findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.apply {
+            isRefreshing = false
+            isEnabled = false
+        }
     }
 }

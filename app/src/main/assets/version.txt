@@ -1,3 +1,8 @@
+[1050] @ 2018-05-31
+    add SwipeRefreshLayout for refresh animation
+    add a refresh action in Toolbar, support both highlight and list
+    lock bottom sheet when no refresh highlights
+
 [1049] @ 2018-05-31
     put highlights into bottom sheet and merge to ListActivity
 

@@ -202,11 +202,17 @@
         app:behavior_peekHeight="0dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
-            android:background="#dedede"
-            android:id="@+id/bottom_sheet"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/bottom_sheet_option1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
+                android:id="@+id/bottom_sheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#dedede" />
+        </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
