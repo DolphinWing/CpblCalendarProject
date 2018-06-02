@@ -164,6 +164,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 holder.HomeTeamScore.setText(String.valueOf(game.HomeScore));
                 holder.AwayTeamName.setText(game.AwayTeam.getShortName());
                 holder.HomeTeamName.setText(game.HomeTeam.getShortName());
+                holder.Field.setText(game.getFieldFullName(mContext));
                 break;
             case TYPE_RESULT:
                 holder.GameTime.setText(date_str);

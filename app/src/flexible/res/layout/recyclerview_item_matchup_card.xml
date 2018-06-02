@@ -2,30 +2,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/padding_small"
-    android:layout_marginLeft="@dimen/padding_medium"
-    android:layout_marginRight="@dimen/padding_medium"
-    android:layout_marginTop="@dimen/padding_small"
+    android:layout_marginBottom="2dp"
+    android:layout_marginEnd="@dimen/padding_small"
+    android:layout_marginStart="@dimen/padding_small"
+    android:layout_marginTop="2dp"
     android:background="?selectableItemBackground">
 
     <RelativeLayout
         android:id="@android:id/background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingBottom="@dimen/padding_large"
+        android:paddingEnd="@dimen/padding_medium"
+        android:paddingStart="@dimen/padding_medium"
+        android:paddingTop="@dimen/padding_large"
         tools:ignore="RtlSymmetry,RtlHardcoded">
 
         <LinearLayout
             android:id="@+id/match_title"
             style="@style/Theme.Holo_green.Match.Title"
-            android:paddingLeft="16dp"
+            android:paddingLeft="8dp"
             android:paddingRight="8dp">
-
 
             <TextView
                 android:id="@+id/textView1"
@@ -50,7 +48,7 @@
             android:layout_below="@+id/match_title"
             android:orientation="vertical"
             android:paddingBottom="8dp"
-            android:paddingLeft="@dimen/padding_large"
+            android:paddingLeft="8dp"
             android:paddingTop="8dp">
 
             <LinearLayout
@@ -124,7 +122,7 @@
             android:layout_below="@+id/match_up"
             android:layout_gravity="left|center_vertical"
             android:gravity="center_vertical"
-            android:paddingLeft="16dp"
+            android:paddingLeft="8dp"
             android:paddingTop="@dimen/padding_small">
 
             <TextView
@@ -148,7 +146,7 @@
             android:id="@+id/textView6"
             style="@style/Theme.Holo_green.Match.Channel"
             android:layout_below="@+id/more_info"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="@dimen/padding_small"
             android:visibility="gone" />
 

@@ -15,10 +15,10 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:theme">
         
-        <-- https://developer.android.com/topic/arc/optimizing#navigation-patterns -->
+        <!-- https://developer.android.com/topic/arc/optimizing#navigation-patterns -->
         <meta-data 
             android:name="WindowManagerPreference:SuppressWindowControlNavigationButton" 
-            android:value="[true|false]" />
+            android:value="true" />
 
         <activity
             android:name=".SettingsActivity3"
