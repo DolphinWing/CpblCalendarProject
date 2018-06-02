@@ -29,18 +29,19 @@
         <LinearLayout
             android:id="@+id/filter_view_pane"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@android:color/white"
             android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:padding="8dp"
-                android:text="@string/title_query" />
+                android:layout_marginStart="@dimen/padding_medium"
+                android:text="@string/filter_title" />
 
             <HorizontalScrollView
                 android:id="@+id/filter_list_pane"
@@ -51,9 +52,10 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:dividerPadding="8dp"
+                    android:dividerPadding="@dimen/padding_small"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="8dp"
+                    android:padding="@dimen/padding_small"
                     app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
                     <TextView
@@ -64,8 +66,8 @@
                         android:text="@string/title_game_year" />
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp" />
+                        android:layout_width="@dimen/padding_small"
+                        android:layout_height="@dimen/padding_small" />
 
                     <TextView
                         android:id="@android:id/button2"
@@ -75,8 +77,8 @@
                         android:text="@string/title_game_field" />
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp" />
+                        android:layout_width="@dimen/padding_small"
+                        android:layout_height="@dimen/padding_small" />
 
                     <TextView
                         android:id="@android:id/button3"
@@ -98,8 +100,8 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginEnd="@dimen/padding_medium"
+                android:layout_marginStart="@dimen/padding_small"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_action_filter_list" />
         </LinearLayout>

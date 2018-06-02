@@ -2,7 +2,6 @@
 
 package dolphin.android.apps.CpblCalendar3
 
-import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -13,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialogFragment
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -69,9 +67,9 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mTextViewTeam: TextView
     private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
 
-    private lateinit var helper: CpblCalendarHelper
-    private lateinit var teamHelper: TeamHelper
-    //    private val mAllGamesCache = SparseArray<List<Game>>()
+    //private lateinit var helper: CpblCalendarHelper
+    //private lateinit var teamHelper: TeamHelper
+    //private val mAllGamesCache = SparseArray<List<Game>>()
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
     private lateinit var viewModel: GameViewModel
@@ -80,8 +78,8 @@ class ListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        helper = CpblCalendarHelper(this)
-        teamHelper = TeamHelper(application as CpblApplication)
+        //helper = CpblCalendarHelper(this)
+        //teamHelper = TeamHelper(application as CpblApplication)
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
         viewModel.debugMode = false
 
@@ -140,7 +138,7 @@ class ListActivity : AppCompatActivity() {
             if (mPager.currentItem != mSpinnerMonth.selectedItemPosition) {
                 mPager.currentItem = mSpinnerMonth.selectedItemPosition
             } else {
-                doQueryAction()
+                doQueryAction() //page is the same, request the data from view model
             }
         }
 
@@ -194,6 +192,12 @@ class ListActivity : AppCompatActivity() {
         return true //super.onCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.action_highlight)?.isVisible = //false
+                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_refresh -> {
@@ -202,6 +206,7 @@ class ListActivity : AppCompatActivity() {
                 } else {
                     doWebQuery()
                 }
+                return true
             }
             R.id.action_leader_board -> {
                 //https://goo.gl/GtBKgp
@@ -211,12 +216,29 @@ class ListActivity : AppCompatActivity() {
                 customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI)
                 return true
             }
+            R.id.action_highlight -> {
+                if (mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                    findViewById<RecyclerView>(R.id.bottom_sheet)?.scrollToPosition(0)
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                } else {
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                return true
+            }
             R.id.action_cache_mode -> {
-                PreferenceUtils.setCacheMode(this@ListActivity, true)
-                startActivity(Intent(this@ListActivity, CacheModeListActivity::class.java).apply {
-                    putExtra("cache_init", true)
-                })
-                finish()
+                AlertDialog.Builder(this@ListActivity)
+                        .setTitle(R.string.title_cache_mode_enable_title)
+                        .setMessage(R.string.title_cache_mode_enable_message)
+                        .setPositiveButton(R.string.title_cache_mode_start) { _, _ ->
+                            PreferenceUtils.setCacheMode(this@ListActivity, true)
+                            startActivity(Intent(this@ListActivity,
+                                    CacheModeListActivity::class.java).apply {
+                                putExtra("cache_init", true)
+                            })
+                            finish()
+                        }
+                        .setNegativeButton(R.string.title_cache_mode_cancel) { _, _ -> }
+                        .show()
                 return true
             }
             R.id.action_go_to_cpbl -> {
@@ -325,7 +347,7 @@ class ListActivity : AppCompatActivity() {
 
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
         Log.d(TAG, "start fetch $newYear/${newMonth + 1}")
-        viewModel.fetch(helper, newYear, newMonth, clearCached = true)
+        viewModel.fetch(newYear, newMonth, clearCached = true)
         mAdapter.getChildFragment(newMonth - 1)?.arguments = Bundle().apply {
             putInt("year", newYear)
             putInt("month", newMonth)
@@ -392,7 +414,7 @@ class ListActivity : AppCompatActivity() {
                 val teamId = args.getInt("team_id", 0)
                 startRefreshing(true, year, month)
                 Log.d(TAG, "refreshing $year/${month + 1} @$fieldId $teamId")
-                viewModel.fetch(cpblHelper, year, month)?.observe(this,
+                viewModel.fetch(year, month)?.observe(this,
                         Observer<List<Game>> { updateAdapter(it, helper, fieldId, teamId) })
                 //} else {
                 //    startRefreshing(false)
@@ -645,7 +667,8 @@ class ListActivity : AppCompatActivity() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
         if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             //mPager.currentItem = mMonth - 1
-            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            //mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            finish()
             return
         }
         super.onBackPressed()
@@ -661,7 +684,7 @@ class ListActivity : AppCompatActivity() {
         val year = now.get(Calendar.YEAR)
         val monthOfJava = now.get(Calendar.MONTH)
         showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
-        viewModel.fetch(helper, year, monthOfJava, clearCached = refresh)
+        viewModel.fetch(year, monthOfJava, clearCached = refresh)
                 ?.observe(this@ListActivity, Observer {
                     if (it?.isNotEmpty() == true) {//we have data
                         list.addAll(it)
@@ -690,7 +713,7 @@ class ListActivity : AppCompatActivity() {
 
     private fun preparePreviousMonth(list: ArrayList<Game>, year: Int, previousMonth: Int) {
         showSnackBar(getString(R.string.title_download_from_cpbl, year, previousMonth + 1))
-        viewModel.fetch(helper, year, previousMonth)?.observe(this@ListActivity,
+        viewModel.fetch(year, previousMonth)?.observe(this@ListActivity,
                 Observer {
                     if (it?.isNotEmpty() == true) list.addAll(0, it)
                     prepareExtraCards(list)
@@ -699,7 +722,7 @@ class ListActivity : AppCompatActivity() {
 
     private fun prepareNextMonth(list: ArrayList<Game>, year: Int, nextMonth: Int) {
         showSnackBar(getString(R.string.title_download_from_cpbl, year, nextMonth + 1))
-        viewModel.fetch(helper, year, nextMonth)?.observe(this@ListActivity,
+        viewModel.fetch(year, nextMonth)?.observe(this@ListActivity,
                 Observer {
                     if (it?.isNotEmpty() == true) list.addAll(it)
                     prepareExtraCards(list)
@@ -723,7 +746,9 @@ class ListActivity : AppCompatActivity() {
             when {
                 GameCardAdapter.isMoreCard(game) -> {
                     //mPager.currentItem = mMonth - 1
+                    doQueryAction() //get new data from ViewModel
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    invalidateOptionsMenu()
                 }
                 view.id == R.id.card_option2 -> if (GameCardAdapter.isUpdateCard(game)) {
                     try {
@@ -733,8 +758,7 @@ class ListActivity : AppCompatActivity() {
                         startActivity(Intent(Intent.ACTION_VIEW,
                                 Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
                     }
-
-                    finish()
+                    finish() //update new app, so we can close now
                 } else {
                     val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
                     if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
@@ -749,6 +773,7 @@ class ListActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@ListActivity)
             setHasFixedSize(true)
         }
+        invalidateOptionsMenu()
         showSnackBar(visible = false)
         findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.apply {
             isRefreshing = false

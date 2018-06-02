@@ -48,7 +48,7 @@ class HighlightActivity3 : HighlightActivity() {
         Log.d(TAG, "download calendar")
         val list = ArrayList<Game>()
         tryShowSnackbar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
-        viewModel.fetch(helper, year, monthOfJava)?.observe(this,
+        viewModel.fetch(year, monthOfJava)?.observe(this,
                 Observer<List<Game>> {
                     //check today and if we have games before and after
                     if (it?.isNotEmpty() == true) {
@@ -85,7 +85,7 @@ class HighlightActivity3 : HighlightActivity() {
     }
 
     private fun fetchDataForPreviousMonth(year: Int, monthOfJava: Int, list: ArrayList<Game>) {
-        viewModel.fetch(helper, year, monthOfJava)?.observe(this@HighlightActivity3,
+        viewModel.fetch(year, monthOfJava)?.observe(this@HighlightActivity3,
                 Observer<List<Game>> {
                     if (it?.isNotEmpty() == true) {
                         list.addAll(0, it)
@@ -95,7 +95,7 @@ class HighlightActivity3 : HighlightActivity() {
     }
 
     private fun fetchDataForNextMonth(year: Int, monthOfJava: Int, list: ArrayList<Game>) {
-        viewModel.fetch(helper, year, monthOfJava)?.observe(this@HighlightActivity3,
+        viewModel.fetch(year, monthOfJava)?.observe(this@HighlightActivity3,
                 Observer<List<Game>> {
                     if (it?.isNotEmpty() == true) {
                         list.addAll(it)

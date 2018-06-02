@@ -9,4 +9,8 @@
     <string name="id_prefix_challenge">挑戰 %d</string>
     <string name="id_prefix_champion">冠軍 %d</string>
     <string name="id_prefix_all_star">明星 %d</string>
+    <string name="action_title_show_highlight">highlight</string>
+    <string name="filter_title">filter</string>
+    <string name="title_cache_mode_enable_title">啟用離線模式</string>
+    <string name="title_cache_mode_enable_message">離線模式將不會自動更新賽程資料。No score</string>
 </resources>

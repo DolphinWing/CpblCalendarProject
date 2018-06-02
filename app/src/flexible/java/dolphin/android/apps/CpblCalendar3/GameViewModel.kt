@@ -1,17 +1,21 @@
 package dolphin.android.apps.CpblCalendar3
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.ViewModel
 import android.util.SparseArray
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 
-internal class GameViewModel : ViewModel() {
+internal class GameViewModel(application: Application) : AndroidViewModel(application) {
+    val helper = CpblCalendarHelper(application)
     var debugMode: Boolean = false
-    private val mAllGames = SparseArray<GameListLiveData>()
+    private val mAllGames = (application as CpblApplication).cacheList
+    //SparseArray<GameListLiveData>()
 
     private fun gkey(year: Int, monthOfJava: Int) = year * 12 + monthOfJava
 
-    fun fetch(helper: CpblCalendarHelper, year: Int, monthOfJava: Int,
-              fetchFromWeb: Boolean = true, clearCached: Boolean = false): GameListLiveData? {
+    fun fetch(year: Int, monthOfJava: Int, fetchFromWeb: Boolean = true,
+              clearCached: Boolean = false): GameListLiveData? {
         val key = gkey(year, monthOfJava)
         if (clearCached) {
             mAllGames.remove(key)

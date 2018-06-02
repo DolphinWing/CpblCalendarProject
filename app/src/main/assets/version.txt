@@ -1,3 +1,7 @@
+[1051] @ 2018-06-02
+    move Context to ViewModel
+    add cache mode dialog
+
 [1050] @ 2018-05-31
     add SwipeRefreshLayout for refresh animation
     add a refresh action in Toolbar, support both highlight and list

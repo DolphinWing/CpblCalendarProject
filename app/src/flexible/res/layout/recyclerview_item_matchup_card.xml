@@ -1,150 +1,156 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="2dp"
-    android:layout_marginEnd="4dp"
-    android:layout_marginStart="4dp"
-    android:layout_marginTop="2dp"
-    android:background="@drawable/round_corner"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:ignore="RtlSymmetry,RtlHardcoded">
+    android:layout_marginBottom="@dimen/padding_small"
+    android:layout_marginLeft="@dimen/padding_medium"
+    android:layout_marginRight="@dimen/padding_medium"
+    android:layout_marginTop="@dimen/padding_small"
+    android:background="?selectableItemBackground">
 
-    <LinearLayout
-        android:id="@+id/match_title"
-        style="@style/Theme.Holo_green.Match.Title"
-        android:paddingLeft="16dp"
-        android:paddingRight="8dp">
-
-
-        <TextView
-            android:id="@+id/textView1"
-            style="@style/Theme.Holo_green.Match.Time"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/textView9"
-            style="@style/Theme.Holo_green.Match.GameId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/match_up"
+    <RelativeLayout
+        android:id="@android:id/background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/match_title"
-        android:layout_toLeftOf="@+id/item_control_pane"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/padding_large"
-        android:paddingTop="8dp">
+        android:padding="16dp"
+        tools:ignore="RtlSymmetry,RtlHardcoded">
 
         <LinearLayout
-            android:id="@+id/away_team"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:id="@+id/match_title"
+            style="@style/Theme.Holo_green.Match.Title"
+            android:paddingLeft="16dp"
+            android:paddingRight="8dp">
 
-            <ImageView
-                android:id="@android:id/icon1"
-                android:layout_width="@dimen/match_logo_width"
-                android:layout_height="@dimen/match_logo_height"
-                android:contentDescription="@null"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:src="@drawable/ic_baseball" />
 
             <TextView
-                android:id="@+id/textView2"
-                style="@style/Theme.Holo_green.Match.Team"
+                android:id="@+id/textView1"
+                style="@style/Theme.Holo_green.Match.Time"
                 android:layout_width="0dp"
-                android:layout_marginLeft="16dp"
+                android:layout_weight="1"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textView9"
+                style="@style/Theme.Holo_green.Match.GameId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/match_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/match_title"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/padding_large"
+            android:paddingTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/away_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@android:id/icon1"
+                    android:layout_width="@dimen/match_logo_width"
+                    android:layout_height="@dimen/match_logo_height"
+                    android:contentDescription="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_baseball" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/Theme.Holo_green.Match.Team"
+                    android:layout_width="0dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    style="@style/Theme.Holo_green.Match.Score" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_small" />
+
+            <LinearLayout
+                android:id="@+id/home_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@android:id/icon2"
+                    android:layout_width="@dimen/match_logo_width"
+                    android:layout_height="@dimen/match_logo_height"
+                    android:contentDescription="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_baseball" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    style="@style/Theme.Holo_green.Match.Team"
+                    android:layout_width="0dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    style="@style/Theme.Holo_green.Match.Score" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/more_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/match_up"
+            android:layout_gravity="left|center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="@dimen/padding_small">
+
+            <TextView
+                android:id="@+id/textView7"
+                style="@style/Theme.Holo_green.Match.Field"
+                android:layout_gravity="top" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/padding_small"
                 android:layout_weight="1" />
 
             <TextView
-                android:id="@+id/textView3"
-                style="@style/Theme.Holo_green.Match.Score" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small" />
-
-        <LinearLayout
-            android:id="@+id/home_team"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@android:id/icon2"
-                android:layout_width="@dimen/match_logo_width"
-                android:layout_height="@dimen/match_logo_height"
-                android:contentDescription="@null"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:src="@drawable/ic_baseball" />
-
-            <TextView
-                android:id="@+id/textView5"
-                style="@style/Theme.Holo_green.Match.Team"
-                android:layout_width="0dp"
-                android:layout_marginLeft="16dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView4"
-                style="@style/Theme.Holo_green.Match.Score" />
+                android:id="@+id/textView8"
+                style="@style/Theme.Holo_green.Match.ExtraMsg"
+                android:layout_gravity="top" />
 
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/more_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/match_up"
-        android:layout_gravity="left|center_vertical"
-        android:layout_toLeftOf="@+id/item_control_pane"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingTop="@dimen/padding_small">
 
         <TextView
-            android:id="@+id/textView7"
-            style="@style/Theme.Holo_green.Match.Field"
-            android:layout_gravity="top" />
+            android:id="@+id/textView6"
+            style="@style/Theme.Holo_green.Match.Channel"
+            android:layout_below="@+id/more_info"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="@dimen/padding_small"
+            android:visibility="gone" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="@dimen/padding_small"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/textView8"
-            style="@style/Theme.Holo_green.Match.ExtraMsg"
-            android:layout_gravity="top" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView6"
-        style="@style/Theme.Holo_green.Match.Channel"
-        android:layout_below="@+id/more_info"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="@dimen/padding_small"
-        android:layout_toLeftOf="@+id/item_control_pane"
-        android:visibility="gone" />
-
-</RelativeLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -13,6 +13,10 @@
         app:showAsAction="always|withText" />
 
     <item
+        android:id="@+id/action_highlight"
+        android:title="@string/action_title_show_highlight" />
+
+    <item
         android:id="@+id/action_cache_mode"
         android:icon="@drawable/btn_check_holo_light"
         android:title="@string/action_cache_mode" />

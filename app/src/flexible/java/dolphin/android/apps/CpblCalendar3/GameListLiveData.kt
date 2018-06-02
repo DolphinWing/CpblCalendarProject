@@ -5,20 +5,19 @@ import android.util.Log
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.Team
+import dolphin.android.apps.CpblCalendar.provider.TeamHelper
 import java.util.*
-import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.concurrent.thread
 
-internal class GameListLiveData(private val helper: CpblCalendarHelper,
-                                private val year: Int,
-                                private val monthOfJava: Int,
-                                private val debugMode: Boolean = false) : LiveData<List<Game>>() {
+internal class GameListLiveData(//application: CpblApplication,
+        private val helper: CpblCalendarHelper, private val year: Int, private val monthOfJava: Int,
+        private val debugMode: Boolean = false) : LiveData<List<Game>>() {
     companion object {
         private const val TAG = "GameListLiveData"
     }
 
+    //private val helper = CpblCalendarHelper(application)
+    //private val teamHelper = TeamHelper(application)
     private val executor = Executors.newSingleThreadExecutor()
 
     override fun onInactive() {

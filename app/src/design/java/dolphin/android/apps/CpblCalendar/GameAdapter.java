@@ -37,6 +37,7 @@ public class GameAdapter extends BaseGameAdapter {
     private boolean ENABLE_BOTTOM_SHEET = false;
     private boolean mOnChromebook = false;
     private OnOptionClickListener mListener;
+    private boolean ENABLE_CACHE_MODE = false;
 
     interface OnOptionClickListener {
         void onOptionClicked(View view, Game game);
@@ -48,6 +49,7 @@ public class GameAdapter extends BaseGameAdapter {
         ENABLE_BOTTOM_SHEET = FirebaseRemoteConfig.getInstance()
                 .getBoolean("enable_bottom_sheet_options");
         mOnChromebook = context.getPackageManager().hasSystemFeature("org.chromium.arc.device_management");
+        ENABLE_CACHE_MODE = PreferenceUtils.isCacheMode(context);
     }
 
     void setOnOptionClickListener(OnOptionClickListener listener) {
@@ -90,11 +92,14 @@ public class GameAdapter extends BaseGameAdapter {
             }
         }
 
-//        //game field
-//        TextView fieldText = (TextView) convertView.findViewById(R.id.textView7);
-//        if (fieldText != null) {
-//            fieldText.setText(game.Field);
-//        }
+        TextView tv3 = convertView.findViewById(R.id.textView3);
+        if (tv3 != null) {
+            tv3.setVisibility(ENABLE_CACHE_MODE ? View.INVISIBLE : View.VISIBLE);
+        }
+        TextView tv4 = convertView.findViewById(R.id.textView4);
+        if (tv4 != null) {
+            tv4.setVisibility(ENABLE_CACHE_MODE ? View.INVISIBLE : View.VISIBLE);
+        }
 
         TextView timeText = convertView.findViewById(R.id.textView1);
         TextView liveText = convertView.findViewById(R.id.textView10);
