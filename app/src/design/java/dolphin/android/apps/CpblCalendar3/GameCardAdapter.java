@@ -162,17 +162,8 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 //holder.GameTime.setVisibility(View.VISIBLE);
                 holder.AwayTeamScore.setText(String.valueOf(game.AwayScore));
                 holder.HomeTeamScore.setText(String.valueOf(game.HomeScore));
-//                //use live text field in design flavor
-//                if (holder.LiveText != null && game.LiveMessage != null) {
-//                    String msg = game.LiveMessage.replace("&nbsp;&nbsp;", "<br>");
-//                    msg = msg.substring(msg.lastIndexOf("<br>") + 4);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                        holder.LiveText.setText(Html.fromHtml(msg, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
-//                    } else {
-//                        holder.LiveText.setText(Html.fromHtml(msg));
-//                    }
-//                    holder.LiveText.setVisibility(View.VISIBLE);
-//                }
+                holder.AwayTeamName.setText(game.AwayTeam.getShortName());
+                holder.HomeTeamName.setText(game.HomeTeam.getShortName());
                 break;
             case TYPE_RESULT:
                 holder.GameTime.setText(date_str);
