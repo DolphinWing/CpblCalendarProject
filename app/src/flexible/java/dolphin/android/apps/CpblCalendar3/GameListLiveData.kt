@@ -14,11 +14,13 @@ internal class GameListLiveData(//application: CpblApplication,
         private val debugMode: Boolean = false) : LiveData<List<Game>>() {
     companion object {
         private const val TAG = "GameListLiveData"
+        private const val TIMEOUT = 6 * 60 * 60 * 1000
     }
 
     //private val helper = CpblCalendarHelper(application)
     //private val teamHelper = TeamHelper(application)
     private val executor = Executors.newSingleThreadExecutor()
+    private var updateTime: Long = 0
 
     override fun onInactive() {
         super.onInactive()
@@ -29,14 +31,20 @@ internal class GameListLiveData(//application: CpblApplication,
         super.onActive()
         Log.d(TAG, "onActive $year/${monthOfJava + 1}")
 
-        executor.submit { if (value == null) fetch() }
+        executor.submit { if (expired() || value == null) fetch() }
     }
+
+    private fun expired(): Boolean = updateTime <= 0 ||
+            (System.currentTimeMillis() - updateTime) > TIMEOUT
 
     private fun fetch() {
         if (debugMode) {
             genData()
             return //just create fake data
         }
+
+        updateTime = System.currentTimeMillis()
+
         Log.v(TAG, "fetch $year/${monthOfJava + 1}")
         val list = helper.query2018(year, monthOfJava, "01")
         //check if we have warm up games here
