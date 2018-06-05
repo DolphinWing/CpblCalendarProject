@@ -14,7 +14,7 @@ internal class GameListLiveData(//application: CpblApplication,
         private val debugMode: Boolean = false) : LiveData<List<Game>>() {
     companion object {
         private const val TAG = "GameListLiveData"
-        private const val TIMEOUT = 6 * 60 * 60 * 1000
+        private const val TIMEOUT = 3 * 60 * 60 * 1000
     }
 
     //private val helper = CpblCalendarHelper(application)

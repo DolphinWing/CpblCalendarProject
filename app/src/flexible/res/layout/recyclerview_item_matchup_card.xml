@@ -22,8 +22,8 @@
         <LinearLayout
             android:id="@+id/match_title"
             style="@style/Theme.Holo_green.Match.Title"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
 
             <TextView
                 android:id="@+id/textView1"
@@ -48,7 +48,7 @@
             android:layout_below="@+id/match_title"
             android:orientation="vertical"
             android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
+            android:paddingStart="16dp"
             android:paddingTop="8dp">
 
             <LinearLayout

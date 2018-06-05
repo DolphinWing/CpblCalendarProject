@@ -130,7 +130,7 @@ class ListActivity : AppCompatActivity() {
             filterPaneVisible = !filterPaneVisible
         }
         //filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
-
+        mFilterControlPane.setOnTouchListener { _, _ -> true }
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
             //hide filter panel
             filterPaneVisible = false
@@ -195,6 +195,13 @@ class ListActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.action_highlight)?.isVisible = //false
                 mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED
+        menu?.findItem(R.id.action_refresh)?.isEnabled = when {
+            mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED &&
+                    findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.isRefreshing == true -> false
+        //mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED &&
+        //        mPager.getC
+            else -> true
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -391,8 +398,9 @@ class ListActivity : AppCompatActivity() {
 
         private var container: SwipeRefreshLayout? = null
         private lateinit var list: RecyclerView
+        private lateinit var emptyView: View
         private var index = -1
-        private lateinit var cpblHelper: CpblCalendarHelper
+        //private lateinit var cpblHelper: CpblCalendarHelper
         private lateinit var helper: TeamHelper
         private lateinit var viewModel: GameViewModel
         private var year = 2018
@@ -429,7 +437,7 @@ class ListActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             //Log.d(TAG, "Fragment onCreate")
             viewModel = ViewModelProviders.of(activity!!).get(GameViewModel::class.java)
-            cpblHelper = CpblCalendarHelper(activity!!)
+            //cpblHelper = CpblCalendarHelper(activity!!)
             helper = TeamHelper(activity!!.application as CpblApplication)
         }
 
@@ -445,6 +453,7 @@ class ListActivity : AppCompatActivity() {
             }
             this.list = view.findViewById(android.R.id.list)
             this.list.layoutManager = SmoothScrollLinearLayoutManager(activity)
+            this.emptyView = view.findViewById(R.id.empty_pane)
             return view //super.onCreateView(inflater, container, savedInstanceState)
         }
 
@@ -481,16 +490,17 @@ class ListActivity : AppCompatActivity() {
             Log.d(TAG, "field = $field, ${adapterList.size} games")
             this.list.adapter = ItemAdapter(adapterList, this)
             this.list.setHasFixedSize(true)
-            if (list != null)
-                for (i in 0 until list.size) {
-                    if (DateUtils.isToday(list[i].StartTime)) {
-                        this.list.scrollToPosition(i)
-                        break//break when the upcoming game if found
-                    } else if (!list[i].IsFinal) {
-                        this.list.scrollToPosition(i)
-                        break//break when the upcoming game if found
-                    }
+            for (i in 0 until adapterList.size) {
+                if (DateUtils.isToday(adapterList[i].game.StartTime)) {
+                    this.list.scrollToPosition(i)
+                    break//break when the upcoming game if found
+                } else if (!adapterList[i].game.IsFinal) {
+                    this.list.scrollToPosition(i)
+                    break//break when the upcoming game if found
                 }
+            }
+            emptyView.visibility = if (adapterList.isEmpty()) View.VISIBLE else View.GONE
+            this.list.visibility = if (adapterList.isEmpty()) View.GONE else View.VISIBLE
             startRefreshing(false)
         }
 
@@ -679,6 +689,7 @@ class ListActivity : AppCompatActivity() {
             isEnabled = true
             isRefreshing = true
         }
+        invalidateOptionsMenu()
         val list = ArrayList<Game>()
         val now = CpblCalendarHelper.getNowTime()
         val year = now.get(Calendar.YEAR)
@@ -745,6 +756,7 @@ class ListActivity : AppCompatActivity() {
         adapter.setOnClickListener { view, game ->
             when {
                 GameCardAdapter.isMoreCard(game) -> {
+                    //view.id == R.id.card_option1 -> {
                     //mPager.currentItem = mMonth - 1
                     doQueryAction() //get new data from ViewModel
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -773,11 +785,11 @@ class ListActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@ListActivity)
             setHasFixedSize(true)
         }
-        invalidateOptionsMenu()
         showSnackBar(visible = false)
         findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.apply {
             isRefreshing = false
             isEnabled = false
         }
+        invalidateOptionsMenu()
     }
 }

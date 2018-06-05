@@ -1,11 +1,28 @@
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
-        android:id="@android:id/list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#10000000"/>
+        android:layout_height="match_parent">
+
+        <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#10000000"
+            android:visibility="gone"
+            tools:listitem="@layout/recyclerview_item_matchup_card" />
+
+        <TextView
+            android:id="@+id/empty_pane"
+            style="@style/Theme.Holo_green.TextMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_games_this_month"
+            android:visibility="invisible" />
+    </FrameLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

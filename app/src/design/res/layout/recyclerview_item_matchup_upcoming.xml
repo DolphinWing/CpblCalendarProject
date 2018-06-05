@@ -12,11 +12,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:orientation="vertical">
 
         <LinearLayout
+            android:layout_marginTop="16dp"
             android:id="@+id/match_title"
             style="@style/Theme.Holo_green.Match.Title"
             android:paddingLeft="16dp"
@@ -100,7 +99,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="4dp"
             android:layout_marginTop="16dp"
             android:background="#cccccc" />
 

@@ -1,3 +1,7 @@
+[1052] @ 2018-06-05
+    add empty text for no games in the list
+    layout update update
+
 [1051] @ 2018-06-02
     move Context to ViewModel
     add cache mode dialog
