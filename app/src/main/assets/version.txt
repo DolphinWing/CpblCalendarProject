@@ -1,3 +1,6 @@
+[1053] @ 2018-06-06
+    use BackDrop design for filter control pane
+
 [1052] @ 2018-06-05
     add empty text for no games in the list
     layout update update

@@ -57,6 +57,7 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mFilterControlBg: View
     private lateinit var mPager: ViewPager
     private lateinit var mAdapter: SimplePageAdapter
+    private lateinit var mTabLayout: TabLayout
 
     private lateinit var mSpinnerYear: Spinner
     private lateinit var mSpinnerMonth: Spinner
@@ -84,8 +85,13 @@ class ListActivity : AppCompatActivity() {
         viewModel.debugMode = false
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_action_filter_list)
+        }
 
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+        mTabLayout = findViewById(R.id.tab_layout)
         mPager = findViewById(R.id.viewpager)
 
         //prepare filter pane
@@ -125,10 +131,10 @@ class ListActivity : AppCompatActivity() {
         mFilterControlBg = findViewById(R.id.filter_control_background)
         mFilterControlBg.setOnClickListener { filterPaneVisible = false }
         mFilterControlPane = findViewById(R.id.filter_control_pane)
-        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
-            restoreFilter()
-            filterPaneVisible = !filterPaneVisible
-        }
+//        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
+//            restoreFilter()
+//            filterPaneVisible = !filterPaneVisible
+//        }
         //filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
         mFilterControlPane.setOnTouchListener { _, _ -> true }
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
@@ -147,10 +153,10 @@ class ListActivity : AppCompatActivity() {
         months.removeAt(months.size - 1) //no December games
         months.removeAt(0) //no January games
         //months.removeAt(0)
-        months.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
+        months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
         mAdapter = SimplePageAdapter(this, months)
         mPager.adapter = mAdapter
-        mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
         mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 mMonth = position + 1
@@ -160,7 +166,7 @@ class ListActivity : AppCompatActivity() {
             }
         })
         //pager.currentItem = mMonth - 1
-        tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
+        mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
         mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
                 months).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -207,6 +213,13 @@ class ListActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            android.R.id.home -> {
+                if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                } else {
+                    filterPaneVisible = !filterPaneVisible
+                }
+            }
             R.id.action_refresh -> {
                 if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     prepareHighlightCards(refresh = true)
@@ -275,32 +288,63 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun showFilterPane(visible: Boolean) {
-        mFilterControlPane.apply {
+        findViewById<View>(R.id.filter_view_pane)?.apply {
             if (visible) {
+                val bottom: Float = mFilterControlPane.bottom.toFloat()
                 this.animate()
-                        .translationY(0f)
-                        .withStartAction {
-                            //visibility = View.VISIBLE
-                            mFilterControlBg.visibility = View.VISIBLE
-                            mFilterListPane.visibility = View.INVISIBLE
-                        }
-                        //.withEndAction { }
+                        .translationY(bottom)
                         .setInterpolator(AccelerateInterpolator())
                         .start()
-
+                mTabLayout.animate()
+                        .translationY(bottom)
+                        .setInterpolator(AccelerateInterpolator())
+                        .start()
+                mPager.animate()
+                        .translationY(bottom)
+                        .setInterpolator(AccelerateInterpolator())
+                        .start()
             } else {
                 this.animate()
-                        .translationY(-bottom.toFloat())
+                        .translationY(0f)
                         .setInterpolator(DecelerateInterpolator())
-                        //.withStartAction { }
-                        .withEndAction {
-                            //visibility = View.GONE
-                            mFilterListPane.visibility = View.VISIBLE
-                            mFilterControlBg.visibility = View.GONE
-                        }
+                        .start()
+                mTabLayout.animate()
+                        .translationY(0f)
+                        .setInterpolator(DecelerateInterpolator())
+                        .start()
+                mPager.animate()
+                        .translationY(0f)
+                        .setInterpolator(DecelerateInterpolator())
                         .start()
             }
         }
+
+//        mFilterControlPane.apply {
+//            if (visible) {
+//                this.animate()
+//                        .translationY(0f)
+//                        .withStartAction {
+//                            //visibility = View.VISIBLE
+//                            mFilterControlBg.visibility = View.VISIBLE
+//                            mFilterListPane.visibility = View.INVISIBLE
+//                        }
+//                        //.withEndAction { }
+//                        .setInterpolator(AccelerateInterpolator())
+//                        .start()
+//
+//            } else {
+//                this.animate()
+//                        .translationY(-bottom.toFloat())
+//                        .setInterpolator(DecelerateInterpolator())
+//                        //.withStartAction { }
+//                        .withEndAction {
+//                            //visibility = View.GONE
+//                            mFilterListPane.visibility = View.VISIBLE
+//                            mFilterControlBg.visibility = View.GONE
+//                        }
+//                        .start()
+//            }
+//        }
     }
 
     private var selectedFieldId: String = "F00"
@@ -677,8 +721,8 @@ class ListActivity : AppCompatActivity() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
         if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             //mPager.currentItem = mMonth - 1
-            //mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            finish()
+            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            //finish()
             return
         }
         super.onBackPressed()
