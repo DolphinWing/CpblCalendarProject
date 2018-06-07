@@ -129,7 +129,8 @@ class ListActivity : AppCompatActivity() {
         mFilterListPane = findViewById(R.id.filter_list_pane)
         //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
         mFilterControlBg = findViewById(R.id.filter_control_background)
-        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
+//        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
+        mFilterControlBg.setOnTouchListener { _, _ -> true }
         mFilterControlPane = findViewById(R.id.filter_control_pane)
 //        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
 //            restoreFilter()
@@ -189,7 +190,9 @@ class ListActivity : AppCompatActivity() {
         })
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         //HighlightFragment().show(supportFragmentManager, "highlight")
-        bottomSheet.setOnTouchListener { _, _ -> true }
+        bottomSheet.setOnTouchListener { _, event ->
+            event.y.compareTo(supportActionBar?.height ?: 56) > 0
+        }
         prepareHighlightCards()
     }
 
@@ -215,8 +218,11 @@ class ListActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 } else {
+                    if (!filterPaneVisible) {
+                        restoreFilter()
+                    }
                     filterPaneVisible = !filterPaneVisible
                 }
             }
@@ -243,6 +249,7 @@ class ListActivity : AppCompatActivity() {
                 } else {
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
+                invalidateOptionsMenu()
                 return true
             }
             R.id.action_cache_mode -> {
@@ -294,19 +301,22 @@ class ListActivity : AppCompatActivity() {
                 this.animate()
                         .translationY(bottom)
                         .setInterpolator(AccelerateInterpolator())
+                        .withEndAction { mFilterControlBg.visibility = View.VISIBLE }
                         .start()
                 mTabLayout.animate()
-                        .translationY(bottom)
+                        .translationY(bottom - this.height)
                         .setInterpolator(AccelerateInterpolator())
                         .start()
                 mPager.animate()
-                        .translationY(bottom)
+                        .translationY(bottom - this.height - mTabLayout.height)
                         .setInterpolator(AccelerateInterpolator())
+                        .withStartAction { mPager.isEnabled = false }
                         .start()
             } else {
                 this.animate()
                         .translationY(0f)
                         .setInterpolator(DecelerateInterpolator())
+                        .withStartAction { mFilterControlBg.visibility = View.GONE }
                         .start()
                 mTabLayout.animate()
                         .translationY(0f)
@@ -315,36 +325,10 @@ class ListActivity : AppCompatActivity() {
                 mPager.animate()
                         .translationY(0f)
                         .setInterpolator(DecelerateInterpolator())
+                        .withEndAction { mPager.isEnabled = true }
                         .start()
             }
         }
-
-//        mFilterControlPane.apply {
-//            if (visible) {
-//                this.animate()
-//                        .translationY(0f)
-//                        .withStartAction {
-//                            //visibility = View.VISIBLE
-//                            mFilterControlBg.visibility = View.VISIBLE
-//                            mFilterListPane.visibility = View.INVISIBLE
-//                        }
-//                        //.withEndAction { }
-//                        .setInterpolator(AccelerateInterpolator())
-//                        .start()
-//
-//            } else {
-//                this.animate()
-//                        .translationY(-bottom.toFloat())
-//                        .setInterpolator(DecelerateInterpolator())
-//                        //.withStartAction { }
-//                        .withEndAction {
-//                            //visibility = View.GONE
-//                            mFilterListPane.visibility = View.VISIBLE
-//                            mFilterControlBg.visibility = View.GONE
-//                        }
-//                        .start()
-//            }
-//        }
     }
 
     private var selectedFieldId: String = "F00"
@@ -621,14 +605,14 @@ class ListActivity : AppCompatActivity() {
                     game.getFieldFullName(context)
                 }
                 teamAwayName?.text = game.AwayTeam.name
-                teamAwayScore?.text = if (game.IsFinal) game.AwayScore.toString() else "-"
+                teamAwayScore?.text = if (game.IsFinal || game.IsLive) game.AwayScore.toString() else "-"
                 teamAwayLogo?.apply {
                     setImageResource(R.drawable.ic_baseball)
                     setColorFilter(helper.getLogoColorFilter(game.AwayTeam, year),
                             PorterDuff.Mode.SRC_IN)
                 }
                 teamHomeName?.text = game.HomeTeam.name
-                teamHomeScore?.text = if (game.IsFinal) game.HomeScore.toString() else "-"
+                teamHomeScore?.text = if (game.IsFinal || game.IsLive) game.HomeScore.toString() else "-"
                 teamHomeLogo?.apply {
                     setImageResource(R.drawable.ic_baseball)
                     setColorFilter(helper.getLogoColorFilter(game.HomeTeam, year),
@@ -695,27 +679,6 @@ class ListActivity : AppCompatActivity() {
             setAnimationOnForwardScrolling(true)
         }
     }
-
-//    class HighlightFragment : BottomSheetDialogFragment() {
-//        var rootView: View? = null
-////        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-////            val contentView = inflater.inflate(R.layout.layout_query_pane, container, false)
-////            //val behavior = BottomSheetBehavior.from(contentView)
-////            //contentView.post { behavior.peekHeight = contentView.height }
-////            return contentView
-////        }
-//
-//        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//            val dialog = super.onCreateDialog(savedInstanceState)
-//            if (rootView == null) {
-//                rootView = View.inflate(context, R.layout.layout_query_pane, null)
-//            }
-//            dialog.setContentView(rootView)
-//            val behavior = BottomSheetBehavior.from(rootView!!.parent as View)
-//            rootView!!.post { behavior.peekHeight = rootView!!.height - 100 }
-//            return dialog
-//        }
-//    }
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")

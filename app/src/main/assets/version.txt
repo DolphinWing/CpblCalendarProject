@@ -1,3 +1,10 @@
+[1054] @ 2018-06-07
+    change SplashActivity inheritance
+        make new animations for new loading screen
+    change back drop style
+
+TODO: need new replacement control for Spinner, new icons
+
 [1053] @ 2018-06-06
     use BackDrop design for filter control pane
 
