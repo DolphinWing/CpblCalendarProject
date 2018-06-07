@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 
 import java.util.List;
 
@@ -60,5 +61,16 @@ public class PackageUtils {
         List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
+    }
+
+    public static void startGooglePlayApp(Context context, String packageName) {
+        //http://stackoverflow.com/a/11753070/2673859
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + packageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+        }
     }
 }
