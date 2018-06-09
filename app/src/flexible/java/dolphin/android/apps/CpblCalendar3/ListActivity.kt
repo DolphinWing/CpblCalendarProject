@@ -86,7 +86,7 @@ class ListActivity : AppCompatActivity() {
 
         val now = CpblCalendarHelper.getNowTime()
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
-        viewModel.debugMode = true
+        viewModel.debugMode = false
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
         supportActionBar?.apply {
