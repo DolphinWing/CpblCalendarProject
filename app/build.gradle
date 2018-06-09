@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0'
-            versionCode 1054
+            versionCode 1055
         }
     }
     compileOptions {
@@ -57,7 +57,7 @@ android {
 
 dependencies {
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -91,6 +91,7 @@ dependencies {
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
     flexibleImplementation 'android.arch.lifecycle:extensions:1.1.1'
+    flexibleImplementation 'cn.carbswang.android:NumberPickerView:1.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -13,4 +13,6 @@
     <string name="filter_title">條件</string>
     <string name="title_cache_mode_enable_title">啟用離線模式</string>
     <string name="title_cache_mode_enable_message">離線模式將不會自動更新賽程資料，也不會顯示得分資訊。如果要取得最新資料，請離開離線模式。</string>
+    <string name="action_reset_filter">Reset</string>
+    <string name="title_query">Apply</string>
 </resources>

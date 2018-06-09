@@ -83,7 +83,7 @@ internal class GameListLiveData(//application: CpblApplication,
         val id = monthOfJava * 100
         when {
             this.monthOfJava == monthOfJava -> {
-                val time = CpblCalendarHelper.getGameTime(year, monthOfJava + 1, dayOfMonth,
+                val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, dayOfMonth,
                         18, 35)
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {
@@ -111,7 +111,7 @@ internal class GameListLiveData(//application: CpblApplication,
                         }))
             }
             this.monthOfJava > monthOfJava -> {
-                val time = CpblCalendarHelper.getGameTime(year, monthOfJava + 1, 28,
+                val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, 28,
                         18, 35)
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {
@@ -133,7 +133,7 @@ internal class GameListLiveData(//application: CpblApplication,
                         }))
             }
             this.monthOfJava < monthOfJava -> {
-                val time = CpblCalendarHelper.getGameTime(year, monthOfJava + 1, 1,
+                val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, 1,
                         18, 35)
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {

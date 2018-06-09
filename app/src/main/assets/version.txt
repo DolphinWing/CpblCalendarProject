@@ -1,3 +1,7 @@
+[1055] @ 2018-06-09
+    change Spinner to NumberViewPicker (https://github.com/Carbs0126/NumberPickerView)
+    change filter pane style (new animations)
+
 [1054] @ 2018-06-07
     change SplashActivity inheritance
         make new animations for new loading screen

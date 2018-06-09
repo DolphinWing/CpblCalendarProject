@@ -29,6 +29,7 @@ import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.*
+import cn.carbswang.android.numberpickerview.library.NumberPickerView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
@@ -59,10 +60,14 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mAdapter: SimplePageAdapter
     private lateinit var mTabLayout: TabLayout
 
-    private lateinit var mSpinnerYear: Spinner
-    private lateinit var mSpinnerMonth: Spinner
-    private lateinit var mSpinnerField: Spinner
-    private lateinit var mSpinnerTeam: Spinner
+    //    private lateinit var mSpinnerYear: Spinner
+//    private lateinit var mSpinnerMonth: Spinner
+//    private lateinit var mSpinnerField: Spinner
+//    private lateinit var mSpinnerTeam: Spinner
+    private lateinit var mPickerYear: NumberPickerView
+    private lateinit var mPickerMonth: NumberPickerView
+    private lateinit var mPickerField: NumberPickerView
+    private lateinit var mPickerTeam: NumberPickerView
     private lateinit var mTextViewYear: TextView
     private lateinit var mTextViewField: TextView
     private lateinit var mTextViewTeam: TextView
@@ -79,10 +84,9 @@ class ListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        //helper = CpblCalendarHelper(this)
-        //teamHelper = TeamHelper(application as CpblApplication)
+        val now = CpblCalendarHelper.getNowTime()
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
-        viewModel.debugMode = false
+        viewModel.debugMode = true
 
         findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
         supportActionBar?.apply {
@@ -95,36 +99,65 @@ class ListActivity : AppCompatActivity() {
         mPager = findViewById(R.id.viewpager)
 
         //prepare filter pane
-        mSpinnerYear = findViewById(R.id.spinner3)
-        mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
-        mSpinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                //won't happen
-            }
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (p2 == 0) {
-                    mSpinnerTeam.isEnabled = true
-                } else {
-                    mSpinnerTeam.isEnabled = false
-                    mSpinnerTeam.setSelection(0)
-                }
-            }
-        }
-        mSpinnerMonth = findViewById(R.id.spinner4)
-        mSpinnerField = findViewById(R.id.spinner1)
-        mSpinnerTeam = findViewById(R.id.spinner2)
-        mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-                arrayOf(getString(R.string.title_favorite_teams_all),
-                        *resources.getStringArray(R.array.cpbl_team_name))).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
+//        mSpinnerYear = findViewById(R.id.spinner3)
+//        mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
+//        mSpinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onNothingSelected(p0: AdapterView<*>?) {
+//                //won't happen
+//            }
+//
+//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+//                if (p2 == 0) {
+//                    mSpinnerTeam.isEnabled = true
+//                    mPickerTeam.isEnabled = true
+//                } else {
+//                    mSpinnerTeam.isEnabled = false
+//                    mSpinnerTeam.setSelection(0)
+//                    mPickerTeam.isEnabled = false
+//                    mPickerTeam.value = 0
+//                }
+//            }
+//        }
+//        mSpinnerMonth = findViewById(R.id.spinner4)
+//        mSpinnerField = findViewById(R.id.spinner1)
+//        mSpinnerTeam = findViewById(R.id.spinner2)
+//        mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+//                arrayOf(getString(R.string.title_favorite_teams_all),
+//                        *resources.getStringArray(R.array.cpbl_team_name))).apply {
+//            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        }
         mTextViewYear = findViewById(android.R.id.button1)
         mTextViewYear.setOnClickListener { filterPaneVisible = true }
         mTextViewField = findViewById(android.R.id.button2)
         mTextViewField.setOnClickListener { filterPaneVisible = true }
         mTextViewTeam = findViewById(android.R.id.button3)
         mTextViewTeam.setOnClickListener { filterPaneVisible = true }
+
+        mPickerYear = findViewById(android.R.id.text1)
+        mPickerMonth = findViewById(android.R.id.text2)
+        mPickerField = findViewById(android.R.id.icon1)
+        mPickerTeam = findViewById(android.R.id.icon2)
+
+        mPickerYear.apply {
+            val year = now.get(Calendar.YEAR)
+            displayedValues = Array(year - 1989, {
+                getString(R.string.title_cpbl_year, it + 1) + " (${1990 + it})"
+            })
+            minValue = 1
+            maxValue = year - 1989
+            value = maxValue
+        }
+        mPickerTeam.apply {
+            displayedValues = arrayOf(getString(R.string.title_favorite_teams_all),
+                    getString(R.string.team_ct_elephants_short2),
+                    getString(R.string.team_711_lions_short2),
+                    getString(R.string.team_fubon_guardians_short),
+                    getString(R.string.team_lamigo_monkeys_short))
+            //*resources.getStringArray(R.array.cpbl_team_name))
+            minValue = -1
+            maxValue = 3
+        }
+        findViewById<View>(android.R.id.icon)?.setOnClickListener { restoreFilter() }
 
         mFilterListPane = findViewById(R.id.filter_list_pane)
         //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
@@ -142,8 +175,10 @@ class ListActivity : AppCompatActivity() {
             //hide filter panel
             filterPaneVisible = false
             //start fetch, page change will cause fetch actions
-            if (mPager.currentItem != mSpinnerMonth.selectedItemPosition) {
-                mPager.currentItem = mSpinnerMonth.selectedItemPosition
+//            if (mPager.currentItem != mSpinnerMonth.selectedItemPosition) {
+//                mPager.currentItem = mSpinnerMonth.selectedItemPosition
+            if (mPager.currentItem != mPickerMonth.value - 1) {
+                mPager.currentItem = mPickerMonth.value - 1
             } else {
                 doQueryAction() //page is the same, request the data from view model
             }
@@ -151,7 +186,7 @@ class ListActivity : AppCompatActivity() {
 
         //prepare month list
         val months = ArrayList(Arrays.asList(*DateFormatSymbols(Locale.TAIWAN).months))
-        months.removeAt(months.size - 1) //no December games
+        months.dropLast(1) //no December games
         months.removeAt(0) //no January games
         //months.removeAt(0)
         months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
@@ -161,19 +196,30 @@ class ListActivity : AppCompatActivity() {
         mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 mMonth = position + 1
-                runOnUiThread { mSpinnerMonth.setSelection(position) }
+                runOnUiThread {
+                    //                    mSpinnerMonth.setSelection(position)
+                    mPickerMonth.value = mMonth
+                }
                 Log.d(TAG, "selected month = ${mMonth + 1}")
                 doQueryAction()
             }
         })
         //pager.currentItem = mMonth - 1
         mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
-        mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-                months).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+//                months).apply {
+//            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        }
+//        //mSpinnerMonth.setSelection(pager.currentItem)
+//        mSpinnerMonth.setSelection(mMonth - 1)
+
+        mPickerMonth.apply {
+            displayedValues = Array(months.size, { months[it] })
+            minValue = Calendar.FEBRUARY
+            maxValue = Calendar.NOVEMBER
+            value = mMonth
         }
-        //mSpinnerMonth.setSelection(pager.currentItem)
-        mSpinnerMonth.setSelection(mMonth - 1)
+
         //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
         val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -191,7 +237,7 @@ class ListActivity : AppCompatActivity() {
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         //HighlightFragment().show(supportFragmentManager, "highlight")
         bottomSheet.setOnTouchListener { _, event ->
-            event.y.compareTo(supportActionBar?.height ?: 56) > 0
+            event.y > supportActionBar?.height ?: 56
         }
         prepareHighlightCards()
     }
@@ -289,8 +335,12 @@ class ListActivity : AppCompatActivity() {
 
     private fun restoreFilter() {
         runOnUiThread {
-            mSpinnerYear.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mYear)
-            mSpinnerMonth.setSelection(mMonth - 1)
+            //            mSpinnerYear.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mYear)
+//            mSpinnerMonth.setSelection(mMonth - 1)
+            mPickerYear.value = mYear - 1989
+            mPickerMonth.value = mMonth
+            mPickerTeam.value = -1
+            mPickerField.value = 0
         }
     }
 
@@ -333,21 +383,23 @@ class ListActivity : AppCompatActivity() {
 
     private var selectedFieldId: String = "F00"
         get() {
-            val f = mSpinnerField.selectedItemPosition
+            val f = mPickerField.value//mSpinnerField.selectedItemPosition
             return resources.getStringArray(R.array.cpbl_game_field_id)[f]
         }
 
     private var selectedTeamId: Int = 0
         get() {
-            val t = mSpinnerTeam.selectedItemPosition
-            val team = if (t == 0) "0" else resources.getStringArray(R.array.cpbl_team_id)[t - 1]
+            val t = mPickerTeam.value //mSpinnerTeam.selectedItemPosition
+            val team = if (t < 0) "0" else resources.getStringArray(R.array.cpbl_team_id)[t]
             return team.toInt()
         }
 
     private fun doQueryAction() {
-        val y = mSpinnerYear.selectedItemPosition
-        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - y
-        val month = mSpinnerMonth.selectedItemPosition + 1
+//        val y = mSpinnerYear.selectedItemPosition
+//        Log.d(TAG, "year = ${mPickerYear.value} month=${mPickerMonth.value}")
+//        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - y
+        val year = mPickerYear.value + 1989
+        val month = mPickerMonth.value//mSpinnerMonth.selectedItemPosition + 1
         Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
             Log.d(TAG, "clear $mYear data")
@@ -373,9 +425,17 @@ class ListActivity : AppCompatActivity() {
             }
         }
 
-        mTextViewYear.text = mSpinnerYear.selectedItem.toString()
-        mTextViewField.text = mSpinnerField.selectedItem.toString()
-        mTextViewTeam.text = mSpinnerTeam.selectedItem.toString()
+        Log.d(TAG, "team = ${mPickerTeam.value} field = ${mPickerField.value}")
+        mTextViewYear.text = //mSpinnerYear.selectedItem.toString()
+                getString(R.string.title_cpbl_year, mPickerYear.value)
+        mTextViewField.text = //mSpinnerField.selectedItem.toString()
+                resources.getStringArray(R.array.cpbl_game_field_name)[mPickerField.value]
+        mTextViewTeam.text = //mSpinnerTeam.selectedItem.toString()
+                if (mPickerTeam.value < 0) {
+                    getString(R.string.title_favorite_teams_all)
+                } else {
+                    resources.getStringArray(R.array.cpbl_team_name)[mPickerTeam.value]
+                }
     }
 
     private var snackbar: Snackbar? = null
