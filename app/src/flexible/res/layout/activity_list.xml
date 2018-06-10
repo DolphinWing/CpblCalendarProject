@@ -278,7 +278,7 @@
                 android:id="@+id/bottom_sheet"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#dedede" />
+                android:background="#ffffff" />
         </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
 

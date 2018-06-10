@@ -651,21 +651,25 @@ class ListActivity : AppCompatActivity() {
                     Html.fromHtml(displayTime)
                 }
                 gameField?.text = if (game.Source == Game.SOURCE_CPBL ||
-                        !game.Field.contains(context.getString(R.string.title_at))) {
+                        game.Field?.contains(context.getString(R.string.title_at)) == false) {
                     String.format("%s%s", context.getString(R.string.title_at),
                             game.getFieldFullName(context))
                 } else {
                     game.getFieldFullName(context)
                 }
                 teamAwayName?.text = game.AwayTeam.name
-                teamAwayScore?.text = if (game.IsFinal || game.IsLive) game.AwayScore.toString() else "-"
+                teamAwayScore?.text = if (game.IsFinal || game.IsLive) {
+                    game.AwayScore.toString()
+                } else "-"
                 teamAwayLogo?.apply {
                     setImageResource(R.drawable.ic_baseball)
                     setColorFilter(helper.getLogoColorFilter(game.AwayTeam, year),
                             PorterDuff.Mode.SRC_IN)
                 }
                 teamHomeName?.text = game.HomeTeam.name
-                teamHomeScore?.text = if (game.IsFinal || game.IsLive) game.HomeScore.toString() else "-"
+                teamHomeScore?.text = if (game.IsFinal || game.IsLive) {
+                    game.HomeScore.toString()
+                } else "-"
                 teamHomeLogo?.apply {
                     setImageResource(R.drawable.ic_baseball)
                     setColorFilter(helper.getLogoColorFilter(game.HomeTeam, year),
@@ -736,8 +740,8 @@ class ListActivity : AppCompatActivity() {
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
         if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            //finish()
+            //mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            finish()
             return
         } else if (filterPaneVisible) {//close the filter pane
             filterPaneVisible = false

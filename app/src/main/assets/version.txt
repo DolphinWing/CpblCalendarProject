@@ -1,3 +1,9 @@
+[1057] @ 2018-06-10
+    fix possible crush when using SplashActivity
+        it is disabled in flexible flavor
+    change bottom sheet style
+    fix some possible crush when listing
+
 [1056] @ 2018-06-10
     update UI after 1055 test
 

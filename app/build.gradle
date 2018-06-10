@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0'
-            versionCode 1056
+            versionCode 1057
         }
     }
     compileOptions {
