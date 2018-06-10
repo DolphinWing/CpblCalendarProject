@@ -1,3 +1,6 @@
+[1056] @ 2018-06-10
+    update UI after 1055 test
+
 [1055] @ 2018-06-09
     change Spinner to NumberViewPicker (https://github.com/Carbs0126/NumberPickerView)
     change filter pane style (new animations)

@@ -2,10 +2,12 @@
 
 package dolphin.android.apps.CpblCalendar3
 
+import android.animation.ValueAnimator
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
@@ -20,6 +22,7 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.graphics.drawable.DrawerArrowDrawable
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -60,10 +63,6 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mAdapter: SimplePageAdapter
     private lateinit var mTabLayout: TabLayout
 
-    //    private lateinit var mSpinnerYear: Spinner
-//    private lateinit var mSpinnerMonth: Spinner
-//    private lateinit var mSpinnerField: Spinner
-//    private lateinit var mSpinnerTeam: Spinner
     private lateinit var mPickerYear: NumberPickerView
     private lateinit var mPickerMonth: NumberPickerView
     private lateinit var mPickerField: NumberPickerView
@@ -71,11 +70,11 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mTextViewYear: TextView
     private lateinit var mTextViewField: TextView
     private lateinit var mTextViewTeam: TextView
-    private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
 
-    //private lateinit var helper: CpblCalendarHelper
-    //private lateinit var teamHelper: TeamHelper
-    //private val mAllGamesCache = SparseArray<List<Game>>()
+    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
+    private lateinit var mHomeIcon: DrawerArrowDrawable
+
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
     private lateinit var viewModel: GameViewModel
@@ -88,44 +87,21 @@ class ListActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
         viewModel.debugMode = false
 
-        findViewById<Toolbar>(R.id.toolbar)?.apply { setSupportActionBar(this) }
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_action_filter_list)
+        mHomeIcon = DrawerArrowDrawable(this).apply { color = Color.WHITE }
+        findViewById<Toolbar>(R.id.toolbar)?.apply {
+            setSupportActionBar(this)
+            navigationIcon = mHomeIcon
         }
+//        supportActionBar?.apply {
+//            setDisplayHomeAsUpEnabled(true)
+//            setDisplayShowHomeEnabled(true)
+//            setHomeAsUpIndicator(R.drawable.ic_action_filter_list)
+//        }
 
         mTabLayout = findViewById(R.id.tab_layout)
         mPager = findViewById(R.id.viewpager)
 
         //prepare filter pane
-//        mSpinnerYear = findViewById(R.id.spinner3)
-//        mSpinnerYear.adapter = CpblCalendarHelper.buildYearAdapter(this, mYear)
-//        mSpinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                //won't happen
-//            }
-//
-//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                if (p2 == 0) {
-//                    mSpinnerTeam.isEnabled = true
-//                    mPickerTeam.isEnabled = true
-//                } else {
-//                    mSpinnerTeam.isEnabled = false
-//                    mSpinnerTeam.setSelection(0)
-//                    mPickerTeam.isEnabled = false
-//                    mPickerTeam.value = 0
-//                }
-//            }
-//        }
-//        mSpinnerMonth = findViewById(R.id.spinner4)
-//        mSpinnerField = findViewById(R.id.spinner1)
-//        mSpinnerTeam = findViewById(R.id.spinner2)
-//        mSpinnerTeam.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-//                arrayOf(getString(R.string.title_favorite_teams_all),
-//                        *resources.getStringArray(R.array.cpbl_team_name))).apply {
-//            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        }
         mTextViewYear = findViewById(android.R.id.button1)
         mTextViewYear.setOnClickListener { filterPaneVisible = true }
         mTextViewField = findViewById(android.R.id.button2)
@@ -175,8 +151,6 @@ class ListActivity : AppCompatActivity() {
             //hide filter panel
             filterPaneVisible = false
             //start fetch, page change will cause fetch actions
-//            if (mPager.currentItem != mSpinnerMonth.selectedItemPosition) {
-//                mPager.currentItem = mSpinnerMonth.selectedItemPosition
             if (mPager.currentItem != mPickerMonth.value - 1) {
                 mPager.currentItem = mPickerMonth.value - 1
             } else {
@@ -206,12 +180,6 @@ class ListActivity : AppCompatActivity() {
         })
         //pager.currentItem = mMonth - 1
         mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
-//        mSpinnerMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-//                months).apply {
-//            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        }
-//        //mSpinnerMonth.setSelection(pager.currentItem)
-//        mSpinnerMonth.setSelection(mMonth - 1)
 
         mPickerMonth.apply {
             displayedValues = Array(months.size, { months[it] })
@@ -221,6 +189,7 @@ class ListActivity : AppCompatActivity() {
         }
 
         //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
+        mSwipeRefreshLayout = findViewById(R.id.bottom_sheet_option1)
         val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         mBottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -249,23 +218,28 @@ class ListActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.action_highlight)?.isVisible = //false
-                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED
-        menu?.findItem(R.id.action_refresh)?.isEnabled = when {
+                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
+        menu?.findItem(R.id.action_refresh)?.isVisible = when {
             mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED &&
-                    findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.isRefreshing == true -> false
-        //mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED &&
-        //        mPager.getC
+                    mSwipeRefreshLayout.isRefreshing == true -> false
+            filterPaneVisible -> false
             else -> true
         }
+        //menu?.findItem(R.id.action_go_to_cpbl)?.isVisible = !filterPaneVisible
+        //menu?.findItem(R.id.action_settings)?.isVisible = !filterPaneVisible
+        menu?.findItem(R.id.action_cache_mode)?.isVisible =
+                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
+        menu?.findItem(R.id.action_leader_board)?.isVisible = !filterPaneVisible
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            android.R.id.home -> {
-                if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            android.R.id.home -> when {
+                mSwipeRefreshLayout.isRefreshing -> Log.w(TAG, "still refresh...")
+                mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ->
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                } else {
+                else -> {
                     if (!filterPaneVisible) {
                         restoreFilter()
                     }
@@ -292,7 +266,7 @@ class ListActivity : AppCompatActivity() {
                 if (mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
                     findViewById<RecyclerView>(R.id.bottom_sheet)?.scrollToPosition(0)
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                } else {
+                } else {//should not be here
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
                 invalidateOptionsMenu()
@@ -317,10 +291,12 @@ class ListActivity : AppCompatActivity() {
             R.id.action_go_to_cpbl -> {
                 CpblCalendarHelper.startActivityToCpblSchedule(this@ListActivity, mYear,
                         mMonth + 1, "01", "F00")
+                filterPaneVisible = false
                 return true
             }
             R.id.action_settings -> {
                 startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
+                filterPaneVisible = false
                 return true
             }
         }
@@ -329,14 +305,15 @@ class ListActivity : AppCompatActivity() {
 
     private var filterPaneVisible: Boolean = false
         set(value) {
-            runOnUiThread { showFilterPane(value) }
-            field = value
+            if (field != value) {
+                runOnUiThread { showFilterPane(value) }
+                field = value
+            }
+            runOnUiThread { invalidateOptionsMenu() }
         }
 
     private fun restoreFilter() {
         runOnUiThread {
-            //            mSpinnerYear.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - mYear)
-//            mSpinnerMonth.setSelection(mMonth - 1)
             mPickerYear.value = mYear - 1989
             mPickerMonth.value = mMonth
             mPickerTeam.value = -1
@@ -349,9 +326,14 @@ class ListActivity : AppCompatActivity() {
             if (visible) {
                 val bottom: Float = mFilterControlPane.bottom.toFloat()
                 this.animate()
+                        .translationY(bottom - resources.getDimension(R.dimen.padding_large))
+                        .setInterpolator(AccelerateInterpolator())
+                        //.withStartAction { mFilterListPane.visibility = View.GONE }
+                        .withEndAction { mFilterControlBg.visibility = View.VISIBLE }
+                        .start()
+                mFilterListPane.animate()
                         .translationY(bottom)
                         .setInterpolator(AccelerateInterpolator())
-                        .withEndAction { mFilterControlBg.visibility = View.VISIBLE }
                         .start()
                 mTabLayout.animate()
                         .translationY(bottom - this.height)
@@ -366,7 +348,12 @@ class ListActivity : AppCompatActivity() {
                 this.animate()
                         .translationY(0f)
                         .setInterpolator(DecelerateInterpolator())
+                        //.withStartAction { mFilterListPane.visibility = View.VISIBLE }
                         .withStartAction { mFilterControlBg.visibility = View.GONE }
+                        .start()
+                mFilterListPane.animate()
+                        .translationY(0f)
+                        .setInterpolator(DecelerateInterpolator())
                         .start()
                 mTabLayout.animate()
                         .translationY(0f)
@@ -379,27 +366,33 @@ class ListActivity : AppCompatActivity() {
                         .start()
             }
         }
+
+        //https://stackoverflow.com/a/42024138
+        val animation = ValueAnimator.ofFloat(if (visible) 0f else 1f, if (visible) 1f else 0f)
+        animation.apply {
+            addUpdateListener { mHomeIcon.progress = it.animatedValue as Float }
+            interpolator = DecelerateInterpolator()
+            duration = 400
+        }
+        animation.start()
     }
 
     private var selectedFieldId: String = "F00"
         get() {
-            val f = mPickerField.value//mSpinnerField.selectedItemPosition
+            val f = mPickerField.value
             return resources.getStringArray(R.array.cpbl_game_field_id)[f]
         }
 
     private var selectedTeamId: Int = 0
         get() {
-            val t = mPickerTeam.value //mSpinnerTeam.selectedItemPosition
+            val t = mPickerTeam.value
             val team = if (t < 0) "0" else resources.getStringArray(R.array.cpbl_team_id)[t]
             return team.toInt()
         }
 
     private fun doQueryAction() {
-//        val y = mSpinnerYear.selectedItemPosition
-//        Log.d(TAG, "year = ${mPickerYear.value} month=${mPickerMonth.value}")
-//        val year = CpblCalendarHelper.getNowTime().get(Calendar.YEAR) - y
         val year = mPickerYear.value + 1989
-        val month = mPickerMonth.value//mSpinnerMonth.selectedItemPosition + 1
+        val month = mPickerMonth.value
         Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
             Log.d(TAG, "clear $mYear data")
@@ -488,7 +481,7 @@ class ListActivity : AppCompatActivity() {
         private lateinit var list: RecyclerView
         private lateinit var emptyView: View
         private var index = -1
-        //private lateinit var cpblHelper: CpblCalendarHelper
+
         private lateinit var helper: TeamHelper
         private lateinit var viewModel: GameViewModel
         private var year = 2018
@@ -743,16 +736,19 @@ class ListActivity : AppCompatActivity() {
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
         if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            //mPager.currentItem = mMonth - 1
             mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             //finish()
+            return
+        } else if (filterPaneVisible) {//close the filter pane
+            filterPaneVisible = false
+            restoreFilter()
             return
         }
         super.onBackPressed()
     }
 
     private fun prepareHighlightCards(refresh: Boolean = false) {
-        findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.apply {
+        mSwipeRefreshLayout.apply {
             isEnabled = true
             isRefreshing = true
         }
@@ -853,7 +849,7 @@ class ListActivity : AppCompatActivity() {
             setHasFixedSize(true)
         }
         showSnackBar(visible = false)
-        findViewById<SwipeRefreshLayout>(R.id.bottom_sheet_option1)?.apply {
+        mSwipeRefreshLayout.apply {
             isRefreshing = false
             isEnabled = false
         }
