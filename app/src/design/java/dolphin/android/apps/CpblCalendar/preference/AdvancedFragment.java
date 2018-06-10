@@ -2,6 +2,7 @@ package dolphin.android.apps.CpblCalendar.preference;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -68,9 +69,11 @@ public class AdvancedFragment extends PreferenceFragment {
                 ((CpblApplication) getActivity().getApplication()).setPreferenceChanged(true);
             }
             return r;
-        } else if (key.equals(KEY_RESTART_APP)) {
-            Intent intent = new Intent(getActivity(), SplashActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        } else if (key.equals(KEY_RESTART_APP) && getActivity() != null) {
+            //Intent intent = new Intent(getActivity(), SplashActivity.class);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            PackageManager pm = getActivity().getPackageManager();
+            Intent intent = pm.getLaunchIntentForPackage(getActivity().getPackageName());
             startActivity(intent);
             getActivity().finish();
             return true;

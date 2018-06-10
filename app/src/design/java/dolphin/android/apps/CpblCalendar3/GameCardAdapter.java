@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar3;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.graphics.PorterDuff;
@@ -322,7 +323,13 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
     }
 
     static Game getNewVersionCard(Context context, FirebaseRemoteConfig config) {
-        PackageInfo info = PackageUtils.getPackageInfo(context, SplashActivity.class);
+        Class<?> cls;
+        if (context instanceof Activity) {
+            cls = context.getClass();
+        } else {
+            cls = SplashActivity.class;
+        }
+        PackageInfo info = PackageUtils.getPackageInfo(context, cls);
         int versionCode = info != null ? info.versionCode : Integer.MAX_VALUE;
         long latestCode = config.getLong("latest_version_code");
         Log.v("CpblCalendar3", String.format("versionCode: %d, play: %d", versionCode, latestCode));
