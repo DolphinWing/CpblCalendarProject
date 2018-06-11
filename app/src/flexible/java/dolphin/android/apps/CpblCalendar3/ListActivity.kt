@@ -238,7 +238,7 @@ class ListActivity : AppCompatActivity() {
             android.R.id.home -> when {
                 mSwipeRefreshLayout.isRefreshing -> Log.w(TAG, "still refresh...")
                 mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ->
-                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 else -> {
                     if (!filterPaneVisible) {
                         restoreFilter()
