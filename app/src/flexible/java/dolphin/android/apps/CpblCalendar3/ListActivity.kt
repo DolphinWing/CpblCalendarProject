@@ -309,7 +309,7 @@ class ListActivity : AppCompatActivity() {
                 runOnUiThread { showFilterPane(value) }
                 field = value
             }
-            runOnUiThread { invalidateOptionsMenu() }
+            //runOnUiThread { invalidateOptionsMenu() }
         }
 
     private fun restoreFilter() {
@@ -328,7 +328,7 @@ class ListActivity : AppCompatActivity() {
                 this.animate()
                         .translationY(bottom - resources.getDimension(R.dimen.padding_large))
                         .setInterpolator(AccelerateInterpolator())
-                        //.withStartAction { mFilterListPane.visibility = View.GONE }
+                        .withStartAction { invalidateOptionsMenu() }
                         .withEndAction { mFilterControlBg.visibility = View.VISIBLE }
                         .start()
                 mFilterListPane.animate()
@@ -348,7 +348,7 @@ class ListActivity : AppCompatActivity() {
                 this.animate()
                         .translationY(0f)
                         .setInterpolator(DecelerateInterpolator())
-                        //.withStartAction { mFilterListPane.visibility = View.VISIBLE }
+                        .withEndAction { invalidateOptionsMenu() }
                         .withStartAction { mFilterControlBg.visibility = View.GONE }
                         .start()
                 mFilterListPane.animate()
