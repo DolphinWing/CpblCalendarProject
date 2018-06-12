@@ -1,17 +1,17 @@
 package dolphin.android.apps.CpblCalendar3
 
-import androidx.lifecycle.LiveData
 import android.util.Log
+import androidx.lifecycle.LiveData
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.Team
-import dolphin.android.apps.CpblCalendar.provider.TeamHelper
 import java.util.*
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 
-internal class GameListLiveData(//application: CpblApplication,
-        private val helper: CpblCalendarHelper, private val year: Int, private val monthOfJava: Int,
-        private val debugMode: Boolean = false) : LiveData<List<Game>>() {
+internal class GameListLiveData(private val executor: ExecutorService, //application: CpblApplication,
+                                private val helper: CpblCalendarHelper, private val year: Int,
+                                private val monthOfJava: Int, private val debugMode: Boolean = false)
+    : LiveData<List<Game>>() {
     companion object {
         private const val TAG = "GameListLiveData"
         private const val TIMEOUT = 3 * 60 * 60 * 1000
@@ -19,7 +19,7 @@ internal class GameListLiveData(//application: CpblApplication,
 
     //private val helper = CpblCalendarHelper(application)
     //private val teamHelper = TeamHelper(application)
-    private val executor = Executors.newSingleThreadExecutor()
+    //private val executor = Executors.newSingleThreadExecutor()
     private var updateTime: Long = 0
 
     override fun onInactive() {
