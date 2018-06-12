@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.graphics.PorterDuff;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -24,6 +22,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -175,6 +175,16 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                 //always use long name
                 holder.AwayTeamName.setText(game.AwayTeam.getName());
                 holder.HomeTeamName.setText(game.HomeTeam.getName());
+                if (holder.Option1 != null) {
+                    holder.Option1.setTag(game);
+                    holder.Option1.setOnClickListener(this);
+                }
+                if (holder.Option3 != null) {
+                    Game g = new Game(game.Id);
+                    g.People = position;//use this field to save position to remove
+                    holder.Option3.setTag(g);
+                    holder.Option3.setOnClickListener(this);
+                }
                 break;
             case TYPE_UPCOMING:
                 if (game.isToday()) {
@@ -192,10 +202,10 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
                     holder.Channel.setVisibility(View.VISIBLE);
                 }
                 //dolphin++@2017.07.10, add more buttons
-                if (holder.Option1 != null) {
-                    holder.Option1.setTag(game);
-                    holder.Option1.setOnClickListener(this);
-                }
+//                if (holder.Option1 != null) {
+//                    holder.Option1.setTag(game);
+//                    holder.Option1.setOnClickListener(this);
+//                }
                 if (holder.Option2 != null) {
                     holder.Option2.setTag(game);
                     holder.Option2.setOnClickListener(this);
@@ -244,7 +254,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
         TextView Channel, Field;
         TextView LiveText;
         ImageView HomeLogo, AwayLogo;
-        View Option1, Option2;
+        View Option1, Option2, Option3;
 
         ViewHolder(View parent) {
             super(parent);
@@ -260,8 +270,9 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             LiveText = parent.findViewById(R.id.textView10);
             AwayLogo = parent.findViewById(android.R.id.icon1);
             HomeLogo = parent.findViewById(android.R.id.icon2);
-            //Option1 = parent.findViewById(R.id.card_option1);
+            Option1 = parent.findViewById(R.id.card_option1);
             Option2 = parent.findViewById(R.id.card_option2);
+            Option3 = parent.findViewById(R.id.card_option3);
         }
     }
 
@@ -344,5 +355,10 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
 
     static boolean isUpdateCard(Game game) {
         return game != null && game.Id == ID_UPDATE;
+    }
+
+    void removeAt(int position) {
+        mGames.remove(position);
+        notifyDataSetChanged();
     }
 }

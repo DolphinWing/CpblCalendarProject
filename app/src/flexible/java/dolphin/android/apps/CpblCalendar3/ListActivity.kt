@@ -3,8 +3,6 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.animation.ValueAnimator
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,27 +10,30 @@ import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.browser.customtabs.CustomTabsIntent
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.text.Html
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
+import androidx.appcompat.widget.Toolbar
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewpager.widget.ViewPager
 import cn.carbswang.android.numberpickerview.library.NumberPickerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
@@ -59,20 +60,20 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mFilterListPane: View
     private lateinit var mFilterControlPane: View
     private lateinit var mFilterControlBg: View
-    private lateinit var mPager: androidx.viewpager.widget.ViewPager
+    private lateinit var mPager: ViewPager
     private lateinit var mAdapter: SimplePageAdapter
-    private lateinit var mTabLayout: com.google.android.material.tabs.TabLayout
+    private lateinit var mTabLayout: TabLayout
 
     private lateinit var mPickerYear: NumberPickerView
     private lateinit var mPickerMonth: NumberPickerView
     private lateinit var mPickerField: NumberPickerView
     private lateinit var mPickerTeam: NumberPickerView
-    private lateinit var mTextViewYear: TextView
-    private lateinit var mTextViewField: TextView
-    private lateinit var mTextViewTeam: TextView
+    private lateinit var mChipYear: Chip
+    private lateinit var mChipField: Chip
+    private lateinit var mChipTeam: Chip
 
-    private lateinit var mSwipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    private lateinit var mBottomSheetBehavior: com.google.android.material.bottomsheet.BottomSheetBehavior<View>
+    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var mHomeIcon: DrawerArrowDrawable
 
     private var mYear: Int = 2018
@@ -85,7 +86,7 @@ class ListActivity : AppCompatActivity() {
 
         val now = CpblCalendarHelper.getNowTime()
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
-        viewModel.debugMode = false
+        viewModel.debugMode = true
 
         mHomeIcon = DrawerArrowDrawable(this).apply { color = Color.WHITE }
         findViewById<Toolbar>(R.id.toolbar)?.apply {
@@ -102,12 +103,12 @@ class ListActivity : AppCompatActivity() {
         mPager = findViewById(R.id.viewpager)
 
         //prepare filter pane
-        mTextViewYear = findViewById(android.R.id.button1)
-        mTextViewYear.setOnClickListener { filterPaneVisible = true }
-        mTextViewField = findViewById(android.R.id.button2)
-        mTextViewField.setOnClickListener { filterPaneVisible = true }
-        mTextViewTeam = findViewById(android.R.id.button3)
-        mTextViewTeam.setOnClickListener { filterPaneVisible = true }
+        mChipYear = findViewById(android.R.id.button1)
+//        mChipYear.setOnClickListener { filterPaneVisible = true }
+        mChipField = findViewById(android.R.id.button2)
+//        mChipField.setOnClickListener { filterPaneVisible = true }
+        mChipTeam = findViewById(android.R.id.button3)
+//        mChipTeam.setOnClickListener { filterPaneVisible = true }
 
         mPickerYear = findViewById(android.R.id.text1)
         mPickerMonth = findViewById(android.R.id.text2)
@@ -166,20 +167,20 @@ class ListActivity : AppCompatActivity() {
         months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
         mAdapter = SimplePageAdapter(this, months)
         mPager.adapter = mAdapter
-        mPager.addOnPageChangeListener(com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
-        mPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
+        mTabLayout.setupWithViewPager(mPager)
+        mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
+        mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 mMonth = position + 1
                 runOnUiThread {
-                    //                    mSpinnerMonth.setSelection(position)
                     mPickerMonth.value = mMonth
                 }
                 Log.d(TAG, "selected month = ${mMonth + 1}")
                 doQueryAction()
             }
         })
+        mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
         //pager.currentItem = mMonth - 1
-        mTabLayout.addOnTabSelectedListener(com.google.android.material.tabs.TabLayout.ViewPagerOnTabSelectedListener(mPager))
 
         mPickerMonth.apply {
             displayedValues = Array(months.size, { months[it] })
@@ -191,19 +192,19 @@ class ListActivity : AppCompatActivity() {
         //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
         mSwipeRefreshLayout = findViewById(R.id.bottom_sheet_option1)
         val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
-        mBottomSheetBehavior = com.google.android.material.bottomsheet.BottomSheetBehavior.from(bottomSheet)
-        mBottomSheetBehavior.setBottomSheetCallback(object : com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        mBottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 //do nothing
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING) {
-                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
         })
-        mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         //HighlightFragment().show(supportFragmentManager, "highlight")
         bottomSheet.setOnTouchListener { _, event ->
             event.y > supportActionBar?.height ?: 56
@@ -218,9 +219,9 @@ class ListActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.action_highlight)?.isVisible = //false
-                mBottomSheetBehavior.state != com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
+                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
         menu?.findItem(R.id.action_refresh)?.isVisible = when {
-            mBottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED &&
+            mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED &&
                     mSwipeRefreshLayout.isRefreshing == true -> false
             filterPaneVisible -> false
             else -> true
@@ -228,7 +229,7 @@ class ListActivity : AppCompatActivity() {
         //menu?.findItem(R.id.action_go_to_cpbl)?.isVisible = !filterPaneVisible
         //menu?.findItem(R.id.action_settings)?.isVisible = !filterPaneVisible
         menu?.findItem(R.id.action_cache_mode)?.isVisible =
-                mBottomSheetBehavior.state != com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
+                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
         menu?.findItem(R.id.action_leader_board)?.isVisible = !filterPaneVisible
         return super.onPrepareOptionsMenu(menu)
     }
@@ -237,8 +238,8 @@ class ListActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> when {
                 mSwipeRefreshLayout.isRefreshing -> Log.w(TAG, "still refresh...")
-                mBottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED ->
-                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+                mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ->
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 else -> {
                     if (!filterPaneVisible) {
                         restoreFilter()
@@ -247,7 +248,7 @@ class ListActivity : AppCompatActivity() {
                 }
             }
             R.id.action_refresh -> {
-                if (mBottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
+                if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     prepareHighlightCards(refresh = true)
                 } else {
                     doWebQuery()
@@ -263,11 +264,11 @@ class ListActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_highlight -> {
-                if (mBottomSheetBehavior.state != com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
-                    findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.bottom_sheet)?.scrollToPosition(0)
-                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+                if (mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                    findViewById<RecyclerView>(R.id.bottom_sheet)?.scrollToPosition(0)
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 } else {//should not be here
-                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
                 invalidateOptionsMenu()
                 return true
@@ -419,11 +420,11 @@ class ListActivity : AppCompatActivity() {
         }
 
         Log.d(TAG, "team = ${mPickerTeam.value} field = ${mPickerField.value}")
-        mTextViewYear.text = //mSpinnerYear.selectedItem.toString()
+        mChipYear.chipText = //mSpinnerYear.selectedItem.toString()
                 getString(R.string.title_cpbl_year, mPickerYear.value)
-        mTextViewField.text = //mSpinnerField.selectedItem.toString()
+        mChipField.chipText = //mSpinnerField.selectedItem.toString()
                 resources.getStringArray(R.array.cpbl_game_field_name)[mPickerField.value]
-        mTextViewTeam.text = //mSpinnerTeam.selectedItem.toString()
+        mChipTeam.chipText = //mSpinnerTeam.selectedItem.toString()
                 if (mPickerTeam.value < 0) {
                     getString(R.string.title_favorite_teams_all)
                 } else {
@@ -431,7 +432,7 @@ class ListActivity : AppCompatActivity() {
                 }
     }
 
-    private var snackbar: com.google.android.material.snackbar.Snackbar? = null
+    private var snackbar: Snackbar? = null
 
     private fun doWebQuery(newYear: Int = mYear, newMonth: Int = mMonth) {
         Log.d(TAG, "start fetch $newYear/${newMonth + 1}")
@@ -450,8 +451,8 @@ class ListActivity : AppCompatActivity() {
             if (snackbar != null) {
                 snackbar!!.setText(text)
             } else {
-                snackbar = com.google.android.material.snackbar.Snackbar.make(findViewById<View>(R.id.main_content_frame), text,
-                        com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE)
+                snackbar = Snackbar.make(findViewById<View>(R.id.main_content_frame), text,
+                        Snackbar.LENGTH_INDEFINITE)
             }
             snackbar!!.show()
         } else {
@@ -474,11 +475,11 @@ class ListActivity : AppCompatActivity() {
         override fun getCount() = months.size
     }
 
-    internal class MonthViewFragment : androidx.fragment.app.Fragment(), FlexibleAdapter.OnItemClickListener,
+    internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListener,
             FlexibleAdapter.OnItemLongClickListener {
 
-        private var container: androidx.swiperefreshlayout.widget.SwipeRefreshLayout? = null
-        private lateinit var list: androidx.recyclerview.widget.RecyclerView
+        private var container: SwipeRefreshLayout? = null
+        private lateinit var list: RecyclerView
         private lateinit var emptyView: View
         private var index = -1
 
@@ -522,7 +523,8 @@ class ListActivity : AppCompatActivity() {
             helper = TeamHelper(activity!!.application as CpblApplication)
         }
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                                  savedInstanceState: Bundle?): View? {
             val view = inflater.inflate(R.layout.fragment_recycler_view, container, false)
             this.container = view.findViewById(R.id.swipeRefreshLayout)
             this.container!!.isRefreshing = true
@@ -623,7 +625,7 @@ class ListActivity : AppCompatActivity() {
     internal class MyItemView(private val context: Context, val game: Game,
                               private val helper: TeamHelper) :
             AbstractFlexibleItem<MyItemView.ViewHolder>() {
-        override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<androidx.recyclerview.widget.RecyclerView.ViewHolder>>?,
+        override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
                                     holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
             val dateStr = SimpleDateFormat("MMM d (E) ", Locale.TAIWAN)
                     .format(game.StartTime.time)
@@ -705,7 +707,7 @@ class ListActivity : AppCompatActivity() {
         override fun equals(other: Any?) = if (other is MyItemView) other == this else false
 
         override fun createViewHolder(view: View?,
-                                      adapter: FlexibleAdapter<IFlexible<androidx.recyclerview.widget.RecyclerView.ViewHolder>>?): ViewHolder {
+                                      adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?): ViewHolder {
             return ViewHolder(view, adapter)
         }
 
@@ -739,7 +741,7 @@ class ListActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ${mBottomSheetBehavior.state}")
-        if (mBottomSheetBehavior.state == com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED) {
+        if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             //mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             finish()
             return
@@ -809,47 +811,94 @@ class ListActivity : AppCompatActivity() {
 
     private fun prepareExtraCards(list: ArrayList<Game>) {
         showSnackBar(getString(R.string.title_download_complete))
-        val config = FirebaseRemoteConfig.getInstance()
         val gameList = CpblCalendarHelper.getHighlightGameList(list)
-        gameList.addAll(0, GameCardAdapter.getAnnouncementCards(this, config))
-        GameCardAdapter.getNewVersionCard(this, config)?.let { gameList.add(0, it) }
+        if (viewModel.debugMode) {
+            gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 2" })
+            gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 1" })
+            gameList.add(0, Game(-3).apply { LiveMessage = "update card" })
+        } else {
+            val config = FirebaseRemoteConfig.getInstance()
+            gameList.addAll(0, GameCardAdapter.getAnnouncementCards(this, config))
+            GameCardAdapter.getNewVersionCard(this, config)?.let { gameList.add(0, it) }
+        }
         updateHighlightList(gameList)
     }
 
     private fun updateHighlightList(list: ArrayList<Game>) {
-        list.add(GameCardAdapter.createMoreCard())//add a more button to last row
+//        list.add(GameCardAdapter.createMoreCard())//add a more button to last row
+//
+//        val adapter = GameCardAdapter(this, list, TeamHelper(application as CpblApplication))
+//        adapter.setOnClickListener { view, game ->
+//            when {
+//                GameCardAdapter.isMoreCard(game) -> {
+//                    //view.id == R.id.card_option1 -> {
+//                    //mPager.currentItem = mMonth - 1
+//                    doQueryAction() //get new data from ViewModel
+//                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+//                    invalidateOptionsMenu()
+//                }
+//                view.id == R.id.card_option2 -> if (GameCardAdapter.isUpdateCard(game)) {
+//                    try {
+//                        startActivity(Intent(Intent.ACTION_VIEW,
+//                                Uri.parse("market://details?id=$packageName")))
+//                    } catch (anfe: android.content.ActivityNotFoundException) {
+//                        startActivity(Intent(Intent.ACTION_VIEW,
+//                                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+//                    }
+//                    finish() //update new app, so we can close now
+//                } else {
+//                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
+//                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
+//                        startActivity(calIntent)
+//                    }
+//                }
+//                view.id == R.id.card_option1 -> if (game != null) {
+//                    Utils.startGameActivity(this@ListActivity, game)
+//                }
+//                view.id == R.id.card_option3 -> if (game != null) {
+//                    adapter.removeAt(game.People)
+//                }
+//            //else -> Utils.startGameActivity(this@ListActivity, game)
+//            }
+//        }
 
-        val adapter = GameCardAdapter(this, list, TeamHelper(application as CpblApplication))
-        adapter.setOnClickListener { view, game ->
-            when {
-                GameCardAdapter.isMoreCard(game) -> {
-                    //view.id == R.id.card_option1 -> {
-                    //mPager.currentItem = mMonth - 1
-                    doQueryAction() //get new data from ViewModel
-                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
-                    invalidateOptionsMenu()
-                }
-                view.id == R.id.card_option2 -> if (GameCardAdapter.isUpdateCard(game)) {
-                    try {
-                        startActivity(Intent(Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=$packageName")))
-                    } catch (anfe: android.content.ActivityNotFoundException) {
-                        startActivity(Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+        val adapter = HighlightCardAdapter(application as CpblApplication, list,
+                object : HighlightCardAdapter.OnCardClickListener {
+                    override fun onOptionClick(view: View, game: Game, position: Int) {
+                        Log.d(TAG, "on option click $position")
+                        when (view.id) {
+                            R.id.card_option1 -> if (game.Id != HighlightCardAdapter.TYPE_MORE_CARD) {
+                                Log.d(TAG, "start game ${game.Id} from ${game.Url}")
+                                Utils.startGameActivity(this@ListActivity, game)
+                            } else {
+                                doQueryAction() //get new data from ViewModel
+                                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                                invalidateOptionsMenu()
+                            }
+                            R.id.card_option2 -> if (game.Id != HighlightCardAdapter.TYPE_UPDATE_CARD) {
+                                val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
+                                if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
+                                    startActivity(calIntent)
+                                }
+                            } else {
+                                try {
+                                    startActivity(Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("market://details?id=$packageName")))
+                                } catch (anfe: android.content.ActivityNotFoundException) {
+                                    startActivity(Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                                }
+                                finish() //update new app, so we can close now
+                            }
+                            R.id.card_option3 -> {
+                                Log.d(TAG, "dismiss card, maybe we should remember it")
+                            }
+                        }
                     }
-                    finish() //update new app, so we can close now
-                } else {
-                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
-                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
-                        startActivity(calIntent)
-                    }
-                }
-                else -> Utils.startGameActivity(this@ListActivity, game)
-            }
-        }
-        findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.bottom_sheet)?.apply {
+                })
+        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
             this.adapter = adapter
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@ListActivity)
+            layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
             setHasFixedSize(true)
         }
         showSnackBar(visible = false)

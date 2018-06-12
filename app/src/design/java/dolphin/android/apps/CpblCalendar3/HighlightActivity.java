@@ -366,7 +366,7 @@ public class HighlightActivity extends AppCompatActivity
 //            public int getSpanSize(int position) {
 //                switch (adapter.getItemViewType(position)) {
 //                    case GameCardAdapter.TYPE_LIVE:
-//                    case GameCardAdapter.TYPE_MORE:
+//                    case GameCardAdapter.TYPE_MORE_CARD:
 //                        return columnPerRow;
 //                }
 //                return 1;

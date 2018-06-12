@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar3
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
@@ -10,7 +11,9 @@ import java.util.concurrent.ExecutorService
 
 internal class GameListLiveData(private val executor: ExecutorService, //application: CpblApplication,
                                 private val helper: CpblCalendarHelper, private val year: Int,
-                                private val monthOfJava: Int, private val debugMode: Boolean = false)
+                                private val monthOfJava: Int,
+                                private val debugMode: Boolean = false,
+                                private val context: Context? = null)
     : LiveData<List<Game>>() {
     companion object {
         private const val TAG = "GameListLiveData"
@@ -24,12 +27,12 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
 
     override fun onInactive() {
         super.onInactive()
-        Log.d(TAG, "onInactive $year/${monthOfJava + 1}")
+        if (debugMode) Log.d(TAG, "onInactive $year/${monthOfJava + 1}")
     }
 
     override fun onActive() {
         super.onActive()
-        Log.d(TAG, "onActive $year/${monthOfJava + 1}")
+        if (debugMode) Log.d(TAG, "onActive $year/${monthOfJava + 1}")
 
         executor.submit { if (expired() || value == null) fetch() }
     }
@@ -38,12 +41,12 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
             (System.currentTimeMillis() - updateTime) > TIMEOUT
 
     private fun fetch() {
+        //Log.d(TAG, "debug mode = $debugMode")
+        updateTime = System.currentTimeMillis()
         if (debugMode) {
             genData()
             return //just create fake data
         }
-
-        updateTime = System.currentTimeMillis()
 
         Log.v(TAG, "fetch $year/${monthOfJava + 1}")
         val list = helper.query2018(year, monthOfJava, "01")
@@ -69,7 +72,7 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
         }
         //sort games by time and id
         val sortedList = list.sortedWith(compareBy(Game::StartTime, Game::Id))
-        Log.d(TAG, "list size = ${sortedList.size}")
+        if (debugMode) Log.d(TAG, "list size = ${sortedList.size}")
         //mAllGamesCache.put(year * 12 + monthOfJava, sortedList)
 
         postValue(sortedList)
@@ -81,6 +84,7 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
         val monthOfJava = now.get(Calendar.MONTH)
         val dayOfMonth = now.get(Calendar.DAY_OF_MONTH)
         val id = monthOfJava * 100
+        val random = Random(System.currentTimeMillis())
         when {
             this.monthOfJava == monthOfJava -> {
                 val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, dayOfMonth,
@@ -89,25 +93,35 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
                         Game(id + 1, time).apply {
                             IsFinal = true
                             StartTime.add(Calendar.DAY_OF_MONTH, -1)
-                            AwayTeam = Team(Team.ID_FUBON_GUARDIANS)
-                            HomeTeam = Team(Team.ID_LAMIGO_MONKEYS)
+                            AwayTeam = Team(context, Team.ID_FUBON_GUARDIANS, false)
+                            HomeTeam = Team(context, Team.ID_LAMIGO_MONKEYS, true)
+                            AwayScore = random.nextInt(20)
+                            HomeScore = random.nextInt(20)
+                            FieldId = "F04"
                         },
                         Game(id + 2, time).apply {
                             IsFinal = true
                             StartTime.add(Calendar.DAY_OF_MONTH, -1)
-                            AwayTeam = Team(Team.ID_CT_ELEPHANTS)
-                            HomeTeam = Team(Team.ID_UNI_711_LIONS)
+                            AwayTeam = Team(context, Team.ID_CT_ELEPHANTS, false)
+                            HomeTeam = Team(context, Team.ID_UNI_711_LIONS, true)
+                            HomeScore = random.nextInt(20)
+                            AwayScore = random.nextInt(20)
+                            FieldId = "F02"
                         },
                         Game(id + 3, time).apply {
                             IsLive = true
                             LiveMessage = "LIVE!!"
-                            AwayTeam = Team(Team.ID_UNKNOWN_AWAY)
-                            HomeTeam = Team(Team.ID_UNKNOWN_HOME)
+                            AwayTeam = Team(context, Team.ID_UNKNOWN_AWAY, false)
+                            HomeTeam = Team(context, Team.ID_UNKNOWN_HOME, true)
+                            HomeScore = random.nextInt(20)
+                            AwayScore = random.nextInt(20)
+                            FieldId = "F26"
                         },
                         Game(id + 4, time).apply {
                             StartTime.add(Calendar.DAY_OF_MONTH, 1)
-                            AwayTeam = Team(Team.ID_CHINESE_TAIPEI)
-                            HomeTeam = Team(Team.ID_SOUTH_KOREA)
+                            AwayTeam = Team(context, Team.ID_CHINESE_TAIPEI, false)
+                            HomeTeam = Team(context, Team.ID_SOUTH_KOREA, true)
+                            FieldId = "F08"
                         }))
             }
             this.monthOfJava > monthOfJava -> {
@@ -118,18 +132,27 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
                             StartTime.add(Calendar.DAY_OF_MONTH, -1)
                             IsFinal = true
                             DelayMessage = "delayed"
-                            AwayTeam = Team(Team.ID_SINON_BULLS)
-                            HomeTeam = Team(Team.ID_EDA_RHINOS)
+                            AwayTeam = Team(context, Team.ID_SINON_BULLS, false)
+                            HomeTeam = Team(context, Team.ID_EDA_RHINOS, true)
+                            FieldId = "F09"
+                            HomeScore = random.nextInt(20)
+                            AwayScore = random.nextInt(20)
                         },
                         Game(id + 2, time).apply {
                             IsFinal = true
-                            AwayTeam = Team(Team.ID_MKT_COBRAS)
-                            HomeTeam = Team(Team.ID_MKT_SUNS)
+                            AwayTeam = Team(context, Team.ID_MKT_COBRAS, false)
+                            HomeTeam = Team(context, Team.ID_MKT_SUNS, true)
+                            FieldId = "F11"
+                            HomeScore = random.nextInt(20)
+                            AwayScore = random.nextInt(20)
                         },
                         Game(id + 3, time).apply {
                             IsFinal = true
-                            AwayTeam = Team(Team.ID_FIRST_KINGO)
-                            HomeTeam = Team(Team.ID_CT_WHALES)
+                            AwayTeam = Team(context, Team.ID_FIRST_KINGO)
+                            HomeTeam = Team(context, Team.ID_CT_WHALES, true)
+                            FieldId = "F26"
+                            HomeScore = random.nextInt(20)
+                            AwayScore = random.nextInt(20)
                         }))
             }
             this.monthOfJava < monthOfJava -> {
@@ -138,18 +161,21 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {
                             DelayMessage = "original $year/$monthOfJava/$dayOfMonth"
-                            AwayTeam = Team(Team.ID_SS_TIGERS)
-                            HomeTeam = Team(Team.ID_W_DRAGONS)
+                            AwayTeam = Team(context, Team.ID_SS_TIGERS, false)
+                            HomeTeam = Team(context, Team.ID_W_DRAGONS, true)
+                            FieldId = "F19"
                         },
                         Game(id + 2, time).apply {
                             Channel = "CPBL TV"
-                            AwayTeam = Team(Team.ID_JUNGO_BEARS)
-                            HomeTeam = Team(Team.ID_ELEPHANTS)
+                            AwayTeam = Team(context, Team.ID_JUNGO_BEARS)
+                            HomeTeam = Team(context, Team.ID_ELEPHANTS, true)
+                            FieldId = "F05"
                         },
                         Game(id + 3, time).apply {
                             StartTime.add(Calendar.DAY_OF_MONTH, 1)
-                            AwayTeam = Team(Team.ID_TIME_EAGLES)
-                            HomeTeam = Team(Team.ID_LANEW_BEARS)
+                            AwayTeam = Team(context, Team.ID_TIME_EAGLES)
+                            HomeTeam = Team(context, Team.ID_LANEW_BEARS, true)
+                            FieldId = "F03"
                         }))
             }
         }

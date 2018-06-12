@@ -1,6 +1,7 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
 import android.content.Context;
+
 import androidx.annotation.Keep;
 
 import com.google.gson.Gson;
@@ -494,10 +495,6 @@ public class Team {
         mLogoId = logo;
     }
 
-    public Team(int id) {
-        this(id, "", "", 0);
-    }
-
     /**
      * get team id
      *
@@ -532,7 +529,10 @@ public class Team {
             return mShortName;
         }
         if (mContext != null && getId() != ID_UNKNOWN) {
-            mShortName = getShortName(mContext, mId);
+            mShortName = getShortName(mContext, getId());
+        }
+        if (mShortName != null) {
+            return mShortName;
         }
         return getName();
     }

@@ -1,0 +1,148 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.MaterialComponents.CardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/padding_medium"
+    android:layout_marginTop="@dimen/padding_small"
+    android:layout_marginRight="@dimen/padding_medium"
+    android:layout_marginBottom="@dimen/padding_small"
+    tools:ignore="RtlSymmetry,RtlHardcoded">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/match_title"
+            style="@style/Theme.Holo_green.Match.Title"
+            android:paddingLeft="8dp"
+            android:paddingRight="@dimen/padding_large">
+
+            <TextView
+                android:id="@+id/textView1"
+                style="@style/Theme.Holo_green.Match.Time"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView9"
+                style="@style/Theme.Holo_green.Match.GameId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/match_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:id="@+id/away_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@android:id/icon1"
+                    android:layout_width="@dimen/match_logo_width"
+                    android:layout_height="@dimen/match_logo_height"
+                    android:layout_marginRight="16dp"
+                    android:contentDescription="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_baseball"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/Theme.Holo_green.Match.Team"
+                    android:layout_width="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    style="@style/Theme.Holo_green.Match.Score" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_small" />
+
+            <LinearLayout
+                android:id="@+id/home_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@android:id/icon2"
+                    android:layout_width="@dimen/match_logo_width"
+                    android:layout_height="@dimen/match_logo_height"
+                    android:layout_marginRight="16dp"
+                    android:contentDescription="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_baseball"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    style="@style/Theme.Holo_green.Match.Team"
+                    android:layout_width="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    style="@style/Theme.Holo_green.Match.Score" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/Theme.Holo_green.Match.Field"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/card_option3"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/action_more" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/card_option1"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/action_more" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

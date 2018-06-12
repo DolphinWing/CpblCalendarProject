@@ -1215,6 +1215,9 @@ public class CpblCalendarHelper extends HttpHelper {
                 }
             }
         }
+        if (lived && beforeIndex > 0) {//add previous day result
+            //TODO: add here
+        }
 
         return gameList;
     }

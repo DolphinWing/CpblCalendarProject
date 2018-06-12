@@ -60,40 +60,35 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:dividerPadding="@dimen/padding_small"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/padding_small"
                     app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
                         android:id="@android:id/button1"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/round_corner"
-                        android:text="@string/title_game_year" />
+                        android:layout_height="wrap_content" />
 
                     <View
                         android:layout_width="@dimen/padding_small"
                         android:layout_height="@dimen/padding_small" />
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
                         android:id="@android:id/button2"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/round_corner"
-                        android:text="@string/title_game_field" />
+                        android:layout_height="wrap_content" />
 
                     <View
                         android:layout_width="@dimen/padding_small"
                         android:layout_height="@dimen/padding_small" />
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
                         android:id="@android:id/button3"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/round_corner"
-                        android:text="@string/title_favorite_teams" />
+                        android:layout_height="wrap_content" />
 
                     <!-- <View
                          android:layout_width="0dp"
@@ -117,6 +112,7 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
+            style="@style/Widget.MaterialComponents.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#f4f4f4"
@@ -176,7 +172,7 @@
                 android:id="@+id/bottom_sheet"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ffffff" />
+                android:background="#f4f4f4" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </FrameLayout>
 

@@ -1,6 +1,7 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import java.util.concurrent.Executors
@@ -10,6 +11,7 @@ internal class GameViewModel(application: Application) : AndroidViewModel(applic
     var debugMode: Boolean = false
     private val mAllGames = (application as CpblApplication).cacheList
     private val executor = Executors.newFixedThreadPool(3)
+    private val context: Context? = application.applicationContext
 
     //SparseArray<GameListLiveData>()
 
@@ -22,7 +24,7 @@ internal class GameViewModel(application: Application) : AndroidViewModel(applic
             mAllGames.remove(key)
         }
         if (fetchFromWeb && mAllGames[key] == null) {
-            mAllGames.put(key, GameListLiveData(executor, helper, year, monthOfJava, debugMode))
+            mAllGames.put(key, GameListLiveData(executor, helper, year, monthOfJava, debugMode, context))
         }
         return mAllGames[key]
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.Keep;
 
 import com.google.gson.Gson;
@@ -485,5 +486,19 @@ public class Game implements Parcelable {
 
     public boolean isToday() {
         return DateUtils.isToday(StartTime);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Game) {
+            Game game = (Game) obj;
+            return game.StartTime.equals(StartTime) && game.Id == Id;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return StartTime.hashCode() + Id;
     }
 }
