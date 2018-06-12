@@ -3,10 +3,10 @@ package dolphin.android.apps.CpblCalendar3
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -27,7 +27,7 @@ class CacheModeListActivity : CalendarActivity() {
 
     override fun getActivity() = this
 
-    private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mDrawerLayout: androidx.drawerlayout.widget.DrawerLayout
     private lateinit var mDrawerList: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,9 +40,9 @@ class CacheModeListActivity : CalendarActivity() {
         initQueryPane()
         mSpinnerYear.setSelection(0)
         mSpinnerMonth.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.MONTH))
-        findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)?.isEnabled = false
+        findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefreshLayout)?.isEnabled = false
         findViewById<View>(R.id.bottom_sheet)?.visibility = View.GONE
-        findViewById<FloatingActionButton>(R.id.button_floating_action)?.visibility = View.GONE
+        findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.button_floating_action)?.visibility = View.GONE
 
         if (intent?.getBooleanExtra("cache_init", false) == true) {
             Handler().postDelayed({ runDownloadCache() }, 500)

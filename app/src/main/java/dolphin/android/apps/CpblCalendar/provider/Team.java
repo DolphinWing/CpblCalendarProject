@@ -1,7 +1,7 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
 import android.content.Context;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

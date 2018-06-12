@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">@color/holo_green_dark</color>
     <color name="colorPrimaryDark">@color/holo_green_dark_darker</color>
-    <color name="colorAccent">#FF9966FF</color>
+    <color name="colorAccent">#fb8c00</color>
 
     <color name="holo_green_light_lighter">#ffddffaa</color>
     <color name="pressed_holo_green_light_lighter">#ccddffaa</color>

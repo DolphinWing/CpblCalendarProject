@@ -2,7 +2,7 @@ package dolphin.android.apps.CpblCalendar3;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.v7.graphics.Palette;
+import androidx.palette.graphics.Palette;
 import android.util.SparseArray;
 
 import com.google.android.gms.analytics.GoogleAnalytics;

@@ -3,7 +3,7 @@ package dolphin.android.apps.CpblCalendar.provider;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v7.graphics.Palette;
+import androidx.palette.graphics.Palette;
 
 import dolphin.android.apps.CpblCalendar3.CpblApplication;
 

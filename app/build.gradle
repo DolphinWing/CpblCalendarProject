@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.0"
 
     defaultConfig {
         applicationId "dolphin.android.apps.CpblCalendar3"
         resConfigs /*"zh",*/ "zh_TW"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true
     }
 
@@ -57,8 +57,8 @@ android {
 
 dependencies {
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.0'
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -76,21 +76,21 @@ dependencies {
     implementation "com.google.firebase:firebase-config:$playServiceVersion"
     implementation "com.google.firebase:firebase-messaging:$playServiceVersion"
     //implementation "com.google.firebase:firebase-crash:$playServiceVersion"
-    implementation "com.android.support:support-v13:$supportLibraryVersion"
-    implementation "com.android.support:support-v4:$supportLibraryVersion"
-    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
-    implementation "com.android.support:palette-v7:$supportLibraryVersion"
-    implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$supportLibraryVersion"
-    implementation "com.android.support:design:$supportLibraryVersion"
-    implementation "com.android.support:customtabs:$supportLibraryVersion"
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0-alpha3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
+    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
+    implementation 'androidx.palette:palette:1.0.0-alpha3'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha3'
+    implementation 'androidx.cardview:cardview:1.0.0-alpha3'
+    implementation 'com.google.android.material:material:1.0.0-alpha3'
+    implementation 'androidx.browser:browser:1.0.0-alpha3'
     //designCompile 'com.evernote:android-job:1.1.7'
 
     //https://github.com/davideas/FlexibleAdapter
     flexibleImplementation 'eu.davidea:flexible-adapter:5.0.3'
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
-    flexibleImplementation 'android.arch.lifecycle:extensions:1.1.1'
+    flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-alpha1'
     flexibleImplementation 'cn.carbswang.android:NumberPickerView:1.1.1'
 }
 

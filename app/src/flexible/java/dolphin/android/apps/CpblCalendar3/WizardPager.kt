@@ -3,10 +3,10 @@ package dolphin.android.apps.CpblCalendar3
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.util.Log
 import android.util.SparseArray
@@ -19,7 +19,7 @@ import android.view.ViewGroup
  * https://stackoverflow.com/a/13437997/2673859
  */
 
-class WizardPager : ViewPager {
+class WizardPager : androidx.viewpager.widget.ViewPager {
     companion object {
         private const val TAG = "WizardPager"
     }
@@ -73,12 +73,12 @@ class WizardPager : ViewPager {
     /**
      * Enhanced PagerAdapter that supports getting child fragments.
      */
-    abstract class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+    abstract class PagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
         //https://stackoverflow.com/a/15261142/2673859
-        private val childFragments = SparseArray<Fragment>()
+        private val childFragments = SparseArray<androidx.fragment.app.Fragment>()
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
+            val fragment = super.instantiateItem(container, position) as androidx.fragment.app.Fragment
             childFragments.put(position, fragment)
             return fragment
         }
@@ -88,7 +88,7 @@ class WizardPager : ViewPager {
             super.destroyItem(container, position, `object`)
         }
 
-        fun getChildFragment(position: Int): Fragment? {
+        fun getChildFragment(position: Int): androidx.fragment.app.Fragment? {
             return childFragments.get(position)
         }
     }
@@ -96,7 +96,7 @@ class WizardPager : ViewPager {
     /**
      * Basic StepFragment for WizardPager. It can support back and forth navigation.
      */
-    open class StepFragment : Fragment() {
+    open class StepFragment : androidx.fragment.app.Fragment() {
         private var mListener: StepListener? = null
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

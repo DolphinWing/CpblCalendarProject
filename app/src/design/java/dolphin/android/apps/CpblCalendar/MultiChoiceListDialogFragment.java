@@ -6,9 +6,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import android.util.SparseArray;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;

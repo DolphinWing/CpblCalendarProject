@@ -1,8 +1,8 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import android.util.SparseArray
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 
