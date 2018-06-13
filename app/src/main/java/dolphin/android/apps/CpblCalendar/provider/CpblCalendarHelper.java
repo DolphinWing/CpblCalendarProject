@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -24,6 +23,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.core.content.ContextCompat;
 import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.net.GoogleDriveHelper;
@@ -1215,8 +1215,26 @@ public class CpblCalendarHelper extends HttpHelper {
                 }
             }
         }
+        //Log.d(TAG, "having live games: " + lived);
         if (lived && beforeIndex > 0) {//add previous day result
-            //TODO: add here
+            //Log.d(TAG, "add final result of yesterday for reference");
+            long diff = Integer.MAX_VALUE;//try to add closest result only
+            for (i = beforeIndex; i >= 0; i--) {
+                Game game = list.get(i);
+                if (game.IsLive) continue;//don't add live games that we have already added
+                if (diff < now.getTimeInMillis() - game.StartTime.getTimeInMillis()) {
+                    break;//ignore all other final result, just closest ones
+                }
+                if (gameList.contains(game)) {//don't add the same game
+                    continue;//the same day result, try to add yesterday
+                } else {
+                    gameList.add(game);
+                }
+                if (DEBUG_LOG) {
+                    Log.d(TAG, String.format("%d: %s", game.Id, game.getDisplayDate()));
+                }
+                diff = now.getTimeInMillis() - game.StartTime.getTimeInMillis();//store the diff
+            }
         }
 
         return gameList;
