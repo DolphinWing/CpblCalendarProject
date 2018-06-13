@@ -90,7 +90,7 @@ class SplashActivity3 : AppCompatActivity() {
     }
 
     private fun checkLatestAppVersion() {
-        val info = PackageUtils.getPackageInfo(this, SplashActivity::class.java)
+        val info = PackageUtils.getPackageInfo(this, SplashActivity3::class.java)
         val versionCode = info?.versionCode ?: 0
         if (versionCode > config.getLong("latest_version_code")) {
             animateToNextActivity()

@@ -112,9 +112,9 @@ public class CpblApplication extends Application {
         return mTeamLogoPalette.get(id);
     }
 
-//    private final SparseArray<GameListLiveData> mCacheList = new SparseArray<>();
-//
-//    public SparseArray<GameListLiveData> getCacheList() {
-//        return mCacheList;
-//    }
+    private final SparseArray<GameListLiveData> mCacheList = new SparseArray<>();
+
+    public SparseArray<GameListLiveData> getCacheList() {
+        return mCacheList;
+    }
 }

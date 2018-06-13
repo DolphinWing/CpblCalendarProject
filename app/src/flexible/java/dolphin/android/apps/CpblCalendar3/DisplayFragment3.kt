@@ -1,11 +1,7 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.os.Bundle
-import android.preference.Preference
 import android.preference.PreferenceFragment
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
-import dolphin.android.apps.CpblCalendar.provider.Team
-import se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference
 
 class DisplayFragment3 : PreferenceFragment()/*, Preference.OnPreferenceChangeListener*/ {
 //    private lateinit var mCpblTeams: Array<String>

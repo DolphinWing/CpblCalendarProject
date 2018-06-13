@@ -167,7 +167,7 @@ class ListActivity : AppCompatActivity() {
         months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
         mAdapter = SimplePageAdapter(this, months)
         mPager.adapter = mAdapter
-        mTabLayout.setupWithViewPager(mPager)
+        //mTabLayout.setupWithViewPager(mPager)
         mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
         mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -818,50 +818,58 @@ class ListActivity : AppCompatActivity() {
             gameList.add(0, Game(-3).apply { LiveMessage = "update card" })
         } else {
             val config = FirebaseRemoteConfig.getInstance()
-            gameList.addAll(0, GameCardAdapter.getAnnouncementCards(this, config))
-            GameCardAdapter.getNewVersionCard(this, config)?.let { gameList.add(0, it) }
+            gameList.addAll(0, getAnnouncementCards(config))
+            getNewVersionCard(config)?.let { gameList.add(0, it) }
         }
         updateHighlightList(gameList)
     }
 
-    private fun updateHighlightList(list: ArrayList<Game>) {
-//        list.add(GameCardAdapter.createMoreCard())//add a more button to last row
-//
-//        val adapter = GameCardAdapter(this, list, TeamHelper(application as CpblApplication))
-//        adapter.setOnClickListener { view, game ->
-//            when {
-//                GameCardAdapter.isMoreCard(game) -> {
-//                    //view.id == R.id.card_option1 -> {
-//                    //mPager.currentItem = mMonth - 1
-//                    doQueryAction() //get new data from ViewModel
-//                    mBottomSheetBehavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
-//                    invalidateOptionsMenu()
-//                }
-//                view.id == R.id.card_option2 -> if (GameCardAdapter.isUpdateCard(game)) {
-//                    try {
-//                        startActivity(Intent(Intent.ACTION_VIEW,
-//                                Uri.parse("market://details?id=$packageName")))
-//                    } catch (anfe: android.content.ActivityNotFoundException) {
-//                        startActivity(Intent(Intent.ACTION_VIEW,
-//                                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
-//                    }
-//                    finish() //update new app, so we can close now
-//                } else {
-//                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
-//                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
-//                        startActivity(calIntent)
-//                    }
-//                }
-//                view.id == R.id.card_option1 -> if (game != null) {
-//                    Utils.startGameActivity(this@ListActivity, game)
-//                }
-//                view.id == R.id.card_option3 -> if (game != null) {
-//                    adapter.removeAt(game.People)
-//                }
-//            //else -> Utils.startGameActivity(this@ListActivity, game)
-//            }
-//        }
+    private fun getAnnouncementCards(config: FirebaseRemoteConfig): List<Game> {
+        val list = ArrayList<Game>()
+        val now = CpblCalendarHelper.getNowTime()
+        val keys = config.getString("add_highlight_card")
+        if (keys != null && keys.isNotEmpty()) {
+            for (id in keys.split(";".toRegex()).toTypedArray()) {
+                val msg = config.getString("add_highlight_card_$id")
+                if (msg != null && id.length >= 6) {
+                    val cal = CpblCalendarHelper.getNowTime()
+                    cal.set(Calendar.YEAR, Integer.parseInt(id.substring(0, 4)))
+                    cal.set(Calendar.MONTH, Integer.parseInt(id.substring(4, 5)))
+                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(id.substring(5, 6)))
+                    cal.set(Calendar.HOUR_OF_DAY, 0)
+                    cal.set(Calendar.MINUTE, 0)
+                    cal.set(Calendar.SECOND, 0)
+                    if (cal.before(now)) {
+                        continue//check if the announcement is expired
+                    }
 
+                    list.add(0, Game(HighlightCardAdapter.TYPE_ANNOUNCEMENT, cal).apply {
+                        LiveMessage = msg
+                    })
+                }
+            }
+        }
+        return list
+    }
+
+    private fun getNewVersionCard(config: FirebaseRemoteConfig): Game? {
+        val info = PackageUtils.getPackageInfo(this, ListActivity::class.java)
+        val versionCode = info?.versionCode ?: Integer.MAX_VALUE
+        val latestCode = config.getLong("latest_version_code")
+        Log.v("CpblCalendar3", String.format("versionCode: %d, play: %d", versionCode, latestCode))
+        if (versionCode < latestCode) {
+            val summary: String? = config.getString("latest_version_summary")
+            return Game(HighlightCardAdapter.TYPE_UPDATE_CARD).apply {
+                LiveMessage = if (summary != null && summary.isNotEmpty())
+                    summary
+                else
+                    getString(R.string.new_version_available_message)
+            }
+        }
+        return null
+    }
+
+    private fun updateHighlightList(list: ArrayList<Game>) {
         val adapter = HighlightCardAdapter(application as CpblApplication, list,
                 object : HighlightCardAdapter.OnCardClickListener {
                     override fun onOptionClick(view: View, game: Game, position: Int) {

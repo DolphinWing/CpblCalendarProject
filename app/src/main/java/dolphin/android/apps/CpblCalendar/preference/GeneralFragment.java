@@ -10,16 +10,15 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
 
-import dolphin.android.apps.CpblCalendar3.R;
-import dolphin.android.apps.CpblCalendar3.SplashActivity;
+import androidx.annotation.NonNull;
 import dolphin.android.apps.CpblCalendar.Utils;
+import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.util.AssetUtils;
 import dolphin.android.util.PackageUtils;
 
@@ -46,7 +45,7 @@ public class GeneralFragment extends PreferenceFragment {
         mIsEngineerMode = PreferenceUtils.isEngineerMode(context);
         //getResources().getBoolean(R.bool.pref_engineer_mode);
 
-        PackageInfo pinfo = PackageUtils.getPackageInfo(context, SplashActivity.class);
+        PackageInfo pinfo = PackageUtils.getPackageInfo(context, getActivity().getClass());
         if (pinfo != null) {
             findPreference(KEY_APP_VERSION).setSummary(String.format(Locale.US,
                     mIsEngineerMode ? "%s  r%d (eng)" : "%s (r%d)",

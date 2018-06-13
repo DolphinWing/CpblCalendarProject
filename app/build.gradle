@@ -49,7 +49,8 @@ android {
         //flexible.setRoot("src/design")
         flexible {
             manifest.srcFile 'src/flexible/AndroidManifest.xml'
-            java.srcDirs = ['src/flexible/java', 'src/design/java']
+            //java.srcDirs = ['src/flexible/java', 'src/design/java']
+            //java { exclude 'dolphin/android/apps/CpblCalendar3' }
             res.srcDirs = ['src/flexible/res', 'src/design/res']
         }
     }

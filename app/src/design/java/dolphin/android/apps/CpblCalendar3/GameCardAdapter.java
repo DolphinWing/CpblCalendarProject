@@ -272,7 +272,7 @@ class GameCardAdapter extends RecyclerView.Adapter<GameCardAdapter.ViewHolder>
             HomeLogo = parent.findViewById(android.R.id.icon2);
             Option1 = parent.findViewById(R.id.card_option1);
             Option2 = parent.findViewById(R.id.card_option2);
-            Option3 = parent.findViewById(R.id.card_option3);
+            //Option3 = parent.findViewById(R.id.card_option3);
         }
     }
 
