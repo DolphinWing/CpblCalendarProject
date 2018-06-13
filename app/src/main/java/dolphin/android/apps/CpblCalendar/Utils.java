@@ -140,7 +140,8 @@ public class Utils {
      */
     static AlertDialog buildEnableCacheModeDialog(Context context,
                                                   DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setCancelable(true)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.Theme_Holo_green_Dialog)
+                .setCancelable(true)
                 .setMessage(R.string.title_cache_mode_enable_message)
                 .setTitle(R.string.action_cache_mode)
                 .setPositiveButton(R.string.title_cache_mode_start, listener)

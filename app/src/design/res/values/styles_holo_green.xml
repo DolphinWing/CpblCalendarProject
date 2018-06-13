@@ -45,8 +45,10 @@
         <item name="colorPrimary">@color/holo_green_dark</item>
     </style>
 
-    <style name="Theme.Holo_green.Dialog" parent="@style/Theme.AppCompat.Light.Dialog">
+    <style name="Theme.Holo_green.Dialog" parent="@style/Theme.MaterialComponents.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button.UnelevatedButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
     </style>
 
     <style name="Theme.Holo_green.Dialog.WindowTitle" parent="@style/TextAppearance.AppCompat.Title.Inverse">

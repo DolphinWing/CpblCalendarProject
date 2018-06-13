@@ -55,7 +55,7 @@ public class MultiChoiceListDialogFragment extends DialogFragment
         for (int i = 0; i < mTeams.length; i++) {
             mTeamChecked[i] = teams.get(mTeams[i]) != null;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.Theme_Holo_green_Dialog)
                 .setMultiChoiceItems(R.array.cpbl_team_name, mTeamChecked, this)
                 .setPositiveButton(android.R.string.ok, this)
                 .setNegativeButton(android.R.string.cancel, this)
