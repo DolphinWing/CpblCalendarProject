@@ -13,7 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp">
 
         <LinearLayout
             android:id="@+id/match_title"
@@ -87,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp">
 
-            <TextView
+            <Button
                 android:id="@+id/card_option2"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"

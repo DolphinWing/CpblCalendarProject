@@ -1,25 +1,27 @@
 package dolphin.android.apps.CpblCalendar3
 
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import dolphin.android.apps.CpblCalendar.provider.Game
-import eu.davidea.flexibleadapter.FlexibleAdapter
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
-import eu.davidea.flexibleadapter.items.IFlexible
-import eu.davidea.viewholders.FlexibleViewHolder
+import android.animation.Animator
 import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
 import android.text.Html
 import android.text.format.DateUtils
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper
+import eu.davidea.flexibleadapter.FlexibleAdapter
+import eu.davidea.flexibleadapter.helpers.AnimatorHelper
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import eu.davidea.flexibleadapter.items.IFlexible
+import eu.davidea.viewholders.FlexibleViewHolder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.CardItem>?,
+class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
                            listener: Any? = null)
     : FlexibleAdapter<HighlightCardAdapter.CardItem>(items, listener) {
 
@@ -35,7 +37,8 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
             val gameList = ArrayList<CardItem>()
             list?.forEach {
                 when {
-                    it.IsLive -> gameList.add(LiveCardItem(context, it, listener))
+                    it.IsLive -> gameList.add(LiveCardItem(context, listener = listener,
+                            helper = TeamHelper(application), game = it))
                     it.IsFinal -> gameList.add(ResultCardItem(context, listener = listener,
                             helper = TeamHelper(application), game = it))
                     it.Id == TYPE_ANNOUNCEMENT -> gameList.add(AnnounceCardItem(it))
@@ -49,20 +52,18 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
     }
 
     constructor(application: CpblApplication, list: ArrayList<Game>, listener: Any? = null)
-            : this(createCardItems(application, list, listener as? OnCardClickListener), listener)
+            : this(items = createCardItems(application, list, listener as? OnCardClickListener), listener = listener)
 
     init {
-        setAnimationDuration(300)
+        setAnimationOnForwardScrolling(true)
+        setAnimationOnReverseScrolling(true)
+        setAnimationDelay(50)
+//        setAnimationDuration(300)
     }
 
     interface OnCardClickListener {
         fun onOptionClick(view: View, game: Game, position: Int)
     }
-
-//    fun removeAt(index: Int) {
-//        items?.removeAt(index)
-//        notifyDataSetChanged()
-//    }
 
     open class CardItem(val game: Game, private val listener: OnCardClickListener? = null)
         : AbstractFlexibleItem<CardViewHolder>() {
@@ -95,9 +96,14 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
             option2?.setOnClickListener { listener?.onOptionClick(option2, game, position) }
             option3?.setOnClickListener {
                 adapter?.removeItem(position)
-                adapter?.notifyDataSetChanged()
+                adapter?.notifyItemRemoved(position)
+                //adapter?.notifyDataSetChanged()
                 listener?.onOptionClick(option3, game, position)
             }
+        }
+
+        override fun scrollAnimators(animators: MutableList<Animator>, position: Int, isForward: Boolean) {
+            AnimatorHelper.alphaAnimator(animators, frontView, 0f)
         }
     }
 
@@ -118,7 +124,7 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
             private val textId: TextView? = view?.findViewById(R.id.textView9)
             val awayTeamName: TextView? = view?.findViewById(R.id.textView2)
             val homeTeamName: TextView? = view?.findViewById(R.id.textView5)
-            val textField: TextView? = view?.findViewById(R.id.textView7)
+            private val textField: TextView? = view?.findViewById(R.id.textView7)
             private val textChannel: TextView? = view?.findViewById(R.id.textView6)
 
             override fun apply(game: Game, position: Int) {
@@ -140,7 +146,7 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
         }
     }
 
-    open class LiveCardItem(private val context: Context, game: Game,
+    open class LiveCardItem(private val context: Context, private val helper: TeamHelper, game: Game,
                             private val listener: OnCardClickListener? = null)
         : UpcomingCardItem(context, game, listener) {
 
@@ -148,15 +154,17 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
 
         override fun createViewHolder(view: View?,
                                       adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?)
-                : CardViewHolder = LiveCardHolder(context, view, adapter, listener)
+                : CardViewHolder = LiveCardHolder(context, helper, view, adapter, listener)
 
-        open class LiveCardHolder(private val context: Context, view: View?,
+        open class LiveCardHolder(context: Context, private val helper: TeamHelper, view: View?,
                                   adapter: FlexibleAdapter<out IFlexible<*>>?,
                                   listener: OnCardClickListener? = null)
             : UpcomingCard(context, view, adapter, listener) {
 
             private val awayTeamScore: TextView? = view?.findViewById(R.id.textView3)
             private val homeTeamScore: TextView? = view?.findViewById(R.id.textView4)
+            private val awayTeamLogo: ImageView? = view?.findViewById(android.R.id.icon1)
+            private val homeTeamLogo: ImageView? = view?.findViewById(android.R.id.icon2)
 
             override fun apply(game: Game, position: Int) {
                 super.apply(game, position)
@@ -169,14 +177,19 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
                 }
                 awayTeamScore?.text = game.AwayScore.toString()
                 homeTeamScore?.text = game.HomeScore.toString()
-                textField?.text = game.getFieldFullName(context)
+                //textField?.text = game.getFieldFullName(context)
+                val year = game.StartTime.get(Calendar.YEAR)
+                awayTeamLogo?.setColorFilter(helper.getLogoColorFilter(game.AwayTeam, year),
+                        PorterDuff.Mode.SRC_IN)
+                homeTeamLogo?.setColorFilter(helper.getLogoColorFilter(game.HomeTeam, year),
+                        PorterDuff.Mode.SRC_IN)
             }
         }
     }
 
     class ResultCardItem(private val context: Context, private val helper: TeamHelper, game: Game,
                          private val listener: OnCardClickListener? = null)
-        : LiveCardItem(context, game, listener) {
+        : LiveCardItem(context, helper, game, listener) {
 
         override fun getLayoutRes() = R.layout.recyclerview_item3_matchup_final
 
@@ -184,13 +197,10 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
                                       adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?)
                 : CardViewHolder = ResultCardHolder(context, helper, view, adapter, listener)
 
-        class ResultCardHolder(context: Context, private val helper: TeamHelper, view: View?,
+        class ResultCardHolder(context: Context, helper: TeamHelper, view: View?,
                                adapter: FlexibleAdapter<out IFlexible<*>>?,
                                listener: OnCardClickListener? = null)
-            : LiveCardHolder(context, view, adapter, listener) {
-
-            private val awayTeamLogo: ImageView? = view?.findViewById(android.R.id.icon1)
-            private val homeTeamLogo: ImageView? = view?.findViewById(android.R.id.icon2)
+            : LiveCardHolder(context, helper, view, adapter, listener) {
 
             override fun apply(game: Game, position: Int) {
                 super.apply(game, position)
@@ -200,12 +210,6 @@ class HighlightCardAdapter(private val items: MutableList<HighlightCardAdapter.C
 
                 awayTeamName?.text = game.AwayTeam?.name
                 homeTeamName?.text = game.HomeTeam?.name
-
-                val year = game.StartTime.get(Calendar.YEAR)
-                awayTeamLogo?.setColorFilter(helper.getLogoColorFilter(game.AwayTeam, year),
-                        PorterDuff.Mode.SRC_IN)
-                homeTeamLogo?.setColorFilter(helper.getLogoColorFilter(game.HomeTeam, year),
-                        PorterDuff.Mode.SRC_IN)
             }
         }
     }

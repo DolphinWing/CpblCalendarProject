@@ -109,15 +109,30 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
                             FieldId = "F02"
                         },
                         Game(id + 3, time).apply {
+                            StartTime.timeInMillis = now.timeInMillis //reset start time
+                            StartTime.add(Calendar.HOUR_OF_DAY, -1) //the game should be started
                             IsLive = true
-                            LiveMessage = "LIVE!!"
+                            LiveMessage = "LIVE!! TOP 3"
                             AwayTeam = Team(context, Team.ID_UNKNOWN_AWAY, false)
                             HomeTeam = Team(context, Team.ID_UNKNOWN_HOME, true)
                             HomeScore = random.nextInt(20)
                             AwayScore = random.nextInt(20)
                             FieldId = "F26"
+                            Field = "Tainan"
                         },
                         Game(id + 4, time).apply {
+                            StartTime.timeInMillis = now.timeInMillis //reset start time
+                            StartTime.add(Calendar.HOUR_OF_DAY, -1) //the game should be started
+                            IsLive = true
+                            LiveMessage = "LIVE!! BOT 7"
+                            AwayTeam = Team(context, Team.ID_FUBON_GUARDIANS, false)
+                            HomeTeam = Team(context, Team.ID_LAMIGO_MONKEYS, true)
+                            AwayScore = random.nextInt(20)
+                            HomeScore = random.nextInt(20)
+                            FieldId = "F04"
+                            Field = "Taipei"
+                        },
+                        Game(id + 5, time).apply {
                             StartTime.add(Calendar.DAY_OF_MONTH, 1)
                             AwayTeam = Team(context, Team.ID_CHINESE_TAIPEI, false)
                             HomeTeam = Team(context, Team.ID_SOUTH_KOREA, true)

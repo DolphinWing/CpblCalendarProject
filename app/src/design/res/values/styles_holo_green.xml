@@ -47,6 +47,7 @@
 
     <style name="Theme.Holo_green.Dialog" parent="@style/Theme.MaterialComponents.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
+        <!-- https://stackoverflow.com/a/38592081/2673859 -->
         <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button.UnelevatedButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
     </style>

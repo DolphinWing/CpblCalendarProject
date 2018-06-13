@@ -13,7 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp">
 
         <LinearLayout
             android:id="@+id/match_title"
@@ -124,25 +127,29 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/card_option3"
+                android:id="@+id/card_option1"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:text="@string/action_more" />
+                android:text="@string/action_go_to_website" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp" />
+
+            <Button
+                android:id="@+id/card_option3"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/action_dismiss" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/card_option1"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="@string/action_more" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

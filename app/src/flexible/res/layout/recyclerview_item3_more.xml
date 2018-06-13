@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/padding_medium"
-    android:layout_marginTop="@dimen/padding_medium"
+    android:layout_marginTop="@dimen/padding_small"
     android:layout_marginRight="@dimen/padding_medium"
-    android:layout_marginBottom="@dimen/padding_medium"
-    android:foreground="?selectableItemBackground">
+    android:layout_marginBottom="@dimen/padding_small">
 
-    <TextView
+    <Button
         android:id="@+id/card_option1"
-        style="@style/Theme.Holo_green.Card.More"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/text_more" />
+    <!-- app:icon="@drawable/ic_action_arrow_forward" -->
 
 </com.google.android.material.card.MaterialCardView>

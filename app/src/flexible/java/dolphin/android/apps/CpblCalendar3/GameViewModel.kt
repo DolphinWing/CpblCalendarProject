@@ -31,8 +31,8 @@ internal class GameViewModel(application: Application) : AndroidViewModel(applic
 
     fun query(year: Int, monthOfJava: Int): GameListLiveData? = mAllGames[gkey(year, monthOfJava)]
 
-    override fun onCleared() {
-        super.onCleared()
-        executor.shutdown()
-    }
+//    override fun onCleared() {
+//        super.onCleared()
+//        executor.shutdown()
+//    }
 }

@@ -2,6 +2,7 @@
 
 package dolphin.android.apps.CpblCalendar3
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
@@ -23,6 +24,7 @@ import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.widget.Toolbar
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -43,7 +45,9 @@ import dolphin.android.apps.CpblCalendar.provider.TeamHelper
 import dolphin.android.util.DateUtils
 import dolphin.android.util.PackageUtils
 import eu.davidea.flexibleadapter.FlexibleAdapter
+import eu.davidea.flexibleadapter.common.FlexibleItemAnimator
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
+import eu.davidea.flexibleadapter.helpers.AnimatorHelper
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
@@ -86,7 +90,7 @@ class ListActivity : AppCompatActivity() {
 
         val now = CpblCalendarHelper.getNowTime()
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
-        viewModel.debugMode = true
+        viewModel.debugMode = false
 
         mHomeIcon = DrawerArrowDrawable(this).apply { color = Color.WHITE }
         findViewById<Toolbar>(R.id.toolbar)?.apply {
@@ -104,11 +108,11 @@ class ListActivity : AppCompatActivity() {
 
         //prepare filter pane
         mChipYear = findViewById(android.R.id.button1)
-//        mChipYear.setOnClickListener { filterPaneVisible = true }
+        mChipYear.setOnClickListener { filterPaneVisible = true }
         mChipField = findViewById(android.R.id.button2)
-//        mChipField.setOnClickListener { filterPaneVisible = true }
+        mChipField.setOnClickListener { filterPaneVisible = true }
         mChipTeam = findViewById(android.R.id.button3)
-//        mChipTeam.setOnClickListener { filterPaneVisible = true }
+        mChipTeam.setOnClickListener { filterPaneVisible = true }
 
         mPickerYear = findViewById(android.R.id.text1)
         mPickerMonth = findViewById(android.R.id.text2)
@@ -208,6 +212,10 @@ class ListActivity : AppCompatActivity() {
         //HighlightFragment().show(supportFragmentManager, "highlight")
         bottomSheet.setOnTouchListener { _, event ->
             event.y > supportActionBar?.height ?: 56
+        }
+        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
+            layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
+            setHasFixedSize(true)
         }
         prepareHighlightCards()
     }
@@ -728,14 +736,18 @@ class ListActivity : AppCompatActivity() {
             init {
                 view?.findViewById<View>(R.id.item_control_pane)?.visibility = View.INVISIBLE
             }
+
+            override fun scrollAnimators(animators: MutableList<Animator>, position: Int, isForward: Boolean) {
+                AnimatorHelper.alphaAnimator(animators, frontView, 0f)
+            }
         }
     }
 
     internal class ItemAdapter(items: MutableList<MyItemView>?, listener: Any? = null)
         : FlexibleAdapter<MyItemView>(items, listener) {
         init {
-            //isOnlyEntryAnimation = true
             setAnimationOnForwardScrolling(true)
+            setAnimationOnReverseScrolling(true)
         }
     }
 
@@ -884,9 +896,13 @@ class ListActivity : AppCompatActivity() {
                                 invalidateOptionsMenu()
                             }
                             R.id.card_option2 -> if (game.Id != HighlightCardAdapter.TYPE_UPDATE_CARD) {
-                                val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
-                                if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
-                                    startActivity(calIntent)
+                                if (game.IsLive) {//refresh cards
+                                    prepareHighlightCards(true)
+                                } else {//register in calendar app
+                                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
+                                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
+                                        startActivity(calIntent)
+                                    }
                                 }
                             } else {
                                 try {
@@ -906,9 +922,45 @@ class ListActivity : AppCompatActivity() {
                 })
         findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
             this.adapter = adapter
-            layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
-            setHasFixedSize(true)
+
+            itemAnimator = object : FlexibleItemAnimator() {
+                override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?): Boolean {
+                    Log.d(TAG, "before removal animation")
+                    holder?.itemView?.alpha = 1f
+                    return true
+                }
+
+                override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, index: Int) {
+                    Log.d(TAG, "animate removal $index")
+                    ViewCompat.animate(holder!!.itemView)
+                            .alpha(0f)
+                            .setDuration(removeDuration)
+                            .setInterpolator(AccelerateInterpolator())
+                            .setListener(DefaultRemoveVpaListener(holder))
+                            .withEndAction { adapter.notifyDataSetChanged() }
+                            .start()
+                }
+
+//                override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?): Boolean {
+//                    Log.d(TAG, "before add animation")
+//                    holder?.itemView?.alpha = 0f
+//                    return true
+//                }
+//
+//                override fun animateAddImpl(holder: RecyclerView.ViewHolder?, index: Int) {
+//                    Log.d(TAG, "animate add $index")
+//                    ViewCompat.animate(holder!!.itemView)
+//                            .alpha(1f)
+//                            .setDuration(addDuration)
+//                            .setInterpolator(DecelerateInterpolator())
+//                            .setListener(DefaultAddVpaListener(holder))
+//                            .start()
+//                }
+            }
+//            itemAnimator!!.addDuration = 300
+            itemAnimator!!.removeDuration = 300
         }
+        //adapter.isSwipeEnabled = true
         showSnackBar(visible = false)
         mSwipeRefreshLayout.apply {
             isRefreshing = false
