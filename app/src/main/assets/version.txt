@@ -1,3 +1,8 @@
+[1060] @ 2018-06-13
+    use Android Studio 3.2 canary
+    refactor to androidx
+    remove design java from flexible
+
 [1057] @ 2018-06-10
     fix possible crush when using SplashActivity
         it is disabled in flexible flavor
