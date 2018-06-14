@@ -301,7 +301,7 @@ public class HighlightActivity extends AppCompatActivity
     }
 
     private ArrayList<Game> getGamesOfTheMonth(int year, int monthOfJava) {
-        return mHelper.query2016(year, monthOfJava + 1, "01", "F01",
+        return mHelper.query2016(year, monthOfJava + 1, "01", "F00",
                 mRemoteConfig.getBoolean("enable_delay_games_from_cache"),
                 mRemoteConfig.getBoolean("enable_delay_games_from_drive"));
     }
