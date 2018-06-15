@@ -1,3 +1,8 @@
+[1061] @ 2018-06-15
+    hide filter pane when touch the front pane
+    fix incorrect translation about go to website
+    update some layouts
+
 [1060] @ 2018-06-13
     use Android Studio 3.2 canary
     refactor to androidx

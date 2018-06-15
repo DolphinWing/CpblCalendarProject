@@ -57,7 +57,7 @@ class SplashActivity3 : AppCompatActivity() {
 
         findViewById<View>(android.R.id.progress).animate()
                 .alpha(1.0f)
-                .setDuration(500)
+                .setDuration(600)
                 .setInterpolator(DecelerateInterpolator())
                 .withStartAction { prepareRemoteConfig() }
                 .withEndAction { }
@@ -125,12 +125,15 @@ class SplashActivity3 : AppCompatActivity() {
 
     private fun animateToNextActivity() {
         val progressBar: ProgressBar = findViewById(android.R.id.progress)
-        ProgressBarAnimation(progressBar, 50, 99)
+        ProgressBarAnimation(progressBar, 60, 99)
                 .withStartAction {
                     progressBar.isIndeterminate = false
                     progressBar.max = 100
                 }
-                .withEndAction { progressBar.progress = 100; startNextActivity() }
+                .withEndAction {
+                    progressBar.progress = 100
+                    startNextActivity()
+                }
                 .animate()
     }
 

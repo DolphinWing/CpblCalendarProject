@@ -11,6 +11,7 @@ import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.text.Html
 import android.util.Log
 import android.view.*
@@ -32,6 +33,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import cn.carbswang.android.numberpickerview.library.NumberPickerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
@@ -80,6 +83,8 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var mHomeIcon: DrawerArrowDrawable
 
+    private var mAdView: AdView? = null
+
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
     private lateinit var viewModel: GameViewModel
@@ -105,6 +110,7 @@ class ListActivity : AppCompatActivity() {
 
         mTabLayout = findViewById(R.id.tab_layout)
         mPager = findViewById(R.id.viewpager)
+        mAdView = findViewById(R.id.adView)
 
         //prepare filter pane
         mChipYear = findViewById(android.R.id.button1)
@@ -151,7 +157,12 @@ class ListActivity : AppCompatActivity() {
 //            filterPaneVisible = !filterPaneVisible
 //        }
         //filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
-        mFilterControlPane.setOnTouchListener { _, _ -> true }
+        mFilterControlPane.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {//hide filter pane
+                filterPaneVisible = false
+            }
+            true
+        }
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
             //hide filter panel
             filterPaneVisible = false
@@ -218,6 +229,26 @@ class ListActivity : AppCompatActivity() {
             setHasFixedSize(true)
         }
         prepareHighlightCards()
+        Handler().postDelayed({
+            mAdView?.loadAd(AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build())
+        }, 500)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mAdView?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mAdView?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mAdView?.destroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
