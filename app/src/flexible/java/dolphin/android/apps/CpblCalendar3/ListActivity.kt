@@ -11,7 +11,6 @@ import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.text.Html
 import android.util.Log
 import android.view.*
@@ -120,19 +119,22 @@ class ListActivity : AppCompatActivity() {
         mChipTeam = findViewById(android.R.id.button3)
         mChipTeam.setOnClickListener { filterPaneVisible = true }
 
+        //Log.d(TAG, "friction: ${ViewConfiguration.getScrollFriction()}")
         mPickerYear = findViewById(android.R.id.text1)
         mPickerMonth = findViewById(android.R.id.text2)
         mPickerField = findViewById(android.R.id.icon1)
         mPickerTeam = findViewById(android.R.id.icon2)
 
+        mPickerField.setFriction(ViewConfiguration.getScrollFriction() * 2)
         mPickerYear.apply {
             val year = now.get(Calendar.YEAR)
-            displayedValues = Array(year - 1989, {
+            displayedValues = Array(year - 1989) {
                 getString(R.string.title_cpbl_year, it + 1) + " (${1990 + it})"
-            })
+            }
             minValue = 1
             maxValue = year - 1989
             value = maxValue
+            setFriction(ViewConfiguration.getScrollFriction() * 2)
         }
         mPickerTeam.apply {
             displayedValues = arrayOf(getString(R.string.title_favorite_teams_all),
@@ -150,19 +152,19 @@ class ListActivity : AppCompatActivity() {
         //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
         mFilterControlBg = findViewById(R.id.filter_control_background)
 //        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
-        mFilterControlBg.setOnTouchListener { _, _ -> true }
+        mFilterControlBg.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {//hide filter pane
+                filterPaneVisible = false
+            }
+            true
+        }
         mFilterControlPane = findViewById(R.id.filter_control_pane)
 //        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
 //            restoreFilter()
 //            filterPaneVisible = !filterPaneVisible
 //        }
         //filterPaneVisible = false //mFilterControlPane.visibility == View.VISIBLE
-        mFilterControlPane.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) {//hide filter pane
-                filterPaneVisible = false
-            }
-            true
-        }
+        mFilterControlPane.setOnTouchListener { _, _ -> true }
         findViewById<View>(android.R.id.custom)?.setOnClickListener {
             //hide filter panel
             filterPaneVisible = false
@@ -198,7 +200,7 @@ class ListActivity : AppCompatActivity() {
         //pager.currentItem = mMonth - 1
 
         mPickerMonth.apply {
-            displayedValues = Array(months.size, { months[it] })
+            displayedValues = Array(months.size) { months[it] }
             minValue = Calendar.FEBRUARY
             maxValue = Calendar.NOVEMBER
             value = mMonth
@@ -229,11 +231,15 @@ class ListActivity : AppCompatActivity() {
             setHasFixedSize(true)
         }
         prepareHighlightCards()
-        Handler().postDelayed({
-            mAdView?.loadAd(AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build())
-        }, 500)
+        loadAds()
+    }
+
+    private fun loadAds() {
+//        Handler().postDelayed({
+        mAdView?.loadAd(AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build())
+//        }, 500)
     }
 
     override fun onResume() {
@@ -383,6 +389,7 @@ class ListActivity : AppCompatActivity() {
                         .translationY(bottom - this.height - mTabLayout.height)
                         .setInterpolator(AccelerateInterpolator())
                         .withStartAction { mPager.isEnabled = false }
+                        //.withEndAction { loadAds() }
                         .start()
             } else {
                 this.animate()
@@ -642,7 +649,7 @@ class ListActivity : AppCompatActivity() {
             if (!game.IsFinal && !game.IsLive && activity != null) {
                 AlertDialog.Builder(activity!!)
                         .setItems(arrayOf(getString(R.string.action_add_to_calendar),
-                                getString(R.string.action_show_field_info)), { _, i ->
+                                getString(R.string.action_show_field_info))) { _, i ->
                             Log.d(TAG, "selected $i")
                             when (i) {
                                 0 -> {
@@ -656,7 +663,7 @@ class ListActivity : AppCompatActivity() {
                                             CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId))
                                 }
                             }
-                        }).show()
+                        }.show()
             }
         }
     }
@@ -897,7 +904,11 @@ class ListActivity : AppCompatActivity() {
 
     private fun getNewVersionCard(config: FirebaseRemoteConfig): Game? {
         val info = PackageUtils.getPackageInfo(this, ListActivity::class.java)
-        val versionCode = info?.versionCode ?: Integer.MAX_VALUE
+        val versionCode: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            info?.longVersionCode //see
+        } else {
+            info?.versionCode?.toLong()
+        } ?: Long.MAX_VALUE
         val latestCode = config.getLong("latest_version_code")
         Log.v("CpblCalendar3", String.format("versionCode: %d, play: %d", versionCode, latestCode))
         if (versionCode < latestCode) {
@@ -966,7 +977,7 @@ class ListActivity : AppCompatActivity() {
                     ViewCompat.animate(holder!!.itemView)
                             .alpha(0f)
                             .setDuration(removeDuration)
-                            .setInterpolator(AccelerateInterpolator())
+                            .setInterpolator(DecelerateInterpolator())
                             .setListener(DefaultRemoveVpaListener(holder))
                             .withEndAction { adapter.notifyDataSetChanged() }
                             .start()

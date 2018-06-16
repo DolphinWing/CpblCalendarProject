@@ -1,3 +1,7 @@
+[1062] @ 2018-06-16
+    add AdView to filter pane
+    fix touch on filter pane background
+
 [1061] @ 2018-06-15
     hide filter pane when touch the front pane
     fix incorrect translation about go to website

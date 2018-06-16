@@ -37,8 +37,8 @@ android {
             minSdkVersion 21
             targetSdkVersion 27
             dimension "mode"
-            versionName '3.2.0'
-            versionCode 1061
+            versionName '3.2.0 canary'
+            versionCode 1062
         }
     }
     compileOptions {

@@ -1,5 +1,4 @@
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Widget.MaterialComponents.CardView"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/padding_medium"
@@ -15,4 +14,4 @@
         android:text="@string/text_more" />
     <!-- app:icon="@drawable/ic_action_arrow_forward" -->
 
-</com.google.android.material.card.MaterialCardView>
+</FrameLayout>
