@@ -92,6 +92,7 @@ dependencies {
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
     flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-alpha1'
+    //https://github.com/Carbs0126/NumberPickerView
     flexibleImplementation 'cn.carbswang.android:NumberPickerView:1.1.1'
 }
 

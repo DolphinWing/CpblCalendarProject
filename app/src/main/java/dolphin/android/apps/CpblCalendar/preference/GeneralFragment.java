@@ -87,22 +87,26 @@ public class GeneralFragment extends PreferenceFragment {
             Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ZXC22);
         } else if (key.equals(PreferenceUtils.KEY_LIB_EVERNOTE_JOB)) {//[188]dolphin++
             Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_EVERNOTE_ANDROID_JOB);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_CIRCLE_IMAGE_VIEW)) {//[168]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CIRCLE_IMAGE_VIEW);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_ABS_WEB)) {
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_ABDT_GIT)) {
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
+//        } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
+//            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
+//        } else if (key.equals(PreferenceUtils.KEY_LIB_CIRCLE_IMAGE_VIEW)) {//[168]dolphin++
+//            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CIRCLE_IMAGE_VIEW);
+//        } else if (key.equals(PreferenceUtils.KEY_LIB_ABS_WEB)) {
+//            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
+//        } else if (key.equals(PreferenceUtils.KEY_LIB_ABDT_GIT)) {
+//            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
         } else if (key.equals(PreferenceUtils.KEY_RES_AAS)) {//[13]dolphin++
             Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ANDROID_ASSET_STUDIO);
         } else if (key.equals(PreferenceUtils.KEY_RES_ICONIC)) {//[13]dolphin++
             Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ICONIC_ICON_SET);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_SHOWCASE)) {//[18]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_SHOWCASE_VIEW);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_NINEOLD)) {//[18]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_NINEOLD_ANDROID);
+//        } else if (key.equals(PreferenceUtils.KEY_LIB_SHOWCASE)) {//[18]dolphin++
+//            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_SHOWCASE_VIEW);
+//        } else if (key.equals(PreferenceUtils.KEY_LIB_NINEOLD)) {//[18]dolphin++
+//            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_NINEOLD_ANDROID);
+        } else if (key.equals(PreferenceUtils.KEY_LIB_FLEXIBLE_ADAPTER)) {//[13]dolphin++
+            Utils.startBrowserActivity(getActivity(), "https://github.com/davideas/FlexibleAdapter");
+        } else if (key.equals(PreferenceUtils.KEY_LIB_NUMBER_VIEW_PICKER)) {//[13]dolphin++
+            Utils.startBrowserActivity(getActivity(), "https://github.com/Carbs0126/NumberPickerView");
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -122,7 +126,7 @@ public class GeneralFragment extends PreferenceFragment {
         if (!getResources().getBoolean(R.bool.config_tablet)) {
             // change AlertDialog message font size
             // http://stackoverflow.com/a/6563075
-            TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+            TextView textView = dialog.findViewById(android.R.id.message);
             if (textView != null) {
                 textView.setTextSize(12);
             }

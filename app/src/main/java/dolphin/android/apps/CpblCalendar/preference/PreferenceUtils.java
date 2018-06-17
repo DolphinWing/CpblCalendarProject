@@ -26,15 +26,17 @@ public class PreferenceUtils {
     static final String KEY_CPBL_WEB = "data_from_cpbl";
     static final String KEY_TWBALL_WIKI = "data_from_twbsball";
     static final String KEY_ZXC22 = "data_from_zxc22";
-    static final String KEY_LIB_ABS_WEB = "lib_actionbarsherlock";
-    static final String KEY_LIB_ABDT_GIT = "lib_npombourcq";
+//    static final String KEY_LIB_ABS_WEB = "lib_actionbarsherlock";
+//    static final String KEY_LIB_ABDT_GIT = "lib_npombourcq";
     static final String KEY_RES_AAS = "res_asset_studio";//[13]++
     static final String KEY_RES_ICONIC = "res_iconic_set";//[13]++
-    static final String KEY_LIB_SHOWCASE = "lib_showcaseview";//[18]++
-    static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
-    static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
-    static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
+//    static final String KEY_LIB_SHOWCASE = "lib_showcaseview";//[18]++
+//    static final String KEY_LIB_NINEOLD = "lib_nineold_android";//[18]++
+//    static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
+//    static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
     static final String KEY_LIB_EVERNOTE_JOB = "lib_evernote_android_job";//[168]++
+    static final String KEY_LIB_FLEXIBLE_ADAPTER = "lib_flexible_adapter";
+    static final String KEY_LIB_NUMBER_VIEW_PICKER = "lib_number_view_picker";
 
     //DisplayFragment
     final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
@@ -42,8 +44,8 @@ public class PreferenceUtils {
     private final static String KEY_TEAM_LOGO_ON = "team_logo";
     private final static String KEY_HIGHLIGHT_WIN = "highlight_win";
     private final static String KEY_HIGHLIGHT_TODAY = "highlight_today";
-    final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
-    final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
+//    final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
+//    final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
     public final static String KEY_FAVORITE_TEAMS = "favorite_teams";
     private final static String KEY_ENABLE_PULL_TO_REFRESH = "pull_to_refresh";
     private final static String KEY_USE_OLD_DRAWER = "use_drawer_menu";
@@ -72,27 +74,27 @@ public class PreferenceUtils {
     final static String URL_CPBL_OFFICAL_WEBSITE = "http://www.cpbl.com.tw/";
     final static String URL_TW_BASEBALL_WIKI = "http://twbsball.dils.tku.edu.tw/";
     final static String URL_ZXC22 = "http://zxc22.idv.tw/";
-    final static String URL_ACTIONBAR_SHERLOCK =
-            "http://actionbarsherlock.com/index.html";
-    final static String URL_ACTIONBAR_DRAWER_TOGGLE =
-            "https://gist.github.com/npombourcq/5636121";
+//    final static String URL_ACTIONBAR_SHERLOCK =
+//            "http://actionbarsherlock.com/index.html";
+//    final static String URL_ACTIONBAR_DRAWER_TOGGLE =
+//            "https://gist.github.com/npombourcq/5636121";
     final static String URL_ANDROID_ASSET_STUDIO = //[13]dolphin++
             "https://romannurik.github.io/AndroidAssetStudio/";
     final static String URL_ICONIC_ICON_SET = //[13]dolphin++
             "http://somerandomdude.com/work/iconic/";
-    //[18]dolphin++ ShowcaseView
-    final static String URL_SHOWCASE_VIEW =
-            "http://espiandev.github.io/ShowcaseView/";
-    //[18]dolphin++ NineOldAndroids
-    final static String URL_NINEOLD_ANDROID = "http://nineoldandroids.com/";
+//    //[18]dolphin++ ShowcaseView
+//    final static String URL_SHOWCASE_VIEW =
+//            "http://espiandev.github.io/ShowcaseView/";
+//    //[18]dolphin++ NineOldAndroids
+//    final static String URL_NINEOLD_ANDROID = "http://nineoldandroids.com/";
 
-    //[129]dolphin++ FloatingActionButton
-    final static String URL_FLOATING_ACTION_BUTTON =
-            "https://github.com/makovkastar/FloatingActionButton";
+//    //[129]dolphin++ FloatingActionButton
+//    final static String URL_FLOATING_ACTION_BUTTON =
+//            "https://github.com/makovkastar/FloatingActionButton";
 
-    //[129]dolphin++ FloatingActionButton
-    final static String URL_CIRCLE_IMAGE_VIEW =
-            "https://github.com/hdodenhof/CircleImageView";
+//    //[129]dolphin++ FloatingActionButton
+//    final static String URL_CIRCLE_IMAGE_VIEW =
+//            "https://github.com/hdodenhof/CircleImageView";
 
     //[188]dolphin++ Evernote Android Job library
     final static String URL_EVERNOTE_ANDROID_JOB =
