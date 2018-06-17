@@ -518,7 +518,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     @Override
-    public void OnFragmentAttached() {
+    public void onFragmentAttached() {
         //[33]dolphin++
     }
 

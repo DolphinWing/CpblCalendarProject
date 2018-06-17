@@ -25,6 +25,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -62,6 +63,8 @@ class ListActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "ListActivity"
     }
+
+    private lateinit var mDrawerList: DrawerLayout
 
     private lateinit var mFilterListPane: View
     private lateinit var mFilterControlPane: View
@@ -106,6 +109,18 @@ class ListActivity : AppCompatActivity() {
 //            setDisplayShowHomeEnabled(true)
 //            setHomeAsUpIndicator(R.drawable.ic_action_filter_list)
 //        }
+
+        mDrawerList = findViewById(R.id.drawer_layout)
+        mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.drawer_list_right, SettingsFragment())
+                .commit()
+        mDrawerList.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerClosed(drawerView: View) {
+                Log.d(TAG, "apply the settings")
+                mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+        })
 
         mTabLayout = findViewById(R.id.tab_layout)
         mPager = findViewById(R.id.viewpager)
@@ -341,7 +356,9 @@ class ListActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_settings -> {
-                startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
+                //startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
+                mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                mDrawerList.openDrawer(Gravity.END)
                 filterPaneVisible = false
                 return true
             }

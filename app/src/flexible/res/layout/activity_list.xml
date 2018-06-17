@@ -1,168 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content_frame"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListActivity">
+    tools:ignore="RtlSymmetry,RtlHardcoded">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/holo_green_dark"
-        android:elevation="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?android:actionBarSize">
+        tools:context=".ListActivity">
 
-        <include
-            android:id="@+id/filter_control_pane"
-            layout="@layout/layout_filter_pane"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/holo_green_dark"
             android:elevation="0dp"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="16dp"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <LinearLayout
-            android:id="@+id/filter_view_pane"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:background="@drawable/back_drop_foreground"
-            android:elevation="1dp"
-            android:gravity="center_vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?android:actionBarSize">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding_medium"
-                android:text="@string/filter_title"
-                android:visibility="gone" />
+            <include
+                android:id="@+id/filter_control_pane"
+                layout="@layout/layout_filter_pane"
+                android:elevation="0dp"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <HorizontalScrollView
-                android:id="@+id/filter_list_pane"
+            <LinearLayout
+                android:id="@+id/filter_view_pane"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/padding_small"
-                android:layout_marginEnd="@dimen/padding_small"
-                android:layout_weight="1">
+                android:layout_height="48dp"
+                android:background="@drawable/back_drop_foreground"
+                android:elevation="1dp"
+                android:gravity="center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/toolbar">
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding_medium"
+                    android:text="@string/filter_title"
+                    android:visibility="gone" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@android:id/button1"
-                        style="@style/Widget.MaterialComponents.Chip.Action"
+                <HorizontalScrollView
+                    android:id="@+id/filter_list_pane"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_small"
+                    android:layout_marginEnd="@dimen/padding_small"
+                    android:layout_weight="1">
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-                    <View
-                        android:layout_width="@dimen/padding_small"
-                        android:layout_height="@dimen/padding_small" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@android:id/button1"
+                            style="@style/Widget.MaterialComponents.Chip.Action"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@android:id/button2"
-                        style="@style/Widget.MaterialComponents.Chip.Action"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        <View
+                            android:layout_width="@dimen/padding_small"
+                            android:layout_height="@dimen/padding_small" />
 
-                    <View
-                        android:layout_width="@dimen/padding_small"
-                        android:layout_height="@dimen/padding_small" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@android:id/button2"
+                            style="@style/Widget.MaterialComponents.Chip.Action"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@android:id/button3"
-                        style="@style/Widget.MaterialComponents.Chip.Action"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        <View
+                            android:layout_width="@dimen/padding_small"
+                            android:layout_height="@dimen/padding_small" />
 
-                    <!-- <View
-                         android:layout_width="0dp"
-                         android:layout_height="1dp"
-                         android:layout_weight="1" />-->
+                        <com.google.android.material.chip.Chip
+                            android:id="@android:id/button3"
+                            style="@style/Widget.MaterialComponents.Chip.Action"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                </LinearLayout>
-            </HorizontalScrollView>
-        </LinearLayout>
+                        <!-- <View
+                             android:layout_width="0dp"
+                             android:layout_height="1dp"
+                             android:layout_weight="1" />-->
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            style="@style/Widget.MaterialComponents.TabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/non_white"
-            android:elevation="1dp"
-            app:layout_constraintTop_toBottomOf="@+id/filter_view_pane"
-            app:tabGravity="center"
-            app:tabIndicatorColor="@color/holo_green_dark"
-            app:tabIndicatorHeight="4dp"
-            app:tabMode="scrollable" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/non_white"
-            android:elevation="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                style="@style/Widget.MaterialComponents.TabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/no_so_white"
+                android:elevation="1dp"
+                app:layout_constraintTop_toBottomOf="@+id/filter_view_pane"
+                app:tabGravity="center"
+                app:tabIndicatorColor="@color/holo_green_dark"
+                app:tabIndicatorHeight="4dp"
+                app:tabMode="scrollable" />
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/no_so_white"
+                android:elevation="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+
+            <FrameLayout
+                android:id="@+id/filter_control_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@android:color/transparent"
+                android:elevation="8dp"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filter_control_pane">
+
+            </FrameLayout>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="filter_view_pane,tab_layout,viewpager" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
-            android:id="@+id/filter_control_background"
+            android:id="@+id/bottom_sheet_background"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@android:color/transparent"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/filter_control_pane">
+            android:layout_height="match_parent"
+            android:paddingTop="?actionBarSize"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="56dp"
+            app:layout_behavior="@string/bottom_sheet_behavior">
 
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/bottom_sheet_option1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
+                    android:id="@+id/bottom_sheet"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/no_so_white" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </FrameLayout>
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="filter_view_pane,tab_layout,viewpager" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <FrameLayout
-        android:id="@+id/bottom_sheet_background"
+        android:id="@+id/drawer_list_right"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?actionBarSize"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="56dp"
-        app:layout_behavior="@string/bottom_sheet_behavior">
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/bottom_sheet_option1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
-                android:id="@+id/bottom_sheet"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/non_white" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </FrameLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_gravity="end"
+        android:background="@android:color/white" />
+</androidx.drawerlayout.widget.DrawerLayout>

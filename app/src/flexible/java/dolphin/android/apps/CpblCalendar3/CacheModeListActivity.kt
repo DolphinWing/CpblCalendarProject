@@ -119,7 +119,7 @@ class CacheModeListActivity : CalendarActivity() {
 
     }
 
-    override fun OnFragmentAttached() {
+    override fun onFragmentAttached() {
         //
     }
 

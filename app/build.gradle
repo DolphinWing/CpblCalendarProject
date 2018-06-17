@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0 canary'
-            versionCode 1062
+            versionCode 1063
         }
     }
     compileOptions {
@@ -86,6 +86,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0-alpha3'
     implementation 'androidx.browser:browser:1.0.0-alpha3'
     //designCompile 'com.evernote:android-job:1.1.7'
+    implementation 'androidx.preference:preference:1.0.0-alpha3'
 
     //https://github.com/davideas/FlexibleAdapter
     flexibleImplementation 'eu.davidea:flexible-adapter:5.0.3'

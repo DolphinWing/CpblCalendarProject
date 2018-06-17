@@ -22,10 +22,10 @@ public class PreferenceUtils {
     public static final String TAG = "Preference";
 
     //GeneralFragment
-    static final String KEY_APP_VERSION = "app_version";
-    static final String KEY_CPBL_WEB = "data_from_cpbl";
-    static final String KEY_TWBALL_WIKI = "data_from_twbsball";
-    static final String KEY_ZXC22 = "data_from_zxc22";
+    public static final String KEY_APP_VERSION = "app_version";
+    public static final String KEY_CPBL_WEB = "data_from_cpbl";
+    public static final String KEY_TWBALL_WIKI = "data_from_twbsball";
+    public static final String KEY_ZXC22 = "data_from_zxc22";
 //    static final String KEY_LIB_ABS_WEB = "lib_actionbarsherlock";
 //    static final String KEY_LIB_ABDT_GIT = "lib_npombourcq";
     static final String KEY_RES_AAS = "res_asset_studio";//[13]++
@@ -35,8 +35,8 @@ public class PreferenceUtils {
 //    static final String KEY_LIB_FAB = "lib_floating_action_button";//[129]++
 //    static final String KEY_LIB_CIRCLE_IMAGE_VIEW = "lib_circle_image_view";//[168]++
     static final String KEY_LIB_EVERNOTE_JOB = "lib_evernote_android_job";//[168]++
-    static final String KEY_LIB_FLEXIBLE_ADAPTER = "lib_flexible_adapter";
-    static final String KEY_LIB_NUMBER_VIEW_PICKER = "lib_number_view_picker";
+    public static final String KEY_LIB_FLEXIBLE_ADAPTER = "lib_flexible_adapter";
+    public static final String KEY_LIB_NUMBER_VIEW_PICKER = "lib_number_view_picker";
 
     //DisplayFragment
     final static String KEY_DISPLAY_GROUP = "display_group";//[29]++
@@ -46,7 +46,7 @@ public class PreferenceUtils {
     private final static String KEY_HIGHLIGHT_TODAY = "highlight_today";
 //    final static String KEY_INCLUDE_LEADER = "include_lead_board";//[29]++
 //    final static String KEY_DISPLAY_EXTRA_GROUP = "display_extra_group";//[29]++
-    public final static String KEY_FAVORITE_TEAMS = "favorite_teams";
+    private final static String KEY_FAVORITE_TEAMS = "favorite_teams";
     private final static String KEY_ENABLE_PULL_TO_REFRESH = "pull_to_refresh";
     private final static String KEY_USE_OLD_DRAWER = "use_drawer_menu";
 
@@ -78,7 +78,7 @@ public class PreferenceUtils {
 //            "http://actionbarsherlock.com/index.html";
 //    final static String URL_ACTIONBAR_DRAWER_TOGGLE =
 //            "https://gist.github.com/npombourcq/5636121";
-    final static String URL_ANDROID_ASSET_STUDIO = //[13]dolphin++
+    public final static String URL_ANDROID_ASSET_STUDIO = //[13]dolphin++
             "https://romannurik.github.io/AndroidAssetStudio/";
     final static String URL_ICONIC_ICON_SET = //[13]dolphin++
             "http://somerandomdude.com/work/iconic/";

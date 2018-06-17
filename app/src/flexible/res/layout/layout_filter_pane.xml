@@ -77,7 +77,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/padding_large" />
+        android:layout_height="@dimen/padding_medium" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -108,7 +108,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/padding_medium" />
+        android:layout_height="@dimen/padding_large" />
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"

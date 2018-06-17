@@ -22,5 +22,5 @@
     <color name="card_click_pressed">#04000000</color>
     <color name="card_click_hovered">#0899cc00</color>
 
-    <color name="non_white">#f4f4f4</color>
+    <color name="no_so_white">#f4f4f4</color>
 </resources>
