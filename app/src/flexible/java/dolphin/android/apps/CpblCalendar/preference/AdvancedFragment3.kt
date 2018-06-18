@@ -13,7 +13,7 @@ class AdvancedFragment3 : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.prefs_advanced)
         findPreference(KEY_CLEAR_CACHE)?.apply {
-            if (PreferenceUtils.isCacheMode(activity)) {
+            if (activity != null && PrefsHelper(activity!!).cacheModeEnabled) {
                 isEnabled = false
                 setSummary(R.string.summary_clear_cache_off)
             }

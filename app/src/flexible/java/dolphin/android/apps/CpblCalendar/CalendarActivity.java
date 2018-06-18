@@ -1,5 +1,6 @@
 package dolphin.android.apps.CpblCalendar;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -39,7 +40,6 @@ import androidx.core.content.ContextCompat;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
-import dolphin.android.apps.CpblCalendar3.CpblApplication;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.apps.CpblCalendar3.SettingsActivity3;
 import dolphin.android.net.HttpHelper;
@@ -75,7 +75,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     private View mProgressView;
     private TextView mProgressText;//[84]dolphin++
 
-    private GoogleAnalyticsHelper mAnalytics;
     private FirebaseAnalytics mFirebaseAnalytics;//[198]++
     private FirebaseRemoteConfig mRemoteConfig;//[199]++
 
@@ -119,8 +118,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 //        }
         mActivity = getActivity();//[89]dolphin++ fix 1.2.0 java.lang.NullPointerException
 
-        mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(),
-                GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_BASE);
+//        mAnalytics = new GoogleAnalyticsHelper((CpblApplication) getApplication(),
+//                GoogleAnalyticsHelper.SCREEN_CALENDAR_ACTIVITY_BASE);
         mRemoteConfig = FirebaseRemoteConfig.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 //        mDelayGames2014 = new SparseArray<>();
@@ -171,6 +170,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         if (mProgressView != null) {
             mProgressView.setOnTouchListener(new View.OnTouchListener() {
                 //[123]++ use touch to replace click, capture all events
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     return true;//do nothing
@@ -351,7 +351,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 }
                 return true;//break;
             case R.id.action_go_to_cpbl:
-                mAnalytics.sendGmsGoogleAnalyticsReport("UI", "go_to_website", null);
                 if (mFirebaseAnalytics != null) {
                     Bundle bundle = new Bundle();
                     bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "go_to_website");
@@ -620,7 +619,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 //                    mDelayGames2014.put(mYear, mHelper.queryDelayGames2014(mActivity, mYear));
 //                }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                if (isDestroyed()) {
                     Log.w(TAG, "activity destroyed");
                     return;
                 }
@@ -644,8 +643,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 //                                    mDelayGames2014.get(mYear));
 ////                            }
                             list = mHelper.query2016(mYear, i, gameKind, mField, allowCache, allowDrive);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-                                    && isDestroyed()) {
+                            if (isDestroyed()) {
                                 Log.w(TAG, "activity destroyed");
                                 return;
                             }
@@ -663,8 +661,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
                     long endTime = System.currentTimeMillis() - startTime;
-                    mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-                            String.format(Locale.US, "%d-%d", mYear, mMonth));
+                    Log.v(TAG, "time cost:" + endTime);
+//                    mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
+//                            String.format(Locale.US, "%d-%d", mYear, mMonth));
                     doQueryCallback(gameList, true);
                     return;
                 }
@@ -682,7 +681,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     }
                     doQueryStateUpdateCallback(R.string.title_download_complete);
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                    if (isDestroyed()) {
                         Log.w(TAG, "activity destroyed");
                         return;
                     }
@@ -704,16 +703,16 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     }
 
                     if (gameList != null) {
-                        long endTime = System.currentTimeMillis() - startTime;
-                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-                                String.format(Locale.US, "%d-%d", mYear, mMonth));
+//                        long endTime = System.currentTimeMillis() - startTime;
+//                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
+//                                String.format(Locale.US, "%d-%d", mYear, mMonth));
                         doQueryCallback(gameList, true);
                     } else {
                         throw new Exception("no data");
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "doWebQuery: " + e.getMessage());
-                    mAnalytics.sendTrackerException("doWebQuery", e.getMessage(), 0);
+//                    mAnalytics.sendTrackerException("doWebQuery", e.getMessage(), 0);
 
                     //can use cache, so try to read from cache
                     if (mHelper.canUseCache()) {
@@ -725,13 +724,13 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         doQueryStateUpdateCallback(getString(R.string.title_download_from_zxc22,
                                 mYear, mMonth));
                         gameList = mHelper.query2014zxc(mMonth);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+                        if (isDestroyed()) {
                             Log.w(TAG, "activity destroyed");
                             return;
                         }
-                        long endTime = System.currentTimeMillis() - startTime;
-                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-                                String.format(Locale.US, "%d-%d", mYear, mMonth));
+//                        long endTime = System.currentTimeMillis() - startTime;
+//                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
+//                                String.format(Locale.US, "%d-%d", mYear, mMonth));
 
                         doQueryCallback(gameList, true);
                     }
@@ -764,11 +763,11 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mIsQuery = false;
         mGameList = list;
 
-        if (bFromWeb) {//[126]++ only send message to Analytics when data is from web
-            mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
-                    String.format(Locale.US, "%04d/%02d:%s", mYear, mMonth,
-                            GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
-        }
+//        if (bFromWeb) {//[126]++ only send message to Analytics when data is from web
+//            mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
+//                    String.format(Locale.US, "%04d/%02d:%s", mYear, mMonth,
+//                            GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
+//        }
 
         Calendar now = CpblCalendarHelper.getNowTime();
         boolean thisYear = (mYear == now.get(Calendar.YEAR));
@@ -858,7 +857,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI);
 
-        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
+//        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
         internalLoading(false);
         mIsQuery = false;
         invalidateOptionsMenu();
@@ -958,10 +957,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }).start();
     }
 
-    @SuppressWarnings("SameParameterValue")
-    void sendTrackerException(String action, String label, long evtValue) {
-        mAnalytics.sendTrackerException(action, label, evtValue);
-    }
+//    @SuppressWarnings("SameParameterValue")
+//    void sendTrackerException(String action, String label, long evtValue) {
+////        mAnalytics.sendTrackerException(action, label, evtValue);
+//    }
 
 //    private final BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
 //        @Override

@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import android.util.SparseArray
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.Team
 import dolphin.android.apps.CpblCalendar3.R
 
@@ -26,6 +27,7 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
     //    private final static String TAG = "MultiChoiceDialog";
     private lateinit var mTeams: IntArray
     private lateinit var mTeamChecked: BooleanArray
+    private lateinit var mPrefs: PrefsHelper
     private var mOnClickListener: OnClickListener? = null
 
     interface OnClickListener {
@@ -37,6 +39,7 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
 
     @SuppressLint("ValidFragment")
     constructor(context: Context, listener: OnClickListener? = null) {
+        mPrefs = PrefsHelper(context)
         val ids = context.resources.getStringArray(R.array.cpbl_team_id)
         mTeams = IntArray(ids.size)
         mTeamChecked = BooleanArray(ids.size)
@@ -47,7 +50,7 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val teams = PreferenceUtils.getFavoriteTeams(activity)
+        val teams = mPrefs.favoriteTeams //PreferenceUtils.getFavoriteTeams(activity)
         for (i in mTeams.indices) {
             mTeamChecked[i] = teams.get(mTeams[i]) != null
         }
@@ -83,6 +86,6 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
                 teams.put(mTeams[i], Team(activity, mTeams[i]))
             }
         }
-        PreferenceUtils.setFavoriteTeams(activity, teams)
+        mPrefs.favoriteTeams = teams //PreferenceUtils.setFavoriteTeams(activity, teams)
     }
 }

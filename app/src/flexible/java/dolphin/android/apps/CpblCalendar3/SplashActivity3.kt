@@ -19,6 +19,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.util.PackageUtils
 
 class SplashActivity3 : AppCompatActivity() {
@@ -27,6 +28,7 @@ class SplashActivity3 : AppCompatActivity() {
     }
 
     private lateinit var config: FirebaseRemoteConfig
+    private lateinit var prefs: PrefsHelper
 
     //http://gunhansancar.com/change-language-programmatically-in-android/
     override fun attachBaseContext(newBase: Context) {
@@ -36,6 +38,8 @@ class SplashActivity3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash3)
+
+        prefs = PrefsHelper(this)
 
         //http://stackoverflow.com/a/31016761/2673859
         //check google play service and authentication
@@ -80,7 +84,7 @@ class SplashActivity3 : AppCompatActivity() {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         config.activateFetched()
-                        if (PreferenceUtils.isCacheMode(applicationContext)) {
+                        if (prefs.cacheModeEnabled) {
                             checkLatestAppVersion()
                             return@addOnCompleteListener
                         }
@@ -139,9 +143,9 @@ class SplashActivity3 : AppCompatActivity() {
 
     private fun startNextActivity() {
         overridePendingTransition(0, 0)
-        val intent: Intent = if (PreferenceUtils.isOnlyOldDrawerMenu(this)) {
+        val intent: Intent = if (prefs.useDrawerMenu) {
             Intent(this, CalendarForPhoneActivity::class.java)
-        } else if (PreferenceUtils.isCacheMode(this)) {
+        } else if (prefs.cacheModeEnabled) {
             Intent(this, CacheModeListActivity::class.java)
         } else {
             //Intent(this, HighlightActivity3::class.java)

@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.annotation.Keep
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar3.CpblApplication
@@ -41,21 +41,19 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
      * @param gameArrayList game list
      */
     fun updateAdapter(gameArrayList: ArrayList<Game>?, year: String, month: String) {
-        val activity = activity
         //http://stackoverflow.com/a/11621405
         //this.setListShown(false);
         //Log.d(TAG, String.format("updateAdapter gameArrayList.size = %d",
         //        ((gameArrayList != null) ? gameArrayList.size() : 0)));
-        val adapter = GameAdapter(activity, gameArrayList,
-                getActivity().application as CpblApplication)
+        val adapter = GameAdapter(activity, gameArrayList, activity.application as CpblApplication)
         if (onOptionClickListener != null) {//set listener
-            adapter.setOnOptionClickListener(onOptionClickListener)
+            adapter.onOptionClickListener = onOptionClickListener
         }
         this.listAdapter = adapter
         //http://stackoverflow.com/a/5888331
-        if (PreferenceUtils.isUpComingOn(activity) && gameArrayList != null) {
+        if (mPrefsHelper.autoScrollUpcoming && gameArrayList != null) {
             try {//[8]++ try to scroll to not playing game at beginning
-                if (PreferenceUtils.isCacheMode(activity)) {//[87]dolphin++ select after game
+                if (mPrefsHelper.cacheModeEnabled) {//[87]dolphin++ select after game
                     val now = CpblCalendarHelper.getNowTime()
                     for (i in gameArrayList.indices) {
                         if (gameArrayList[i].StartTime.after(now)) {
@@ -79,16 +77,13 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
             Log.e(TAG, "updateAdapter null")
         }
 
-        if (PreferenceUtils.getFavoriteTeams(activity).size() > 0) {
+        if (mPrefsHelper.favoriteTeams.size() > 0) {
             this.listView.emptyView = getEmptyView(year, month)
         } else {
             this.setEmptyText(String.format("%s %s\n%s", year, month,
                     getString(R.string.no_favorite_teams)))
         }
         this.setListShown(true)
-        //        if (PreferenceUtils.isCacheMode(getActivity())) {
-        //            this.getListView().setPadding(0, 0, 0, 96);
-        //        }
     }
 
     @SuppressLint("InflateParams")
@@ -121,7 +116,9 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
 
                 val y = y1
                 val m = m1
-                button1.setOnClickListener { CpblCalendarHelper.startActivityToCpblSchedule(activity, y, m, "01", "F00") }
+                button1.setOnClickListener {
+                    CpblCalendarHelper.startActivityToCpblSchedule(activity, y, m, "01", "F00")
+                }
             }
             val text2 = mEmptyView!!.findViewById<TextView>(android.R.id.text2)
             if (text2 != null) {
@@ -131,29 +128,7 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
         return mEmptyView
     }
 
-    //    @Override
-    //    public void onListItemClick(ListView l, View v, int position, long id) {
-    //        super.onListItemClick(l, v, position, id);
-    //        //Log.d(TAG, "onListItemClick: " + position);
-    //        if (v != null) {
-    //            Game game = (Game) v.getTag();
-    //            //Log.d(TAG, "onListItemClick: " + position);
-    //            //Log.d(TAG, "  game.IsFinal: " + game.IsFinal);
-    //            //Log.d(TAG, "  game.Url: " + game.Url);
-    //            if (mFirebaseAnalytics != null) {
-    //                Bundle bundle = new Bundle();
-    //                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.format(Locale.US,
-    //                        "%d-%d", game.StartTime.get(Calendar.YEAR), game.Id));
-    //                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, String.format(Locale.TAIWAN,
-    //                        "%s vs %s", game.AwayTeam.getShortName(), game.HomeTeam.getShortName()));
-    //                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, game.Kind);
-    //                bundle.putString(FirebaseAnalytics.Param.ITEM_LOCATION_ID, game.Field);
-    //                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
-    //            }
-    //
-    //            Utils.startGameActivity(getActivity(), game);
-    //        }
-    //    }
+    private lateinit var mPrefsHelper: PrefsHelper
 
     //Long click on ListFragment
     //http://stackoverflow.com/a/6857819/2673859
@@ -161,9 +136,7 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
         super.onActivityCreated(savedInstanceState)
         val listView = listView
         listView.onItemLongClickListener = this
-
-        //        final AppCompatActivity activity = (AppCompatActivity) getActivity();
-        //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
+        mPrefsHelper = PrefsHelper(activity)
     }
 
     override fun onItemLongClick(adapterView: AdapterView<*>, view: View, position: Int, l: Long): Boolean {
@@ -172,6 +145,6 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
     }
 
     companion object {
-        private val TAG = "GameListFragment"
+        private const val TAG = "GameListFragment"
     }
 }

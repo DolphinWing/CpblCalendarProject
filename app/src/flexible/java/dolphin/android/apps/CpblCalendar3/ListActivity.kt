@@ -42,6 +42,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper
@@ -90,6 +91,7 @@ class ListActivity : AppCompatActivity() {
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
     private lateinit var viewModel: GameViewModel
+    private lateinit var prefs: PrefsHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +100,7 @@ class ListActivity : AppCompatActivity() {
         val now = CpblCalendarHelper.getNowTime()
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
         viewModel.debugMode = false
+        prefs = PrefsHelper(this)
 
         mHomeIcon = DrawerArrowDrawable(this).apply { color = Color.WHITE }
         findViewById<Toolbar>(R.id.toolbar)?.apply {
@@ -339,7 +342,7 @@ class ListActivity : AppCompatActivity() {
                         .setTitle(R.string.title_cache_mode_enable_title)
                         .setMessage(R.string.title_cache_mode_enable_message)
                         .setPositiveButton(R.string.title_cache_mode_start) { _, _ ->
-                            PreferenceUtils.setCacheMode(this@ListActivity, true)
+                            prefs.cacheModeEnabled = true
                             startActivity(Intent(this@ListActivity,
                                     CacheModeListActivity::class.java).apply {
                                 putExtra("cache_init", true)
@@ -549,6 +552,7 @@ class ListActivity : AppCompatActivity() {
 
         private lateinit var helper: TeamHelper
         private lateinit var viewModel: GameViewModel
+        private lateinit var prefs: PrefsHelper
         private var year = 2018
         private var month = Calendar.MAY
 
@@ -585,6 +589,7 @@ class ListActivity : AppCompatActivity() {
             viewModel = ViewModelProviders.of(activity!!).get(GameViewModel::class.java)
             //cpblHelper = CpblCalendarHelper(activity!!)
             helper = TeamHelper(activity!!.application as CpblApplication)
+            prefs = PrefsHelper(activity!!)
         }
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -617,7 +622,7 @@ class ListActivity : AppCompatActivity() {
                     (activity as ListActivity).showSnackBar(visible = false)
                 }
                 this.container?.isRefreshing = false
-                this.container?.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
+                this.container?.isEnabled = prefs.pullToRefreshEnabled
             }
         }
 
@@ -698,7 +703,7 @@ class ListActivity : AppCompatActivity() {
             val year = game.StartTime.get(Calendar.YEAR)
 
             holder?.apply {
-//                if (DateUtils.isToday(game.StartTime) && PreferenceUtils.isHighlightToday(context)) {
+                //                if (DateUtils.isToday(game.StartTime) && PreferenceUtils.isHighlightToday(context)) {
 //                    itemView.setBackgroundResource(R.drawable.item_highlight_background_holo_light)
 //                } else {
 //                    itemView.setBackgroundResource(R.drawable.selectable_background_holo_green)

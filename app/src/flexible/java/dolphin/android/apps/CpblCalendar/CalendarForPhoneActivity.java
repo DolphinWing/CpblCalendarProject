@@ -12,12 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +40,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -495,7 +492,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
     }
 
     private void sendTrackerException() {
-        sendTrackerException("commitAllowingStateLoss", "phone", 0);
+//        sendTrackerException("commitAllowingStateLoss", "phone", 0);
     }
 
     @Override
@@ -661,24 +658,7 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         setBottomSheetVisibility(visible, game, null);
     }
 
-    private static class Option3Holder {
-        public View alarm;
-        public Game game;
-
-        Option3Holder(View image, Game game) {
-            this.alarm = image;
-            this.game = game;
-        }
-    }
-
     private void setBottomSheetVisibility(boolean visible, Game game, View view) {
-        View alarm = null;
-        if (view != null && view.getParent() != null) {
-            //Log.d(TAG, "setBottomSheetVisibility " + view.getParent());
-            if (view.getParent() instanceof ViewGroup) {
-                alarm = ((ViewGroup) view.getParent()).findViewById(R.id.icon_alarm);
-            }
-        }
         if (mBottomSheetBackground != null) {//use progress background
             final boolean isVisible = visible;
             float from = visible ? 0.0f : 1.0f;
@@ -757,20 +737,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
                 }
                 mBottomSheetOption2.setTag(game);
             }
-            if (mBottomSheetOption3 != null) {
-                if (game.StartTime.after(CpblCalendarHelper.getNowTime())) {
-                    mBottomSheetOption3.setVisibility(View.VISIBLE);
-                    boolean enabled = PreferenceUtils.isEnableNotification(getBaseContext());
-                    enabled &= alarm != null && alarm.getVisibility() == View.VISIBLE;
-                    mBottomSheetOption3.setEnabled(enabled);
-                    refreshBottomSheetOption3Text(game);
-                } else {
-//                    accountHeight += mBottomSheetOption3.getHeight();
-//                    mBottomSheetOption3.setVisibility(View.GONE);
-                    mBottomSheetOption3.setEnabled(false);
-                }
-                mBottomSheetOption3.setTag(new Option3Holder(alarm, game));
-            }
             if (mBottomSheetOption4 != null) {
                 mBottomSheetOption4.setTag(game);
             }
@@ -812,12 +778,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
             case R.id.bottom_sheet_option2:
                 addToCalendar((Game) view.getTag());
                 break;
-            case R.id.bottom_sheet_option3:
-                if (view.getTag() != null) {
-                    Option3Holder holder = (Option3Holder) view.getTag();
-                    updateNotification(holder.alarm, holder.game);
-                }
-                break;
             case R.id.bottom_sheet_option4:
                 showFieldInfoActivity((Game) view.getTag());
                 break;
@@ -831,34 +791,6 @@ public class CalendarForPhoneActivity extends CalendarActivity implements OnQuer
         Intent calIntent = Utils.createAddToCalendarIntent(this, game);
         if (PackageUtils.isCallable(getActivity(), calIntent)) {
             startActivity(calIntent);
-        }
-    }
-
-    private void updateNotification(View view, Game game) {
-//        CpblApplication application = (CpblApplication) getApplication();
-        AlarmHelper helper = new AlarmHelper(getBaseContext());
-        if (helper.hasAlarm(game)) {
-            helper.removeGame(game);
-//            AlarmProvider.cancelAlarmByGame(application, game);//cancelAlarm(game);
-        } else {
-            helper.addGame(game);
-//            AlarmProvider.setAlarmByGame(application, game);//setAlarm(game);
-        }
-        //Log.d(TAG, "updateNotification: " + view);
-        if (view instanceof ImageView) {
-            ((ImageView) view).setImageResource(helper.hasAlarm(game)
-                    ? R.drawable.ic_device_access_alarmed
-                    : R.drawable.ic_device_access_alarm);
-        }
-        refreshBottomSheetOption3Text(game);
-    }
-
-    private void refreshBottomSheetOption3Text(Game game) {
-        if (mBottomSheetOption3 instanceof TextView) {
-            TextView option3 = (TextView) mBottomSheetOption3;
-            AlarmHelper helper = new AlarmHelper(getBaseContext());
-            option3.setText(helper.hasAlarm(game) ? R.string.action_remove_notification
-                    : R.string.action_add_to_notification);
         }
     }
 

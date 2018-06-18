@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -36,15 +37,22 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
     private final Context mContext;
 
     final static long ONE_DAY = 1000 * 60 * 60 * 24;
+
     private final static long ONE_WEEK = ONE_DAY * 7;
+
     private final static long LONGEST_GAME = 60 * 60 * 7 * 1000;
 
     private final LayoutInflater mInflater;
 
     private final boolean bShowWinner;
+
     private final boolean bShowLogo;
+
     private final boolean bShowToday;
+
     private final boolean bIsTablet;//[47]dolphin++
+
+    private final AlarmHelper mAlarmHelper;//[50]dolphin++
 
     private final Calendar mNow;
 
@@ -59,6 +67,7 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         bShowToday = PreferenceUtils.isHighlightToday(mContext);
         bIsTablet = mContext.getResources().getBoolean(R.bool.config_tablet);
 
+        mAlarmHelper = new AlarmHelper(mContext);
         mNow = CpblCalendarHelper.getNowTime();
     }
 
@@ -291,6 +300,45 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
                     : R.drawable.selectable_background_holo_green);
         }
         //}//[24]++ fix darker highlight when enable highlightToday
+
+        //[50]++ notification
+        View alarm = convertView.findViewById(R.id.icon_alarm);
+        if (alarm != null) {
+            alarm.setTag(game);
+            if (PreferenceUtils.isEnableNotification(mContext)) {
+                alarm.setVisibility(game.IsFinal || bLiveNow
+                        || game.StartTime.before(mNow) ? View.GONE : View.VISIBLE);
+                alarm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Game g = (Game) view.getTag();
+                        //Log.d(TAG, "id = " + g.Id);
+                        ImageView img = (ImageView) view;
+                        updateGameNotification(img, g);
+                    }
+                });
+
+                ((ImageView) alarm).setImageResource(mAlarmHelper.hasAlarm(game)
+                        ? R.drawable.ic_device_access_alarmed
+                        : R.drawable.ic_device_access_alarm);
+            } else {
+                alarm.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void updateGameNotification(ImageView icon, Game game) {
+        if (mAlarmHelper.hasAlarm(game)) {
+            mAlarmHelper.removeGame(game);
+            icon.setImageResource(R.drawable.ic_device_access_alarm);
+            cancelAlarm(game);
+        } else {
+            mAlarmHelper.addGame(game);
+            icon.setImageResource(R.drawable.ic_device_access_alarmed);
+            setAlarm(game);
+        }
+
+        //AlarmProvider.setNextAlarm(mContext);
     }
 
     protected abstract int getLayoutResId(Game game);
