@@ -11,9 +11,9 @@ import dolphin.android.util.PackageUtils
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        addPreferencesFromResource(R.xml.prefs_main)
-        addPreferencesFromResource(R.xml.prefs_display)
+        //addPreferencesFromResource(R.xml.prefs_display)
         addPreferencesFromResource(R.xml.prefs_display_extra3)
+        addPreferencesFromResource(R.xml.prefs_main)
         addPreferencesFromResource(R.xml.prefs_advanced)
 
         findPreference(PreferenceUtils.KEY_APP_VERSION)?.apply {

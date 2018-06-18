@@ -118,6 +118,7 @@ class ListActivity : AppCompatActivity() {
         mDrawerList.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View) {
                 Log.d(TAG, "apply the settings")
+                doQueryAction() //try to reset pull to refresh and adapter style
                 mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
         })
@@ -697,6 +698,11 @@ class ListActivity : AppCompatActivity() {
             val year = game.StartTime.get(Calendar.YEAR)
 
             holder?.apply {
+//                if (DateUtils.isToday(game.StartTime) && PreferenceUtils.isHighlightToday(context)) {
+//                    itemView.setBackgroundResource(R.drawable.item_highlight_background_holo_light)
+//                } else {
+//                    itemView.setBackgroundResource(R.drawable.selectable_background_holo_green)
+//                }
                 gameId?.text = when (game.Kind) {
                     "01" -> game.Id.toString()
                     "02" -> context.getString(R.string.id_prefix_all_star, game.Id)
