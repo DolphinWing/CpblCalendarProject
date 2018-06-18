@@ -11,7 +11,7 @@
     </style>
 
     <style name="Theme.Holo_green.SplashTheme" parent="Theme.Holo_green">
-        <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
         <item name="android:windowBackground">@drawable/splash_background</item>
         <!-- http://developer.android.com/reference/android/R.attr.html#windowEnterAnimation -->
         <item name="android:windowAnimationStyle">@null</item>

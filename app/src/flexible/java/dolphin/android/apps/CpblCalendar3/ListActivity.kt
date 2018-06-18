@@ -121,7 +121,7 @@ class ListActivity : AppCompatActivity() {
         mDrawerList.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View) {
                 Log.d(TAG, "apply the settings")
-                doQueryAction() //try to reset pull to refresh and adapter style
+                doQueryAction(false) //try to reset pull to refresh and adapter style
                 mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
         })
@@ -212,7 +212,7 @@ class ListActivity : AppCompatActivity() {
                     mPickerMonth.value = mMonth
                 }
                 Log.d(TAG, "selected month = ${mMonth + 1}")
-                doQueryAction()
+                doQueryAction() //query when page change
             }
         })
         mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
@@ -458,7 +458,7 @@ class ListActivity : AppCompatActivity() {
             return team.toInt()
         }
 
-    private fun doQueryAction() {
+    private fun doQueryAction(showSnackbar: Boolean = true) {
         val year = mPickerYear.value + 1989
         val month = mPickerMonth.value
         Log.d(TAG, "do query action to $year/${month + 1}")
@@ -479,6 +479,7 @@ class ListActivity : AppCompatActivity() {
             it.arguments = Bundle().apply {
                 Log.d(TAG, "notify fragment to update $year/${month + 1} $selectedFieldId")
                 putBoolean("refresh", true)
+                putBoolean("snackbar", showSnackbar)
                 putInt("year", year)
                 putInt("month", month)
                 putString("field_id", selectedFieldId)
@@ -570,7 +571,7 @@ class ListActivity : AppCompatActivity() {
                 month = args.getInt("month", 0)
                 val fieldId = args.getString("field_id", "F00")
                 val teamId = args.getInt("team_id", 0)
-                startRefreshing(true, year, month)
+                startRefreshing(true, year, month, args.getBoolean("snackbar", true))
                 Log.d(TAG, "refreshing $year/${month + 1} @$fieldId $teamId")
                 viewModel.fetch(year, month)?.observe(this,
                         Observer<List<Game>> { updateAdapter(it, helper, fieldId, teamId) })
@@ -609,16 +610,17 @@ class ListActivity : AppCompatActivity() {
             return view //super.onCreateView(inflater, container, savedInstanceState)
         }
 
-        private fun startRefreshing(enabled: Boolean, year: Int = 2018, monthOfJava: Int = 0) {
+        private fun startRefreshing(enabled: Boolean, year: Int = 2018, monthOfJava: Int = 0,
+                                    showSnackbar: Boolean = true) {
             if (enabled) {
                 this.container?.isEnabled = true
                 this.container?.isRefreshing = true
-                if (activity is ListActivity) {
+                if (showSnackbar && activity is ListActivity) {
                     (activity as ListActivity).showSnackBar(
                             getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
                 }
             } else {
-                if (activity is ListActivity) {
+                if (showSnackbar && activity is ListActivity) {
                     (activity as ListActivity).showSnackBar(visible = false)
                 }
                 this.container?.isRefreshing = false
@@ -961,7 +963,7 @@ class ListActivity : AppCompatActivity() {
                                 Log.d(TAG, "start game ${game.Id} from ${game.Url}")
                                 Utils.startGameActivity(this@ListActivity, game)
                             } else {
-                                doQueryAction() //get new data from ViewModel
+                                doQueryAction(false) //get new data from ViewModel
                                 mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                                 invalidateOptionsMenu()
                             }

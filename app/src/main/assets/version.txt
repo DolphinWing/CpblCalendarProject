@@ -1,3 +1,7 @@
+[1064] @ 2018-06-18
+    fix some incorrect UI in new Settings
+    rewrite files to kotlin
+
 [1063] @ 2018-06-17
     convert some java files to kotlin
     add preferences to newly added libraries
