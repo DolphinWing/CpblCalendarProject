@@ -12,7 +12,6 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.List;
 
-import dolphin.android.apps.CpblCalendar.GoogleAnalyticsHelper;
 import dolphin.android.apps.CpblCalendar3.CpblApplication;
 import dolphin.android.apps.CpblCalendar3.R;
 
@@ -21,7 +20,6 @@ import dolphin.android.apps.CpblCalendar3.R;
  * Base implementations of PreferenceActivity
  */
 @SuppressLint("Registered")
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class PreferenceActivity extends android.preference.PreferenceActivity {
     //boolean bEnableNotify = true;
 
@@ -33,7 +31,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return GeneralFragment.class.getName().equals(fragmentName)
                 || DisplayFragment.class.getName().equals(fragmentName)
-                || NotificationFragment.class.getName().equals(fragmentName)
+                //|| NotificationFragment.class.getName().equals(fragmentName)
                 || AdvancedFragment.class.getName().equals(fragmentName);
     }
 
@@ -46,7 +44,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity {
         if (t != null) {
             // Set screen name.
             // Where path is a String representing the screen name.
-            t.setScreenName(GoogleAnalyticsHelper.SCREEN_PREFERENCE_ACTIVITY);
+            t.setScreenName("CpblCalendar.PreferenceActivity");
             // Send a screen view.
             t.send(new HitBuilders.ScreenViewBuilder().build());
         }

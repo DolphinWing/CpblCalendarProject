@@ -42,7 +42,8 @@ public class GeneralFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.prefs_main);
 
         final Context context = getActivity().getBaseContext();
-        mIsEngineerMode = PreferenceUtils.isEngineerMode(context);
+        PrefsHelper helper = new PrefsHelper(context);
+        mIsEngineerMode = helper.getEngineerMode();
         //getResources().getBoolean(R.bool.pref_engineer_mode);
 
         PackageInfo pinfo = PackageUtils.getPackageInfo(context, getActivity().getClass());
@@ -79,14 +80,15 @@ public class GeneralFragment extends PreferenceFragment {
                 mDevHitToast.show();
             }
             return true;
-        } else if (key.equals(PreferenceUtils.KEY_CPBL_WEB)) {
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_CPBL_OFFICAL_WEBSITE);
-        } else if (key.equals(PreferenceUtils.KEY_TWBALL_WIKI)) {
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_TW_BASEBALL_WIKI);
-        } else if (key.equals(PreferenceUtils.KEY_ZXC22)) {
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ZXC22);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_EVERNOTE_JOB)) {//[188]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_EVERNOTE_ANDROID_JOB);
+        } else if (key.equals("data_from_cpbl")) {
+            Utils.startBrowserActivity(getActivity(), "http://www.cpbl.com.tw/");
+        } else if (key.equals("data_from_twbsball")) {
+            Utils.startBrowserActivity(getActivity(), "http://twbsball.dils.tku.edu.tw/");
+        } else if (key.equals("data_from_zxc22")) {
+            Utils.startBrowserActivity(getActivity(), "http://zxc22.idv.tw/");
+        } else if (key.equals("lib_evernote_android_job")) {//[188]dolphin++
+            Utils.startBrowserActivity(getActivity(),
+                    "https://blog.evernote.com/tech/2015/10/26/unified-job-library-android/");
 //        } else if (key.equals(PreferenceUtils.KEY_LIB_FAB)) {//[129]dolphin++
 //            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_FLOATING_ACTION_BUTTON);
 //        } else if (key.equals(PreferenceUtils.KEY_LIB_CIRCLE_IMAGE_VIEW)) {//[168]dolphin++
@@ -95,17 +97,17 @@ public class GeneralFragment extends PreferenceFragment {
 //            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_SHERLOCK);
 //        } else if (key.equals(PreferenceUtils.KEY_LIB_ABDT_GIT)) {
 //            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ACTIONBAR_DRAWER_TOGGLE);
-        } else if (key.equals(PreferenceUtils.KEY_RES_AAS)) {//[13]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ANDROID_ASSET_STUDIO);
-        } else if (key.equals(PreferenceUtils.KEY_RES_ICONIC)) {//[13]dolphin++
-            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_ICONIC_ICON_SET);
+        } else if (key.equals("res_asset_studio")) {//[13]dolphin++
+            Utils.startBrowserActivity(getActivity(), "https://romannurik.github.io/AndroidAssetStudio/");
+        } else if (key.equals("res_iconic_set")) {//[13]dolphin++
+            Utils.startBrowserActivity(getActivity(), "http://somerandomdude.com/work/iconic/");
 //        } else if (key.equals(PreferenceUtils.KEY_LIB_SHOWCASE)) {//[18]dolphin++
 //            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_SHOWCASE_VIEW);
 //        } else if (key.equals(PreferenceUtils.KEY_LIB_NINEOLD)) {//[18]dolphin++
 //            Utils.startBrowserActivity(getActivity(), PreferenceUtils.URL_NINEOLD_ANDROID);
-        } else if (key.equals(PreferenceUtils.KEY_LIB_FLEXIBLE_ADAPTER)) {//[13]dolphin++
+        } else if (key.equals("lib_flexible_adapter")) {//[13]dolphin++
             Utils.startBrowserActivity(getActivity(), "https://github.com/davideas/FlexibleAdapter");
-        } else if (key.equals(PreferenceUtils.KEY_LIB_NUMBER_VIEW_PICKER)) {//[13]dolphin++
+        } else if (key.equals("lib_number_picker_view")) {//[13]dolphin++
             Utils.startBrowserActivity(getActivity(), "https://github.com/Carbs0126/NumberPickerView");
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);

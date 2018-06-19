@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.preference.PreferenceFragmentCompat
 import dolphin.android.apps.CpblCalendar.Utils
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.util.PackageUtils
 
@@ -16,7 +15,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.prefs_main)
         addPreferencesFromResource(R.xml.prefs_advanced)
 
-        findPreference(PreferenceUtils.KEY_APP_VERSION)?.apply {
+        findPreference("app_version")?.apply {
             val info = PackageUtils.getPackageInfo(activity, activity?.javaClass)
             summary = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 "${info.versionName} (${info.longVersionCode})"
@@ -46,27 +45,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 it.finish()
                 return true
             }
-            PreferenceUtils.KEY_CPBL_WEB -> {
+            "data_from_cpbl" -> {
                 Utils.startBrowserActivity(activity, "http://www.cpbl.com.tw/")
                 return true
             }
-            PreferenceUtils.KEY_TWBALL_WIKI -> {
+            "data_from_twbsball" -> {
                 Utils.startBrowserActivity(activity, "http://twbsball.dils.tku.edu.tw/")
                 return true
             }
-            PreferenceUtils.KEY_ZXC22 -> {
+            "data_from_zxc22" -> {
                 Utils.startBrowserActivity(activity, "http://zxc22.idv.tw/")
                 return true
             }
-            PreferenceUtils.URL_ANDROID_ASSET_STUDIO -> {
+            "res_asset_studio" -> {
                 Utils.startBrowserActivity(activity, "https://romannurik.github.io/AndroidAssetStudio/")
                 return true
             }
-            PreferenceUtils.KEY_LIB_FLEXIBLE_ADAPTER -> {
+            "lib_flexible_adapter" -> {
                 Utils.startBrowserActivity(activity, "https://github.com/davideas/FlexibleAdapter")
                 return true
             }
-            PreferenceUtils.KEY_LIB_NUMBER_VIEW_PICKER -> {
+            "lib_number_picker_view" -> {
                 Utils.startBrowserActivity(activity, "https://github.com/Carbs0126/NumberPickerView")
                 return true
             }

@@ -14,15 +14,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.StrictMode;
 import android.provider.CalendarContract;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,16 +23,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 import dolphin.android.apps.CpblCalendar3.R;
 
 /**
- * Created by dolphin on 2015/02/07.
- * <p/>
- * Collection of utils in CalendarActivity
+ * Collection of utilities in CalendarActivity
  */
 public class Utils {
     static void enableStrictMode() {
@@ -79,57 +72,57 @@ public class Utils {
         return gameList;
     }
 
-    //http://zxc22.idv.tw/rank_up.asp
-    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
-    public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
-
-    @SuppressLint("InflateParams")
-    public static AlertDialog buildLeaderBoardZxc22(Context context) {
-        if (context == null) {
-            return null;
-        }
-
-        final AlertDialog dialog = new AlertDialog.Builder(context).create();
-        //change the style like the entire theme
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.leader_board, null);
-        TextView textView = (TextView) view.findViewById(android.R.id.title);
-        if (textView != null) {
-            //textView.setText(String.format("%s %s", context.getString(R.string.title_zxc22),
-            //        context.getString(R.string.summary_zxc22)));
-            textView.setText(R.string.action_leader_board);
-        }
-
-        WebView webView = (WebView) view.findViewById(R.id.webView);
-        webView.getSettings().setJavaScriptEnabled(false);
-        webView.getSettings().setSupportZoom(false);
-        webView.loadUrl(LEADER_BOARD_URL);
-
-        View btOk = view.findViewById(android.R.id.button1);
-        if (btOk != null) {
-            btOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
-        }
-
-        dialog.setView(view);//webView
-        dialog.show();
-
-        //http://stackoverflow.com/a/15847580/2673859
-        DisplayMetrics display = context.getResources().getDisplayMetrics();
-        int width = (int) (display.widthPixels * (display.widthPixels > 1200 ? .8 : .95));
-        width = width > 1600 ? 1600 : width;
-        int height = (int) (display.heightPixels * .9);
-        //height = height < 480 ? 480 : height;
-        //Log.d("CpblCalendarHelper", String.format("w=%d, h=%d", width, height));
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setLayout(width, height);
-        }
-        return dialog;
-    }
+//    //http://zxc22.idv.tw/rank_up.asp
+//    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+//    public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
+//
+//    @SuppressLint("InflateParams")
+//    public static AlertDialog buildLeaderBoardZxc22(Context context) {
+//        if (context == null) {
+//            return null;
+//        }
+//
+//        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+//        //change the style like the entire theme
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        View view = inflater.inflate(R.layout.leader_board, null);
+//        TextView textView = view.findViewById(android.R.id.title);
+//        if (textView != null) {
+//            //textView.setText(String.format("%s %s", context.getString(R.string.title_zxc22),
+//            //        context.getString(R.string.summary_zxc22)));
+//            textView.setText(R.string.action_leader_board);
+//        }
+//
+//        WebView webView = view.findViewById(R.id.webView);
+//        webView.getSettings().setJavaScriptEnabled(false);
+//        webView.getSettings().setSupportZoom(false);
+//        webView.loadUrl(LEADER_BOARD_URL);
+//
+//        View btOk = view.findViewById(android.R.id.button1);
+//        if (btOk != null) {
+//            btOk.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    dialog.dismiss();
+//                }
+//            });
+//        }
+//
+//        dialog.setView(view);//webView
+//        dialog.show();
+//
+//        //http://stackoverflow.com/a/15847580/2673859
+//        DisplayMetrics display = context.getResources().getDisplayMetrics();
+//        int width = (int) (display.widthPixels * (display.widthPixels > 1200 ? .8 : .95));
+//        width = width > 1600 ? 1600 : width;
+//        int height = (int) (display.heightPixels * .9);
+//        //height = height < 480 ? 480 : height;
+//        //Log.d("CpblCalendarHelper", String.format("w=%d, h=%d", width, height));
+//        if (dialog.getWindow() != null) {
+//            dialog.getWindow().setLayout(width, height);
+//        }
+//        return dialog;
+//    }
 
     /**
      * build cache mode dialog
@@ -182,7 +175,8 @@ public class Utils {
         String fieldName = resources.getStringArray(R.array.cpbl_game_field_name)[fieldIndex];
         String fieldId = resources.getStringArray(R.array.cpbl_game_field_id)[fieldIndex];
         //[22]dolphin++ add check the favorite teams
-        SparseArray<Team> teams = PreferenceUtils.getFavoriteTeams(context);
+        PrefsHelper helper = new PrefsHelper(context);
+        SparseArray<Team> teams = helper.getFavoriteTeams();
         //2013 has 4 teams only, should I check this?
         //[89]dolphin++ only filter out this year, check array size
         if (teams.size() < resources.getStringArray(R.array.cpbl_team_id).length
@@ -268,7 +262,8 @@ public class Utils {
 //                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            }
 
-            if (PreferenceUtils.isEngineerMode(context)) {
+            PrefsHelper helper = new PrefsHelper(context);
+            if (helper.getEngineerMode()) {
                 Log.d("CpblCalendarHelper", "Url=" + url.substring(url.lastIndexOf("/")));
             } else {
                 startBrowserActivity(context, url);
@@ -330,7 +325,7 @@ public class Utils {
      * @param context Context
      * @return true if installed
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public static boolean isGoogleChromeInstalled(Context context) {
         if (context == null) {
             return false;
@@ -402,8 +397,9 @@ public class Utils {
 
     public static Intent createAddToCalendarIntent(Context context, Game game) {
         Intent calIntent = new Intent(Intent.ACTION_INSERT);
-        calIntent.setData(CalendarContract.Events.CONTENT_URI);
-        calIntent.setType("vnd.android.cursor.item/event");
+        //calIntent.setData(CalendarContract.Events.CONTENT_URI);
+        //calIntent.setType("vnd.android.cursor.item/event");
+        calIntent.setDataAndType(CalendarContract.Events.CONTENT_URI, "vnd.android.cursor.item/event");
 
         String contentText = context.getString(R.string.msg_content_text,
                 game.AwayTeam.getShortName(), game.HomeTeam.getShortName());

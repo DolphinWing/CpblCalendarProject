@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar3.R;
@@ -54,9 +54,10 @@ abstract class BaseGameAdapter extends ArrayAdapter<Game> {
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
 
-        bShowWinner = PreferenceUtils.isHighlightWin(mContext);
-        bShowLogo = PreferenceUtils.isTeamLogoShown(mContext);
-        bShowToday = PreferenceUtils.isHighlightToday(mContext);
+        PrefsHelper helper = new PrefsHelper(context);
+        bShowWinner = helper.isHighlightWin();
+        bShowLogo = helper.isTeamLogoShown();
+        bShowToday = helper.isHighlightToday();
         bIsTablet = mContext.getResources().getBoolean(R.bool.config_tablet);
 
         mNow = CpblCalendarHelper.getNowTime();

@@ -37,7 +37,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar3.R;
@@ -77,6 +77,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     private FirebaseAnalytics mFirebaseAnalytics;//[198]++
     private FirebaseRemoteConfig mRemoteConfig;//[199]++
+    private PrefsHelper mPrefsHelper;
 
     private final SparseArray<SparseArray<Game>> mDelayGames2014 = new SparseArray<>();//[118]dolphin++
     private final SparseArray<ArrayList<Game>> mAllGamesCache = new SparseArray<>();//[146]++
@@ -95,7 +96,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         //supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
 
-        if (PreferenceUtils.isEngineerMode(this)) {//[28]dolphin
+        mPrefsHelper = new PrefsHelper(this);
+
+        if (mPrefsHelper.getEngineerMode()) {//[28]dolphin
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
 
@@ -109,7 +112,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         mGameField = getResources().getStringArray(R.array.cpbl_game_field_id);
         mGameKind = getResources().getStringArray(R.array.cpbl_game_kind_id_2014);
-        mCacheMode = PreferenceUtils.isCacheMode(this);//[83]dolphin++
+        mCacheMode = mPrefsHelper.getCacheModeEnabled();//[83]dolphin++
         //Log.d(TAG, "mCacheMode = " + mCacheMode);
 
 //        //[56]++ refresh the alarm when open the activity
@@ -279,7 +282,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        mCacheMode = PreferenceUtils.isCacheMode(this);
+        mCacheMode = mPrefsHelper.getCacheModeEnabled();
         //Log.d(TAG, String.format("onPrepareOptionsMenu mCacheMode=%s", mCacheMode));
         MenuItem item = menu.findItem(R.id.action_cache_mode);
         if (item != null) {
@@ -325,7 +328,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 startActivityForResult(new Intent(this, SettingsActivity3.class), 0);
                 return true;
             case R.id.action_refresh://[13]dolphin++
-                if (PreferenceUtils.isCacheMode(this)) {
+                if (mPrefsHelper.getCacheModeEnabled()) {
                     runDownloadCache();
                 } else {
 //                    if (mYear >= 2014) {//remove cache
@@ -365,7 +368,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel
                     mCacheMode = false;
-                    PreferenceUtils.setCacheMode(getBaseContext(), false);
+                    mPrefsHelper.setCacheModeEnabled(false);
                     item.setIcon(R.drawable.holo_green_btn_check_off_holo_dark);
                     //item.setCheckable(mCacheMode);
                     mButtonQuery.performClick();//refresh a again
@@ -499,7 +502,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
         final boolean bDemoCache = getResources().getBoolean(R.bool.demo_cache);
         final Activity activity = getActivity();
-        if (PreferenceUtils.isCacheMode(activity) || bDemoCache) {//do cache mode query
+        if (mPrefsHelper.getCacheModeEnabled() || bDemoCache) {//do cache mode query
             doCacheModeQuery(activity, year, month, getOnQueryCallback());
         } else if (quick_refresh) {//do a quick refresh from local variable
             doQueryCallback(mGameList, false);//[126]dolphin++
@@ -773,7 +776,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         boolean thisYear = (mYear == now.get(Calendar.YEAR));
         boolean beforeThisMonth = !thisYear || (mMonth < (now.get(Calendar.MONTH) + 1));
         if (list != null && mHelper != null && mHelper.canUseCache()
-                && !PreferenceUtils.isCacheMode(this) && beforeThisMonth && mField.equals("F00")) {
+                && !mPrefsHelper.getCacheModeEnabled() && beforeThisMonth && mField.equals("F00")) {
             //Log.d(TAG, String.format("write to cache %04d-%02d.json", mYear, mMonth));
             boolean r = mHelper.putLocalCache(mYear, mMonth, mKind, list);
             Log.v(TAG, String.format("%04d-%02d-%d.json result: %s", mYear, mMonth, mKind,
@@ -806,7 +809,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                         }
 
                         //show offline mode indicator
-                        if (PreferenceUtils.isCacheMode(getBaseContext())) {
+                        if (mPrefsHelper.getCacheModeEnabled()) {
 //                            if (actionBar != null) {
 //                                actionBar.setSubtitle(R.string.action_cache_mode);
 //                            }
@@ -869,7 +872,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mCacheMode = true;
-                        PreferenceUtils.setCacheMode(getBaseContext(), true);
+                        mPrefsHelper.setCacheModeEnabled(true);
                         item.setIcon(R.drawable.holo_green_btn_check_on_holo_dark);
                         //item.setCheckable(mCacheMode);
                         //mButtonQuery.performClick();

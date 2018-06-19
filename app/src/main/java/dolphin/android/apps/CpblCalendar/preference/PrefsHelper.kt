@@ -15,8 +15,14 @@ class PrefsHelper(private val context: Context) {
     val engineerMode: Boolean
         get() = getResBoolean(R.bool.pref_engineer_mode)
 
-    val teamLogoShown: Boolean
+    val isTeamLogoShown: Boolean
         get() = sharedPrefs.getBoolean("team_logo", getResBoolean(R.bool.def_team_logo))
+
+    val isHighlightWin: Boolean
+        get() = sharedPrefs.getBoolean("highlight_win", getResBoolean(R.bool.def_highlight_win))
+
+    val isHighlightToday: Boolean
+        get() = sharedPrefs.getBoolean("highlight_today", getResBoolean(R.bool.def_highlight_today))
 
     val autoScrollUpcoming: Boolean
         get() = sharedPrefs.getBoolean("upcoming_game", getResBoolean(R.bool.def_upcoming_game))

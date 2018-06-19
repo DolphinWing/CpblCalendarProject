@@ -41,7 +41,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game

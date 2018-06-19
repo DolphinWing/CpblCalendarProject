@@ -18,7 +18,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity
 import dolphin.android.apps.CpblCalendar.Utils
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.util.PackageUtils
 

@@ -5,7 +5,6 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.text.Html;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,12 +13,10 @@ import android.widget.TextView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import dolphin.android.apps.CpblCalendar.preference.AlarmHelper;
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
@@ -220,61 +217,61 @@ public class GameAdapter extends BaseGameAdapter {
 
     @Override
     protected void setAlarm(Game game) {
-        //AlarmProvider.setNextAlarm(mApplication);
-        Context context = getContext();
-        ArrayList<Game> list = getAlarmHelper().getAlarmList();
-        if (!list.isEmpty()) {//something in the list, check the start time
-            for (Game g : list) {
-                if (g.Id == game.Id) {
-                    continue;//bypass myself
-                }
-                if (g.StartTime.compareTo(game.StartTime) == 0) {//same day
-                    Log.v(AlarmHelper.TAG, String.format("same day: %d %d", g.Id, game.Id));
-                    return;
-                }
-            }
-        }
-
-        Calendar alarm = game.StartTime;
-        alarm.add(Calendar.MINUTE, -PreferenceUtils.getAlarmNotifyTime(context));
-        if (context.getResources().getBoolean(R.bool.demo_notification)) {//debug alarm
-            alarm = CpblCalendarHelper.getNowTime();
-            //already stored in the map, so use the count to do the demo
-            alarm.add(Calendar.SECOND, 15 * list.size());
-            //Log.d(AlarmHelper.TAG, "demo alarm: " + alarm.getTime().toString());
-            //alarm.add(Calendar.MINUTE, 10);
-        }
-//        String key = AlarmHelper.getAlarmIdKey(game);
-//        AlarmProvider.setAlarm(mApplication, alarm, key);
+//        //AlarmProvider.setNextAlarm(mApplication);
+//        Context context = getContext();
+//        ArrayList<Game> list = getAlarmHelper().getAlarmList();
+//        if (!list.isEmpty()) {//something in the list, check the start time
+//            for (Game g : list) {
+//                if (g.Id == game.Id) {
+//                    continue;//bypass myself
+//                }
+//                if (g.StartTime.compareTo(game.StartTime) == 0) {//same day
+//                    Log.v(AlarmHelper.TAG, String.format("same day: %d %d", g.Id, game.Id));
+//                    return;
+//                }
+//            }
+//        }
+//
+//        Calendar alarm = game.StartTime;
+//        alarm.add(Calendar.MINUTE, -PreferenceUtils.getAlarmNotifyTime(context));
+//        if (context.getResources().getBoolean(R.bool.demo_notification)) {//debug alarm
+//            alarm = CpblCalendarHelper.getNowTime();
+//            //already stored in the map, so use the count to do the demo
+//            alarm.add(Calendar.SECOND, 15 * list.size());
+//            //Log.d(AlarmHelper.TAG, "demo alarm: " + alarm.getTime().toString());
+//            //alarm.add(Calendar.MINUTE, 10);
+//        }
+////        String key = AlarmHelper.getAlarmIdKey(game);
+////        AlarmProvider.setAlarm(mApplication, alarm, key);
     }
 
     @Override
     protected void cancelAlarm(Game game) {
-        String key = AlarmHelper.getAlarmIdKey(game);
-        Game anotherGame = null;
-        //check if we have the same day job
-        ArrayList<Game> list = getAlarmHelper().getAlarmList();
-        if (!list.isEmpty()) {//cancel the same day
-            for (Game g : list) {
-                if (g.Id == game.Id) {
-                    continue;//bypass myself
-                }
-                if (g.StartTime.compareTo(game.StartTime) == 0) {//same day
-                    Log.v(AlarmHelper.TAG, String.format("same day: %d %d", g.Id, game.Id));
-                    int previousJobId = getAlarmHelper().getJobId(key);
-                    if (previousJobId > 0) {//yes, previous registered
-                        //Log.d(AlarmHelper.TAG, "yes, previous registered: " + previousJobId);
-                        anotherGame = g;
-                    }
-                }
-            }
-        }
-
-//        AlarmProvider.cancelAlarm(mApplication, key);
-        if (anotherGame != null) {//set alarm for another game
-            Log.v(AlarmHelper.TAG, "set alarm for another game " + anotherGame.Id);
-            setAlarm(anotherGame);
-        }
+//        String key = AlarmHelper.getAlarmIdKey(game);
+//        Game anotherGame = null;
+//        //check if we have the same day job
+//        ArrayList<Game> list = getAlarmHelper().getAlarmList();
+//        if (!list.isEmpty()) {//cancel the same day
+//            for (Game g : list) {
+//                if (g.Id == game.Id) {
+//                    continue;//bypass myself
+//                }
+//                if (g.StartTime.compareTo(game.StartTime) == 0) {//same day
+//                    Log.v(AlarmHelper.TAG, String.format("same day: %d %d", g.Id, game.Id));
+//                    int previousJobId = getAlarmHelper().getJobId(key);
+//                    if (previousJobId > 0) {//yes, previous registered
+//                        //Log.d(AlarmHelper.TAG, "yes, previous registered: " + previousJobId);
+//                        anotherGame = g;
+//                    }
+//                }
+//            }
+//        }
+//
+////        AlarmProvider.cancelAlarm(mApplication, key);
+//        if (anotherGame != null) {//set alarm for another game
+//            Log.v(AlarmHelper.TAG, "set alarm for another game " + anotherGame.Id);
+//            setAlarm(anotherGame);
+//        }
     }
 
     @SuppressWarnings("unused")

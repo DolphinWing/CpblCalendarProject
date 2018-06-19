@@ -6,11 +6,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.SparseArray
 import androidx.annotation.Keep
 import androidx.fragment.app.DialogFragment
-import android.util.SparseArray
-
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.Team
 import dolphin.android.apps.CpblCalendar3.R

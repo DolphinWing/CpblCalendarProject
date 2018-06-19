@@ -13,7 +13,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dolphin.android.apps.CpblCalendar.CalendarActivity
 import dolphin.android.apps.CpblCalendar.GameListFragment
 import dolphin.android.apps.CpblCalendar.OnQueryCallback
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
