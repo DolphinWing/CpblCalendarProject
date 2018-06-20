@@ -6,7 +6,7 @@ import android.net.ConnectivityManager
 /**
  * Created by dolphin on 2013/6/3.
  */
-open class HttpHelper(protected val context: Context) : UrlHelper() {
+open class HttpHelper(val context: Context) : UrlHelper() {
     companion object {
         private const val TAG = "HttpHelper"
 
@@ -53,6 +53,6 @@ open class HttpHelper(protected val context: Context) : UrlHelper() {
                 .activeNetworkInfo?.isConnected ?: false
 
     fun getRemoteFile(url: String, path: String, listener: HttpProgressListener? = null): Boolean {
-        return UrlHelper.getRemoteFile(context, url, path, listener)
+        return UrlHelper.getRemoteFile(context, url, path, DEFAULT_NETWORK_TIMEOUT, listener)
     }
 }
