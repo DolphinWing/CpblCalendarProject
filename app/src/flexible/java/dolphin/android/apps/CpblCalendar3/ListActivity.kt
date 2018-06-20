@@ -637,7 +637,7 @@ class ListActivity : AppCompatActivity() {
             list?.forEach {
                 if ((field == "F00" || it.FieldId == field) &&
                         (team == 0 || it.HomeTeam.id == team || it.AwayTeam.id == team)) {
-                    adapterList.add(MyItemView(activity!!, it, helper))
+                    adapterList.add(MyItemView(/*activity!!,*/ it, helper))
                 }
             }
             Log.d(TAG, "field = $field, ${adapterList.size} games")
@@ -692,9 +692,14 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    internal class MyItemView(private val context: Context, val game: Game,
-                              private val helper: TeamHelper) :
+    internal class MyItemView(val game: Game, private val helper: TeamHelper) :
             AbstractFlexibleItem<MyItemView.ViewHolder>() {
+
+        private val appContext: Context
+            get() = helper.application.applicationContext
+
+        private fun getResString(resId: Int, vararg args: Any) = appContext.getString(resId, args)
+
         override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
                                     holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
             val dateStr = SimpleDateFormat("MMM d (E) ", Locale.TAIWAN)
@@ -704,17 +709,17 @@ class ListActivity : AppCompatActivity() {
             val year = game.StartTime.get(Calendar.YEAR)
 
             holder?.apply {
-                //                if (DateUtils.isToday(game.StartTime) && PreferenceUtils.isHighlightToday(context)) {
-//                    itemView.setBackgroundResource(R.drawable.item_highlight_background_holo_light)
-//                } else {
-//                    itemView.setBackgroundResource(R.drawable.selectable_background_holo_green)
-//                }
+                if (DateUtils.isToday(game.StartTime) && helper.config().isHighlightToday) {
+                    itemView.setBackgroundResource(R.drawable.item_highlight_background_holo_light)
+                } else {
+                    itemView.setBackgroundResource(R.drawable.selectable_background_holo_green)
+                }
                 gameId?.text = when (game.Kind) {
                     "01" -> game.Id.toString()
-                    "02" -> context.getString(R.string.id_prefix_all_star, game.Id)
-                    "03" -> context.getString(R.string.id_prefix_champion, game.Id)
-                    "05" -> context.getString(R.string.id_prefix_challenge, game.Id)
-                    "07" -> context.getString(R.string.id_prefix_warm_up, game.Id)
+                    "02" -> getResString(R.string.id_prefix_all_star, game.Id)
+                    "03" -> getResString(R.string.id_prefix_champion, game.Id)
+                    "05" -> getResString(R.string.id_prefix_challenge, game.Id)
+                    "07" -> getResString(R.string.id_prefix_warm_up, game.Id)
                     else -> game.Id.toString()
                 }
                 val displayTime = when {
@@ -728,11 +733,11 @@ class ListActivity : AppCompatActivity() {
                     Html.fromHtml(displayTime)
                 }
                 gameField?.text = if (game.Source == Game.SOURCE_CPBL ||
-                        game.Field?.contains(context.getString(R.string.title_at)) == false) {
-                    String.format("%s%s", context.getString(R.string.title_at),
-                            game.getFieldFullName(context))
+                        game.Field?.contains(getResString(R.string.title_at)) == false) {
+                    String.format("%s%s", getResString(R.string.title_at),
+                            game.getFieldFullName(appContext))
                 } else {
-                    game.getFieldFullName(context)
+                    game.getFieldFullName(appContext)
                 }
                 teamAwayName?.text = game.AwayTeam.name
                 teamAwayScore?.text = if (game.IsFinal || game.IsLive) {

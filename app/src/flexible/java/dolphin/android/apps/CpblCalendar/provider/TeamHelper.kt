@@ -3,25 +3,24 @@ package dolphin.android.apps.CpblCalendar.provider
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.palette.graphics.Palette
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar3.CpblApplication
 
 /**
- * Created by jimmyhu on 2017/3/17.
- *
- *
- * A helper class to handle Team logo & palette.
+ * A helper class to handle Team logo & palette. and also other staffs.
  */
 
-class TeamHelper(private val application: CpblApplication) {
+class TeamHelper(val application: CpblApplication) {
 
     fun getLogoColorFilter(team: Team, year: Int): Int {
         val logoId = Team.getTeamLogo(team.id, year)
-        var palette: Palette? = application.getTeamLogoPalette(logoId)
-        if (palette == null) {
+        val palette: Palette = application.getTeamLogoPalette(logoId) ?: kotlin.run {
             val bitmap = BitmapFactory.decodeResource(application.resources, logoId)
-            palette = Palette.from(bitmap).generate()
-            application.setTeamLogoPalette(logoId, palette)//save to cache
+            val p = Palette.from(bitmap).generate()
+            application.setTeamLogoPalette(logoId, p)//save to cache
+            p
         }
+
         var color = Color.BLACK
         if (isInvalidColor(color) && palette.dominantSwatch != null) {
             color = palette.getDominantColor(color)
@@ -44,4 +43,6 @@ class TeamHelper(private val application: CpblApplication) {
         }
         return false
     }
+
+    fun config() = PrefsHelper(application.applicationContext)
 }

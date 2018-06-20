@@ -4,7 +4,7 @@
 
     <PreferenceCategory
         android:key="display_extra_group"
-        android:title="@string/title_display_favorite">
+        android:title="@string/title_display_settings">
         <se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference
             android:defaultValue="@array/cpbl_team_id"
             android:entries="@array/cpbl_team_name"

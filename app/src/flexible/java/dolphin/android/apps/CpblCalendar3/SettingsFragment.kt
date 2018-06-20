@@ -40,6 +40,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 return r
             }
+            "use_drawer_menu" -> activity?.let {
+                Toast.makeText(activity, "clicked!", Toast.LENGTH_SHORT).show()
+//                AlertDialog.Builder(activity)
+//                        .setTitle("hello")
+//                        .setMessage("bye")
+//                        .setPositiveButton(R.string.action_open_app) { _, _ ->
+//                            //startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
+//                            activity!!.finish()
+//                        }
+//                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+//                        .show()
+                return true
+            }
             "action_restart_app" -> activity?.let {
                 startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
                 it.finish()

@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0 canary'
-            versionCode 1064
+            versionCode 1065
         }
     }
     compileOptions {
