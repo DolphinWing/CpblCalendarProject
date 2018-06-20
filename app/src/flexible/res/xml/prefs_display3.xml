@@ -20,11 +20,9 @@
             android:summaryOn="@string/summary_pull_to_refresh_on"
             android:title="@string/title_enable_pull_to_refresh" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="use_drawer_menu"
-            android:summaryOff="@string/summary_use_drawer_menu_off"
-            android:summaryOn="@string/summary_use_drawer_menu_on"
+        <Preference
+            android:key="use_old_drawer_menu"
+            android:summary="@string/summary_use_drawer_menu_on"
             android:title="@string/title_use_drawer_menu" />
 
     </PreferenceCategory>

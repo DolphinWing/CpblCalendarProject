@@ -55,8 +55,9 @@ class PrefsHelper(private val context: Context) {
     val pullToRefreshEnabled: Boolean
         get() = sharedPrefs.getBoolean("pull_to_refresh", getResBoolean(R.bool.def_enable_pull_to_refresh))
 
-    val useDrawerMenu: Boolean
+    var useDrawerMenu: Boolean
         get() = sharedPrefs.getBoolean("use_drawer_menu", false)
+        set(value) = sharedPrefs.edit().putBoolean("use_drawer_menu", value).apply()
 
     var cacheModeEnabled: Boolean
         get() = sharedPrefs.getBoolean("cache_mode", getResBoolean(R.bool.def_cache_mode))

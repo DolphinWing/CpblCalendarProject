@@ -52,7 +52,7 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
         for (i in mTeams.indices) {
             mTeamChecked[i] = teams.get(mTeams[i]) != null
         }
-        val builder = AlertDialog.Builder(activity, R.style.Theme_MaterialComponents_Dialog_Alert)
+        val builder = AlertDialog.Builder(activity, R.style.Theme_Holo_green_Dialog)
                 .setMultiChoiceItems(R.array.cpbl_team_name, mTeamChecked, this)
                 .setPositiveButton(android.R.string.ok, this)
                 .setNegativeButton(android.R.string.cancel, this)

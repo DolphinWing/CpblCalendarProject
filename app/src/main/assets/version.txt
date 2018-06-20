@@ -1,3 +1,7 @@
+[1065] @ 2018-06-20
+    still rewrite kotlins
+    fix highlight background
+
 [1064] @ 2018-06-18
     fix some incorrect UI in new Settings
     rewrite files to kotlin

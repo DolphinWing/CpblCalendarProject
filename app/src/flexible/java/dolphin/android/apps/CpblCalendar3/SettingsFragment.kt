@@ -3,15 +3,23 @@ package dolphin.android.apps.CpblCalendar3
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import dolphin.android.apps.CpblCalendar.Utils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.util.PackageUtils
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    private lateinit var prefs: PrefsHelper
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        prefs = PrefsHelper(activity!!)
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        //addPreferencesFromResource(R.xml.prefs_display)
-        addPreferencesFromResource(R.xml.prefs_display_extra3)
+        addPreferencesFromResource(R.xml.prefs_display3)
         addPreferencesFromResource(R.xml.prefs_main)
         addPreferencesFromResource(R.xml.prefs_advanced)
 
@@ -40,17 +48,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 return r
             }
-            "use_drawer_menu" -> activity?.let {
-                Toast.makeText(activity, "clicked!", Toast.LENGTH_SHORT).show()
-//                AlertDialog.Builder(activity)
-//                        .setTitle("hello")
-//                        .setMessage("bye")
-//                        .setPositiveButton(R.string.action_open_app) { _, _ ->
-//                            //startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
-//                            activity!!.finish()
-//                        }
-//                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-//                        .show()
+            "use_old_drawer_menu" -> activity?.let {
+                //prefs.useDrawerMenu = true
+                //startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
+                //it.finish()
+                //Toast.makeText(it, "clicked!", Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(it)
+                        .setTitle("hello")
+                        .setMessage("bye")
+                        .setPositiveButton(R.string.action_open_app) { _, _ ->
+                            prefs.useDrawerMenu = true
+                            startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
+                            it.finish()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                        .show()
                 return true
             }
             "action_restart_app" -> activity?.let {
