@@ -72,10 +72,10 @@ public class Utils {
         return gameList;
     }
 
-//    //http://zxc22.idv.tw/rank_up.asp
-//    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
-//    public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
-//
+    //http://zxc22.idv.tw/rank_up.asp
+    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
+
 //    @SuppressLint("InflateParams")
 //    public static AlertDialog buildLeaderBoardZxc22(Context context) {
 //        if (context == null) {

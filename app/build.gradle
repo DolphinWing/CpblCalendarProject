@@ -77,8 +77,8 @@ dependencies {
     implementation "com.google.firebase:firebase-config:$playServiceVersion"
     implementation "com.google.firebase:firebase-messaging:$playServiceVersion"
     //implementation "com.google.firebase:firebase-crash:$playServiceVersion"
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0-alpha3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
+    //implementation 'androidx.legacy:legacy-support-v13:1.0.0-alpha3'
+    //implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
     implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
     implementation 'androidx.palette:palette:1.0.0-alpha3'
     implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha3'

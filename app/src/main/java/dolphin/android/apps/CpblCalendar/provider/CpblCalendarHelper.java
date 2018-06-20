@@ -49,11 +49,11 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public final static String URL_FIELD_2017 = URL_BASE + "/footer/stadium/@field";
 
-    private final Context mContext;
+    //private final Context mContext;
 
-    protected Context getContext() {
-        return mContext;
-    }
+    //protected Context getContext() {
+    //    return mContext;
+    //}
 
     private boolean mUseCache = false;
 
@@ -63,7 +63,8 @@ public class CpblCalendarHelper extends HttpHelper {
     private final SparseArray<String> mChampionMonth = new SparseArray<>();
 
     public CpblCalendarHelper(Context context) {
-        mContext = context;
+        super(context);
+        //mContext = context;
         Resources resources = getContext().getResources();
         mUseCache = resources.getBoolean(R.bool.feature_cache);
         for (String allStar : getString(R.string.allstar_month_override).split(";")) {
@@ -1048,7 +1049,7 @@ public class CpblCalendarHelper extends HttpHelper {
             if (index >= 0 && index < driveIds.length) {//already have cached data in Google Drive
                 String driveId = driveIds[index];
                 File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
-                GoogleDriveHelper.download(context, driveId, f);
+                new GoogleDriveHelper(context).download(driveId, f);
                 delayedGames = restoreDelayGames2016(year);//read again
                 if (delayedGames.size() > 0) {//use cache directly
                     Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));
