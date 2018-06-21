@@ -4,6 +4,7 @@ gradlew         text eol=lf
 .idea/*.xml     text eol=lf
 
 #https://jmln.tw/blog/2017-08-13-set-github-repo-lang.html
-app/src/obselete/* linguist-vendored=false
-#app/src/design/java/se/pixelcoding/wikitab/preferences/* linguist-vendored
-app/src/design/* linguist-vendored=false
+app/src/obselete/java/dolphin/android/apps/CpblCalendar/* linguist-vendored
+app/src/obselete/java/dolphin/android/apps/CpblCalendar/preference/* linguist-vendored
+app/src/design/java/se/pixelcoding/wikitab/preferences/* linguist-vendored
+app/src/design/java/* linguist-vendored
