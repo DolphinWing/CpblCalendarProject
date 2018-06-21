@@ -1,5 +1,8 @@
+[1066] @ 2018-06-21
+    fix dialog button style
+
 [1065] @ 2018-06-20
-    still rewrite kotlins
+    still rewrite kotlin files
     fix highlight background
 
 [1064] @ 2018-06-18
