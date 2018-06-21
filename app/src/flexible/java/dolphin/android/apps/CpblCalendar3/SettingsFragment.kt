@@ -44,7 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     Toast.makeText(activity, R.string.title_clear_cache_complete,
                             Toast.LENGTH_SHORT).show()
 
-                    (activity?.application as? CpblApplication)?.setPreferenceChanged(true)
+                    //(activity?.application as? CpblApplication)?.setPreferenceChanged(true)
                 }
                 return r
             }

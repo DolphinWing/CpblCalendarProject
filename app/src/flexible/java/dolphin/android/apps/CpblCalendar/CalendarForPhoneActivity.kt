@@ -237,7 +237,7 @@ class CalendarForPhoneActivity : CalendarActivity(), OnQueryCallback, ActivityCo
                 mDrawerLayout.openDrawer(mDrawerList)
                 return true
             }
-            R.id.action_settings -> (application as CpblApplication).setPreferenceChanged(false)
+            R.id.action_settings -> (application as CpblApplication).isUpdateRequired = false
         }
         return super.onOptionsItemSelected(item)
     }
@@ -384,7 +384,7 @@ class CalendarForPhoneActivity : CalendarActivity(), OnQueryCallback, ActivityCo
         }
         //query_to_update(true);//[126]dolphin++ quick refresh
 
-        application.setPreferenceChanged(false)//reset to default
+        application.isUpdateRequired = false//reset to default
     }
 
     override fun onFragmentAttached() {

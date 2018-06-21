@@ -29,7 +29,6 @@ class CpblApplication : Application() {
      * @return true means we need to donwload again
      */
     var isUpdateRequired = false
-        private set
 
     private val mTeamLogoPalette = SparseArray<Palette>()
 
@@ -78,15 +77,6 @@ class CpblApplication : Application() {
             mTrackers[TrackerName.APP_TRACKER] = t
         }
         return mTrackers[trackerId]
-    }
-
-    /**
-     * set flag to indicate app needs to query the data again
-     *
-     * @param changed true if we want app to download again
-     */
-    fun setPreferenceChanged(changed: Boolean) {
-        isUpdateRequired = changed
     }
 
     fun setTeamLogoPalette(id: Int, palette: Palette) {
