@@ -1,8 +1,6 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.util.Log;
 import android.util.SparseArray;
@@ -23,7 +21,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.core.content.ContextCompat;
 import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.net.GoogleDriveHelper;
@@ -44,29 +41,24 @@ public class CpblCalendarHelper extends HttpHelper {
 
     public final static String URL_BASE = "http://www.cpbl.com.tw";
 
-    private final static String URL_SCHEDULE_2016 = URL_BASE +
+    public final static String URL_SCHEDULE_2016 = URL_BASE +
             "/schedule/index/@year-@month-01.html?&date=@year-@month-01&gameno=01&sfieldsub=@field&sgameno=@kind";
 
     public final static String URL_FIELD_2017 = URL_BASE + "/footer/stadium/@field";
-
-    //private final Context mContext;
-
-    //protected Context getContext() {
-    //    return mContext;
-    //}
-
-    private boolean mUseCache = false;
 
     private final SparseIntArray mAllStarMonth = new SparseIntArray();
     private final SparseIntArray mWarmUpMonth = new SparseIntArray();
     private final SparseArray<String> mChallengeMonth = new SparseArray<>();
     private final SparseArray<String> mChampionMonth = new SparseArray<>();
 
+    private final CacheFileHelper cacheHelper;
+
     public CpblCalendarHelper(Context context) {
         super(context);
         //mContext = context;
         Resources resources = getContext().getResources();
-        mUseCache = resources.getBoolean(R.bool.feature_cache);
+        cacheHelper = new CacheFileHelper(getContext());
+
         for (String allStar : getString(R.string.allstar_month_override).split(";")) {
             String[] data = allStar.split("/");
             if (data.length >= 2) {
@@ -175,51 +167,6 @@ public class CpblCalendarHelper extends HttpHelper {
         return false;
     }
 
-    /**
-     * start CPBL website in browser
-     *
-     * @param context Context
-     * @param year    year
-     * @param month   month
-     * @param kind    game kind
-     * @param field   game field
-     */
-    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
-                                                   String field) {
-//        startActivityToCpblSchedule(context, year, month, kind, field, false);
-//    }
-//
-//    /**
-//     * start CPBL website in browser
-//     *
-//     * @param context Context
-//     * @param year    year
-//     * @param month   month
-//     * @param kind    game kind
-//     * @param field   game field
-//     * @param newTask true if in a new task
-//     */
-//    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
-//                                                   String field, boolean newTask) {
-////        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String url = URL_SCHEDULE_2016.replace("@year", String.valueOf(year))
-                .replace("@month", String.valueOf(month))
-                .replace("@kind", kind).replace("@field",
-                        field == null || field.equals("F00") ? "" : field);
-//        intent.setData(Uri.parse(url));//URL_SCHEDULE_2014
-//        if (newTask) {//[170]++
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {//[167]++
-//            //[164]dolphin++ add Chrome Custom Tabs
-//            Bundle extras = new Bundle();
-//            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
-//            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-//                    SupportV4Utils.getColor(context, R.color.holo_green_dark));
-//            intent.putExtras(extras);
-//        }
-//        context.startActivity(intent);
-        Utils.startBrowserActivity(context, url);
-    }
 
     //<font color=blue>001 義大-統一(新莊)</font>
     private final static String PATTERN_GAME_2014_ZXC = "<font color=blue>([^/]+)";
@@ -366,99 +313,6 @@ public class CpblCalendarHelper extends HttpHelper {
         return game;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    static ArrayList<Game> getCache(Context context, String fileName) {
-        if (context != null) {
-            //String fileName = String.format("%04d-%02d.json", year, month);
-            File f = new File(getCacheDir(context), fileName);
-            //Log.d(TAG, "getCache " + f.getAbsolutePath());
-            if (f.exists()) {
-                //convert JSON string to ArrayList<Game> object
-                return Game.listFromJson(context, FileUtils.readFileToString(f));
-            }
-            f = new File(context.getCacheDir(), fileName);
-            //Log.d(TAG, "getCache " + f.getAbsolutePath());
-            if (f.exists()) {
-                //convert JSON string to ArrayList<Game> object
-                return Game.listFromJson(context, FileUtils.readFileToString(f));
-            }
-        }
-        return null;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    static ArrayList<Game> getCache(Context context, int year, int month) {
-        return getCache(context, String.format(Locale.US, "%04d-%02d.json", year, month));
-    }
-
-    public ArrayList<Game> getCache(int year, int month) {
-        if (canUseCache()) {
-            return getCache(getContext(), String.format(Locale.US, "%04d-%02d.json", year, month));
-        }
-        return null;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    static boolean putCache(Context context, String fileName, ArrayList<Game> list) {
-        if (context == null) {
-            return false;
-        }
-        //String fileName = String.format("%04d-%02d.json", year, month);
-        File f = new File(getCacheDir(context), fileName);
-        if (list == null) {
-            return f.delete();
-        }
-        //convert ArrayList<Game> object to JSON string
-        //Log.d(TAG, "putCache " + f.getAbsolutePath());
-        boolean r = FileUtils.writeStringToFile(f, Game.listToJson(context, list));
-        if (!r) {
-            f = new File(context.getCacheDir(), fileName);
-            //Log.d(TAG, "putCache " + f.getAbsolutePath());
-            r = FileUtils.writeStringToFile(f, Game.listToJson(context, list));
-        }
-        return r;
-    }
-
-    @SuppressWarnings("unused")
-    public static boolean putCache(Context context, int year, int month, ArrayList<Game> list) {
-        return putCache(context, String.format(Locale.US, "%04d-%02d.json", year, month), list);
-    }
-
-    public boolean putCache(int year, int month, ArrayList<Game> list) {
-        return canUseCache() && putCache(getContext(), String.format(Locale.US, "%04d-%02d.json", year, month), list);
-    }
-
-    public boolean canUseCache() {
-        return mUseCache;
-    }
-
-    @SuppressWarnings("unused")
-    public boolean hasCache(int year, int month) {
-        return (getCache(year, month) != null);
-    }
-
-    @SuppressWarnings("unused")
-    public static boolean hasCache(Context context, int year, int month) {
-        return (getCache(context, year, month) != null);
-    }
-
-    public boolean putLocalCache(int year, int month, int kind, ArrayList<Game> list) {
-        return putCache(getContext(), String.format(Locale.US, "%04d-%02d-%d.json", year, month, kind), list);
-    }
-
-    @SuppressWarnings("unused")
-    public boolean removeLocalCache(int year, int month, int kind) {
-        return putLocalCache(year, month, kind, null);
-    }
-
-    @SuppressWarnings("unused")
-    public ArrayList<Game> getLocalCache(int year, int month, int kind) {
-        if (canUseCache()) {
-            return getCache(getContext(), String.format(Locale.US, "%04d-%02d-%d.json", year, month, kind));
-        }
-        return null;
-    }
-
     /**
      * Always get Taipei time (GMT+8)
      *
@@ -525,41 +379,20 @@ public class CpblCalendarHelper extends HttpHelper {
 //        return DateUtils.sameDay(game1.StartTime, game2.StartTime);
 //    }
 
-    /**
-     * build year array adapter
-     *
-     * @param context Context
-     * @param nowYear current year
-     * @return ArrayAdapter
-     */
-    public static ArrayAdapter<String> buildYearAdapter(Context context, int nowYear) {
-        String[] years = new String[nowYear - 1990 + 1];
-        for (int i = 1990; i <= nowYear; i++) {
-            String y = context.getString(R.string.title_cpbl_year, (i - 1989));
-            years[nowYear - i] = String.format(Locale.US, "%d (%s)", i, y);
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item, years);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
+    public boolean canUseCache() {
+        return cacheHelper.getCanUseCache();
     }
 
-    /**
-     * build month array adapter
-     *
-     * @param context Context
-     * @return ArrayAdapter
-     */
-    public static ArrayAdapter<String> buildMonthAdapter(Context context) {
-        ArrayList<String> months = new ArrayList<>(Arrays.asList(
-                new DateFormatSymbols(Locale.TAIWAN).getMonths()));
-        if (context.getResources().getBoolean(R.bool.feature_enable_all_months)) {
-            months.add(context.getString(R.string.title_game_year_all_months));//[146]++
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item, months);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
+    public ArrayList<Game> getCache(int year, int month) {
+        return cacheHelper.getCache(year, month);
+    }
+
+    public boolean putCache(int year, int month, ArrayList<Game> list) {
+        return cacheHelper.putCache(year, month, list);
+    }
+
+    public boolean putLocalCache(int year, int month, int kind, ArrayList<Game> list) {
+        return cacheHelper.putLocalCache(year, month, kind, list);
     }
 
     private void storeDelayGames2014(Context context, int year, SparseArray<Game> games) {
@@ -573,12 +406,17 @@ public class CpblCalendarHelper extends HttpHelper {
         storeDelayGames2014(context, year, delay_str.toString());
     }
 
+    private File getDelayFile(int year) {
+        return new File(CacheFileHelper.getCacheDir(getContext()),
+                String.format(Locale.US, "%d.delay", year));
+    }
+
     //@Deprecated
     private void storeDelayGames2014(Context context, int year, String delay_str) {
         if (context == null) {
             return;//cannot store, no context
         }
-        File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
+        File f = getDelayFile(year);
         //Log.d(TAG, f.getAbsolutePath());
         FileUtils.writeStringToFile(f, delay_str);
     }
@@ -595,7 +433,7 @@ public class CpblCalendarHelper extends HttpHelper {
     @SuppressWarnings("UnusedReturnValue")
     public boolean removeDelayGames2014(Context context, int year) {
         if (context != null) {
-            File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
+            File f = getDelayFile(year);
             return f.delete();
         }
         return false;
@@ -603,11 +441,11 @@ public class CpblCalendarHelper extends HttpHelper {
 
     private SparseArray<Game> restoreDelayGames2014(Context context, int year) {
         SparseArray<Game> delayedGames = new SparseArray<>();
-        if (context == null || getCacheDir(context) == null) {
+        if (context == null /*|| getCacheDir(context) == null*/) {
             return delayedGames;//[160]++ avoid use NullPointer to File constructor
         }
         //restore data from cache
-        File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
+        File f = getDelayFile(year);
         //Log.d(TAG, f.getAbsolutePath());
         String delay_str = FileUtils.readFileToString(f);
         if (delay_str != null && !delay_str.isEmpty() && !delay_str.contains("HTTP")) {
@@ -630,18 +468,6 @@ public class CpblCalendarHelper extends HttpHelper {
             }
         }
         return delayedGames;
-    }
-
-    /**
-     * Get cache dir for app
-     *
-     * @param context Context
-     * @return cache dir
-     */
-    public static File getCacheDir(Context context) {
-        return (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                ? context.getExternalCacheDir() : context.getCacheDir();
     }
 
     private String getString(int id) {
@@ -1024,10 +850,10 @@ public class CpblCalendarHelper extends HttpHelper {
         //Log.d(TAG, "query delay games 2016: " + year);
 
         Context context = getContext();
-        if (/*year < 2005 || */context == null) {
-            Log.w(TAG, String.format("no %d delay game info in www.cpbl.com.tw", year));
-            return null;
-        }
+//        if (/*year < 2005 || */context == null) {
+//            Log.w(TAG, String.format("no %d delay game info in www.cpbl.com.tw", year));
+//            return null;
+//        }
 
         //read current month
         Calendar now = getNowTime();
@@ -1048,8 +874,7 @@ public class CpblCalendarHelper extends HttpHelper {
             int index = year - 1990;
             if (index >= 0 && index < driveIds.length) {//already have cached data in Google Drive
                 String driveId = driveIds[index];
-                File f = new File(getCacheDir(context), String.format(Locale.US, "%d.delay", year));
-                new GoogleDriveHelper(context).download(driveId, f);
+                new GoogleDriveHelper(context).download(driveId, getDelayFile(year));
                 delayedGames = restoreDelayGames2016(year);//read again
                 if (delayedGames.size() > 0) {//use cache directly
                     Log.v(TAG, String.format("use Google Drive cached data (%d)", delayedGames.size()));

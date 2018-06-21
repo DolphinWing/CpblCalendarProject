@@ -193,7 +193,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         if (mSpinnerYear != null) {
-            mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
+            mSpinnerYear.setAdapter(Utils.buildYearAdapter(getBaseContext(), mYear));
             mSpinnerYear.setEnabled(!mCacheMode);
             mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -212,7 +212,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         if (mSpinnerMonth != null) {
-            mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
+            mSpinnerMonth.setAdapter(Utils.buildMonthAdapter(getBaseContext()));
         }
 
         if (mSpinnerKind != null) {
@@ -362,8 +362,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
                     mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                 }
-                CpblCalendarHelper.startActivityToCpblSchedule(mActivity, mYear,
-                        mMonth, getGameKind(mKind), mField/*, true*/);
+                Utils.startActivityToCpblSchedule(mActivity, mYear, mMonth, getGameKind(mKind),
+                        mField/*, true*/);
                 return true;
             case R.id.action_cache_mode:
                 if (mCacheMode) {//cancel

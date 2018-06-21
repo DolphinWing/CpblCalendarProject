@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import dolphin.android.apps.CpblCalendar.provider.CacheFileHelper;
 import dolphin.android.apps.CpblCalendar3.CpblApplication;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.apps.CpblCalendar3.SplashActivity;
@@ -37,7 +38,7 @@ public class AdvancedFragment extends PreferenceFragment {
                 p1.setEnabled(false);
                 p1.setSummary(R.string.summary_clear_cache_off);
             }
-            if ((getActivity() == null || CpblCalendarHelper.getCacheDir(getActivity()) == null)) {
+            if ((getActivity() == null || CacheFileHelper.getCacheDir(getActivity()) == null)) {
                 p1.setEnabled(false);
                 p1.setSummary(R.string.summary_clear_cache_null);
             }
@@ -54,7 +55,7 @@ public class AdvancedFragment extends PreferenceFragment {
             boolean r = true;
             File[] caches = null;
             if (getActivity() != null) {
-                File cacheDir = CpblCalendarHelper.getCacheDir(getActivity());
+                File cacheDir = CacheFileHelper.getCacheDir(getActivity());
                 if (cacheDir != null) {
                     caches = cacheDir.listFiles();
                 }

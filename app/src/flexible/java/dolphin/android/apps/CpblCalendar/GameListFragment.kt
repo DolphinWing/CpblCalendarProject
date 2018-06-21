@@ -117,7 +117,7 @@ internal class GameListFragment : ListFragment(), AdapterView.OnItemLongClickLis
                 val y = y1
                 val m = m1
                 button1.setOnClickListener {
-                    CpblCalendarHelper.startActivityToCpblSchedule(activity, y, m, "01", "F00")
+                    Utils.startActivityToCpblSchedule(activity, y, m, "01", "F00")
                 }
             }
             val text2 = mEmptyView!!.findViewById<TextView>(android.R.id.text2)

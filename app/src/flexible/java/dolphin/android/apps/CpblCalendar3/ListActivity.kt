@@ -353,7 +353,7 @@ class ListActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_go_to_cpbl -> {
-                CpblCalendarHelper.startActivityToCpblSchedule(this@ListActivity, mYear,
+                Utils.startActivityToCpblSchedule(this@ListActivity, mYear,
                         mMonth + 1, "01", "F00")
                 filterPaneVisible = false
                 return true

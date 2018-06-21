@@ -5,6 +5,7 @@ import android.preference.Preference
 import android.preference.PreferenceScreen
 import android.widget.Toast
 import androidx.preference.PreferenceFragmentCompat
+import dolphin.android.apps.CpblCalendar.provider.CacheFileHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar3.CpblApplication
 import dolphin.android.apps.CpblCalendar3.R
@@ -17,7 +18,7 @@ class AdvancedFragment3 : PreferenceFragmentCompat() {
                 isEnabled = false
                 setSummary(R.string.summary_clear_cache_off)
             }
-            if (activity == null || CpblCalendarHelper.getCacheDir(activity) == null) {
+            if (activity == null || CacheFileHelper.getCacheDir(activity!!) == null) {
                 isEnabled = false
                 setSummary(R.string.summary_clear_cache_null)
             }
@@ -29,7 +30,7 @@ class AdvancedFragment3 : PreferenceFragmentCompat() {
             KEY_CLEAR_CACHE -> {
                 var r = true
                 if (activity != null) {
-                    CpblCalendarHelper.getCacheDir(activity)?.listFiles()?.forEach {
+                    CacheFileHelper.getCacheDir(activity!!)?.listFiles()?.forEach {
                         r = r and it.delete() //delete every file
                     }
                     Toast.makeText(activity, R.string.title_clear_cache_complete,

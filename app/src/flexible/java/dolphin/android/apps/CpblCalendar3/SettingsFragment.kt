@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
+import dolphin.android.apps.CpblCalendar.provider.CacheFileHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.util.PackageUtils
 
@@ -38,7 +39,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             "action_clear_cache" -> {
                 var r = true
                 if (activity != null) {
-                    CpblCalendarHelper.getCacheDir(activity)?.listFiles()?.forEach {
+                    CacheFileHelper.getCacheDir(activity!!)?.listFiles()?.forEach {
                         r = r and it.delete() //delete every file
                     }
                     Toast.makeText(activity, R.string.title_clear_cache_complete,

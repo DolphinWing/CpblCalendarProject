@@ -16,8 +16,11 @@ import android.os.StrictMode;
 import android.provider.CalendarContract;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.ArrayAdapter;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -319,6 +322,53 @@ public class Utils {
         }
     }
 
+
+    /**
+     * start CPBL website in browser
+     *
+     * @param context Context
+     * @param year    year
+     * @param month   month
+     * @param kind    game kind
+     * @param field   game field
+     */
+    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
+                                                   String field) {
+//        startActivityToCpblSchedule(context, year, month, kind, field, false);
+//    }
+//
+//    /**
+//     * start CPBL website in browser
+//     *
+//     * @param context Context
+//     * @param year    year
+//     * @param month   month
+//     * @param kind    game kind
+//     * @param field   game field
+//     * @param newTask true if in a new task
+//     */
+//    public static void startActivityToCpblSchedule(Context context, int year, int month, String kind,
+//                                                   String field, boolean newTask) {
+////        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String url = CpblCalendarHelper.URL_SCHEDULE_2016.replace("@year",
+                String.valueOf(year)).replace("@month",
+                String.valueOf(month)).replace("@kind", kind)
+                .replace("@field", field == null || field.equals("F00") ? "" : field);
+//        intent.setData(Uri.parse(url));//URL_SCHEDULE_2014
+//        if (newTask) {//[170]++
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {//[167]++
+//            //[164]dolphin++ add Chrome Custom Tabs
+//            Bundle extras = new Bundle();
+//            extras.putBinder(Utils.EXTRA_CUSTOM_TABS_SESSION, null);
+//            extras.putInt(Utils.EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+//                    SupportV4Utils.getColor(context, R.color.holo_green_dark));
+//            intent.putExtras(extras);
+//        }
+//        context.startActivity(intent);
+        Utils.startBrowserActivity(context, url);
+    }
+
     /**
      * Check if Google Chrome is installed.
      *
@@ -428,5 +478,42 @@ public class Utils {
         calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, scheduledEndTime);
         calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
         return calIntent;
+    }
+
+    /**
+     * build year array adapter
+     *
+     * @param context Context
+     * @param nowYear current year
+     * @return ArrayAdapter
+     */
+    public static ArrayAdapter<String> buildYearAdapter(Context context, int nowYear) {
+        String[] years = new String[nowYear - 1990 + 1];
+        for (int i = 1990; i <= nowYear; i++) {
+            String y = context.getString(R.string.title_cpbl_year, (i - 1989));
+            years[nowYear - i] = String.format(Locale.US, "%d (%s)", i, y);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item, years);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    /**
+     * build month array adapter
+     *
+     * @param context Context
+     * @return ArrayAdapter
+     */
+    public static ArrayAdapter<String> buildMonthAdapter(Context context) {
+        ArrayList<String> months = new ArrayList<>(Arrays.asList(
+                new DateFormatSymbols(Locale.TAIWAN).getMonths()));
+        if (context.getResources().getBoolean(R.bool.feature_enable_all_months)) {
+            months.add(context.getString(R.string.title_game_year_all_months));//[146]++
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item, months);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 }

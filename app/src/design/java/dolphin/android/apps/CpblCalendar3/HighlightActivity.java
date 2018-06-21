@@ -140,7 +140,7 @@ public class HighlightActivity extends AppCompatActivity
                 Calendar now = CpblCalendarHelper.getNowTime();
                 int year = now.get(Calendar.YEAR);
                 int month = now.get(Calendar.MONTH) + 1;
-                CpblCalendarHelper.startActivityToCpblSchedule(this, year, month, "01", "F00");
+                Utils.startActivityToCpblSchedule(this, year, month, "01", "F00");
                 return true;
             }
             case R.id.action_leader_board: {

@@ -128,7 +128,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
                 button1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        CpblCalendarHelper.startActivityToCpblSchedule(getActivity(), y, m, "01", "F00");
+                        Utils.startActivityToCpblSchedule(getActivity(), y, m, "01", "F00");
                     }
                 });
             }
