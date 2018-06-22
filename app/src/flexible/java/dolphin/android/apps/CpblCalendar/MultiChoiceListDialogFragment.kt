@@ -67,12 +67,12 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
     override fun onClick(dialogInterface: DialogInterface, which: Int) {
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
-                //                Log.d(TAG, "BUTTON_POSITIVE");
+                //Log.d(TAG, "BUTTON_POSITIVE");
                 saveFavTeams()
                 mOnClickListener?.onOkay()
             }
             DialogInterface.BUTTON_NEGATIVE ->
-                //                Log.d(TAG, "BUTTON_NEGATIVE");
+                //Log.d(TAG, "BUTTON_NEGATIVE");
                 mOnClickListener?.onCancel()
         }
     }
@@ -81,7 +81,7 @@ class MultiChoiceListDialogFragment : DialogFragment, DialogInterface.OnMultiCho
         val teams = SparseArray<Team>()
         for (i in mTeams.indices) {
             if (mTeamChecked[i]) {
-                teams.put(mTeams[i], Team(activity, mTeams[i]))
+                teams.put(mTeams[i], Team(activity!!, mTeams[i]))
             }
         }
         mPrefs.favoriteTeams = teams //PreferenceUtils.setFavoriteTeams(activity, teams)

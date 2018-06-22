@@ -5,13 +5,10 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-import android.widget.ArrayAdapter;
 
 import java.io.File;
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -268,11 +265,10 @@ public class CpblCalendarHelper extends HttpHelper {
         Game game = new Game();
         game.Source = Game.SOURCE_ZXC22;
         game.Kind = "01";
-        game.StartTime = getGameTime(0, month - 1, day);
+        game.StartTime = Game.getGameTime(0, month, day);
 
         int dayOfWeek = game.StartTime.get(Calendar.DAY_OF_WEEK);
-        boolean isWeekend = (dayOfWeek == Calendar.SATURDAY ||
-                dayOfWeek == Calendar.SUNDAY);
+        boolean isWeekend = (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
         //int hour = isWeekend ? 17 : 18;
         //int minute = isWeekend ? 05 : 35;
         game.StartTime.set(Calendar.HOUR_OF_DAY, isWeekend ? 17 : 18);
@@ -282,8 +278,8 @@ public class CpblCalendarHelper extends HttpHelper {
         String[] data = str.split("[ \\-()]");
         //Log.d(TAG, "data " + data.length + ", " + data[0]);
         game.Id = Integer.parseInt(data[0]);
-        game.AwayTeam = new Team(context, Team.getTeamId(context, data[1], 2014));
-        game.HomeTeam = new Team(context, Team.getTeamId(context, data[2], 2014));
+        game.AwayTeam = new Team(context, Team.Companion.getTeamId(context, data[1], 2014));
+        game.HomeTeam = new Team(context, Team.Companion.getTeamId(context, data[2], 2014));
         game.Field = (data.length >= 4) ? data[3] : "";
 
         try {//<font color='#547425'><B>4:8(11288人)</B>
@@ -324,61 +320,6 @@ public class CpblCalendarHelper extends HttpHelper {
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
     }
 
-    /**
-     * get game time
-     *
-     * @param year  year
-     * @param month month
-     * @param day   day of month
-     * @return Calendar
-     */
-    @SuppressWarnings("SameParameterValue")
-    private static Calendar getGameTime(int year, int month, int day) {
-        return getGameTime(year, month, day, 0, 0);
-    }
-
-    /**
-     * get game time
-     *
-     * @param year   year
-     * @param month  month
-     * @param day    day of month
-     * @param hour   hour of day (24HR)
-     * @param minute minute
-     * @return Calendar
-     */
-    @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
-    public static Calendar getGameTime(int year, int month, int day, int hour, int minute) {
-        Calendar now = getNowTime();
-        if (year > 0) {
-            now.set(Calendar.YEAR, year);
-        }
-        if (month > 0) {
-            now.set(Calendar.MONTH, month - 1);
-        }
-        now.set(Calendar.DAY_OF_MONTH, day);
-        now.set(Calendar.HOUR_OF_DAY, hour);
-        now.set(Calendar.MINUTE, minute);
-        now.set(Calendar.SECOND, 0);
-        now.set(Calendar.MILLISECOND, 0);
-        return now;
-    }
-
-//    public static boolean isToday(Game game) {
-//        if (game != null) {
-//            Calendar now = getNowTime();
-//            return DateUtils.sameDay(game.StartTime, now);
-//        }
-//        return false;
-//    }
-//
-//    public static boolean isSameDay(Game game1, Game game2) {
-//        if (game1 == null || game2 == null) {
-//            return false;
-//        }
-//        return DateUtils.sameDay(game1.StartTime, game2.StartTime);
-//    }
-
     public boolean canUseCache() {
         return cacheHelper.getCanUseCache();
     }
@@ -411,7 +352,6 @@ public class CpblCalendarHelper extends HttpHelper {
                 String.format(Locale.US, "%d.delay", year));
     }
 
-    //@Deprecated
     private void storeDelayGames2014(Context context, int year, String delay_str) {
         if (context == null) {
             return;//cannot store, no context
@@ -420,8 +360,6 @@ public class CpblCalendarHelper extends HttpHelper {
         //Log.d(TAG, f.getAbsolutePath());
         FileUtils.writeStringToFile(f, delay_str);
     }
-
-    //@Deprecated
 
     /**
      * remove stored delay games
@@ -458,11 +396,8 @@ public class CpblCalendarHelper extends HttpHelper {
                     }
                     Game g = new Game();
                     g.Id = Integer.parseInt(d[0]);
-                    g.StartTime = getNowTime();
-                    g.StartTime.set(Calendar.YEAR, year);
-                    g.StartTime.set(Calendar.MONTH, Integer.parseInt(d[1]) - 1);
-                    g.StartTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(d[2]));
-                    g.StartTime.set(Calendar.HOUR_OF_DAY, 0);
+                    g.StartTime = Game.getGameTime(0, Integer.parseInt(d[1]),
+                            Integer.parseInt(d[2]));
                     delayedGames.put(g.Id, g);
                 }
             }
@@ -471,7 +406,7 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     private String getString(int id) {
-        return getContext() != null && id > 0 ? getContext().getString(id) : "";
+        return /*getContext() != null &&*/ id > 0 ? getContext().getString(id) : "";
     }
 
     /**
@@ -614,12 +549,7 @@ public class CpblCalendarHelper extends HttpHelper {
     private Game parseOneGameHtml2016(String html, int year, int month, int day, String kind) {
         Game game = new Game();
         //onClick="location.href='/games/box.html?&game_type=01&game_id=158&game_date=2015-08-01&pbyear=2015';"
-        game.StartTime = getNowTime();
-        game.StartTime.set(Calendar.YEAR, year);
-        game.StartTime.set(Calendar.MONTH, month - 1);//dolphin++@2016.02.21
-        game.StartTime.set(Calendar.DAY_OF_MONTH, day);//dolphin++@2016.02.21
-        game.StartTime.set(Calendar.SECOND, 0);
-        game.StartTime.set(Calendar.MILLISECOND, 0);
+        game.StartTime = Game.getGameTime(0, month, day);
         game.Kind = kind;//dolphin++@2016.02.21
 
         final String patternGameId = "game_id=([0-9]+)";

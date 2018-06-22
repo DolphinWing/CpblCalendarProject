@@ -87,7 +87,7 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
         val random = Random(System.currentTimeMillis())
         when {
             this.monthOfJava == monthOfJava -> {
-                val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, dayOfMonth,
+                val time = Game.getGameTime(year, this.monthOfJava + 1, dayOfMonth,
                         18, 35)
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {
@@ -140,7 +140,7 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
                         }))
             }
             this.monthOfJava > monthOfJava -> {
-                val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, 28,
+                val time = Game.getGameTime(year, this.monthOfJava + 1, 28,
                         18, 35)
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {
@@ -171,7 +171,7 @@ internal class GameListLiveData(private val executor: ExecutorService, //applica
                         }))
             }
             this.monthOfJava < monthOfJava -> {
-                val time = CpblCalendarHelper.getGameTime(year, this.monthOfJava + 1, 1,
+                val time = Game.getGameTime(year, this.monthOfJava + 1, 1,
                         18, 35)
                 postValue(arrayListOf(
                         Game(id + 1, time).apply {
