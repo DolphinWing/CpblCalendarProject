@@ -678,7 +678,7 @@ class ListActivity : AppCompatActivity() {
                             when (i) {
                                 0 -> {
                                     val calIntent = Utils.createAddToCalendarIntent(activity, game)
-                                    if (PackageUtils.isCallable(activity, calIntent)) {
+                                    if (PackageUtils.isCallable(activity!!, calIntent)) {
                                         startActivity(calIntent)
                                     }
                                 }

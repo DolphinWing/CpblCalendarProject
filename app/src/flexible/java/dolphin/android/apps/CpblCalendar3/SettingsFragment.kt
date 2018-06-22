@@ -8,7 +8,6 @@ import androidx.preference.PreferenceFragmentCompat
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CacheFileHelper
-import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.util.PackageUtils
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -25,11 +24,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.prefs_advanced)
 
         findPreference("app_version")?.apply {
-            val info = PackageUtils.getPackageInfo(activity, activity?.javaClass)
+            val info = PackageUtils.getPackageInfo(activity!!, ListActivity::class.java)
             summary = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                "${info.versionName} (${info.longVersionCode})"
+                "${info?.versionName} (${info?.longVersionCode})"
             } else {
-                "${info.versionName} (${info.versionCode})"
+                "${info?.versionName} (${info?.versionCode})"
             }
         }
     }
@@ -55,9 +54,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 //it.finish()
                 //Toast.makeText(it, "clicked!", Toast.LENGTH_SHORT).show()
                 AlertDialog.Builder(it)
-                        .setTitle("hello")
-                        .setMessage("bye")
-                        .setPositiveButton(R.string.action_open_app) { _, _ ->
+                        .setTitle(R.string.title_use_drawer_menu)
+                        .setMessage(R.string.message_use_drawer_menu)
+                        .setPositiveButton(R.string.action_enable) { _, _ ->
                             prefs.useDrawerMenu = true
                             startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
                             it.finish()

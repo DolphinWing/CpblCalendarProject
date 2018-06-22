@@ -5,6 +5,8 @@
     <string name="title_use_drawer_menu">使用舊式查詢頁面</string>
     <string name="summary_use_drawer_menu_on">使用舊的右側滑出式選單</string>
     <string name="summary_use_drawer_menu_off">使用新的下滑式選單</string>
+    <string name="message_use_drawer_menu">使用舊的頁面將無法使用部份新功能，確定要使用舊式查詢頁面嗎？</string>
+    <string name="action_enable">啟用</string>
     <string name="id_prefix_warm_up">熱身 %d</string>
     <string name="id_prefix_challenge">挑戰 %d</string>
     <string name="id_prefix_champion">冠軍 %d</string>
