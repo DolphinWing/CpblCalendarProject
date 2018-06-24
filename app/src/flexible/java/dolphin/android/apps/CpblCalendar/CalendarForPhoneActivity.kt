@@ -287,6 +287,7 @@ class CalendarForPhoneActivity : CalendarActivity(), OnQueryCallback, ActivityCo
 
     private fun updateGameListFragment(gameArrayList: ArrayList<Game>?, year: Int, month: Int) {
         //mGameList = gameArrayList;//as a temp storage
+        Log.d(TAG, "update list: ${gameArrayList?.size} for $year/$month")
 
         //if (fmgr != null) {//update the fragment
         val trans = fragmentManager.beginTransaction()

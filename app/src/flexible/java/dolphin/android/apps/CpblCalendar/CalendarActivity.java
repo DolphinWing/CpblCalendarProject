@@ -143,21 +143,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         super.onDestroy();
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        registerReceiver(mRefreshListReceiver,
-//                new IntentFilter(AlarmProvider.ACTION_DELETE_NOTIFICATION));
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        unregisterReceiver(mRefreshListReceiver);
-//
-//        super.onPause();
-//    }
-
     protected abstract AppCompatActivity getActivity();
 
     /**
@@ -452,12 +437,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         //setProgressBarIndeterminateVisibility(true);
 
         final ActionBar actionBar = getSupportActionBar();
-//        final boolean isTablet = getResources().getBoolean(R.bool.config_tablet);
 
         String kind = mSpinnerKind != null ? mSpinnerKind.getSelectedItem().toString() : "01";
-//        if (actionBar != null) {
-//            actionBar.setTitle(kind);
-//        }
 
         Calendar now = CpblCalendarHelper.getNowTime();
         String gameYear = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString()
@@ -467,32 +448,8 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         int month = mSpinnerMonth != null ? mSpinnerMonth.getSelectedItemPosition() + 1
                 : now.get(Calendar.MONTH) + 1;
         //Log.d(TAG, String.format(" mSpinnerMonth: %d", month));
-//        String time_str = gameYear;//[154]-- String.format("%s %s", gameYear,
-//        //mSpinnerMonth.getSelectedItem().toString());
-//        time_str = mSpinnerMonth != null && mSpinnerMonth.getSelectedItemPosition() >= 12
-//                ? gameYear : time_str;//[146]++
-//
         int fieldIndex = mSpinnerField != null ? mSpinnerField.getSelectedItemPosition() : 0;
         String fieldId = mGameField[fieldIndex];
-//        if (actionBar != null) {
-//            if (fieldIndex > 0) {
-//                String field = String.format("%s%s", getString(R.string.title_at),
-//                        mSpinnerField.getSelectedItem().toString());
-//                if (isTablet) {
-//                    actionBar.setSubtitle(field);
-//                } else {
-//                    actionBar.setTitle(String.format("%s%s", kind, field));
-//                }
-//            } else {//clear ActionBar subtitle first
-//                actionBar.setSubtitle("");
-//            }
-//            //set time string and kind to ActionBar
-//            if (isTablet) {
-//                actionBar.setTitle(time_str + " " + kind);
-//            } else {
-//                actionBar.setSubtitle(time_str);
-//            }
-//        }
         String leagueYear = mSpinnerYear != null ? mSpinnerYear.getSelectedItem().toString() : "";
         leagueYear = leagueYear.contains(" ") ? leagueYear.substring(leagueYear.indexOf(" ") + 1) : leagueYear;
         leagueYear = leagueYear.isEmpty() ? gameYear : leagueYear.replace("(", "").replace(")", "").trim();
@@ -665,8 +622,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     doQueryStateUpdateCallback(R.string.title_download_complete);
                     long endTime = System.currentTimeMillis() - startTime;
                     Log.v(TAG, "time cost:" + endTime);
-//                    mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-//                            String.format(Locale.US, "%d-%d", mYear, mMonth));
                     doQueryCallback(gameList, true);
                     return;
                 }
@@ -706,9 +661,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     }
 
                     if (gameList != null) {
-//                        long endTime = System.currentTimeMillis() - startTime;
-//                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-//                                String.format(Locale.US, "%d-%d", mYear, mMonth));
                         doQueryCallback(gameList, true);
                     } else {
                         throw new Exception("no data");
@@ -731,9 +683,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                             Log.w(TAG, "activity destroyed");
                             return;
                         }
-//                        long endTime = System.currentTimeMillis() - startTime;
-//                        mAnalytics.sendGmsGoogleAnalyticsTiming("Network", endTime,
-//                                String.format(Locale.US, "%d-%d", mYear, mMonth));
 
                         doQueryCallback(gameList, true);
                     }
@@ -766,11 +715,9 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         mIsQuery = false;
         mGameList = list;
 
-//        if (bFromWeb) {//[126]++ only send message to Analytics when data is from web
-//            mAnalytics.sendGmsGoogleAnalyticsReport("UI", "doQueryCallback",
-//                    String.format(Locale.US, "%04d/%02d:%s", mYear, mMonth,
-//                            GoogleAnalyticsHelper.getExtraMessage(list, mCacheMode)));
-//        }
+        if (bFromWeb) {//[126]++ only send message to Analytics when data is from web
+            Log.v(TAG, "data from web");
+        }
 
         Calendar now = CpblCalendarHelper.getNowTime();
         boolean thisYear = (mYear == now.get(Calendar.YEAR));
@@ -792,15 +739,10 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                 @Override
                 public void run() {
                     if (gameList != null) {
+                        Log.d(TAG, "list size: " + gameList.size());
                         //update subtitle
                         if (gameList.size() > 0 && gameList.get(0).Source == Game.SOURCE_ZXC22
                                 && getActivity() != null && actionBar != null) {
-//                            actionBar.setSubtitle(String.format("%s: %s",
-//                                    getString(R.string.title_data_source),
-//                                    getString(R.string.summary_zxc22)));
-//                            showSnackbar(String.format("%s: %s",
-//                                    getString(R.string.title_data_source),
-//                                    getString(R.string.summary_zxc22)));
                             showModeIndicator(true, String.format("%s: %s",
                                     getString(R.string.title_data_source),
                                     getString(R.string.summary_zxc22)));
@@ -810,9 +752,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
 
                         //show offline mode indicator
                         if (mPrefsHelper.getCacheModeEnabled()) {
-//                            if (actionBar != null) {
-//                                actionBar.setSubtitle(R.string.action_cache_mode);
-//                            }
                             //showSnackbar(getString(R.string.action_cache_mode));
                             showModeIndicator(true, getString(R.string.action_cache_mode));
                         } else {
@@ -843,24 +782,12 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
     }
 
     private void showLeaderBoard2016() {
-//        if (Utils.isGoogleChromeInstalled(mActivity)) {//[190]++ use Chrome Custom Tabs
-//            //http://stackoverflow.com/a/15629199/2673859
-//            Utils.startBrowserActivity(mActivity, Utils.LEADER_BOARD_URL);
-//        } else {
-//            try {
-//                Utils.buildLeaderBoardZxc22(mActivity);
-//            } catch (Exception e) {
-//                Log.e(TAG, "showLeaderBoard: " + e.getMessage());
-//            }
-//        }
-
         //https://goo.gl/GtBKgp
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
                 .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_dark));
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI);
 
-//        mAnalytics.sendGmsGoogleAnalyticsReport("UI", "showLeaderBoard", null);
         internalLoading(false);
         mIsQuery = false;
         invalidateOptionsMenu();
@@ -959,26 +886,6 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
             }
         }).start();
     }
-
-//    @SuppressWarnings("SameParameterValue")
-//    void sendTrackerException(String action, String label, long evtValue) {
-////        mAnalytics.sendTrackerException(action, label, evtValue);
-//    }
-
-//    private final BroadcastReceiver mRefreshListReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (action != null && action.equals(AlarmProvider.ACTION_DELETE_NOTIFICATION)) {
-//                //AlarmHelper helper = new AlarmHelper(context);
-//                //helper.getAlarmList();
-//                //mButtonQuery.performClick();
-//                if (mGameList != null) {//only update the list when we have data in memory
-//                    query_to_update(true);//[126]dolphin++ quick refresh
-//                }
-//            }
-//        }
-//    };
 
     protected void showSnackbar(String message) {
         if (mSnackbar != null && mSnackbar.isShown()) {

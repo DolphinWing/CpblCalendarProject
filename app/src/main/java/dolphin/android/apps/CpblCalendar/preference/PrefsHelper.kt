@@ -30,7 +30,9 @@ class PrefsHelper(private val context: Context) {
     var favoriteTeams: SparseArray<Team>
         get() {
             val teams = SparseArray<Team>()
-            sharedPrefs.getStringSet("favorite_teams", null)?.forEach {
+            sharedPrefs.getStringSet("favorite_teams", HashSet<String>().apply {
+                addAll(context.resources.getStringArray(R.array.cpbl_team_id))
+            })?.forEach {
                 val id = it.toInt()
                 when (id) {
                     Team.ID_ELEPHANTS, Team.ID_CT_ELEPHANTS ->

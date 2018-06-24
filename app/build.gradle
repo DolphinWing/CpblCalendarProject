@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0 canary'
-            versionCode 1065
+            versionCode 1066
         }
     }
     compileOptions {
@@ -58,7 +58,7 @@ android {
 
 dependencies {
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
