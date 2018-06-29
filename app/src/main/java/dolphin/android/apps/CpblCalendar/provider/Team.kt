@@ -204,13 +204,15 @@ class Team {
             if (name == null || c == null) return ID_UNKNOWN
             if (name.equals(c.getString(R.string.team_elephants_short), ignoreCase = true))
                 return if (year > 2013) ID_CT_ELEPHANTS else ID_ELEPHANTS//[69]dolphin++
-            if (name.equals(c.getString(R.string.team_ct_elephants_short), ignoreCase = true) || name.equals(c.getString(R.string.team_ct_elephants_short2), ignoreCase = true))
+            if (name.equals(c.getString(R.string.team_ct_elephants_short), ignoreCase = true) ||
+                    name.equals(c.getString(R.string.team_ct_elephants_short2), ignoreCase = true))
                 return ID_CT_ELEPHANTS
             if (name.equals(c.getString(R.string.team_lions_short), ignoreCase = true)
                     || name.equals(c.getString(R.string.team_711_lions_short), ignoreCase = true)
                     || name.equals(c.getString(R.string.team_711_lions_short2), ignoreCase = true))
                 return if (year < 2007) ID_UNI_LIONS else ID_UNI_711_LIONS
-            if (name.equals(c.getString(R.string.team_eda_rhinos_short), ignoreCase = true) || name.equals(c.getString(R.string.team_eda_rhinos_short2), ignoreCase = true))
+            if (name.equals(c.getString(R.string.team_eda_rhinos_short), ignoreCase = true) ||
+                    name.equals(c.getString(R.string.team_eda_rhinos_short2), ignoreCase = true))
                 return ID_EDA_RHINOS
             if (name.equals(c.getString(R.string.team_lamigo_monkeys_short), ignoreCase = true)
                     || name.equals(c.getString(R.string.team_lamigo_monkeys_short2), ignoreCase = true)
@@ -242,6 +244,7 @@ class Team {
          * @param year year
          * @return logo drawable of that year
          */
+        @JvmStatic
         fun getTeamLogo(id: Int, year: Int): Int {
             //if (year >= 2017) {
             //    return R.drawable.no_logo;
@@ -294,6 +297,7 @@ class Team {
          * @param id      team id
          * @return team name
          */
+        @JvmStatic
         fun getTeamName(context: Context?, id: Int): String? {
             var stringId = -1//R.string.empty_data;
             when (id) {
