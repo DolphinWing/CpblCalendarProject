@@ -637,7 +637,7 @@ class ListActivity : AppCompatActivity() {
             list?.forEach {
                 if ((field == "F00" || it.FieldId == field) &&
                         (team == 0 || it.HomeTeam.id == team || it.AwayTeam.id == team)) {
-                    adapterList.add(MyItemView(/*activity!!,*/ it, helper))
+                    adapterList.add(MyItemView(activity!!, it, helper))
                 }
             }
             Log.d(TAG, "field = $field, ${adapterList.size} games")
@@ -692,13 +692,14 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    internal class MyItemView(val game: Game, private val helper: TeamHelper) :
+    internal class MyItemView(private val context: Context, val game: Game,
+                              private val helper: TeamHelper) :
             AbstractFlexibleItem<MyItemView.ViewHolder>() {
 
-        private val appContext: Context
-            get() = helper.application.applicationContext
+        //private val appContext: Context
+        //    get() = helper.application.applicationContext
 
-        private fun getResString(resId: Int, vararg args: Any) = appContext.getString(resId, args)
+        private fun getResString(resId: Int, vararg args: Any) = context.getString(resId, args)
 
         override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
                                     holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
@@ -735,9 +736,9 @@ class ListActivity : AppCompatActivity() {
                 gameField?.text = if (game.Source == Game.SOURCE_CPBL ||
                         game.Field?.contains(getResString(R.string.title_at)) == false) {
                     String.format("%s%s", getResString(R.string.title_at),
-                            game.getFieldFullName(appContext))
+                            game.getFieldFullName(context))
                 } else {
-                    game.getFieldFullName(appContext)
+                    game.getFieldFullName(context)
                 }
                 teamAwayName?.text = game.AwayTeam.name
                 teamAwayScore?.text = if (game.IsFinal || game.IsLive) {
