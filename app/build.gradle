@@ -37,8 +37,8 @@ android {
             minSdkVersion 21
             targetSdkVersion 27
             dimension "mode"
-            versionName '3.2.0 canary'
-            versionCode 1066
+            versionName '3.2.0'
+            versionCode 1067
         }
     }
     compileOptions {
@@ -79,20 +79,20 @@ dependencies {
     //implementation "com.google.firebase:firebase-crash:$playServiceVersion"
     //implementation 'androidx.legacy:legacy-support-v13:1.0.0-alpha3'
     //implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
-    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
-    implementation 'androidx.palette:palette:1.0.0-alpha3'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha3'
-    implementation 'androidx.cardview:cardview:1.0.0-alpha3'
-    implementation 'com.google.android.material:material:1.0.0-alpha3'
-    implementation 'androidx.browser:browser:1.0.0-alpha3'
+    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+    implementation 'androidx.palette:palette:1.0.0-beta01'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
+    implementation 'androidx.cardview:cardview:1.0.0-beta01'
+    implementation 'com.google.android.material:material:1.0.0-beta01'
+    implementation 'androidx.browser:browser:1.0.0-beta01'
     //designCompile 'com.evernote:android-job:1.1.7'
-    implementation 'androidx.preference:preference:1.0.0-alpha3'
+    implementation 'androidx.preference:preference:1.0.0-beta01'
 
     //https://github.com/davideas/FlexibleAdapter
-    flexibleImplementation 'eu.davidea:flexible-adapter:5.0.3'
+    flexibleImplementation 'eu.davidea:flexible-adapter:5.0.5'
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
-    flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-alpha1'
+    flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-beta01'
     //https://github.com/Carbs0126/NumberPickerView
     flexibleImplementation 'cn.carbswang.android:NumberPickerView:1.1.1'
 }

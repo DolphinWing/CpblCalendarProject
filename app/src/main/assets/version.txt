@@ -1,3 +1,7 @@
+[1067] @ 2018-07-12
+    fix #9 by passing correct Context
+    upgrade libraries
+
 [1066] @ 2018-06-21
     fix dialog button style
 
