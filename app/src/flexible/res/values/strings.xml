@@ -18,7 +18,7 @@
     <string name="action_reset_filter">重設</string>
     <string name="title_query">套用</string>
     <string name="action_dismiss">關閉</string>
-    <string name="action_go_to_website">中職官網</string>
+    <string name="action_go_to_website">詳細</string>
     <string name="new_version_available_go">取得更新</string>
     <string name="new_version_available_later">稍後提醒</string>
 </resources>
