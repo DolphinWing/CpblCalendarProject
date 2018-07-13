@@ -1,3 +1,6 @@
+[1068] @ 2018-07-12
+    update layout
+
 [1067] @ 2018-07-12
     fix #9 by passing correct Context
     upgrade libraries
