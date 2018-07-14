@@ -717,10 +717,10 @@ class ListActivity : AppCompatActivity() {
                 }
                 gameId?.text = when (game.Kind) {
                     "01" -> game.Id.toString()
-                    "02" -> getResString(R.string.id_prefix_all_star, game.Id)
-                    "03" -> getResString(R.string.id_prefix_champion, game.Id)
-                    "05" -> getResString(R.string.id_prefix_challenge, game.Id)
-                    "07" -> getResString(R.string.id_prefix_warm_up, game.Id)
+                    "02" -> context.getString(R.string.id_prefix_all_star, game.Id)
+                    "03" -> context.getString(R.string.id_prefix_champion, game.Id)
+                    "05" -> context.getString(R.string.id_prefix_challenge, game.Id)
+                    "07" -> context.getString(R.string.id_prefix_warm_up, game.Id)
                     else -> game.Id.toString()
                 }
                 val displayTime = when {
