@@ -487,11 +487,11 @@ class ListActivity : AppCompatActivity() {
         }
 
         Log.d(TAG, "team = ${mPickerTeam.value} field = ${mPickerField.value}")
-        mChipYear.chipText = //mSpinnerYear.selectedItem.toString()
+        mChipYear.text = //mSpinnerYear.selectedItem.toString()
                 getString(R.string.title_cpbl_year, mPickerYear.value)
-        mChipField.chipText = //mSpinnerField.selectedItem.toString()
+        mChipField.text = //mSpinnerField.selectedItem.toString()
                 resources.getStringArray(R.array.cpbl_game_field_name)[mPickerField.value]
-        mChipTeam.chipText = //mSpinnerTeam.selectedItem.toString()
+        mChipTeam.text = //mSpinnerTeam.selectedItem.toString()
                 if (mPickerTeam.value < 0) {
                     getString(R.string.title_favorite_teams_all)
                 } else {
@@ -630,7 +630,7 @@ class ListActivity : AppCompatActivity() {
         private val adapterList = ArrayList<MyItemView>()
         private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper,
                                   field: String = "F00", team: Int = 0) {
-            Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
+            //Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
             if (activity == null) return
             //val adapterList = ArrayList<MyItemView>()
             adapterList.clear()
@@ -640,7 +640,7 @@ class ListActivity : AppCompatActivity() {
                     adapterList.add(MyItemView(activity!!, it, helper))
                 }
             }
-            Log.d(TAG, "field = $field, ${adapterList.size} games")
+            //Log.d(TAG, "field = $field, ${adapterList.size} games")
             this.list.adapter = ItemAdapter(adapterList, this)
             this.list.setHasFixedSize(true)
             for (i in 0 until adapterList.size) {
@@ -659,7 +659,7 @@ class ListActivity : AppCompatActivity() {
 
         override fun onItemClick(view: View?, position: Int): Boolean {
             val game = adapterList[position].game
-            Log.d(TAG, "onItemClick $position ${game.Id}")
+            //Log.d(TAG, "onItemClick $position ${game.Id}")
             if (game.Url != null && activity != null) {
                 Utils.startGameActivity(activity, game)
                 return true
@@ -669,12 +669,12 @@ class ListActivity : AppCompatActivity() {
 
         override fun onItemLongClick(position: Int) {
             val game = adapterList[position].game
-            Log.d(TAG, "onItemLongClick $position ${game.Id}")
+            //Log.d(TAG, "onItemLongClick $position ${game.Id}")
             if (!game.IsFinal && !game.IsLive && activity != null) {
                 AlertDialog.Builder(activity!!)
                         .setItems(arrayOf(getString(R.string.action_add_to_calendar),
                                 getString(R.string.action_show_field_info))) { _, i ->
-                            Log.d(TAG, "selected $i")
+                            //Log.d(TAG, "selected $i")
                             when (i) {
                                 0 -> {
                                     val calIntent = Utils.createAddToCalendarIntent(activity, game)

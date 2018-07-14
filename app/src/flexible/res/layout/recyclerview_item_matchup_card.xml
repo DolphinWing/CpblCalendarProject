@@ -140,8 +140,9 @@
         android:id="@+id/textView6"
         style="@style/Theme.Holo_green.Match.Channel"
         android:layout_below="@+id/more_info"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="@dimen/padding_small"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="@dimen/padding_medium"
         android:visibility="gone" />
 
 </RelativeLayout>
