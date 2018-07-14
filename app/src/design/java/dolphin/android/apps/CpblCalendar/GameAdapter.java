@@ -154,6 +154,7 @@ public class GameAdapter extends BaseGameAdapter {
             alarm.setOnClickListener(null);
             //alarm.setClickable(false);
             alarm.setFocusable(false);
+            alarm.setVisibility(View.GONE);
         }
 
         //team logo
