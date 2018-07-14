@@ -1,3 +1,9 @@
+[1070] @ 2018-07-14
+    fix no game id parsing crush
+    release build flavor
+
+    https://medium.com/@xabaras/automatically-copying-proguard-mapping-file-to-apk-build-directory-d7eed285632
+
 [1068] @ 2018-07-12
     update layout
 

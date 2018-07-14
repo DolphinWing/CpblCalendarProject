@@ -473,7 +473,7 @@ public class Game implements Parcelable {
         String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_full_name);
         String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);
         for (int i = 0; i < fieldIds.length; i++) {
-            if (id.equals(fieldIds[i])) {
+            if (fieldIds[i].equals(id)) {
                 return fields[i];
             }
         }

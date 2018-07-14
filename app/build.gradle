@@ -29,8 +29,8 @@ android {
         design {
             minSdkVersion 16
             targetSdkVersion 27
-            versionName '3.0.9'
-            versionCode 1060
+            versionName '3.0.10'
+            versionCode 1070
             dimension "mode"
         }
         flexible {
@@ -38,13 +38,15 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0'
-            versionCode 1068
+            versionCode 1069
         }
     }
+
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_7
         sourceCompatibility JavaVersion.VERSION_1_7
     }
+
     sourceSets {
         //flexible.setRoot("src/design")
         flexible {
@@ -52,6 +54,22 @@ android {
             //java.srcDirs = ['src/flexible/java', 'src/design/java']
             //java { exclude 'dolphin/android/apps/CpblCalendar3' }
             res.srcDirs = ['src/flexible/res', 'src/design/res']
+        }
+    }
+
+    //https://medium.com/@xabaras/automatically-copying-proguard-mapping-file-to-apk-build-directory-d7eed285632
+    applicationVariants.all {
+        variant -> variant.outputs.each {
+            output ->
+                variant.assemble.doLast {
+                    if ( variant.mappingFile != null &&
+                            variant.mappingFile.exists() ) {
+                        copy {
+                            from variant.mappingFile
+                            into output.outputFile.parent
+                        }
+                    }
+                }
         }
     }
 }
