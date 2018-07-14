@@ -1,11 +1,8 @@
 package dolphin.android.apps.CpblCalendar.provider;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Keep;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.Keep;
 import dolphin.android.apps.CpblCalendar3.R;
 import dolphin.android.util.DateUtils;
 
@@ -208,7 +206,6 @@ public class Game implements Parcelable {
      * @param context Context
      * @param str     to json str
      */
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public static Game fromPrefString(Context context, String str) {
         String[] gInfo = str.split(";");
         //Log.d("dolphin", "size: " + gInfo.length);
@@ -476,7 +473,7 @@ public class Game implements Parcelable {
         String[] fields = context.getResources().getStringArray(R.array.cpbl_game_field_full_name);
         String[] fieldIds = context.getResources().getStringArray(R.array.cpbl_game_field_id);
         for (int i = 0; i < fieldIds.length; i++) {
-            if (id.equals(fieldIds[i])) {
+            if (fieldIds[i].equals(id)) {
                 return fields[i];
             }
         }
@@ -485,5 +482,59 @@ public class Game implements Parcelable {
 
     public boolean isToday() {
         return DateUtils.isToday(StartTime);
+    }
+
+    /**
+     * get game time
+     *
+     * @param year  year
+     * @param month month
+     * @param day   day of month
+     * @return Calendar
+     */
+    @SuppressWarnings("SameParameterValue")
+    static Calendar getGameTime(int year, int month, int day) {
+        return getGameTime(year, month, day, 0, 0);
+    }
+
+    /**
+     * get game time
+     *
+     * @param year   year
+     * @param month  month
+     * @param day    day of month
+     * @param hour   hour of day (24HR)
+     * @param minute minute
+     * @return Calendar
+     */
+    @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
+    public static Calendar getGameTime(int year, int month, int day, int hour, int minute) {
+        Calendar now = CpblCalendarHelper.getNowTime();
+        if (year > 0) {
+            now.set(Calendar.YEAR, year);
+        }
+        if (month > 0) {
+            now.set(Calendar.MONTH, month - 1);
+        }
+        now.set(Calendar.DAY_OF_MONTH, day);
+        now.set(Calendar.HOUR_OF_DAY, hour);
+        now.set(Calendar.MINUTE, minute);
+        now.set(Calendar.SECOND, 0);
+        now.set(Calendar.MILLISECOND, 0);
+        return now;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Game) {
+            Game game = (Game) obj;
+            return game.StartTime.equals(StartTime) && game.Id == Id;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return StartTime.hashCode() + Id;
     }
 }
