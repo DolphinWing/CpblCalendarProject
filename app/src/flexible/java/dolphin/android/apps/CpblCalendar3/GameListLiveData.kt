@@ -9,7 +9,7 @@ import dolphin.android.apps.CpblCalendar.provider.Team
 import java.util.*
 import java.util.concurrent.ExecutorService
 
-internal class GameListLiveData(private val executor: ExecutorService, //application: CpblApplication,
+/*internal*/ class GameListLiveData(private val executor: ExecutorService, //application: CpblApplication,
                                 private val helper: CpblCalendarHelper, private val year: Int,
                                 private val monthOfJava: Int,
                                 private val debugMode: Boolean = false,

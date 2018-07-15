@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import java.util.concurrent.Executors
 
-internal class GameViewModel(application: Application) : AndroidViewModel(application) {
+/*internal*/ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val helper = CpblCalendarHelper(application)
     var debugMode: Boolean = false
     private val mAllGames = (application as CpblApplication).cacheList

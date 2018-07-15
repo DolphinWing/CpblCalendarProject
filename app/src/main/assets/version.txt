@@ -1,3 +1,9 @@
+[1074] @ 2018-07-15
+    fix crush on Nexus 6
+        NoSuchMethod error in ViewModelProvider
+         I should not make it internal Orz
+    other layout updates
+
 [1070] @ 2018-07-14
     fix no game id parsing crush
     release build flavor
