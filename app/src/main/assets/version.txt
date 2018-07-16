@@ -1,8 +1,15 @@
+[1075] @ 2018-07-16
+    finally fix proguard issue with ViewModel (#11)
+        a bug from google android lifecycle module... may be fixed in the future
+        See https://stackoverflow.com/a/44770756
+    fix incorrect translations
+
 [1074] @ 2018-07-15
     fix crush on Nexus 6
         NoSuchMethod error in ViewModelProvider
          I should not make it internal Orz
     other layout updates
+    add version code in loading screen
 
 [1070] @ 2018-07-14
     fix no game id parsing crush

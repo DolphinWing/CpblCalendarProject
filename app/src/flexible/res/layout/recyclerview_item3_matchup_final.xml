@@ -132,7 +132,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:text="@string/action_go_to_website" />
+                android:minWidth="56dp"
+                android:text="@string/action_go_to_website2" />
 
             <View
                 android:layout_width="8dp"
@@ -144,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:minWidth="48dp"
+                android:minWidth="56dp"
                 android:text="@string/action_dismiss" />
 
             <View
