@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0'
-            versionCode 1074
+            versionCode 1075
         }
     }
 
@@ -111,8 +111,10 @@ dependencies {
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
     flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-beta01'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0-beta01'
     //https://github.com/Carbs0126/NumberPickerView
     flexibleImplementation 'cn.carbswang.android:NumberPickerView:1.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'

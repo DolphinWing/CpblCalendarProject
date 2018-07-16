@@ -28,6 +28,7 @@ import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -97,7 +98,8 @@ class ListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list)
 
         val now = CpblCalendarHelper.getNowTime()
-        viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
+        viewModel = ViewModelProviders.of(this,
+                ViewModelProvider.AndroidViewModelFactory(application)).get(GameViewModel::class.java)
         viewModel.debugMode = false
         prefs = PrefsHelper(this)
 
@@ -586,7 +588,9 @@ class ListActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             //Log.d(TAG, "Fragment onCreate")
-            viewModel = ViewModelProviders.of(activity!!).get(GameViewModel::class.java)
+            viewModel = ViewModelProviders.of(activity!!,
+                    ViewModelProvider.AndroidViewModelFactory(activity!!.application))
+                    .get(GameViewModel::class.java)
             //cpblHelper = CpblCalendarHelper(activity!!)
             helper = TeamHelper(activity!!.application as CpblApplication)
             prefs = PrefsHelper(activity!!)
