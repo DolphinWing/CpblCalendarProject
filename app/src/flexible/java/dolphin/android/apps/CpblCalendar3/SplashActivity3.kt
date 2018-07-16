@@ -58,6 +58,10 @@ class SplashActivity3 : AppCompatActivity() {
             return //don't show progress bar
         }
 
+        findViewById<TextView>(android.R.id.text1)?.apply {
+            text = PackageUtils.getPackageInfo(applicationContext, SplashActivity3::class.java)
+                    ?.versionCode.toString() ?: 0.toString()
+        }
         findViewById<View>(android.R.id.progress).animate()
                 .alpha(1.0f)
                 .setDuration(600)
