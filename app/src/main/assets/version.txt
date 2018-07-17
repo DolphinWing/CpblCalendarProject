@@ -1,3 +1,6 @@
+[1077] @ 2018-07-17
+    remove duplicated delayed games
+
 [1075] @ 2018-07-16
     finally fix proguard issue with ViewModel (#11)
         a bug from google android lifecycle module... may be fixed in the future

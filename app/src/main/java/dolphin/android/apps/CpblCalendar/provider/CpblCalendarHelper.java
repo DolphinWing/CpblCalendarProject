@@ -477,6 +477,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     game.Source = Game.SOURCE_CPBL;
                     if (delayedGames != null && delayedGames.get(game.Id) != null) {
                         Game delayed = delayedGames.get(game.Id);
+                        if (!game.IsFinal) continue;//only show finished delayed game
                         String d_date = new SimpleDateFormat("MMM d", Locale.TAIWAN)
                                 .format(delayed.StartTime.getTime());
                         game.DelayMessage = game.DelayMessage == null
