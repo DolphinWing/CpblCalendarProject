@@ -29,8 +29,8 @@ android {
         design {
             minSdkVersion 16
             targetSdkVersion 27
-            versionName '3.0.10'
-            versionCode 1076
+            versionName '3.0.11'
+            versionCode 1078
             dimension "mode"
         }
         flexible {

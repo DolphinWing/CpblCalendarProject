@@ -1,3 +1,6 @@
+[1078] @ 2018-07-19
+    fix missing delay games
+
 [1077] @ 2018-07-17
     remove duplicated delayed games
 
