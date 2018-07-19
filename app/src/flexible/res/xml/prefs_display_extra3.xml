@@ -4,17 +4,14 @@
 
     <PreferenceCategory
         android:key="display_extra_group"
-        android:title="@string/title_display_favorite">
-        <!--<se.pixelcoding.wikitab.preferences.FixedMultiSelectListPreference
-            android:defaultValue="@array/cpbl_team_id"
-            android:entries="@array/cpbl_team_name"
-            android:entryValues="@array/cpbl_team_id"
-            android:key="favorite_teams"
-            android:title="@string/title_favorite_teams" />-->
-        <!--
-            MultiSelectListPreference example
-            http://stackoverflow.com/a/11777632
-        -->
+        android:title="@string/title_display_settings">
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_highlight_today"
+            android:key="highlight_today"
+            android:summaryOff="@string/title_highlight_today_off"
+            android:summaryOn="@string/title_highlight_today_on"
+            android:title="@string/title_highlight_today" />
 
         <CheckBoxPreference
             android:defaultValue="@bool/def_enable_pull_to_refresh"
@@ -26,8 +23,10 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="use_drawer_menu"
-            android:summaryOff="@string/summary_pull_to_refresh_off"
+            android:summaryOff="@string/summary_use_drawer_menu_off"
             android:summaryOn="@string/summary_use_drawer_menu_on"
             android:title="@string/title_use_drawer_menu" />
+
     </PreferenceCategory>
+
 </PreferenceScreen>

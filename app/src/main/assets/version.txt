@@ -1,3 +1,62 @@
+[1077] @ 2018-07-17
+    remove duplicated delayed games
+
+[1075] @ 2018-07-16
+    finally fix proguard issue with ViewModel (#11)
+        a bug from google android lifecycle module... may be fixed in the future
+        See https://stackoverflow.com/a/44770756
+    fix incorrect translations
+
+[1074] @ 2018-07-15
+    fix crush on Nexus 6
+        NoSuchMethod error in ViewModelProvider
+         I should not make it internal Orz
+    other layout updates
+    add version code in loading screen
+
+[1070] @ 2018-07-14
+    fix no game id parsing crush
+    release build flavor
+
+    https://medium.com/@xabaras/automatically-copying-proguard-mapping-file-to-apk-build-directory-d7eed285632
+
+[1068] @ 2018-07-12
+    update layout
+
+[1067] @ 2018-07-12
+    fix #9 by passing correct Context
+    upgrade libraries
+
+[1066] @ 2018-06-21
+    fix dialog button style
+
+[1065] @ 2018-06-20
+    still rewrite kotlin files
+    fix highlight background
+
+[1064] @ 2018-06-18
+    fix some incorrect UI in new Settings
+    rewrite files to kotlin
+
+[1063] @ 2018-06-17
+    convert some java files to kotlin
+    add preferences to newly added libraries
+    move preference to DrawerLayout
+
+[1062] @ 2018-06-16
+    add AdView to filter pane
+    fix touch on filter pane background
+
+[1061] @ 2018-06-15
+    hide filter pane when touch the front pane
+    fix incorrect translation about go to website
+    update some layouts
+
+[1060] @ 2018-06-13
+    use Android Studio 3.2 canary
+    refactor to androidx
+    remove design java from flexible
+
 [1057] @ 2018-06-10
     fix possible crush when using SplashActivity
         it is disabled in flexible flavor

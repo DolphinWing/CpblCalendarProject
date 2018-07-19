@@ -18,15 +18,19 @@
 
 <resources>
 
-    <style name="Theme.Holo_green" parent="@style/Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/holo_green_dark</item>
-        <item name="colorPrimaryDark">@color/holo_green_dark_darker</item>
+    <style name="Theme.Holo_green" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/Theme.Holo_green.Toolbar</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="Theme.Holo_green.SplashTheme" parent="Theme.Holo_green">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+        <!--<item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>-->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
         <!-- http://developer.android.com/reference/android/R.attr.html#windowEnterAnimation -->
         <item name="android:windowAnimationStyle">@null</item>
@@ -39,14 +43,18 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
-    <style name="Theme.Holo_green.Settings" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Holo_green.Settings" parent="@style/Theme.MaterialComponents.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorPrimary">@color/holo_green_dark</item>
     </style>
 
-    <style name="Theme.Holo_green.Dialog" parent="@style/Theme.AppCompat.Light.Dialog">
+    <style name="Theme.Holo_green.Dialog" parent="@style/Theme.MaterialComponents.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
+        <!-- https://stackoverflow.com/a/38592081/2673859 -->
+        <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button.UnelevatedButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
     </style>
 
     <style name="Theme.Holo_green.Dialog.WindowTitle" parent="@style/TextAppearance.AppCompat.Title.Inverse">

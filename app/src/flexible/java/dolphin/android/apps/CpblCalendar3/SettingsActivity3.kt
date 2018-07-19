@@ -1,19 +1,18 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import dolphin.android.apps.CpblCalendar.preference.AdvancedFragment
+import androidx.appcompat.widget.Toolbar
+import dolphin.android.apps.CpblCalendar.preference.AdvancedFragment3
 import dolphin.android.apps.CpblCalendar.preference.GeneralFragment
 
 class SettingsActivity3 : android.preference.PreferenceActivity() {
     override fun isValidFragment(fragmentName: String?): Boolean {
         return (GeneralFragment::class.java.name == fragmentName
                 || DisplayFragment3::class.java.name == fragmentName
-                //|| NotificationFragment::class.java.name == fragmentName
-                || AdvancedFragment::class.java.name == fragmentName)
+                || AdvancedFragment3::class.java.name == fragmentName)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

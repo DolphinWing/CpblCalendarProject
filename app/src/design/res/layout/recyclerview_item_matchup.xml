@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_medium"
     android:paddingTop="@dimen/padding_small"
+    android:paddingBottom="@dimen/padding_medium"
     tools:context=".SplashActivity"
     tools:ignore="RtlSymmetry,RtlHardcoded">
 
@@ -22,7 +22,8 @@
             android:layout_height="36dp"
             android:padding="6dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_device_access_alarm" />
+            android:src="@drawable/ic_device_access_alarm"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@android:id/icon"
@@ -132,8 +133,8 @@
         android:layout_gravity="left|center_vertical"
         android:gravity="right|center_vertical"
         android:paddingLeft="16dp"
-        android:paddingRight="@dimen/padding_large"
-        android:paddingTop="@dimen/padding_small">
+        android:paddingTop="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_large">
 
         <TextView
             android:id="@+id/textView8"

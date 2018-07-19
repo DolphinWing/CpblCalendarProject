@@ -6,9 +6,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import android.util.SparseArray;
 
 import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils;
@@ -55,7 +55,7 @@ public class MultiChoiceListDialogFragment extends DialogFragment
         for (int i = 0; i < mTeams.length; i++) {
             mTeamChecked[i] = teams.get(mTeams[i]) != null;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.Theme_Holo_green_Dialog)
                 .setMultiChoiceItems(R.array.cpbl_team_name, mTeamChecked, this)
                 .setPositiveButton(android.R.string.ok, this)
                 .setNegativeButton(android.R.string.cancel, this)

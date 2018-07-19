@@ -54,7 +54,7 @@ public class UrlHelper {
         return null;
     }
 
-    public static synchronized String getUrlContent(String url, int timeoutMillis, String encode) {
+    public /*static*/ synchronized String getUrlContent(String url, int timeoutMillis, String encode) {
         try {
             return getBody(new URL(url), timeoutMillis, encode);
         } catch (IOException e) {
@@ -63,19 +63,19 @@ public class UrlHelper {
         return null;
     }
 
-    public static synchronized String getUrlContent(String url, String encode) {
+    public /*static*/ synchronized String getUrlContent(String url, String encode) {
         return getUrlContent(url, DEFAULT_NETWORK_TIMEOUT, encode);
     }
 
-    public static synchronized String getUrlContent(String url) {
+    public /*static*/ synchronized String getUrlContent(String url) {
         return getUrlContent(url, ENCODE_UTF8);
     }
 
-    public static synchronized boolean getRemoteFile(Context context, String url, String fileName) {
+    public /*static*/ synchronized boolean getRemoteFile(Context context, String url, String fileName) {
         return getRemoteFile(context, url, fileName, DEFAULT_NETWORK_TIMEOUT);
     }
 
-    public static synchronized boolean getRemoteFile(Context context, String url, String fileName,
+    public /*static*/ synchronized boolean getRemoteFile(Context context, String url, String fileName,
                                                      HttpProgressListener listener) {
         return getRemoteFile(context, url, fileName, DEFAULT_NETWORK_TIMEOUT, listener);
     }

@@ -11,11 +11,11 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -190,7 +190,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         if (mSpinnerYear != null) {
-            mSpinnerYear.setAdapter(CpblCalendarHelper.buildYearAdapter(getBaseContext(), mYear));
+            mSpinnerYear.setAdapter(Utils.buildYearAdapter(getBaseContext(), mYear));
             mSpinnerYear.setEnabled(!mCacheMode);
             mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -209,7 +209,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
         }
 
         if (mSpinnerMonth != null) {
-            mSpinnerMonth.setAdapter(CpblCalendarHelper.buildMonthAdapter(getBaseContext()));
+            mSpinnerMonth.setAdapter(Utils.buildMonthAdapter(getBaseContext()));
         }
 
         if (mSpinnerKind != null) {
@@ -360,7 +360,7 @@ public abstract class CalendarActivity extends AppCompatActivity//ActionBarActiv
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
                     mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                 }
-                CpblCalendarHelper.startActivityToCpblSchedule(mActivity, mYear,
+                Utils.startActivityToCpblSchedule(mActivity, mYear,
                         mMonth, getGameKind(mKind), mField/*, true*/);
                 return true;
             case R.id.action_cache_mode:

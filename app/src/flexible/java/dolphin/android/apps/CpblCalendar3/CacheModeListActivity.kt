@@ -3,19 +3,17 @@ package dolphin.android.apps.CpblCalendar3
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dolphin.android.apps.CpblCalendar.CalendarActivity
 import dolphin.android.apps.CpblCalendar.GameListFragment
 import dolphin.android.apps.CpblCalendar.OnQueryCallback
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import java.util.*
@@ -27,12 +25,15 @@ class CacheModeListActivity : CalendarActivity() {
 
     override fun getActivity() = this
 
-    private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mPrefsHelper: PrefsHelper
+    private lateinit var mDrawerLayout: androidx.drawerlayout.widget.DrawerLayout
     private lateinit var mDrawerList: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_phone)
+
+        mPrefsHelper = PrefsHelper(this)
 
         mDrawerLayout = findViewById(R.id.drawer_layout)
         mDrawerList = findViewById(R.id.left_drawer)
@@ -40,9 +41,9 @@ class CacheModeListActivity : CalendarActivity() {
         initQueryPane()
         mSpinnerYear.setSelection(0)
         mSpinnerMonth.setSelection(CpblCalendarHelper.getNowTime().get(Calendar.MONTH))
-        findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)?.isEnabled = false
+        findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefreshLayout)?.isEnabled = false
         findViewById<View>(R.id.bottom_sheet)?.visibility = View.GONE
-        findViewById<FloatingActionButton>(R.id.button_floating_action)?.visibility = View.GONE
+        findViewById<FloatingActionButton>(R.id.button_floating_action)?.hide()
 
         if (intent?.getBooleanExtra("cache_init", false) == true) {
             Handler().postDelayed({ runDownloadCache() }, 500)
@@ -70,7 +71,7 @@ class CacheModeListActivity : CalendarActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_cache_mode -> {
-                PreferenceUtils.setCacheMode(this@CacheModeListActivity, false)
+                mPrefsHelper.cacheModeEnabled = false
                 startActivity(Intent(this@CacheModeListActivity, ListActivity::class.java))
                 finish()
                 return true
@@ -119,10 +120,9 @@ class CacheModeListActivity : CalendarActivity() {
             onLoading(false)
             invalidateOptionsMenu()
         }
-
     }
 
-    override fun OnFragmentAttached() {
+    override fun onFragmentAttached() {
         //
     }
 

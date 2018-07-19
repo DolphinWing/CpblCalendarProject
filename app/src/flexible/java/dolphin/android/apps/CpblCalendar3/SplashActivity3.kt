@@ -2,25 +2,23 @@ package dolphin.android.apps.CpblCalendar3
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.Html
 import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity
 import dolphin.android.apps.CpblCalendar.Utils
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.util.PackageUtils
 
 class SplashActivity3 : AppCompatActivity() {
@@ -29,6 +27,7 @@ class SplashActivity3 : AppCompatActivity() {
     }
 
     private lateinit var config: FirebaseRemoteConfig
+    private lateinit var prefs: PrefsHelper
 
     //http://gunhansancar.com/change-language-programmatically-in-android/
     override fun attachBaseContext(newBase: Context) {
@@ -38,6 +37,8 @@ class SplashActivity3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash3)
+
+        prefs = PrefsHelper(this)
 
         //http://stackoverflow.com/a/31016761/2673859
         //check google play service and authentication
@@ -57,9 +58,13 @@ class SplashActivity3 : AppCompatActivity() {
             return //don't show progress bar
         }
 
+        findViewById<TextView>(android.R.id.text1)?.apply {
+            text = PackageUtils.getPackageInfo(applicationContext, SplashActivity3::class.java)
+                    ?.versionCode.toString() ?: 0.toString()
+        }
         findViewById<View>(android.R.id.progress).animate()
                 .alpha(1.0f)
-                .setDuration(500)
+                .setDuration(600)
                 .setInterpolator(DecelerateInterpolator())
                 .withStartAction { prepareRemoteConfig() }
                 .withEndAction { }
@@ -82,7 +87,7 @@ class SplashActivity3 : AppCompatActivity() {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         config.activateFetched()
-                        if (PreferenceUtils.isCacheMode(applicationContext)) {
+                        if (prefs.cacheModeEnabled) {
                             checkLatestAppVersion()
                             return@addOnCompleteListener
                         }
@@ -92,7 +97,7 @@ class SplashActivity3 : AppCompatActivity() {
     }
 
     private fun checkLatestAppVersion() {
-        val info = PackageUtils.getPackageInfo(this, SplashActivity::class.java)
+        val info = PackageUtils.getPackageInfo(this, SplashActivity3::class.java)
         val versionCode = info?.versionCode ?: 0
         if (versionCode > config.getLong("latest_version_code")) {
             animateToNextActivity()
@@ -127,20 +132,23 @@ class SplashActivity3 : AppCompatActivity() {
 
     private fun animateToNextActivity() {
         val progressBar: ProgressBar = findViewById(android.R.id.progress)
-        ProgressBarAnimation(progressBar, 50, 99)
+        ProgressBarAnimation(progressBar, 60, 99)
                 .withStartAction {
                     progressBar.isIndeterminate = false
                     progressBar.max = 100
                 }
-                .withEndAction { progressBar.progress = 100; startNextActivity() }
+                .withEndAction {
+                    progressBar.progress = 100
+                    startNextActivity()
+                }
                 .animate()
     }
 
     private fun startNextActivity() {
         overridePendingTransition(0, 0)
-        val intent: Intent = if (PreferenceUtils.isOnlyOldDrawerMenu(this)) {
+        val intent: Intent = if (prefs.useDrawerMenu) {
             Intent(this, CalendarForPhoneActivity::class.java)
-        } else if (PreferenceUtils.isCacheMode(this)) {
+        } else if (prefs.cacheModeEnabled) {
             Intent(this, CacheModeListActivity::class.java)
         } else {
             //Intent(this, HighlightActivity3::class.java)

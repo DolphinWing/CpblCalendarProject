@@ -5,14 +5,20 @@
     <string name="title_use_drawer_menu">使用舊式查詢頁面</string>
     <string name="summary_use_drawer_menu_on">使用舊的右側滑出式選單</string>
     <string name="summary_use_drawer_menu_off">使用新的下滑式選單</string>
+    <string name="message_use_drawer_menu">使用舊的頁面將無法使用部份新功能，確定要使用舊式查詢頁面嗎？</string>
+    <string name="action_enable">啟用</string>
     <string name="id_prefix_warm_up">熱身 %d</string>
     <string name="id_prefix_challenge">挑戰 %d</string>
     <string name="id_prefix_champion">冠軍 %d</string>
     <string name="id_prefix_all_star">明星 %d</string>
-    <string name="action_title_show_highlight">最新</string>
+    <string name="action_title_show_highlight">顯示精華</string>
     <string name="filter_title">條件</string>
     <string name="title_cache_mode_enable_title">啟用離線模式</string>
     <string name="title_cache_mode_enable_message">離線模式將不會自動更新賽程資料，也不會顯示得分資訊。如果要取得最新資料，請離開離線模式。</string>
-    <string name="action_reset_filter">Reset</string>
-    <string name="title_query">Apply</string>
+    <string name="action_reset_filter">重設</string>
+    <string name="title_query">套用</string>
+    <string name="action_dismiss">關閉</string>
+    <string name="action_go_to_website2">詳細</string>
+    <string name="new_version_available_go">取得更新</string>
+    <string name="new_version_available_later">稍後提醒</string>
 </resources>

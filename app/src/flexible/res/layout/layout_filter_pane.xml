@@ -1,0 +1,125 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/filter_control_pane"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_medium">
+
+    <!--<View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_medium" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="@dimen/padding_medium"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="0" />
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@android:id/text1"
+            style="@style/Theme.Holo_green.Picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:npv_WrapSelectorWheel="true" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="1"
+            android:minWidth="@dimen/padding_medium" />
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@android:id/text2"
+            style="@style/Theme.Holo_green.Picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:npv_WrapSelectorWheel="false" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="1"
+            android:minWidth="@dimen/padding_medium" />
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@android:id/icon1"
+            style="@style/Theme.Holo_green.Picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:npv_TextArray="@array/cpbl_game_field_name" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="1"
+            android:minWidth="@dimen/padding_medium" />
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@android:id/icon2"
+            style="@style/Theme.Holo_green.Picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
+        <!-- app:npv_HintText="@string/title_team" -->
+
+        <View
+            android:layout_width="@dimen/padding_medium"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="0" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_medium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@android:id/icon"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:text="@string/action_reset_filter" />
+
+        <View
+            android:layout_width="@dimen/padding_medium"
+            android:layout_height="@dimen/padding_medium" />
+
+        <Button
+            android:id="@android:id/custom"
+            style="@style/ButtonHolo_green"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:padding="@dimen/padding_large"
+            android:text="@string/title_query" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_large" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:adSize="BANNER"
+        app:adUnitId="@string/tablet_ad_unit_id" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_very_large" />
+
+</LinearLayout>

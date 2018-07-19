@@ -39,7 +39,6 @@
 
     <item
         android:id="@+id/action_go_to_cpbl"
-        android:icon="@drawable/ic_action_more_horiz"
         android:title="@string/action_go_to_website" />
 
     <item

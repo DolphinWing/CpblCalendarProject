@@ -3,44 +3,42 @@ package dolphin.android.apps.CpblCalendar3;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import dolphin.android.apps.CpblCalendar.CalendarForPhoneActivity;
 import dolphin.android.apps.CpblCalendar.Utils;
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper;
 import dolphin.android.apps.CpblCalendar.provider.Game;
 import dolphin.android.apps.CpblCalendar.provider.Team;
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper;
-import dolphin.android.util.DateUtils;
 import dolphin.android.util.PackageUtils;
 
 /**
@@ -57,6 +55,7 @@ public class HighlightActivity extends AppCompatActivity
 
     public final static String KEY_CACHE = "cache";
 
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
     private CpblCalendarHelper mHelper = null;
     private FirebaseRemoteConfig mRemoteConfig;
     private ArrayList<Game> mCacheGames;
@@ -141,7 +140,7 @@ public class HighlightActivity extends AppCompatActivity
                 Calendar now = CpblCalendarHelper.getNowTime();
                 int year = now.get(Calendar.YEAR);
                 int month = now.get(Calendar.MONTH) + 1;
-                CpblCalendarHelper.startActivityToCpblSchedule(this, year, month, "01", "F00");
+                Utils.startActivityToCpblSchedule(this, year, month, "01", "F00");
                 return true;
             }
             case R.id.action_leader_board: {
@@ -221,12 +220,12 @@ public class HighlightActivity extends AppCompatActivity
         final boolean allowDrive = mRemoteConfig.getBoolean("enable_delay_games_from_drive");
 
         //showSnackbar("downloading");
-        new Thread(new Runnable() {
+        executor.submit(new Runnable() {
             @Override
             public void run() {
                 doDownloadCalendar(allowCache, allowDrive);
             }
-        }, "CpblCalendar").start();
+        }, "CpblCalendar");
     }
 
     private void doDownloadCalendar(boolean allowCache, boolean allowDrive) {
@@ -366,7 +365,7 @@ public class HighlightActivity extends AppCompatActivity
 //            public int getSpanSize(int position) {
 //                switch (adapter.getItemViewType(position)) {
 //                    case GameCardAdapter.TYPE_LIVE:
-//                    case GameCardAdapter.TYPE_MORE:
+//                    case GameCardAdapter.TYPE_MORE_CARD:
 //                        return columnPerRow;
 //                }
 //                return 1;

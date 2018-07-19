@@ -251,6 +251,11 @@
     <string name="title_evernote_android_job">Android-Job</string>
     <string name="summary_evernote_android_job">Copyright &#169; 2007&#8211;2016 by Evernote Corporation, All rights reserved.</string>
 
+    <string name="title_flexible_adapter">FlexibleAdapter</string>
+    <string name="summary_flexible_adapter">Copyright 2015&#8211;2018 Davide Steduto, Davidea Solution Sprl</string>
+    <string name="title_number_picker_view">NumberPickerView</string>
+    <string name="summary_number_picker_view">Copyright 2016 Carbs.Wang (NumberPickerView)</string>
+
     <string-array name="notify_music_value">
         <item>theme.mp3</item>
         <item>20150321.mp3</item>

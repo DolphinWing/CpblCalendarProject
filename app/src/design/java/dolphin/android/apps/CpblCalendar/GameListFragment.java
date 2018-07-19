@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,7 +128,7 @@ public class GameListFragment extends ListFragment implements ListView.OnItemLon
                 button1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        CpblCalendarHelper.startActivityToCpblSchedule(getActivity(), y, m, "01", "F00");
+                        Utils.startActivityToCpblSchedule(getActivity(), y, m, "01", "F00");
                     }
                 });
             }

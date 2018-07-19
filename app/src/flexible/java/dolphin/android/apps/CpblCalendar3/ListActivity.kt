@@ -2,9 +2,8 @@
 
 package dolphin.android.apps.CpblCalendar3
 
+import android.animation.Animator
 import android.animation.ValueAnimator
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,37 +11,47 @@ import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.customtabs.CustomTabsIntent
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.graphics.drawable.DrawerArrowDrawable
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.text.Html
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
+import androidx.appcompat.widget.Toolbar
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewpager.widget.ViewPager
 import cn.carbswang.android.numberpickerview.library.NumberPickerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
-import dolphin.android.apps.CpblCalendar.preference.PreferenceUtils
+import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.apps.CpblCalendar.provider.TeamHelper
 import dolphin.android.util.DateUtils
 import dolphin.android.util.PackageUtils
 import eu.davidea.flexibleadapter.FlexibleAdapter
+import eu.davidea.flexibleadapter.common.FlexibleItemAnimator
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
+import eu.davidea.flexibleadapter.helpers.AnimatorHelper
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
@@ -56,6 +65,8 @@ class ListActivity : AppCompatActivity() {
         private const val TAG = "ListActivity"
     }
 
+    private lateinit var mDrawerList: DrawerLayout
+
     private lateinit var mFilterListPane: View
     private lateinit var mFilterControlPane: View
     private lateinit var mFilterControlBg: View
@@ -67,25 +78,30 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mPickerMonth: NumberPickerView
     private lateinit var mPickerField: NumberPickerView
     private lateinit var mPickerTeam: NumberPickerView
-    private lateinit var mTextViewYear: TextView
-    private lateinit var mTextViewField: TextView
-    private lateinit var mTextViewTeam: TextView
+    private lateinit var mChipYear: Chip
+    private lateinit var mChipField: Chip
+    private lateinit var mChipTeam: Chip
 
     private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var mHomeIcon: DrawerArrowDrawable
 
+    private var mAdView: AdView? = null
+
     private var mYear: Int = 2018
     private var mMonth: Int = Calendar.MAY
     private lateinit var viewModel: GameViewModel
+    private lateinit var prefs: PrefsHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
         val now = CpblCalendarHelper.getNowTime()
-        viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
+        viewModel = ViewModelProviders.of(this,
+                ViewModelProvider.AndroidViewModelFactory(application)).get(GameViewModel::class.java)
         viewModel.debugMode = false
+        prefs = PrefsHelper(this)
 
         mHomeIcon = DrawerArrowDrawable(this).apply { color = Color.WHITE }
         findViewById<Toolbar>(R.id.toolbar)?.apply {
@@ -98,30 +114,47 @@ class ListActivity : AppCompatActivity() {
 //            setHomeAsUpIndicator(R.drawable.ic_action_filter_list)
 //        }
 
+        mDrawerList = findViewById(R.id.drawer_layout)
+        mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.drawer_list_right, SettingsFragment())
+                .commit()
+        mDrawerList.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerClosed(drawerView: View) {
+                Log.d(TAG, "apply the settings")
+                doQueryAction(false) //try to reset pull to refresh and adapter style
+                mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+        })
+
         mTabLayout = findViewById(R.id.tab_layout)
         mPager = findViewById(R.id.viewpager)
+        mAdView = findViewById(R.id.adView)
 
         //prepare filter pane
-        mTextViewYear = findViewById(android.R.id.button1)
-        mTextViewYear.setOnClickListener { filterPaneVisible = true }
-        mTextViewField = findViewById(android.R.id.button2)
-        mTextViewField.setOnClickListener { filterPaneVisible = true }
-        mTextViewTeam = findViewById(android.R.id.button3)
-        mTextViewTeam.setOnClickListener { filterPaneVisible = true }
+        mChipYear = findViewById(android.R.id.button1)
+        mChipYear.setOnClickListener { filterPaneVisible = true }
+        mChipField = findViewById(android.R.id.button2)
+        mChipField.setOnClickListener { filterPaneVisible = true }
+        mChipTeam = findViewById(android.R.id.button3)
+        mChipTeam.setOnClickListener { filterPaneVisible = true }
 
+        //Log.d(TAG, "friction: ${ViewConfiguration.getScrollFriction()}")
         mPickerYear = findViewById(android.R.id.text1)
         mPickerMonth = findViewById(android.R.id.text2)
         mPickerField = findViewById(android.R.id.icon1)
         mPickerTeam = findViewById(android.R.id.icon2)
 
+        mPickerField.setFriction(ViewConfiguration.getScrollFriction() * 2)
         mPickerYear.apply {
             val year = now.get(Calendar.YEAR)
-            displayedValues = Array(year - 1989, {
+            displayedValues = Array(year - 1989) {
                 getString(R.string.title_cpbl_year, it + 1) + " (${1990 + it})"
-            })
+            }
             minValue = 1
             maxValue = year - 1989
             value = maxValue
+            setFriction(ViewConfiguration.getScrollFriction() * 2)
         }
         mPickerTeam.apply {
             displayedValues = arrayOf(getString(R.string.title_favorite_teams_all),
@@ -139,7 +172,12 @@ class ListActivity : AppCompatActivity() {
         //mFilterListPane.setOnClickListener { filterPaneVisible = !filterPaneVisible }
         mFilterControlBg = findViewById(R.id.filter_control_background)
 //        mFilterControlBg.setOnClickListener { filterPaneVisible = false }
-        mFilterControlBg.setOnTouchListener { _, _ -> true }
+        mFilterControlBg.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {//hide filter pane
+                filterPaneVisible = false
+            }
+            true
+        }
         mFilterControlPane = findViewById(R.id.filter_control_pane)
 //        findViewById<View>(R.id.filter_view_pane)?.setOnClickListener {
 //            restoreFilter()
@@ -166,23 +204,23 @@ class ListActivity : AppCompatActivity() {
         months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
         mAdapter = SimplePageAdapter(this, months)
         mPager.adapter = mAdapter
+        //mTabLayout.setupWithViewPager(mPager)
         mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
         mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 mMonth = position + 1
                 runOnUiThread {
-                    //                    mSpinnerMonth.setSelection(position)
                     mPickerMonth.value = mMonth
                 }
                 Log.d(TAG, "selected month = ${mMonth + 1}")
-                doQueryAction()
+                doQueryAction() //query when page change
             }
         })
-        //pager.currentItem = mMonth - 1
         mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
+        //pager.currentItem = mMonth - 1
 
         mPickerMonth.apply {
-            displayedValues = Array(months.size, { months[it] })
+            displayedValues = Array(months.size) { months[it] }
             minValue = Calendar.FEBRUARY
             maxValue = Calendar.NOVEMBER
             value = mMonth
@@ -208,7 +246,35 @@ class ListActivity : AppCompatActivity() {
         bottomSheet.setOnTouchListener { _, event ->
             event.y > supportActionBar?.height ?: 56
         }
+        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
+            layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
+            setHasFixedSize(true)
+        }
         prepareHighlightCards()
+        loadAds()
+    }
+
+    private fun loadAds() {
+//        Handler().postDelayed({
+        mAdView?.loadAd(AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build())
+//        }, 500)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mAdView?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mAdView?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mAdView?.destroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -277,7 +343,7 @@ class ListActivity : AppCompatActivity() {
                         .setTitle(R.string.title_cache_mode_enable_title)
                         .setMessage(R.string.title_cache_mode_enable_message)
                         .setPositiveButton(R.string.title_cache_mode_start) { _, _ ->
-                            PreferenceUtils.setCacheMode(this@ListActivity, true)
+                            prefs.cacheModeEnabled = true
                             startActivity(Intent(this@ListActivity,
                                     CacheModeListActivity::class.java).apply {
                                 putExtra("cache_init", true)
@@ -289,13 +355,15 @@ class ListActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_go_to_cpbl -> {
-                CpblCalendarHelper.startActivityToCpblSchedule(this@ListActivity, mYear,
+                Utils.startActivityToCpblSchedule(this@ListActivity, mYear,
                         mMonth + 1, "01", "F00")
                 filterPaneVisible = false
                 return true
             }
             R.id.action_settings -> {
-                startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
+                //startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
+                mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                mDrawerList.openDrawer(Gravity.END)
                 filterPaneVisible = false
                 return true
             }
@@ -309,7 +377,7 @@ class ListActivity : AppCompatActivity() {
                 runOnUiThread { showFilterPane(value) }
                 field = value
             }
-            runOnUiThread { invalidateOptionsMenu() }
+            //runOnUiThread { invalidateOptionsMenu() }
         }
 
     private fun restoreFilter() {
@@ -328,7 +396,7 @@ class ListActivity : AppCompatActivity() {
                 this.animate()
                         .translationY(bottom - resources.getDimension(R.dimen.padding_large))
                         .setInterpolator(AccelerateInterpolator())
-                        //.withStartAction { mFilterListPane.visibility = View.GONE }
+                        .withStartAction { invalidateOptionsMenu() }
                         .withEndAction { mFilterControlBg.visibility = View.VISIBLE }
                         .start()
                 mFilterListPane.animate()
@@ -343,12 +411,13 @@ class ListActivity : AppCompatActivity() {
                         .translationY(bottom - this.height - mTabLayout.height)
                         .setInterpolator(AccelerateInterpolator())
                         .withStartAction { mPager.isEnabled = false }
+                        //.withEndAction { loadAds() }
                         .start()
             } else {
                 this.animate()
                         .translationY(0f)
                         .setInterpolator(DecelerateInterpolator())
-                        //.withStartAction { mFilterListPane.visibility = View.VISIBLE }
+                        .withEndAction { invalidateOptionsMenu() }
                         .withStartAction { mFilterControlBg.visibility = View.GONE }
                         .start()
                 mFilterListPane.animate()
@@ -390,7 +459,7 @@ class ListActivity : AppCompatActivity() {
             return team.toInt()
         }
 
-    private fun doQueryAction() {
+    private fun doQueryAction(showSnackbar: Boolean = true) {
         val year = mPickerYear.value + 1989
         val month = mPickerMonth.value
         Log.d(TAG, "do query action to $year/${month + 1}")
@@ -411,6 +480,7 @@ class ListActivity : AppCompatActivity() {
             it.arguments = Bundle().apply {
                 Log.d(TAG, "notify fragment to update $year/${month + 1} $selectedFieldId")
                 putBoolean("refresh", true)
+                putBoolean("snackbar", showSnackbar)
                 putInt("year", year)
                 putInt("month", month)
                 putString("field_id", selectedFieldId)
@@ -419,11 +489,11 @@ class ListActivity : AppCompatActivity() {
         }
 
         Log.d(TAG, "team = ${mPickerTeam.value} field = ${mPickerField.value}")
-        mTextViewYear.text = //mSpinnerYear.selectedItem.toString()
+        mChipYear.text = //mSpinnerYear.selectedItem.toString()
                 getString(R.string.title_cpbl_year, mPickerYear.value)
-        mTextViewField.text = //mSpinnerField.selectedItem.toString()
+        mChipField.text = //mSpinnerField.selectedItem.toString()
                 resources.getStringArray(R.array.cpbl_game_field_name)[mPickerField.value]
-        mTextViewTeam.text = //mSpinnerTeam.selectedItem.toString()
+        mChipTeam.text = //mSpinnerTeam.selectedItem.toString()
                 if (mPickerTeam.value < 0) {
                     getString(R.string.title_favorite_teams_all)
                 } else {
@@ -462,7 +532,7 @@ class ListActivity : AppCompatActivity() {
 
     class SimplePageAdapter(a: AppCompatActivity, private var months: ArrayList<String>) :
             WizardPager.PagerAdapter(a.supportFragmentManager) {
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             return MonthViewFragment().apply {
                 arguments = Bundle().apply {
                     putInt("index", position)
@@ -484,6 +554,7 @@ class ListActivity : AppCompatActivity() {
 
         private lateinit var helper: TeamHelper
         private lateinit var viewModel: GameViewModel
+        private lateinit var prefs: PrefsHelper
         private var year = 2018
         private var month = Calendar.MAY
 
@@ -501,7 +572,7 @@ class ListActivity : AppCompatActivity() {
                 month = args.getInt("month", 0)
                 val fieldId = args.getString("field_id", "F00")
                 val teamId = args.getInt("team_id", 0)
-                startRefreshing(true, year, month)
+                startRefreshing(true, year, month, args.getBoolean("snackbar", true))
                 Log.d(TAG, "refreshing $year/${month + 1} @$fieldId $teamId")
                 viewModel.fetch(year, month)?.observe(this,
                         Observer<List<Game>> { updateAdapter(it, helper, fieldId, teamId) })
@@ -517,12 +588,16 @@ class ListActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             //Log.d(TAG, "Fragment onCreate")
-            viewModel = ViewModelProviders.of(activity!!).get(GameViewModel::class.java)
+            viewModel = ViewModelProviders.of(activity!!,
+                    ViewModelProvider.AndroidViewModelFactory(activity!!.application))
+                    .get(GameViewModel::class.java)
             //cpblHelper = CpblCalendarHelper(activity!!)
             helper = TeamHelper(activity!!.application as CpblApplication)
+            prefs = PrefsHelper(activity!!)
         }
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                                  savedInstanceState: Bundle?): View? {
             val view = inflater.inflate(R.layout.fragment_recycler_view, container, false)
             this.container = view.findViewById(R.id.swipeRefreshLayout)
             this.container!!.isRefreshing = true
@@ -538,27 +613,28 @@ class ListActivity : AppCompatActivity() {
             return view //super.onCreateView(inflater, container, savedInstanceState)
         }
 
-        private fun startRefreshing(enabled: Boolean, year: Int = 2018, monthOfJava: Int = 0) {
+        private fun startRefreshing(enabled: Boolean, year: Int = 2018, monthOfJava: Int = 0,
+                                    showSnackbar: Boolean = true) {
             if (enabled) {
                 this.container?.isEnabled = true
                 this.container?.isRefreshing = true
-                if (activity is ListActivity) {
+                if (showSnackbar && activity is ListActivity) {
                     (activity as ListActivity).showSnackBar(
                             getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
                 }
             } else {
-                if (activity is ListActivity) {
+                if (showSnackbar && activity is ListActivity) {
                     (activity as ListActivity).showSnackBar(visible = false)
                 }
                 this.container?.isRefreshing = false
-                this.container?.isEnabled = PreferenceUtils.isPullToRefreshEnabled(activity)
+                this.container?.isEnabled = prefs.pullToRefreshEnabled
             }
         }
 
         private val adapterList = ArrayList<MyItemView>()
         private fun updateAdapter(list: List<Game>? = null, helper: TeamHelper,
                                   field: String = "F00", team: Int = 0) {
-            Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
+            //Log.d(TAG, "we have ${list?.size} games in $month (page=$index)")
             if (activity == null) return
             //val adapterList = ArrayList<MyItemView>()
             adapterList.clear()
@@ -568,7 +644,7 @@ class ListActivity : AppCompatActivity() {
                     adapterList.add(MyItemView(activity!!, it, helper))
                 }
             }
-            Log.d(TAG, "field = $field, ${adapterList.size} games")
+            //Log.d(TAG, "field = $field, ${adapterList.size} games")
             this.list.adapter = ItemAdapter(adapterList, this)
             this.list.setHasFixedSize(true)
             for (i in 0 until adapterList.size) {
@@ -587,7 +663,7 @@ class ListActivity : AppCompatActivity() {
 
         override fun onItemClick(view: View?, position: Int): Boolean {
             val game = adapterList[position].game
-            Log.d(TAG, "onItemClick $position ${game.Id}")
+            //Log.d(TAG, "onItemClick $position ${game.Id}")
             if (game.Url != null && activity != null) {
                 Utils.startGameActivity(activity, game)
                 return true
@@ -597,16 +673,16 @@ class ListActivity : AppCompatActivity() {
 
         override fun onItemLongClick(position: Int) {
             val game = adapterList[position].game
-            Log.d(TAG, "onItemLongClick $position ${game.Id}")
+            //Log.d(TAG, "onItemLongClick $position ${game.Id}")
             if (!game.IsFinal && !game.IsLive && activity != null) {
                 AlertDialog.Builder(activity!!)
                         .setItems(arrayOf(getString(R.string.action_add_to_calendar),
-                                getString(R.string.action_show_field_info)), { _, i ->
-                            Log.d(TAG, "selected $i")
+                                getString(R.string.action_show_field_info))) { _, i ->
+                            //Log.d(TAG, "selected $i")
                             when (i) {
                                 0 -> {
                                     val calIntent = Utils.createAddToCalendarIntent(activity, game)
-                                    if (PackageUtils.isCallable(activity, calIntent)) {
+                                    if (PackageUtils.isCallable(activity!!, calIntent)) {
                                         startActivity(calIntent)
                                     }
                                 }
@@ -615,7 +691,7 @@ class ListActivity : AppCompatActivity() {
                                             CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId))
                                 }
                             }
-                        }).show()
+                        }.show()
             }
         }
     }
@@ -623,6 +699,12 @@ class ListActivity : AppCompatActivity() {
     internal class MyItemView(private val context: Context, val game: Game,
                               private val helper: TeamHelper) :
             AbstractFlexibleItem<MyItemView.ViewHolder>() {
+
+        //private val appContext: Context
+        //    get() = helper.application.applicationContext
+
+        private fun getResString(resId: Int, vararg args: Any) = context.getString(resId, args)
+
         override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
                                     holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
             val dateStr = SimpleDateFormat("MMM d (E) ", Locale.TAIWAN)
@@ -632,6 +714,11 @@ class ListActivity : AppCompatActivity() {
             val year = game.StartTime.get(Calendar.YEAR)
 
             holder?.apply {
+                if (DateUtils.isToday(game.StartTime) && helper.config().isHighlightToday) {
+                    itemView.setBackgroundResource(R.drawable.item_highlight_background_holo_light)
+                } else {
+                    itemView.setBackgroundResource(R.drawable.selectable_background_holo_green)
+                }
                 gameId?.text = when (game.Kind) {
                     "01" -> game.Id.toString()
                     "02" -> context.getString(R.string.id_prefix_all_star, game.Id)
@@ -651,8 +738,8 @@ class ListActivity : AppCompatActivity() {
                     Html.fromHtml(displayTime)
                 }
                 gameField?.text = if (game.Source == Game.SOURCE_CPBL ||
-                        game.Field?.contains(context.getString(R.string.title_at)) == false) {
-                    String.format("%s%s", context.getString(R.string.title_at),
+                        game.Field?.contains(getResString(R.string.title_at)) == false) {
+                    String.format("%s%s", getResString(R.string.title_at),
                             game.getFieldFullName(context))
                 } else {
                     game.getFieldFullName(context)
@@ -726,14 +813,18 @@ class ListActivity : AppCompatActivity() {
             init {
                 view?.findViewById<View>(R.id.item_control_pane)?.visibility = View.INVISIBLE
             }
+
+            override fun scrollAnimators(animators: MutableList<Animator>, position: Int, isForward: Boolean) {
+                AnimatorHelper.alphaAnimator(animators, frontView, 0f)
+            }
         }
     }
 
     internal class ItemAdapter(items: MutableList<MyItemView>?, listener: Any? = null)
         : FlexibleAdapter<MyItemView>(items, listener) {
         init {
-            //isOnlyEntryAnimation = true
             setAnimationOnForwardScrolling(true)
+            setAnimationOnReverseScrolling(true)
         }
     }
 
@@ -809,49 +900,148 @@ class ListActivity : AppCompatActivity() {
 
     private fun prepareExtraCards(list: ArrayList<Game>) {
         showSnackBar(getString(R.string.title_download_complete))
-        val config = FirebaseRemoteConfig.getInstance()
         val gameList = CpblCalendarHelper.getHighlightGameList(list)
-        gameList.addAll(0, GameCardAdapter.getAnnouncementCards(this, config))
-        GameCardAdapter.getNewVersionCard(this, config)?.let { gameList.add(0, it) }
+        if (viewModel.debugMode) {
+            gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 2" })
+            gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 1" })
+            gameList.add(0, Game(-3).apply { LiveMessage = "update card" })
+        } else {
+            val config = FirebaseRemoteConfig.getInstance()
+            gameList.addAll(0, getAnnouncementCards(config))
+            getNewVersionCard(config)?.let { gameList.add(0, it) }
+        }
         updateHighlightList(gameList)
     }
 
-    private fun updateHighlightList(list: ArrayList<Game>) {
-        list.add(GameCardAdapter.createMoreCard())//add a more button to last row
+    private fun getAnnouncementCards(config: FirebaseRemoteConfig): List<Game> {
+        val list = ArrayList<Game>()
+        val now = CpblCalendarHelper.getNowTime()
+        val keys = config.getString("add_highlight_card")
+        if (keys != null && keys.isNotEmpty()) {
+            for (id in keys.split(";".toRegex()).toTypedArray()) {
+                val msg = config.getString("add_highlight_card_$id")
+                if (msg != null && id.length >= 6) {
+                    val cal = CpblCalendarHelper.getNowTime()
+                    cal.set(Calendar.YEAR, Integer.parseInt(id.substring(0, 4)))
+                    cal.set(Calendar.MONTH, Integer.parseInt(id.substring(4, 5)))
+                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(id.substring(5, 6)))
+                    cal.set(Calendar.HOUR_OF_DAY, 0)
+                    cal.set(Calendar.MINUTE, 0)
+                    cal.set(Calendar.SECOND, 0)
+                    if (cal.before(now)) {
+                        continue//check if the announcement is expired
+                    }
 
-        val adapter = GameCardAdapter(this, list, TeamHelper(application as CpblApplication))
-        adapter.setOnClickListener { view, game ->
-            when {
-                GameCardAdapter.isMoreCard(game) -> {
-                    //view.id == R.id.card_option1 -> {
-                    //mPager.currentItem = mMonth - 1
-                    doQueryAction() //get new data from ViewModel
-                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    invalidateOptionsMenu()
+                    list.add(0, Game(HighlightCardAdapter.TYPE_ANNOUNCEMENT, cal).apply {
+                        LiveMessage = msg
+                    })
                 }
-                view.id == R.id.card_option2 -> if (GameCardAdapter.isUpdateCard(game)) {
-                    try {
-                        startActivity(Intent(Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=$packageName")))
-                    } catch (anfe: android.content.ActivityNotFoundException) {
-                        startActivity(Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
-                    }
-                    finish() //update new app, so we can close now
-                } else {
-                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
-                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
-                        startActivity(calIntent)
-                    }
-                }
-                else -> Utils.startGameActivity(this@ListActivity, game)
             }
         }
+        return list
+    }
+
+    private fun getNewVersionCard(config: FirebaseRemoteConfig): Game? {
+        val info = PackageUtils.getPackageInfo(this, ListActivity::class.java)
+        val versionCode: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            info?.longVersionCode //see
+        } else {
+            info?.versionCode?.toLong()
+        } ?: Long.MAX_VALUE
+        val latestCode = config.getLong("latest_version_code")
+        Log.v("CpblCalendar3", String.format("versionCode: %d, play: %d", versionCode, latestCode))
+        if (versionCode < latestCode) {
+            val summary: String? = config.getString("latest_version_summary")
+            return Game(HighlightCardAdapter.TYPE_UPDATE_CARD).apply {
+                LiveMessage = if (summary != null && summary.isNotEmpty())
+                    summary
+                else
+                    getString(R.string.new_version_available_message)
+            }
+        }
+        return null
+    }
+
+    private fun updateHighlightList(list: ArrayList<Game>) {
+        val adapter = HighlightCardAdapter(application as CpblApplication, list,
+                object : HighlightCardAdapter.OnCardClickListener {
+                    override fun onOptionClick(view: View, game: Game, position: Int) {
+                        Log.d(TAG, "on option click $position")
+                        when (view.id) {
+                            R.id.card_option1 -> if (game.Id != HighlightCardAdapter.TYPE_MORE_CARD) {
+                                Log.d(TAG, "start game ${game.Id} from ${game.Url}")
+                                Utils.startGameActivity(this@ListActivity, game)
+                            } else {
+                                doQueryAction(false) //get new data from ViewModel
+                                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                                invalidateOptionsMenu()
+                            }
+                            R.id.card_option2 -> if (game.Id != HighlightCardAdapter.TYPE_UPDATE_CARD) {
+                                if (game.IsLive) {//refresh cards
+                                    prepareHighlightCards(true)
+                                } else {//register in calendar app
+                                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
+                                    if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
+                                        startActivity(calIntent)
+                                    }
+                                }
+                            } else {
+                                try {
+                                    startActivity(Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("market://details?id=$packageName")))
+                                } catch (anfe: android.content.ActivityNotFoundException) {
+                                    startActivity(Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                                }
+                                finish() //update new app, so we can close now
+                            }
+                            R.id.card_option3 -> {
+                                Log.d(TAG, "dismiss card, maybe we should remember it")
+                            }
+                        }
+                    }
+                })
         findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
             this.adapter = adapter
-            layoutManager = LinearLayoutManager(this@ListActivity)
-            setHasFixedSize(true)
+
+            itemAnimator = object : FlexibleItemAnimator() {
+                override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?): Boolean {
+                    Log.d(TAG, "before removal animation")
+                    holder?.itemView?.alpha = 1f
+                    return true
+                }
+
+                override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, index: Int) {
+                    Log.d(TAG, "animate removal $index")
+                    ViewCompat.animate(holder!!.itemView)
+                            .alpha(0f)
+                            .setDuration(removeDuration)
+                            .setInterpolator(DecelerateInterpolator())
+                            .setListener(DefaultRemoveVpaListener(holder))
+                            .withEndAction { adapter.notifyDataSetChanged() }
+                            .start()
+                }
+
+//                override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?): Boolean {
+//                    Log.d(TAG, "before add animation")
+//                    holder?.itemView?.alpha = 0f
+//                    return true
+//                }
+//
+//                override fun animateAddImpl(holder: RecyclerView.ViewHolder?, index: Int) {
+//                    Log.d(TAG, "animate add $index")
+//                    ViewCompat.animate(holder!!.itemView)
+//                            .alpha(1f)
+//                            .setDuration(addDuration)
+//                            .setInterpolator(DecelerateInterpolator())
+//                            .setListener(DefaultAddVpaListener(holder))
+//                            .start()
+//                }
+            }
+//            itemAnimator!!.addDuration = 300
+            itemAnimator!!.removeDuration = 300
         }
+        //adapter.isSwipeEnabled = true
         showSnackBar(visible = false)
         mSwipeRefreshLayout.apply {
             isRefreshing = false

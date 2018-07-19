@@ -22,11 +22,11 @@
         android:summary="@string/summary_display_settings"
         android:title="@string/title_display_settings" />
 
-    <header
+    <!--<header
         android:id="@+id/advanced_settings"
-        android:fragment="dolphin.android.apps.CpblCalendar.preference.AdvancedFragment"
+        android:fragment="dolphin.android.apps.CpblCalendar.preference.AdvancedFragment3"
         android:summary="@string/summary_advanced_settings"
-        android:title="@string/title_advanced_settings" />
+        android:title="@string/title_advanced_settings" />-->
 
     <!-- About app -->
     <header
