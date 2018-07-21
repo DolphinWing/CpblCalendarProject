@@ -551,7 +551,7 @@ public class CpblCalendarHelper extends HttpHelper {
     private Game parseOneGameHtml2016(String html, int year, int month, int day, String kind) {
         Game game = new Game();
         //onClick="location.href='/games/box.html?&game_type=01&game_id=158&game_date=2015-08-01&pbyear=2015';"
-        game.StartTime = Game.getGameTime(0, month, day);
+        game.StartTime = Game.getGameTime(year, month, day);
         game.Kind = kind;//dolphin++@2016.02.21
 
         final String patternGameId = "game_id=([0-9]+)";
