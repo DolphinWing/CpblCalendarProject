@@ -231,7 +231,11 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
 
             override fun apply(game: Game, position: Int) {
                 super.apply(game, position)
-                summary?.text = game.LiveMessage
+                summary?.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Html.fromHtml(game.LiveMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                } else {
+                    Html.fromHtml(game.LiveMessage)
+                }
             }
         }
     }
