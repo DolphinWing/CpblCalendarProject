@@ -741,6 +741,12 @@ public class CpblCalendarHelper extends HttpHelper {
             //Log.d(TAG, "url = " + url);
             game.Url = url != null ? URL_BASE.concat(url) : game.Url;
             //Log.d(TAG, "live url = " + game.Url);
+
+            //dolphin++@20180821: keep games may not update correctly
+            if (getNowTime().getTimeInMillis() - game.StartTime.getTimeInMillis()>86400000 ) {
+                game.IsLive = false;
+                game.IsDelay = true;
+            }
         } else if (html.contains("schedule_icon_starter.png")) {
             game.IsFinal = false;
             //                       9876543210
