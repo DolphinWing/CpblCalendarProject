@@ -76,7 +76,7 @@ public class Utils {
     }
 
     //http://zxc22.idv.tw/rank_up.asp
-    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season/";
+    private final static String LEADER_BOARD_URL = "http://www.cpbl.com.tw/standing/season";
     public final static Uri LEADER_BOARD_URI = Uri.parse(LEADER_BOARD_URL);
 
 //    @SuppressLint("InflateParams")
