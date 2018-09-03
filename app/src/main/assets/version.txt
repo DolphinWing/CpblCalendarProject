@@ -1,4 +1,14 @@
-[1078] @ 2018-07-19
+[1082] @ 2018-09-03
+    upgrade to Android Studio 3.2 RC2
+    fix standing url
+
+[1081] @ 2018-08-21
+    fix some kept game not updated on cpbl website
+
+[1080] @ 2018-07-21
+    fix #13 incorrect year of delay games
+
+[1079] @ 2018-07-19
     fix missing delay games
 
 [1077] @ 2018-07-17
