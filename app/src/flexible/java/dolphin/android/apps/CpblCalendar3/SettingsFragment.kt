@@ -2,12 +2,14 @@ package dolphin.android.apps.CpblCalendar3
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CacheFileHelper
+import dolphin.android.util.AssetUtils
 import dolphin.android.util.PackageUtils
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -92,6 +94,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             "lib_number_picker_view" -> {
                 Utils.startBrowserActivity(activity, "https://github.com/Carbs0126/NumberPickerView")
+                return true
+            }
+            "privacy_policy" -> {
+                AlertDialog.Builder(activity!!)
+                        .setTitle(R.string.title_privacy_policy)
+                        .setMessage(AssetUtils.read_asset_text(activity!!, "privacy_policy.txt",
+                                "utf-8"))
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show().apply {
+                            findViewById<TextView>(android.R.id.message)?.textSize = 12f
+                        }
                 return true
             }
         }

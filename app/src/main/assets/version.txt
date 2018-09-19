@@ -1,3 +1,8 @@
+[1083] @ 2018-09-19
+    upgrade to Android Studio 3.2 RC3
+    update gradle libraries
+    add privacy policy
+
 [1082] @ 2018-09-03
     upgrade to Android Studio 3.2 RC2
     fix standing url

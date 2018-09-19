@@ -6,6 +6,9 @@
         <Preference
             android:key="app_version"
             android:title="@string/app_version" />
+        <Preference
+            android:key="privacy_policy"
+            android:title="@string/title_privacy_policy" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/title_data_source">
         <Preference
