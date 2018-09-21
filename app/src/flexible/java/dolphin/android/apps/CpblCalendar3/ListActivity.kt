@@ -24,6 +24,7 @@ import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.widget.Toolbar
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -148,8 +149,8 @@ class ListActivity : AppCompatActivity() {
         mPickerField.setFriction(ViewConfiguration.getScrollFriction() * 2)
         mPickerYear.apply {
             val year = now.get(Calendar.YEAR)
-            displayedValues = Array(year - 1989) {
-                getString(R.string.title_cpbl_year, it + 1) + " (${1990 + it})"
+            displayedValues = Array(year - 1989) { y ->
+                getString(R.string.title_cpbl_year, y + 1) + " (${1990 + y})"
             }
             minValue = 1
             maxValue = year - 1989
@@ -363,7 +364,7 @@ class ListActivity : AppCompatActivity() {
             R.id.action_settings -> {
                 //startActivityForResult(Intent(this, SettingsActivity3::class.java), 0)
                 mDrawerList.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                mDrawerList.openDrawer(Gravity.END)
+                mDrawerList.openDrawer(GravityCompat.END)
                 filterPaneVisible = false
                 return true
             }
@@ -854,29 +855,35 @@ class ListActivity : AppCompatActivity() {
         val monthOfJava = now.get(Calendar.MONTH)
         showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
         viewModel.fetch(year, monthOfJava, clearCached = refresh)
-                ?.observe(this@ListActivity, Observer {
-                    if (it?.isNotEmpty() == true) {//we have data
-                        list.addAll(it)
+                ?.observe(this@ListActivity, Observer { dataList ->
+                    if (dataList?.isNotEmpty() == true) {//we have data
+                        list.addAll(dataList)
                         //mSpinnerMonth.setSelection(monthOfJava - 1)
                         mPager.currentItem = monthOfJava - 1
 
-                        if (it.first().StartTime.after(now) && monthOfJava > Calendar.JANUARY) {
+                        if (dataList.first().StartTime.after(now) && monthOfJava > Calendar.JANUARY) {
                             //get previous month data
                             preparePreviousMonth(list, year, monthOfJava - 1)
                             return@Observer
-                        } else if (it.last().StartTime.before(now)) {//already started
+                        } else if (dataList.last().StartTime.before(now)) {//already started
                             //check if it is final
-                            var more = it.last().IsFinal
-                            if (it.size > 1 && it.last().StartTime == it.dropLast(1).last().StartTime) {
-                                more = more or it.dropLast(1).last().IsFinal
+                            var more = dataList.last().IsFinal
+                            if (dataList.size > 1 &&
+                                    dataList.last().StartTime == dataList.dropLast(1).last().StartTime) {
+                                more = more or dataList.dropLast(1).last().IsFinal
                             }
                             if (more && monthOfJava < Calendar.DECEMBER) {
                                 prepareNextMonth(list, year, monthOfJava + 1)
                                 return@Observer
                             }
                         }
+                        prepareExtraCards(list)
+                    } else {
+                        Log.e(TAG, "no data list, just show full list directly")
+                        doQueryAction(false) //get new data from ViewModel
+                        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        invalidateOptionsMenu()
                     }
-                    prepareExtraCards(list)
                 })
     }
 

@@ -8,16 +8,16 @@
         android:name=".CpblApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_config"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_adaptive_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_r"
+        android:roundIcon="@mipmap/ic_adaptive_launcher_round"
         android:theme="@style/Theme.Holo_green"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:theme">
-        
+
         <!-- https://developer.android.com/topic/arc/optimizing#navigation-patterns -->
-        <meta-data 
-            android:name="WindowManagerPreference:SuppressWindowControlNavigationButton" 
+        <meta-data
+            android:name="WindowManagerPreference:SuppressWindowControlNavigationButton"
             android:value="true" />
 
         <activity
@@ -61,11 +61,11 @@
 
             <!-- Use static launch bounds -->
             <layout
-                android:defaultHeight="720dp"
                 android:defaultWidth="480dp"
+                android:defaultHeight="720dp"
                 android:gravity="top|end"
-                android:minHeight="640dp"
-                android:minWidth="480dp" />
+                android:minWidth="480dp"
+                android:minHeight="640dp" />
         </activity>
         <activity
             android:name=".ListActivity"

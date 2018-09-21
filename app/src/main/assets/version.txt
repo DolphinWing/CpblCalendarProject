@@ -1,7 +1,11 @@
+[1084] @ 2018-09-21
+    add adaptive icon
+
 [1083] @ 2018-09-19
     upgrade to Android Studio 3.2 RC3
     update gradle libraries
     add privacy policy
+    fix unable to get game data and show full list directly
 
 [1082] @ 2018-09-03
     upgrade to Android Studio 3.2 RC2
