@@ -5,7 +5,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    //buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "dolphin.android.apps.CpblCalendar3"
@@ -38,7 +38,7 @@ android {
             targetSdkVersion 27
             dimension "mode"
             versionName '3.2.0'
-            versionCode 1084
+            versionCode 1085
         }
     }
 
@@ -97,21 +97,21 @@ dependencies {
     //implementation "com.google.firebase:firebase-crash:$playServiceVersion"
     //implementation 'androidx.legacy:legacy-support-v13:1.0.0-alpha3'
     //implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
-    implementation 'androidx.appcompat:appcompat:1.0.0-rc02'
-    implementation 'androidx.palette:palette:1.0.0-rc02'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0-rc02'
-    implementation 'androidx.cardview:cardview:1.0.0-rc02'
-    implementation 'com.google.android.material:material:1.0.0-rc02'
-    implementation 'androidx.browser:browser:1.0.0-rc02'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.palette:palette:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.browser:browser:1.0.0'
     //designCompile 'com.evernote:android-job:1.1.7'
-    implementation 'androidx.preference:preference:1.0.0-rc02'
+    implementation 'androidx.preference:preference:1.0.0'
 
     //https://github.com/davideas/FlexibleAdapter
-    flexibleImplementation 'eu.davidea:flexible-adapter:5.0.5'
+    flexibleImplementation 'eu.davidea:flexible-adapter:5.0.6'
     flexibleImplementation 'eu.davidea:flexible-adapter-ui:1.0.0-b3'
 
-    flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
-    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0-rc01'
+    flexibleImplementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
     //https://github.com/Carbs0126/NumberPickerView
     flexibleImplementation 'cn.carbswang.android:NumberPickerView:1.1.1'
 }

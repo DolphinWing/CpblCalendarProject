@@ -1,3 +1,7 @@
+[1085] @ 2018-09-27
+    update layouts
+    update libraries
+
 [1084] @ 2018-09-21
     add adaptive icon
 
