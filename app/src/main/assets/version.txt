@@ -1,3 +1,7 @@
+[1086] @ 2018-09-28
+    add custom tabs warm up
+    refactor nested classes
+
 [1085] @ 2018-09-27
     update layouts
     update libraries
