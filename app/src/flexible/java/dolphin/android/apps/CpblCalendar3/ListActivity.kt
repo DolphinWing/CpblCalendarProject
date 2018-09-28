@@ -4,6 +4,7 @@ package dolphin.android.apps.CpblCalendar3
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -22,7 +23,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.widget.Toolbar
+import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.CustomTabsServiceConnection
+import androidx.browser.customtabs.CustomTabsSession
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -94,13 +98,18 @@ class ListActivity : AppCompatActivity() {
     private lateinit var viewModel: GameViewModel
     private lateinit var prefs: PrefsHelper
 
+    private var mCustomTabsClient: CustomTabsClient? = null
+    private var mCustomTabsSession: CustomTabsSession? = null
+    private var mCustomTabsConnection: CustomTabsServiceConnection? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
         val now = CpblCalendarHelper.getNowTime()
         viewModel = ViewModelProviders.of(this,
-                ViewModelProvider.AndroidViewModelFactory(application)).get(GameViewModel::class.java)
+                ViewModelProvider.AndroidViewModelFactory(application))
+                .get(GameViewModel::class.java)
         viewModel.debugMode = false
         prefs = PrefsHelper(this)
 
@@ -231,7 +240,8 @@ class ListActivity : AppCompatActivity() {
         mSwipeRefreshLayout = findViewById(R.id.bottom_sheet_option1)
         val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        mBottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        mBottomSheetBehavior.setBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 //do nothing
             }
@@ -263,6 +273,28 @@ class ListActivity : AppCompatActivity() {
 //        }, 500)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        CustomTabsHelper.getPackageNameToUse(this)?.let { packageName ->
+            mCustomTabsConnection = object : CustomTabsServiceConnection() {
+                override fun onCustomTabsServiceConnected(name: ComponentName?,
+                                                          client: CustomTabsClient?) {
+                    mCustomTabsClient = client
+                    mCustomTabsClient?.warmup(0L)
+                    mCustomTabsSession = mCustomTabsClient?.newSession(null)
+                    mCustomTabsSession?.mayLaunchUrl(Utils.LEADER_BOARD_URI, null, null)
+                }
+
+                override fun onServiceDisconnected(p0: ComponentName?) {
+                    mCustomTabsClient = null
+                    mCustomTabsSession = null
+                }
+            }
+            CustomTabsClient.bindCustomTabsService(this, packageName, mCustomTabsConnection)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         mAdView?.resume()
@@ -271,6 +303,16 @@ class ListActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mAdView?.pause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (mCustomTabsConnection != null) {
+            unbindService(mCustomTabsConnection!!)
+            mCustomTabsClient = null
+            mCustomTabsSession = null
+            mCustomTabsConnection = null
+        }
     }
 
     override fun onDestroy() {
@@ -322,11 +364,7 @@ class ListActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_leader_board -> {
-                //https://goo.gl/GtBKgp
-                val builder = CustomTabsIntent.Builder()
-                        .setToolbarColor(ContextCompat.getColor(this, R.color.holo_green_dark))
-                val customTabsIntent = builder.build()
-                customTabsIntent.launchUrl(this, Utils.LEADER_BOARD_URI)
+                CustomTabsHelper.launchUrl(this, mCustomTabsSession, Utils.LEADER_BOARD_URI)
                 return true
             }
             R.id.action_highlight -> {
@@ -356,8 +394,13 @@ class ListActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_go_to_cpbl -> {
-                Utils.startActivityToCpblSchedule(this@ListActivity, mYear,
-                        mMonth + 1, "01", "F00")
+                //Utils.startActivityToCpblSchedule(this@ListActivity, mYear,
+                //        mMonth + 1, "01", "F00")
+                val url = CpblCalendarHelper.URL_SCHEDULE_2016.replace("@year",
+                        mYear.toString()).replace("@month",
+                        (mMonth + 1).toString()).replace("@kind", "01")
+                        .replace("@field", "F00")
+                CustomTabsHelper.launchUrl(this, mCustomTabsSession, Uri.parse(url))
                 filterPaneVisible = false
                 return true
             }
@@ -663,12 +706,13 @@ class ListActivity : AppCompatActivity() {
         }
 
         override fun onItemClick(view: View?, position: Int): Boolean {
-            val game = adapterList[position].game
-            //Log.d(TAG, "onItemClick $position ${game.Id}")
-            if (game.Url != null && activity != null) {
-                Utils.startGameActivity(activity, game)
-                return true
+            adapterList[position].game.Url?.let { url ->
+                (activity as? ListActivity)?.let {
+                    CustomTabsHelper.launchUrl(it, it.mCustomTabsSession, Uri.parse(url))
+                    return true
+                }
             }
+            //Log.d(TAG, "onItemClick $position ${game.Id}")
             return false
         }
 
@@ -688,8 +732,13 @@ class ListActivity : AppCompatActivity() {
                                     }
                                 }
                                 1 -> {
-                                    Utils.startBrowserActivity(activity,
-                                            CpblCalendarHelper.URL_FIELD_2017.replace("@field", game.FieldId))
+                                    val url = CpblCalendarHelper.URL_FIELD_2017.replace("@field",
+                                            game.FieldId)
+                                    //Utils.startBrowserActivity(activity, url)
+                                    (activity as? ListActivity)?.let {
+                                        CustomTabsHelper.launchUrl(it, it.mCustomTabsSession,
+                                                Uri.parse(url))
+                                    }
                                 }
                             }
                         }.show()
@@ -707,7 +756,8 @@ class ListActivity : AppCompatActivity() {
         private fun getResString(resId: Int, vararg args: Any) = context.getString(resId, args)
 
         override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
-                                    holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
+                                    holder: ViewHolder?, position: Int,
+                                    payloads: MutableList<Any>?) {
             val dateStr = SimpleDateFormat("MMM d (E) ", Locale.TAIWAN)
                     .format(game.StartTime.time)
             val timeStr = SimpleDateFormat("HH:mm", Locale.TAIWAN)
@@ -769,7 +819,8 @@ class ListActivity : AppCompatActivity() {
                     } else {
                         visibility = View.VISIBLE
                         text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            Html.fromHtml(game.DelayMessage, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                            Html.fromHtml(game.DelayMessage,
+                                    Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
                         } else {
                             Html.fromHtml(game.DelayMessage)
                         }
@@ -815,7 +866,8 @@ class ListActivity : AppCompatActivity() {
                 view?.findViewById<View>(R.id.item_control_pane)?.visibility = View.INVISIBLE
             }
 
-            override fun scrollAnimators(animators: MutableList<Animator>, position: Int, isForward: Boolean) {
+            override fun scrollAnimators(animators: MutableList<Animator>, position: Int,
+                                         isForward: Boolean) {
                 AnimatorHelper.alphaAnimator(animators, frontView, 0f)
             }
         }
@@ -861,7 +913,8 @@ class ListActivity : AppCompatActivity() {
                         //mSpinnerMonth.setSelection(monthOfJava - 1)
                         mPager.currentItem = monthOfJava - 1
 
-                        if (dataList.first().StartTime.after(now) && monthOfJava > Calendar.JANUARY) {
+                        if (dataList.first().StartTime.after(
+                                        now) && monthOfJava > Calendar.JANUARY) {
                             //get previous month data
                             preparePreviousMonth(list, year, monthOfJava - 1)
                             return@Observer
@@ -869,7 +922,8 @@ class ListActivity : AppCompatActivity() {
                             //check if it is final
                             var more = dataList.last().IsFinal
                             if (dataList.size > 1 &&
-                                    dataList.last().StartTime == dataList.dropLast(1).last().StartTime) {
+                                    dataList.last().StartTime == dataList.dropLast(
+                                            1).last().StartTime) {
                                 more = more or dataList.dropLast(1).last().IsFinal
                             }
                             if (more && monthOfJava < Calendar.DECEMBER) {
@@ -977,7 +1031,9 @@ class ListActivity : AppCompatActivity() {
                         when (view.id) {
                             R.id.card_option1 -> if (game.Id != HighlightCardAdapter.TYPE_MORE_CARD) {
                                 Log.d(TAG, "start game ${game.Id} from ${game.Url}")
-                                Utils.startGameActivity(this@ListActivity, game)
+                                //Utils.startGameActivity(this@ListActivity, game)
+                                CustomTabsHelper.launchUrl(this@ListActivity,
+                                        mCustomTabsSession, game)
                             } else {
                                 doQueryAction(false) //get new data from ViewModel
                                 mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -987,7 +1043,8 @@ class ListActivity : AppCompatActivity() {
                                 if (game.IsLive) {//refresh cards
                                     prepareHighlightCards(true)
                                 } else {//register in calendar app
-                                    val calIntent = Utils.createAddToCalendarIntent(this@ListActivity, game)
+                                    val calIntent = Utils.createAddToCalendarIntent(
+                                            this@ListActivity, game)
                                     if (PackageUtils.isCallable(this@ListActivity, calIntent)) {
                                         startActivity(calIntent)
                                     }
@@ -998,7 +1055,8 @@ class ListActivity : AppCompatActivity() {
                                             Uri.parse("market://details?id=$packageName")))
                                 } catch (anfe: android.content.ActivityNotFoundException) {
                                     startActivity(Intent(Intent.ACTION_VIEW,
-                                            Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                                            Uri.parse(
+                                                    "https://play.google.com/store/apps/details?id=$packageName")))
                                 }
                                 finish() //update new app, so we can close now
                             }
