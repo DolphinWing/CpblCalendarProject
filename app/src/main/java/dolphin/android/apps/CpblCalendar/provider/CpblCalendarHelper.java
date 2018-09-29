@@ -396,7 +396,7 @@ public class CpblCalendarHelper extends HttpHelper {
                     }
                     Game g = new Game();
                     g.Id = Integer.parseInt(d[0]);
-                    g.StartTime = Game.getGameTime(0, Integer.parseInt(d[1]),
+                    g.StartTime = Game.getGameTime(year, Integer.parseInt(d[1]),
                             Integer.parseInt(d[2]));
                     delayedGames.put(g.Id, g);
                 }
