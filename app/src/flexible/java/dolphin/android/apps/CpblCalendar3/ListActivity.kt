@@ -44,6 +44,7 @@ import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.util.PackageUtils
 import eu.davidea.flexibleadapter.common.FlexibleItemAnimator
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
+import kotlinx.android.synthetic.flexible.activity_splash.view.*
 import java.text.DateFormatSymbols
 import java.util.*
 import kotlin.collections.ArrayList
@@ -597,56 +598,80 @@ class ListActivity : AppCompatActivity() {
         val monthOfJava = now.get(Calendar.MONTH)
         showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
         viewModel.fetch(year, monthOfJava, clearCached = refresh)
-                ?.observe(this@ListActivity, Observer { dataList ->
-                    if (dataList?.isNotEmpty() == true) {//we have data
-                        list.addAll(dataList)
-                        //mSpinnerMonth.setSelection(monthOfJava - 1)
-                        mPager.currentItem = monthOfJava - 1
+                ?.observe(this@ListActivity, Observer { resources ->
+                    when {
+                        resources.progress == 98 ->
+                            showSnackBar(getString(R.string.title_download_complete))
+                        resources.progress < 90 ->
+                            showSnackBar(resources.messages +
+                                    getString(R.string.title_download_from_cpbl, year,
+                                            monthOfJava + 1))
+                        else -> resources.dataList?.let { dataList ->
+                            if (dataList.isNotEmpty()) {//we have data
+                                list.addAll(dataList)
+                                //mSpinnerMonth.setSelection(monthOfJava - 1)
+                                mPager.currentItem = monthOfJava - 1
 
-                        if (dataList.first().StartTime.after(
-                                        now) && monthOfJava > Calendar.JANUARY) {
-                            //get previous month data
-                            preparePreviousMonth(list, year, monthOfJava - 1)
-                            return@Observer
-                        } else if (dataList.last().StartTime.before(now)) {//already started
-                            //check if it is final
-                            var more = dataList.last().IsFinal
-                            if (dataList.size > 1 &&
-                                    dataList.last().StartTime == dataList.dropLast(
-                                            1).last().StartTime) {
-                                more = more or dataList.dropLast(1).last().IsFinal
-                            }
-                            if (more && monthOfJava < Calendar.DECEMBER) {
-                                prepareNextMonth(list, year, monthOfJava + 1)
-                                return@Observer
+                                if (dataList.first().StartTime.after(now) &&
+                                        monthOfJava > Calendar.JANUARY) {
+                                    //get previous month data
+                                    preparePreviousMonth(list, year, monthOfJava - 1)
+                                    return@Observer
+                                } else if (dataList.last().StartTime.before(now)) {//already started
+                                    //check if it is final
+                                    var more = dataList.last().IsFinal
+                                    if (dataList.size > 1 &&
+                                            dataList.last().StartTime ==
+                                            dataList.dropLast(1).last().StartTime) {
+                                        more = more or dataList.dropLast(1).last().IsFinal
+                                    }
+                                    if (more && monthOfJava < Calendar.DECEMBER) {
+                                        prepareNextMonth(list, year, monthOfJava + 1)
+                                        return@Observer
+                                    }
+                                }
+                                prepareExtraCards(list)
+                            } else {
+                                Log.e(TAG, "no data list, just show full list directly")
+                                doQueryAction(false) //get new data from ViewModel
+                                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                                invalidateOptionsMenu()
                             }
                         }
-                        prepareExtraCards(list)
-                    } else {
-                        Log.e(TAG, "no data list, just show full list directly")
-                        doQueryAction(false) //get new data from ViewModel
-                        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                        invalidateOptionsMenu()
                     }
                 })
     }
 
     private fun preparePreviousMonth(list: ArrayList<Game>, year: Int, previousMonth: Int) {
         showSnackBar(getString(R.string.title_download_from_cpbl, year, previousMonth + 1))
-        viewModel.fetch(year, previousMonth)?.observe(this@ListActivity,
-                Observer {
-                    if (it?.isNotEmpty() == true) list.addAll(0, it)
-                    prepareExtraCards(list)
-                })
+        viewModel.fetch(year, previousMonth)?.observe(this@ListActivity, Observer { resources ->
+            if (resources.progress < 100) {
+                Log.d(TAG, "download $year/${previousMonth + 1} ${resources.messages}")
+            } else {
+                resources.dataList?.let { dataList ->
+                    if (dataList.isNotEmpty()) {
+                        list.addAll(0, dataList)
+                    }
+                }
+                prepareExtraCards(list)
+            }
+        })
     }
 
     private fun prepareNextMonth(list: ArrayList<Game>, year: Int, nextMonth: Int) {
         showSnackBar(getString(R.string.title_download_from_cpbl, year, nextMonth + 1))
-        viewModel.fetch(year, nextMonth)?.observe(this@ListActivity,
-                Observer {
-                    if (it?.isNotEmpty() == true) list.addAll(it)
-                    prepareExtraCards(list)
-                })
+        viewModel.fetch(year, nextMonth)?.observe(this@ListActivity, Observer { resources ->
+            if (resources.progress < 100) {
+                Log.d(TAG, "download $year/${nextMonth + 1} ${resources.messages}")
+            } else {
+                resources.dataList?.let { dataList ->
+                    if (dataList.isNotEmpty()) {
+                        list.addAll(dataList)
+                    }
+                }
+                prepareExtraCards(list)
+            }
+        })
     }
 
     private fun prepareExtraCards(list: ArrayList<Game>) {

@@ -129,11 +129,11 @@
     </string-array>
 
     <string-array name="cpbl_game_kind_name_2014">
-        <item>例行賽</item>
-        <item>季後挑戰賽</item>
-        <item>熱身賽</item>
-        <item>明星賽</item>
-        <item>總冠軍賽</item>
+        <item>@string/game_kind_01</item>
+        <item>@string/game_kind_05</item>
+        <item>@string/game_kind_07</item>
+        <item>@string/game_kind_02</item>
+        <item>@string/game_kind_03</item>
     </string-array>
 
     <!-- Teams -->
@@ -314,6 +314,8 @@
         <item>2006/10</item>
         <item>2007/10</item>
         <item>2008/10</item>
+        <item>2017/10</item>
+        <item>2018/10</item>
     </string-array>
     <string-array name="champ_month_override">
         <item>1991/11</item>
@@ -327,6 +329,7 @@
         <item>2005/10/11</item>
         <item>2008/10/11</item><!-- 2008 -->
         <item>2017/10/11</item><!-- 2017 -->
+        <item>2018/10/11</item><!-- 2017 -->
     </string-array>
 
 </resources>

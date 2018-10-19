@@ -5,16 +5,18 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
+import dolphin.android.apps.CpblCalendar.provider.GameResource
 import dolphin.android.apps.CpblCalendar.provider.Team
 import java.util.*
 import java.util.concurrent.ExecutorService
 
-/*internal*/ class GameListLiveData(private val executor: ExecutorService, //application: CpblApplication,
-                                private val helper: CpblCalendarHelper, private val year: Int,
-                                private val monthOfJava: Int,
-                                private val debugMode: Boolean = false,
-                                private val context: Context? = null)
-    : LiveData<List<Game>>() {
+/*internal*/ class GameListLiveData(
+        private val executor: ExecutorService, //application: CpblApplication,
+        private val helper: CpblCalendarHelper, private val year: Int,
+        private val monthOfJava: Int,
+        private val debugMode: Boolean = false,
+        private val context: Context? = null)
+    : LiveData<GameResource>() {
     companion object {
         private const val TAG = "GameListLiveData"
         private const val TIMEOUT = 3 * 60 * 60 * 1000
@@ -49,33 +51,39 @@ import java.util.concurrent.ExecutorService
         }
 
         Log.v(TAG, "fetch $year/${monthOfJava + 1}")
+        postValue(GameResource(year, monthOfJava, 0, context?.getString(R.string.game_kind_01)))
         val list = helper.query2018(year, monthOfJava, "01")
         //check if we have warm up games here
+        postValue(GameResource(year, monthOfJava, 20, context?.getString(R.string.game_kind_07)))
         if (helper.isWarmUpMonth(year, monthOfJava)) {
             Log.v(TAG, "find warm up games")
             list.addAll(helper.query2018(year, monthOfJava, "07"))
         }
         //check if we have all star games here
+        postValue(GameResource(year, monthOfJava, 40, context?.getString(R.string.game_kind_02)))
         if (helper.isAllStarMonth(year, monthOfJava)) {
             Log.v(TAG, "find all-star games")
             list.addAll(helper.query2018(year, monthOfJava, "02"))
         }
         //check if we have challenger games here
+        postValue(GameResource(year, monthOfJava, 60, context?.getString(R.string.game_kind_05)))
         if (helper.isChallengeMonth(year, monthOfJava)) {
             Log.v(TAG, "find challenger games")
             list.addAll(helper.query2018(year, monthOfJava, "05"))
         }
         //check if we have championship games here
+        postValue(GameResource(year, monthOfJava, 80, context?.getString(R.string.game_kind_03)))
         if (helper.isChampionMonth(year, monthOfJava)) {
             Log.v(TAG, "find championship games")
             list.addAll(helper.query2018(year, monthOfJava, "03"))
         }
         //sort games by time and id
+        postValue(GameResource(year, monthOfJava, 98))
         val sortedList = list.sortedWith(compareBy(Game::StartTime, Game::Id))
         if (debugMode) Log.d(TAG, "list size = ${sortedList.size}")
         //mAllGamesCache.put(year * 12 + monthOfJava, sortedList)
 
-        postValue(sortedList)
+        postValue(GameResource(year, this.monthOfJava, progress = 100, dataList = sortedList))
     }
 
     private fun genData() {
@@ -89,7 +97,7 @@ import java.util.concurrent.ExecutorService
             this.monthOfJava == monthOfJava -> {
                 val time = Game.getGameTime(year, this.monthOfJava + 1, dayOfMonth,
                         18, 35)
-                postValue(arrayListOf(
+                postValue(GameResource(year, this.monthOfJava, arrayListOf(
                         Game(id + 1, time).apply {
                             IsFinal = true
                             StartTime.add(Calendar.DAY_OF_MONTH, -1)
@@ -137,12 +145,11 @@ import java.util.concurrent.ExecutorService
                             AwayTeam = Team(context, Team.ID_CHINESE_TAIPEI, false)
                             HomeTeam = Team(context, Team.ID_SOUTH_KOREA, true)
                             FieldId = "F08"
-                        }))
+                        })))
             }
             this.monthOfJava > monthOfJava -> {
-                val time = Game.getGameTime(year, this.monthOfJava + 1, 28,
-                        18, 35)
-                postValue(arrayListOf(
+                val time = Game.getGameTime(year, this.monthOfJava + 1, 28, 18, 35)
+                postValue(GameResource(year, this.monthOfJava, arrayListOf(
                         Game(id + 1, time).apply {
                             StartTime.add(Calendar.DAY_OF_MONTH, -1)
                             IsFinal = true
@@ -168,12 +175,11 @@ import java.util.concurrent.ExecutorService
                             FieldId = "F26"
                             HomeScore = random.nextInt(20)
                             AwayScore = random.nextInt(20)
-                        }))
+                        })))
             }
             this.monthOfJava < monthOfJava -> {
-                val time = Game.getGameTime(year, this.monthOfJava + 1, 1,
-                        18, 35)
-                postValue(arrayListOf(
+                val time = Game.getGameTime(year, this.monthOfJava + 1, 1, 18, 35)
+                postValue(GameResource(year, this.monthOfJava, arrayListOf(
                         Game(id + 1, time).apply {
                             DelayMessage = "original $year/$monthOfJava/$dayOfMonth"
                             AwayTeam = Team(context, Team.ID_SS_TIGERS, false)
@@ -191,7 +197,7 @@ import java.util.concurrent.ExecutorService
                             AwayTeam = Team(context, Team.ID_TIME_EAGLES)
                             HomeTeam = Team(context, Team.ID_LANEW_BEARS, true)
                             FieldId = "F03"
-                        }))
+                        })))
             }
         }
     }

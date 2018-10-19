@@ -31,6 +31,13 @@
     <string name="title_delayed_game">補賽</string>
     <string name="delayed_game_cancelled">取消 不補賽</string>
 
+    <!-- game kind -->
+    <string name="game_kind_01">例行賽</string>
+    <string name="game_kind_05">季後挑戰賽</string>
+    <string name="game_kind_07">熱身賽</string>
+    <string name="game_kind_02">明星賽</string>
+    <string name="game_kind_03">總冠軍賽</string>
+
     <!-- preference -->
     <!-- GeneralFragment -->
     <string name="title_general_settings">一般設定</string>

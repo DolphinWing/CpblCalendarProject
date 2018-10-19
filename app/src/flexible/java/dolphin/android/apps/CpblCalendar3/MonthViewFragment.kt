@@ -69,10 +69,16 @@ internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListen
             val teamId = args.getInt("team_id", 0)
             startRefreshing(true, year, month, args.getBoolean("snackbar", true))
             Log.d(TAG, "refreshing $year/${month + 1} @$fieldId $teamId")
-            viewModel.fetch(year, month)?.observe(this,
-                    androidx.lifecycle.Observer<List<Game>> {
-                        updateAdapter(it, helper, fieldId, teamId)
-                    })
+            viewModel.fetch(year, month)?.observe(this, androidx.lifecycle.Observer { resources ->
+                when {
+                    resources.progress == 98 ->
+                        showSnackBar(getString(R.string.title_download_complete))
+                    resources.progress < 90 ->
+                        showSnackBar(resources.messages +
+                                getString(R.string.title_download_from_cpbl, year, month + 1))
+                    else -> updateAdapter(resources.dataList, helper, fieldId, teamId)
+                }
+            })
             //} else {
             //    startRefreshing(false)
         }
@@ -80,6 +86,10 @@ internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListen
             Log.d(TAG, "clear adapter")
             updateAdapter(null, helper)
         }
+    }
+
+    private fun showSnackBar(message: String? = null, visible: Boolean = true) {
+        (activity as? ListActivity)?.showSnackBar(message, visible)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,8 +147,7 @@ internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListen
         list?.forEach {
             if ((field == "F00" || it.FieldId == field) &&
                     (team == 0 || it.HomeTeam.id == team || it.AwayTeam.id == team)) {
-                adapterList.add(
-                        MyItemView(activity!!, it, helper))
+                adapterList.add(MyItemView(activity!!, it, helper))
             }
         }
         //Log.d(TAG, "field = $field, ${adapterList.size} games")
@@ -155,6 +164,7 @@ internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListen
         }
         emptyView.visibility = if (adapterList.isEmpty()) View.VISIBLE else View.GONE
         this.list.visibility = if (adapterList.isEmpty()) View.GONE else View.VISIBLE
+        showSnackBar(visible = false)
         startRefreshing(false)
     }
 
