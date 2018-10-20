@@ -1,3 +1,9 @@
+[1087] @ 2018-10-20
+    fix challenge games for 2017/2018
+    add download progress
+    shorten loading animation wait
+    add 2018.delay
+
 [1086] @ 2018-09-28
     add custom tabs warm up
     refactor nested classes

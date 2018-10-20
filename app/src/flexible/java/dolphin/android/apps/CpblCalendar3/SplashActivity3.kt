@@ -59,12 +59,17 @@ class SplashActivity3 : AppCompatActivity() {
         }
 
         findViewById<TextView>(android.R.id.text1)?.apply {
-            text = PackageUtils.getPackageInfo(applicationContext, SplashActivity3::class.java)
-                    ?.versionCode.toString() ?: 0.toString()
+            val packageInfo = PackageUtils.getPackageInfo(applicationContext,
+                    SplashActivity3::class.java)
+            text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageInfo?.longVersionCode.toString()
+            } else {
+                packageInfo?.versionCode.toString()
+            }
         }
         findViewById<View>(android.R.id.progress).animate()
                 .alpha(1.0f)
-                .setDuration(600)
+                .setDuration(300)
                 .setInterpolator(DecelerateInterpolator())
                 .withStartAction { prepareRemoteConfig() }
                 .withEndAction { }
@@ -97,8 +102,12 @@ class SplashActivity3 : AppCompatActivity() {
     }
 
     private fun checkLatestAppVersion() {
-        val info = PackageUtils.getPackageInfo(this, SplashActivity3::class.java)
-        val versionCode = info?.versionCode ?: 0
+        val packageInfo = PackageUtils.getPackageInfo(this, SplashActivity3::class.java)
+        val versionCode: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo?.longVersionCode
+        } else {
+            packageInfo?.versionCode?.toLong() ?: 0
+        } ?: 0
         if (versionCode > config.getLong("latest_version_code")) {
             animateToNextActivity()
             return
@@ -146,13 +155,11 @@ class SplashActivity3 : AppCompatActivity() {
 
     private fun startNextActivity() {
         overridePendingTransition(0, 0)
-        val intent: Intent = if (prefs.useDrawerMenu) {
-            Intent(this, CalendarForPhoneActivity::class.java)
-        } else if (prefs.cacheModeEnabled) {
-            Intent(this, CacheModeListActivity::class.java)
-        } else {
+        val intent: Intent = when {
+            prefs.useDrawerMenu -> Intent(this, CalendarForPhoneActivity::class.java)
+            prefs.cacheModeEnabled -> Intent(this, CacheModeListActivity::class.java)
+            else -> Intent(this, ListActivity::class.java)
             //Intent(this, HighlightActivity3::class.java)
-            Intent(this, ListActivity::class.java)
         }
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
 //        val intent = Intent(this, ListActivity::class.java).apply {

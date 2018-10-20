@@ -291,8 +291,8 @@ class ListActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        if (mCustomTabsConnection != null) {
-            unbindService(mCustomTabsConnection!!)
+        mCustomTabsConnection?.let { connection ->
+            unbindService(connection)
             mCustomTabsClient = null
             mCustomTabsSession = null
             mCustomTabsConnection = null
