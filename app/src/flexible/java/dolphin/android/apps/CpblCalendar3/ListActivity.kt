@@ -192,7 +192,7 @@ class ListActivity : AppCompatActivity() {
 
         //prepare month list
         val months = ArrayList(Arrays.asList(*DateFormatSymbols(Locale.TAIWAN).months))
-        months.dropLast(1) //no December games
+        //months.remove(months.last()) //no December games
         months.removeAt(0) //no January games
         //months.removeAt(0)
         months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
@@ -216,7 +216,7 @@ class ListActivity : AppCompatActivity() {
         mPickerMonth.apply {
             displayedValues = Array(months.size) { months[it] }
             minValue = Calendar.FEBRUARY
-            maxValue = Calendar.NOVEMBER
+            maxValue = Calendar.DECEMBER //Calendar.NOVEMBER
             value = mMonth
         }
 
