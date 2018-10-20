@@ -77,6 +77,13 @@ public class CpblCalendarHelper extends HttpHelper {
     }
 
     /**
+     * Warmup connection pool. See https://github.com/square/okhttp/issues/3763
+     */
+    public void warmup() {
+        getUrlContent(URL_BASE + "/robots.txt");
+    }
+
+    /**
      * get suggested game kind by date
      *
      * @param context Context

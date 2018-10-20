@@ -17,6 +17,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     //SparseArray<GameListLiveData>()
 
+    init {
+        executor.submit { helper.warmup() }
+    }
+
     private fun gkey(year: Int, monthOfJava: Int) = year * 12 + monthOfJava
 
     fun fetch(year: Int, monthOfJava: Int, fetchFromWeb: Boolean = true,
