@@ -38,7 +38,7 @@ android {
             targetSdkVersion 28
             dimension "mode"
             versionName '3.2.0'
-            versionCode 1087
+            versionCode 1088
         }
     }
 

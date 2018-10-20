@@ -29,6 +29,10 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:enabled="@bool/feature_admob"
             android:theme="@android:style/Theme.Translucent" />
+        <!-- This step is required as of Google Mobile Ads SDK version 17.0.0. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
 
         <meta-data
             android:name="com.google.android.gms.version"

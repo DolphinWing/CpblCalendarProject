@@ -1,3 +1,6 @@
+[1088] @ 2018-10-20
+    fix Google Mobile Ads SDK version 17.0.0 new requirement
+
 [1087] @ 2018-10-20
     fix challenge games for 2017/2018
     add download progress
