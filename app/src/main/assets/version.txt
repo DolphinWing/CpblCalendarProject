@@ -2,6 +2,9 @@
     Add warm up connection pool.
         See https://github.com/square/okhttp/issues/3763
     fix December
+    fix highlight cards don't show correct id
+    move some layouts to another xml files
+    add only support fav teams in latest year
 
 [1088] @ 2018-10-20
     fix Google Mobile Ads SDK version 17.0.0 new requirement
