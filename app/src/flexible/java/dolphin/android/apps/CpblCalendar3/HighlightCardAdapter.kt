@@ -129,7 +129,14 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
 
             override fun apply(game: Game, position: Int) {
                 super.apply(game, position)
-                textId?.text = game.Id.toString()
+                textId?.text = when (game.Kind) {
+                    "01" -> game.Id.toString()
+                    "02" -> context.getString(R.string.id_prefix_all_star, game.Id)
+                    "03" -> context.getString(R.string.id_prefix_champion, game.Id)
+                    "05" -> context.getString(R.string.id_prefix_challenge, game.Id)
+                    "07" -> context.getString(R.string.id_prefix_warm_up, game.Id)
+                    else -> game.Id.toString()
+                }
                 awayTeamName?.text = game.AwayTeam?.shortName
                 homeTeamName?.text = game.HomeTeam?.shortName
                 textField?.text = String.format("%s%s", context.getString(R.string.title_at), game.Field)
