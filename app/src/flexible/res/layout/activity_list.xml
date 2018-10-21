@@ -37,73 +37,15 @@
                 android:paddingBottom="16dp"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
+            <include
                 android:id="@+id/filter_view_pane"
+                layout="@layout/layout_filter_view"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:background="@drawable/back_drop_foreground"
                 android:elevation="1dp"
                 android:gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/padding_medium"
-                    android:text="@string/filter_title"
-                    android:visibility="gone" />
-
-                <HorizontalScrollView
-                    android:id="@+id/filter_list_pane"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_small"
-                    android:layout_marginEnd="@dimen/padding_small"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@android:id/button1"
-                            style="@style/Widget.MaterialComponents.Chip.Action"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <View
-                            android:layout_width="@dimen/padding_small"
-                            android:layout_height="@dimen/padding_small" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@android:id/button2"
-                            style="@style/Widget.MaterialComponents.Chip.Action"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <View
-                            android:layout_width="@dimen/padding_small"
-                            android:layout_height="@dimen/padding_small" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@android:id/button3"
-                            style="@style/Widget.MaterialComponents.Chip.Action"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <!-- <View
-                             android:layout_width="0dp"
-                             android:layout_height="1dp"
-                             android:layout_weight="1" />-->
-
-                    </LinearLayout>
-                </HorizontalScrollView>
-            </LinearLayout>
+                app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
@@ -149,27 +91,14 @@
                 app:constraint_referenced_ids="filter_view_pane,tab_layout,viewpager" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <FrameLayout
+        <include
             android:id="@+id/bottom_sheet_background"
+            layout="@layout/fragment_highlight"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="?actionBarSize"
             app:behavior_hideable="true"
             app:behavior_peekHeight="56dp"
-            app:layout_behavior="@string/bottom_sheet_behavior">
-
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/bottom_sheet_option1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <dolphin.android.apps.CpblCalendar3.FixedRecyclerView
-                    android:id="@+id/bottom_sheet"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/no_so_white" />
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-        </FrameLayout>
+            app:layout_behavior="@string/bottom_sheet_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

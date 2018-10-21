@@ -44,7 +44,6 @@ import dolphin.android.apps.CpblCalendar.provider.Game
 import dolphin.android.util.PackageUtils
 import eu.davidea.flexibleadapter.common.FlexibleItemAnimator
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
-import kotlinx.android.synthetic.flexible.activity_splash.view.*
 import java.text.DateFormatSymbols
 import java.util.*
 import kotlin.collections.ArrayList
@@ -138,6 +137,7 @@ class ListActivity : AppCompatActivity() {
         mPickerMonth = findViewById(android.R.id.text2)
         mPickerField = findViewById(android.R.id.icon1)
         mPickerTeam = findViewById(android.R.id.icon2)
+        val hint = findViewById<View>(R.id.picker_team_hint)
 
         mPickerField.setFriction(ViewConfiguration.getScrollFriction() * 2)
         mPickerYear.apply {
@@ -149,6 +149,17 @@ class ListActivity : AppCompatActivity() {
             maxValue = year - 1989
             value = maxValue
             setFriction(ViewConfiguration.getScrollFriction() * 2)
+
+            setOnScrollListener { view, scrollState ->
+                if (scrollState == NumberPickerView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    mPickerTeam.smoothScrollToValue(-1)
+                    mPickerTeam.isEnabled = view.value == maxValue
+                    hint?.visibility = if (mPickerTeam.isEnabled) View.GONE else View.VISIBLE
+                } else {
+                    mPickerTeam.isEnabled = false
+                    hint?.visibility = View.GONE
+                }
+            }
         }
         mPickerTeam.apply {
             displayedValues = arrayOf(getString(R.string.title_favorite_teams_all),

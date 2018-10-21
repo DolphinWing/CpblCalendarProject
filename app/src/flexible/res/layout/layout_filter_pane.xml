@@ -60,12 +60,27 @@
             android:layout_weight="1"
             android:minWidth="@dimen/padding_medium" />
 
-        <cn.carbswang.android.numberpickerview.library.NumberPickerView
-            android:id="@android:id/icon2"
-            style="@style/Theme.Holo_green.Picker"
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible" />
+            android:layout_height="wrap_content">
+
+            <dolphin.android.apps.CpblCalendar3.FixedNumberPickerView
+                android:id="@android:id/icon2"
+                style="@style/Theme.Holo_green.Picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/picker_team_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                android:text="@string/picker_team_disabled"
+                android:textColor="@android:color/holo_red_dark"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </FrameLayout>
         <!-- app:npv_HintText="@string/title_team" -->
 
         <View
