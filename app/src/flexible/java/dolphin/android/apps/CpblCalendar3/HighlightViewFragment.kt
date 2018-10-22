@@ -120,8 +120,7 @@ class HighlightViewFragment : Fragment() {
                                             return@Observer
                                         }
                                     }
-                                    //maybe we have some extra messages
-                                }
+                                } //maybe we have some extra messages
                             }
                             prepareExtraCards(list)
                         }
@@ -227,6 +226,7 @@ class HighlightViewFragment : Fragment() {
     }
 
     private fun updateHighlightList(list: ArrayList<Game>) {
+        hasHighlights = list.isNotEmpty()
         val adapter = HighlightCardAdapter(activity!!.application as CpblApplication, list,
                 object : HighlightCardAdapter.OnCardClickListener {
                     override fun onOptionClick(view: View, game: Game, position: Int) {
@@ -280,7 +280,13 @@ class HighlightViewFragment : Fragment() {
         mSwipeRefreshLayout?.isRefreshing = false
         mSwipeRefreshLayout?.isEnabled = false
         activity?.invalidateOptionsMenu()
+        if (hasHighlights.not()) {//no data, directly show full list
+            sendMessageToActivity(HighlightCardAdapter.TYPE_MORE_CARD)
+        }
     }
+
+    var hasHighlights: Boolean = false
+        private set
 
     private fun onOptionSelected(viewId: Int, game: Game) {
 //        (activity as? ListActivity)?.onOptionSelected(viewId, game)

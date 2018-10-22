@@ -348,8 +348,11 @@ class ListActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_highlight)?.isVisible = //false
-                mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
+        menu?.findItem(R.id.action_highlight)?.apply {
+            isVisible = !filterPaneVisible &&
+                    mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED
+            isEnabled = mHighlightFragment.hasHighlights
+        }
         menu?.findItem(R.id.action_refresh)?.isVisible = when {
             mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED &&
                     mHighlightFragment.isRefreshing == true -> false

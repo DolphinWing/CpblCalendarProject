@@ -52,7 +52,8 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
     }
 
     constructor(application: CpblApplication, list: ArrayList<Game>, listener: Any? = null)
-            : this(items = createCardItems(application, list, listener as? OnCardClickListener), listener = listener)
+            : this(items = createCardItems(application, list, listener as? OnCardClickListener),
+            listener = listener)
 
     init {
         setAnimationOnForwardScrolling(true)
@@ -78,7 +79,8 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
         override fun getLayoutRes() = R.layout.recyclerview_item3_more
 
         override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
-                                    holder: CardViewHolder?, position: Int, list: MutableList<Any>?) {
+                                    holder: CardViewHolder?, position: Int,
+                                    list: MutableList<Any>?) {
             holder?.apply(game, position)
         }
     }
@@ -102,13 +104,15 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
             }
         }
 
-        override fun scrollAnimators(animators: MutableList<Animator>, position: Int, isForward: Boolean) {
+        override fun scrollAnimators(animators: MutableList<Animator>, position: Int,
+                                     isForward: Boolean) {
             AnimatorHelper.alphaAnimator(animators, frontView, 0f)
         }
     }
 
     open class UpcomingCardItem(private val context: Context, game: Game,
-                                private val listener: OnCardClickListener? = null) : CardItem(game) {
+                                private val listener: OnCardClickListener? = null) :
+            CardItem(game) {
 
         override fun getLayoutRes() = R.layout.recyclerview_item3_matchup_upcoming
 
@@ -139,7 +143,8 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
                 }
                 awayTeamName?.text = game.AwayTeam?.shortName
                 homeTeamName?.text = game.HomeTeam?.shortName
-                textField?.text = String.format("%s%s", context.getString(R.string.title_at), game.Field)
+                textField?.text = String.format("%s%s", context.getString(R.string.title_at),
+                        game.Field)
                 textChannel?.apply {
                     visibility = if (game.Channel.isNullOrEmpty()) View.GONE else View.VISIBLE
                     text = game.Channel
@@ -153,7 +158,8 @@ class HighlightCardAdapter(items: MutableList<HighlightCardAdapter.CardItem>?,
         }
     }
 
-    open class LiveCardItem(private val context: Context, private val helper: TeamHelper, game: Game,
+    open class LiveCardItem(private val context: Context, private val helper: TeamHelper,
+                            game: Game,
                             private val listener: OnCardClickListener? = null)
         : UpcomingCardItem(context, game, listener) {
 

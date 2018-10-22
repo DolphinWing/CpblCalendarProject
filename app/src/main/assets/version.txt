@@ -1,6 +1,7 @@
 [1090] @ 2018-10-22
     add HighlightViewFragment
     add enable highlight on load option
+    fix no game list auto hide highlights
 
 [1089] @ 2018-10-21
     Add warm up connection pool.
