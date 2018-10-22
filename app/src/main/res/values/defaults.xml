@@ -27,6 +27,7 @@
     <bool name="def_highlight_win">false</bool>
     <bool name="def_highlight_today">false</bool>
     <bool name="def_enable_pull_to_refresh">false</bool>
+    <bool name="def_show_highlight">true</bool>
 
     <!-- enable notification -->
     <bool name="def_enable_notification">false</bool>

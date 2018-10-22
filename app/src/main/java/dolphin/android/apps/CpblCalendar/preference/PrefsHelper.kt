@@ -8,7 +8,8 @@ import dolphin.android.apps.CpblCalendar.provider.Team
 import dolphin.android.apps.CpblCalendar3.R
 
 class PrefsHelper(private val context: Context) {
-    private val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+            context)
 
     private fun getResBoolean(resId: Int) = context.resources.getBoolean(resId)
 
@@ -55,7 +56,8 @@ class PrefsHelper(private val context: Context) {
         }
 
     val pullToRefreshEnabled: Boolean
-        get() = sharedPrefs.getBoolean("pull_to_refresh", getResBoolean(R.bool.def_enable_pull_to_refresh))
+        get() = sharedPrefs.getBoolean("pull_to_refresh",
+                getResBoolean(R.bool.def_enable_pull_to_refresh))
 
     var useDrawerMenu: Boolean
         get() = sharedPrefs.getBoolean("use_drawer_menu", false)
@@ -64,4 +66,8 @@ class PrefsHelper(private val context: Context) {
     var cacheModeEnabled: Boolean
         get() = sharedPrefs.getBoolean("cache_mode", getResBoolean(R.bool.def_cache_mode))
         set(value) = sharedPrefs.edit().putBoolean("cache_mode", value).apply()
+
+    val showHighlightOnLoadEnabled: Boolean
+        get() = sharedPrefs.getBoolean("show_highlight_onload",
+                getResBoolean(R.bool.def_show_highlight))
 }

@@ -25,6 +25,13 @@
             android:summary="@string/summary_use_drawer_menu_on"
             android:title="@string/title_use_drawer_menu" />
 
+        <CheckBoxPreference
+            android:defaultValue="@bool/def_show_highlight"
+            android:key="show_highlight_onload"
+            android:summaryOff="@string/summary_show_highlight_onload_off"
+            android:summaryOn="@string/summary_show_highlight_onload_on"
+            android:title="@string/title_enable_show_highlight_onload" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

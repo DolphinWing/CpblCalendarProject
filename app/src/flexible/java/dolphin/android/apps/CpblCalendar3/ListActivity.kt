@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -141,13 +142,14 @@ class ListActivity : AppCompatActivity() {
 
         mPickerField.setFriction(ViewConfiguration.getScrollFriction() * 2)
         mPickerYear.apply {
-            val year = now.get(Calendar.YEAR)
-            displayedValues = Array(year - 1989) { y ->
+            mYear = now.get(Calendar.YEAR)
+            Log.d(TAG, "year = $mYear")
+            displayedValues = Array(mYear - 1989) { y ->
                 getString(R.string.title_cpbl_year, y + 1) + " (${1990 + y})"
             }
             minValue = 1
-            maxValue = year - 1989
-            value = maxValue
+            maxValue = mYear - 1989
+            Log.d(TAG, "max = $maxValue ")
             setFriction(ViewConfiguration.getScrollFriction() * 2)
 
             setOnScrollListener { view, scrollState ->
@@ -160,7 +162,11 @@ class ListActivity : AppCompatActivity() {
                     hint?.visibility = View.GONE
                 }
             }
+
+            value = maxValue
         }
+        Log.d(TAG, "picker year = ${mPickerYear.value}")
+
         mPickerTeam.apply {
             displayedValues = arrayOf(getString(R.string.title_favorite_teams_all),
                     getString(R.string.team_ct_elephants_short2),
@@ -209,6 +215,18 @@ class ListActivity : AppCompatActivity() {
         months.forEach { mTabLayout.addTab(mTabLayout.newTab().setText(it)) }
         mAdapter = SimplePageAdapter(this, months)
         mPager.adapter = mAdapter
+
+        mPickerMonth.apply {
+            displayedValues = Array(months.size) { months[it] }
+            minValue = Calendar.FEBRUARY
+            maxValue = Calendar.DECEMBER //Calendar.NOVEMBER
+
+            mMonth = now.get(Calendar.MONTH)
+            mPager.currentItem = mMonth - 1 //select page
+
+            value = mMonth
+        }
+
         //mTabLayout.setupWithViewPager(mPager)
         mPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
         mPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -223,13 +241,6 @@ class ListActivity : AppCompatActivity() {
         })
         mTabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mPager))
         //pager.currentItem = mMonth - 1
-
-        mPickerMonth.apply {
-            displayedValues = Array(months.size) { months[it] }
-            minValue = Calendar.FEBRUARY
-            maxValue = Calendar.DECEMBER //Calendar.NOVEMBER
-            value = mMonth
-        }
 
         //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
         mSwipeRefreshLayout = findViewById(R.id.bottom_sheet_option1)
@@ -247,8 +258,12 @@ class ListActivity : AppCompatActivity() {
                 }
             }
         })
-        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        //HighlightFragment().show(supportFragmentManager, "highlight")
+        if (prefs.showHighlightOnLoadEnabled) {
+            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            //HighlightFragment().show(supportFragmentManager, "highlight")
+        } else {
+            mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
         bottomSheet.setOnTouchListener { _, event ->
             event.y > supportActionBar?.height ?: 56
         }
@@ -256,7 +271,20 @@ class ListActivity : AppCompatActivity() {
             layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
             setHasFixedSize(true)
         }
-        prepareHighlightCards()
+
+        //TODO: load highlight fragment
+        if (prefs.showHighlightOnLoadEnabled) {
+            prepareHighlightCards()
+        } else { //auto load current year/month
+            Handler().postDelayed({
+                Log.d(TAG, "this year = $mYear")
+                mPickerYear.value = mYear - 1989
+                restoreFilter()
+                filterPaneVisible = false
+                doQueryAction()
+                invalidateOptionsMenu()
+            }, 200)
+        }
         loadAds()
     }
 
@@ -339,17 +367,23 @@ class ListActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            android.R.id.home -> when {
-                mSwipeRefreshLayout.isRefreshing -> Log.w(TAG, "still refresh...")
-                mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ->
-                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                else -> {
-                    if (!filterPaneVisible) {
-                        restoreFilter()
+            android.R.id.home ->
+                when {
+                    mSwipeRefreshLayout.isRefreshing -> Log.w(TAG, "still refresh...")
+                    mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED -> {
+                        restoreFilter() //hide highlight from hamburger
+                        filterPaneVisible = false //hide highlight from hamburger, make sure hidden
+                        doQueryAction(false) //hide highlight, load fragment again
+                        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
-                    filterPaneVisible = !filterPaneVisible
+                    else -> {
+                        if (!filterPaneVisible) {
+                            restoreFilter() //hide filter pane from hamburger
+                            doQueryAction(false) //hide filter, load fragment again
+                        }
+                        filterPaneVisible = !filterPaneVisible
+                    }
                 }
-            }
             R.id.action_refresh -> {
                 if (mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     prepareHighlightCards(refresh = true)
@@ -364,6 +398,7 @@ class ListActivity : AppCompatActivity() {
             }
             R.id.action_highlight -> {
                 if (mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                    prepareHighlightCards()
                     findViewById<RecyclerView>(R.id.bottom_sheet)?.scrollToPosition(0)
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 } else {//should not be here
@@ -420,6 +455,7 @@ class ListActivity : AppCompatActivity() {
         }
 
     private fun restoreFilter() {
+        Log.d(TAG, "restore $mYear/${mMonth + 1}")
         runOnUiThread {
             mPickerYear.value = mYear - 1989
             mPickerMonth.value = mMonth
@@ -504,8 +540,8 @@ class ListActivity : AppCompatActivity() {
         Log.d(TAG, "do query action to $year/${month + 1}")
         if (year != mYear) {//clear all months
             Log.d(TAG, "clear $mYear data")
-            for (i in 1..10) {//Feb. to Nov.
-                mAdapter.getChildFragment(i - 1)?.arguments = Bundle().apply {
+            for (i in 0 until mAdapter.count) {//clear all fragments
+                mAdapter.getChildFragment(i)?.arguments = Bundle().apply {
                     //putInt("year", mYear)
                     //putInt("month", i)
                     putBoolean("clear", true)
@@ -590,8 +626,9 @@ class ListActivity : AppCompatActivity() {
             finish()
             return
         } else if (filterPaneVisible) {//close the filter pane
-            filterPaneVisible = false
             restoreFilter()
+            filterPaneVisible = false
+            doQueryAction(false)
             return
         }
         super.onBackPressed()

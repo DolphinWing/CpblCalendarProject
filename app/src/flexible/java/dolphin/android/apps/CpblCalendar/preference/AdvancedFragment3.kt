@@ -18,7 +18,7 @@ class AdvancedFragment3 : PreferenceFragmentCompat() {
                 isEnabled = false
                 setSummary(R.string.summary_clear_cache_off)
             }
-            if (activity == null || CacheFileHelper.getCacheDir(activity!!) == null) {
+            if (activity == null || CacheFileHelper.getCacheDir(activity) == null) {
                 isEnabled = false
                 setSummary(R.string.summary_clear_cache_null)
             }
@@ -30,7 +30,7 @@ class AdvancedFragment3 : PreferenceFragmentCompat() {
             KEY_CLEAR_CACHE -> {
                 var r = true
                 if (activity != null) {
-                    CacheFileHelper.getCacheDir(activity!!)?.listFiles()?.forEach {
+                    CacheFileHelper.getCacheDir(activity)?.listFiles()?.forEach {
                         r = r and it.delete() //delete every file
                     }
                     Toast.makeText(activity, R.string.title_clear_cache_complete,

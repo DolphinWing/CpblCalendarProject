@@ -39,75 +39,90 @@ class SettingsFragment : PreferenceFragmentCompat() {
         when (preference?.key) {
             "action_clear_cache" -> {
                 var r = true
-                if (activity != null) {
-                    CacheFileHelper.getCacheDir(activity!!)?.listFiles()?.forEach {
-                        r = r and it.delete() //delete every file
+                activity?.let { ctx ->
+                    CacheFileHelper.getCacheDir(ctx)?.listFiles()?.forEach { f ->
+                        r = r and f.delete() //delete every file
                     }
-                    Toast.makeText(activity, R.string.title_clear_cache_complete,
-                            Toast.LENGTH_SHORT).show()
-
-                    //(activity?.application as? CpblApplication)?.setPreferenceChanged(true)
+                    Toast.makeText(ctx, R.string.title_clear_cache_complete, Toast.LENGTH_SHORT)
+                            .show()
+                    //(ctx.application as? CpblApplication)?.setPreferenceChanged(true)
                 }
                 return r
             }
-            "use_old_drawer_menu" -> activity?.let {
-                //prefs.useDrawerMenu = true
-                //startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
-                //it.finish()
-                //Toast.makeText(it, "clicked!", Toast.LENGTH_SHORT).show()
-                AlertDialog.Builder(it)
-                        .setTitle(R.string.title_use_drawer_menu)
-                        .setMessage(R.string.message_use_drawer_menu)
-                        .setPositiveButton(R.string.action_enable) { _, _ ->
-                            prefs.useDrawerMenu = true
-                            startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
-                            it.finish()
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .show()
+            "use_old_drawer_menu" -> {
+                useOldDrawer()
                 return true
             }
-            "action_restart_app" -> activity?.let {
-                startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
-                it.finish()
-                return true
-            }
+            "action_restart_app" ->
+                activity?.let { a ->
+                    startActivity(a.packageManager?.getLaunchIntentForPackage(a.packageName))
+                    a.finish()
+                    return true
+                }
             "data_from_cpbl" -> {
-                Utils.startBrowserActivity(activity, "http://www.cpbl.com.tw/")
+                launchUrl("http://www.cpbl.com.tw/")
                 return true
             }
             "data_from_twbsball" -> {
-                Utils.startBrowserActivity(activity, "http://twbsball.dils.tku.edu.tw/")
+                launchUrl("http://twbsball.dils.tku.edu.tw/")
                 return true
             }
             "data_from_zxc22" -> {
-                Utils.startBrowserActivity(activity, "http://zxc22.idv.tw/")
+                launchUrl("http://zxc22.idv.tw/")
                 return true
             }
             "res_asset_studio" -> {
-                Utils.startBrowserActivity(activity, "https://romannurik.github.io/AndroidAssetStudio/")
+                launchUrl("https://romannurik.github.io/AndroidAssetStudio/")
                 return true
             }
             "lib_flexible_adapter" -> {
-                Utils.startBrowserActivity(activity, "https://github.com/davideas/FlexibleAdapter")
+                launchUrl("https://github.com/davideas/FlexibleAdapter")
                 return true
             }
             "lib_number_picker_view" -> {
-                Utils.startBrowserActivity(activity, "https://github.com/Carbs0126/NumberPickerView")
+                launchUrl("https://github.com/Carbs0126/NumberPickerView")
                 return true
             }
             "privacy_policy" -> {
-                AlertDialog.Builder(activity!!)
-                        .setTitle(R.string.title_privacy_policy)
-                        .setMessage(AssetUtils.read_asset_text(activity!!, "privacy_policy.txt",
-                                "utf-8"))
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show().apply {
-                            findViewById<TextView>(android.R.id.message)?.textSize = 12f
-                        }
+                showPrivacyPolicy()
                 return true
             }
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    private fun launchUrl(url: String) {
+        Utils.startBrowserActivity(activity, url)
+    }
+
+    private fun useOldDrawer() {
+        activity?.let { a ->
+            //prefs.useDrawerMenu = true
+            //startActivity(it.packageManager?.getLaunchIntentForPackage(it.packageName))
+            //it.finish()
+            //Toast.makeText(it, "clicked!", Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(a)
+                    .setTitle(R.string.title_use_drawer_menu)
+                    .setMessage(R.string.message_use_drawer_menu)
+                    .setPositiveButton(R.string.action_enable) { _, _ ->
+                        prefs.useDrawerMenu = true
+                        startActivity(a.packageManager?.getLaunchIntentForPackage(a.packageName))
+                        a.finish()
+                    }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                    .show()
+        }
+    }
+
+    private fun showPrivacyPolicy() {
+        activity?.let { a ->
+            AlertDialog.Builder(a)
+                    .setTitle(R.string.title_privacy_policy)
+                    .setMessage(AssetUtils.read_asset_text(a, "privacy_policy.txt", "utf-8"))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show().apply {
+                        findViewById<TextView>(android.R.id.message)?.textSize = 12f
+                    }
+        }
     }
 }

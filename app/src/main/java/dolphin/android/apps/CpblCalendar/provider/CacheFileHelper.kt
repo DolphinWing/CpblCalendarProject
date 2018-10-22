@@ -19,7 +19,8 @@ internal class CacheFileHelper(private val context: Context) {
          * @return cache dir
          */
         @JvmStatic
-        fun getCacheDir(context: Context): File? {
+        fun getCacheDir(context: Context?): File? {
+            if (context == null) return null
             return if (ContextCompat.checkSelfPermission(context,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 context.externalCacheDir

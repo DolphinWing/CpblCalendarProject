@@ -22,4 +22,7 @@
     <string name="new_version_available_go">取得更新</string>
     <string name="new_version_available_later">稍後提醒</string>
     <string name="picker_team_disabled">未支援</string>
+    <string name="title_enable_show_highlight_onload">啟動時檢視精華</string>
+    <string name="summary_show_highlight_onload_on">啟動時自動顯示賽事精華</string>
+    <string name="summary_show_highlight_onload_off">啟動時直接顯示所有賽程</string>
 </resources>
