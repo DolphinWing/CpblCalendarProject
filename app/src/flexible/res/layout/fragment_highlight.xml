@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bottom_sheet_background"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/highlight_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="?actionBarSize">
@@ -14,6 +15,7 @@
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/no_so_white" />
+            android:background="@color/no_so_white"
+            tools:listitem="@layout/recyclerview_item3_matchup_final" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </FrameLayout>

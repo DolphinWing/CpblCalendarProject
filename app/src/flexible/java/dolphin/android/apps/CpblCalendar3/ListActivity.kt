@@ -3,11 +3,11 @@
 package dolphin.android.apps.CpblCalendar3
 
 import android.animation.ValueAnimator
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -22,13 +22,10 @@ import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import cn.carbswang.android.numberpickerview.library.NumberPickerView
 import com.google.android.gms.ads.AdRequest
@@ -37,14 +34,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
 import dolphin.android.apps.CpblCalendar.provider.Game
-import dolphin.android.util.PackageUtils
-import eu.davidea.flexibleadapter.common.FlexibleItemAnimator
-import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
 import java.text.DateFormatSymbols
 import java.util.*
 import kotlin.collections.ArrayList
@@ -71,7 +64,8 @@ class ListActivity : AppCompatActivity() {
     private lateinit var mChipField: Chip
     private lateinit var mChipTeam: Chip
 
-    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
+    //private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var mHighlightFragment: HighlightViewFragment
     private lateinit var mBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var mHomeIcon: DrawerArrowDrawable
 
@@ -243,7 +237,7 @@ class ListActivity : AppCompatActivity() {
         //pager.currentItem = mMonth - 1
 
         //Handler().postDelayed({ pager.currentItem = mMonth - 1 }, 500)
-        mSwipeRefreshLayout = findViewById(R.id.bottom_sheet_option1)
+        //mSwipeRefreshLayout = findViewById(R.id.bottom_sheet_option1)
         val bottomSheet: View = findViewById(R.id.bottom_sheet_background)
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         mBottomSheetBehavior.setBottomSheetCallback(object :
@@ -267,12 +261,17 @@ class ListActivity : AppCompatActivity() {
         bottomSheet.setOnTouchListener { _, event ->
             event.y > supportActionBar?.height ?: 56
         }
-        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
-            layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
-            setHasFixedSize(true)
-        }
+//        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
+//            layoutManager = SmoothScrollLinearLayoutManager(this@ListActivity)
+//            setHasFixedSize(true)
+//        }
 
-        //TODO: load highlight fragment
+        //load highlight fragment
+        mHighlightFragment = HighlightViewFragment()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.bottom_sheet_background, mHighlightFragment)
+                .commitNow()
+
         if (prefs.showHighlightOnLoadEnabled) {
             prepareHighlightCards()
         } else { //auto load current year/month
@@ -353,7 +352,7 @@ class ListActivity : AppCompatActivity() {
                 mBottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED && !filterPaneVisible
         menu?.findItem(R.id.action_refresh)?.isVisible = when {
             mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED &&
-                    mSwipeRefreshLayout.isRefreshing == true -> false
+                    mHighlightFragment.isRefreshing == true -> false
             filterPaneVisible -> false
             else -> true
         }
@@ -369,7 +368,7 @@ class ListActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home ->
                 when {
-                    mSwipeRefreshLayout.isRefreshing -> Log.w(TAG, "still refresh...")
+                    mHighlightFragment.isRefreshing -> Log.w(TAG, "still refresh...")
                     mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED -> {
                         restoreFilter() //hide highlight from hamburger
                         filterPaneVisible = false //hide highlight from hamburger, make sure hidden
@@ -635,248 +634,80 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun prepareHighlightCards(refresh: Boolean = false) {
-        mSwipeRefreshLayout.apply {
-            isEnabled = true
-            isRefreshing = true
-        }
-        invalidateOptionsMenu()
-        val list = ArrayList<Game>()
         val now = CpblCalendarHelper.getNowTime()
         val year = now.get(Calendar.YEAR)
         val monthOfJava = now.get(Calendar.MONTH)
-        showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
-        viewModel.fetch(year, monthOfJava, clearCached = refresh)
-                ?.observe(this@ListActivity, Observer { resources ->
-                    when {
-                        resources.progress == 98 ->
-                            showSnackBar(getString(R.string.title_download_complete))
-                        resources.progress < 90 ->
-                            showSnackBar(resources.messages +
-                                    getString(R.string.title_download_from_cpbl, year,
-                                            monthOfJava + 1))
-                        else -> resources.dataList?.let { dataList ->
-                            if (dataList.isNotEmpty()) {//we have data
-                                list.addAll(dataList)
-                                //mSpinnerMonth.setSelection(monthOfJava - 1)
-                                mPager.currentItem = monthOfJava - 1
-
-                                if (dataList.first().StartTime.after(now) &&
-                                        monthOfJava > Calendar.JANUARY) {
-                                    //get previous month data
-                                    preparePreviousMonth(list, year, monthOfJava - 1)
-                                    return@Observer
-                                } else if (dataList.last().StartTime.before(now)) {//already started
-                                    //check if it is final
-                                    var more = dataList.last().IsFinal
-                                    if (dataList.size > 1 &&
-                                            dataList.last().StartTime ==
-                                            dataList.dropLast(1).last().StartTime) {
-                                        more = more or dataList.dropLast(1).last().IsFinal
-                                    }
-                                    if (more && monthOfJava < Calendar.DECEMBER) {
-                                        prepareNextMonth(list, year, monthOfJava + 1)
-                                        return@Observer
-                                    }
-                                }
-                                prepareExtraCards(list)
-                            } else {
-                                Log.e(TAG, "no data list, just show full list directly")
-                                doQueryAction(false) //get new data from ViewModel
-                                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                                invalidateOptionsMenu()
-                            }
-                        }
-                    }
-                })
-    }
-
-    private fun preparePreviousMonth(list: ArrayList<Game>, year: Int, previousMonth: Int) {
-        showSnackBar(getString(R.string.title_download_from_cpbl, year, previousMonth + 1))
-        viewModel.fetch(year, previousMonth)?.observe(this@ListActivity, Observer { resources ->
-            if (resources.progress < 100) {
-                Log.d(TAG, "download $year/${previousMonth + 1} ${resources.messages}")
-            } else {
-                resources.dataList?.let { dataList ->
-                    if (dataList.isNotEmpty()) {
-                        list.addAll(0, dataList)
-                    }
-                }
-                prepareExtraCards(list)
-            }
-        })
-    }
-
-    private fun prepareNextMonth(list: ArrayList<Game>, year: Int, nextMonth: Int) {
-        showSnackBar(getString(R.string.title_download_from_cpbl, year, nextMonth + 1))
-        viewModel.fetch(year, nextMonth)?.observe(this@ListActivity, Observer { resources ->
-            if (resources.progress < 100) {
-                Log.d(TAG, "download $year/${nextMonth + 1} ${resources.messages}")
-            } else {
-                resources.dataList?.let { dataList ->
-                    if (dataList.isNotEmpty()) {
-                        list.addAll(dataList)
-                    }
-                }
-                prepareExtraCards(list)
-            }
-        })
-    }
-
-    private fun prepareExtraCards(list: ArrayList<Game>) {
-        showSnackBar(getString(R.string.title_download_complete))
-        val gameList = CpblCalendarHelper.getHighlightGameList(list)
-        if (viewModel.debugMode) {
-            gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 2" })
-            gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 1" })
-            gameList.add(0, Game(-3).apply { LiveMessage = "update card" })
-        } else {
-            val config = FirebaseRemoteConfig.getInstance()
-            gameList.addAll(0, getAnnouncementCards(config))
-            getNewVersionCard(config)?.let { gameList.add(0, it) }
-        }
-        updateHighlightList(gameList)
-    }
-
-    private fun getAnnouncementCards(config: FirebaseRemoteConfig): List<Game> {
-        val list = ArrayList<Game>()
-        val now = CpblCalendarHelper.getNowTime()
-        val keys = config.getString("add_highlight_card")
-        if (keys != null && keys.isNotEmpty()) {
-            for (id in keys.split(";".toRegex()).toTypedArray()) {
-                val msg = config.getString("add_highlight_card_$id")
-                if (msg != null && id.length >= 6) {
-                    val cal = CpblCalendarHelper.getNowTime()
-                    cal.set(Calendar.YEAR, Integer.parseInt(id.substring(0, 4)))
-                    cal.set(Calendar.MONTH, Integer.parseInt(id.substring(4, 5)))
-                    cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(id.substring(5, 6)))
-                    cal.set(Calendar.HOUR_OF_DAY, 0)
-                    cal.set(Calendar.MINUTE, 0)
-                    cal.set(Calendar.SECOND, 0)
-                    if (cal.before(now)) {
-                        continue//check if the announcement is expired
-                    }
-
-                    list.add(0, Game(HighlightCardAdapter.TYPE_ANNOUNCEMENT, cal).apply {
-                        LiveMessage = msg
-                    })
-                }
-            }
-        }
-        return list
-    }
-
-    private fun getNewVersionCard(config: FirebaseRemoteConfig): Game? {
-        val info = PackageUtils.getPackageInfo(this, ListActivity::class.java)
-        val versionCode: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            info?.longVersionCode //see
-        } else {
-            info?.versionCode?.toLong()
-        } ?: Long.MAX_VALUE
-        val latestCode = config.getLong("latest_version_code")
-        Log.v("CpblCalendar3", String.format("versionCode: %d, play: %d", versionCode, latestCode))
-        if (versionCode < latestCode) {
-            val summary: String? = config.getString("latest_version_summary")
-            return Game(HighlightCardAdapter.TYPE_UPDATE_CARD).apply {
-                LiveMessage = if (summary != null && summary.isNotEmpty())
-                    summary
-                else
-                    getString(R.string.new_version_available_message)
-            }
-        }
-        return null
-    }
-
-    private fun updateHighlightList(list: ArrayList<Game>) {
-        val adapter = HighlightCardAdapter(application as CpblApplication, list,
-                object : HighlightCardAdapter.OnCardClickListener {
-                    override fun onOptionClick(view: View, game: Game, position: Int) {
-                        Log.d(TAG, "on option click $position")
-                        onOptionSelected(view.id, game)
-                    }
-                })
-
-        findViewById<RecyclerView>(R.id.bottom_sheet)?.apply {
-            this.adapter = adapter
-
-            itemAnimator = object : FlexibleItemAnimator() {
-                override fun preAnimateRemoveImpl(holder: RecyclerView.ViewHolder?): Boolean {
-                    Log.d(TAG, "before removal animation")
-                    holder?.itemView?.alpha = 1f
-                    return true
-                }
-
-                override fun animateRemoveImpl(holder: RecyclerView.ViewHolder?, index: Int) {
-                    Log.d(TAG, "animate removal $index")
-                    ViewCompat.animate(holder!!.itemView)
-                            .alpha(0f)
-                            .setDuration(removeDuration)
-                            .setInterpolator(DecelerateInterpolator())
-                            .setListener(DefaultRemoveVpaListener(holder))
-                            .withEndAction { adapter.notifyDataSetChanged() }
-                            .start()
-                }
-
-//                override fun preAnimateAddImpl(holder: RecyclerView.ViewHolder?): Boolean {
-//                    Log.d(TAG, "before add animation")
-//                    holder?.itemView?.alpha = 0f
-//                    return true
-//                }
-//
-//                override fun animateAddImpl(holder: RecyclerView.ViewHolder?, index: Int) {
-//                    Log.d(TAG, "animate add $index")
-//                    ViewCompat.animate(holder!!.itemView)
-//                            .alpha(1f)
-//                            .setDuration(addDuration)
-//                            .setInterpolator(DecelerateInterpolator())
-//                            .setListener(DefaultAddVpaListener(holder))
-//                            .start()
-//                }
-            }
-//            itemAnimator!!.addDuration = 300
-            itemAnimator!!.removeDuration = 300
-        }
-        //adapter.isSwipeEnabled = true
-        showSnackBar(visible = false)
-        mSwipeRefreshLayout.apply {
-            isRefreshing = false
-            isEnabled = false
+        mHighlightFragment.arguments = Bundle().apply {
+            putBoolean("refresh", true)
+            putInt("year", year)
+            putInt("month", monthOfJava)
+            putBoolean("cache", refresh)
         }
         invalidateOptionsMenu()
     }
 
-    private fun onOptionSelected(viewId: Int, game: Game) {
-        when (viewId) {
-            R.id.card_option1 -> if (game.Id != HighlightCardAdapter.TYPE_MORE_CARD) {
-                Log.d(TAG, "start game ${game.Id} from ${game.Url}")
-                //Utils.startGameActivity(this@ListActivity, game)
+//    internal fun updateHighlightList(list: ArrayList<Game>) {
+//        //adapter.isSwipeEnabled = true
+//        showSnackBar(visible = false)
+//        mHighlightFragment.arguments = Bundle().apply { putBoolean("refresh", false) }
+//        invalidateOptionsMenu()
+//    }
+
+//    internal fun onOptionSelected(viewId: Int, game: Game) {
+//        when (viewId) {
+//            R.id.card_option1 -> if (game.Id != HighlightCardAdapter.TYPE_MORE_CARD) {
+//                Log.d(TAG, "start game ${game.Id} from ${game.Url}")
+//                //Utils.startGameActivity(this@ListActivity, game)
+//                CustomTabsHelper.launchUrl(this, mCustomTabsSession, game)
+//            } else {
+//                doQueryAction(false) //get new data from ViewModel
+//                mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+//                invalidateOptionsMenu()
+//            }
+//            R.id.card_option2 -> if (game.Id != HighlightCardAdapter.TYPE_UPDATE_CARD) {
+//                if (game.IsLive) {//refresh cards
+//                    prepareHighlightCards(true)
+//                } else {//register in calendar app
+//                    val calIntent = Utils.createAddToCalendarIntent(this, game)
+//                    if (PackageUtils.isCallable(this, calIntent)) {
+//                        startActivity(calIntent)
+//                    }
+//                }
+//            } else {
+//                try {
+//                    startActivity(Intent(Intent.ACTION_VIEW,
+//                            Uri.parse("market://details?id=$packageName")))
+//                } catch (anfe: android.content.ActivityNotFoundException) {
+//                    startActivity(Intent(Intent.ACTION_VIEW,
+//                            Uri.parse(
+//                                    "https://play.google.com/store/apps/details?id=$packageName")))
+//                }
+//                finish() //update new app, so we can close now
+//            }
+//            R.id.card_option3 -> {
+//                Log.d(TAG, "dismiss card, maybe we should remember it")
+//            }
+//        }
+//    }
+
+    internal fun onHighlightFragmentUpdate(what: Int, game: Game? = null) {
+        when (what) {
+            HighlightViewFragment.MSG_LAUNCH_URL ->
                 CustomTabsHelper.launchUrl(this, mCustomTabsSession, game)
-            } else {
+            HighlightCardAdapter.TYPE_MORE_CARD -> {
                 doQueryAction(false) //get new data from ViewModel
                 mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 invalidateOptionsMenu()
             }
-            R.id.card_option2 -> if (game.Id != HighlightCardAdapter.TYPE_UPDATE_CARD) {
-                if (game.IsLive) {//refresh cards
-                    prepareHighlightCards(true)
-                } else {//register in calendar app
-                    val calIntent = Utils.createAddToCalendarIntent(this, game)
-                    if (PackageUtils.isCallable(this, calIntent)) {
-                        startActivity(calIntent)
-                    }
-                }
-            } else {
+            HighlightCardAdapter.TYPE_UPDATE_CARD -> {
+                val url = "https://play.google.com/store/apps/details?id=$packageName"
                 try {
                     startActivity(Intent(Intent.ACTION_VIEW,
                             Uri.parse("market://details?id=$packageName")))
-                } catch (anfe: android.content.ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW,
-                            Uri.parse(
-                                    "https://play.google.com/store/apps/details?id=$packageName")))
+                } catch (anfe: ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
                 finish() //update new app, so we can close now
-            }
-            R.id.card_option3 -> {
-                Log.d(TAG, "dismiss card, maybe we should remember it")
             }
         }
     }

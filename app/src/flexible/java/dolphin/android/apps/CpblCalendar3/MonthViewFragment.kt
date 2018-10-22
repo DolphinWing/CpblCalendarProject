@@ -105,8 +105,7 @@ internal class MonthViewFragment : Fragment(), FlexibleAdapter.OnItemClickListen
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(
-                R.layout.fragment_recycler_view, container, false)
+        val view = inflater.inflate(R.layout.fragment_recycler_view, container, false)
         this.container = view.findViewById(R.id.swipeRefreshLayout)
         this.container!!.isRefreshing = true
         this.container!!.setOnRefreshListener {

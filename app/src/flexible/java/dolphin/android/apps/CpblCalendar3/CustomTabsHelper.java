@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.browser.customtabs.CustomTabsService;
 import androidx.browser.customtabs.CustomTabsSession;
@@ -160,7 +161,7 @@ public class CustomTabsHelper {
      * @param session pass custom tabs session if possible
      * @param game    game information
      */
-    public static void launchUrl(Context context, CustomTabsSession session, Game game) {
+    public static void launchUrl(Context context, CustomTabsSession session, @Nullable Game game) {
         Calendar now = CpblCalendarHelper.getNowTime();
         String url = null;
         if (game != null) {
