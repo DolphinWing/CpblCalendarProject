@@ -1,3 +1,7 @@
+[1090] @ 2018-10-22
+    add HighlightViewFragment
+    add enable highlight on load option
+
 [1089] @ 2018-10-21
     Add warm up connection pool.
         See https://github.com/square/okhttp/issues/3763
