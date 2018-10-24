@@ -21,5 +21,9 @@
         <key>override_start_kind</key>
         <value>01</value>
     </entry>
+    <entry>
+        <key>enable_highlight_no_games</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>
 <!-- END xml_defaults -->

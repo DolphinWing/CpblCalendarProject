@@ -34,6 +34,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dolphin.android.apps.CpblCalendar.Utils
 import dolphin.android.apps.CpblCalendar.preference.PrefsHelper
 import dolphin.android.apps.CpblCalendar.provider.CpblCalendarHelper
@@ -75,6 +76,7 @@ class ListActivity : AppCompatActivity() {
     private var mMonth: Int = Calendar.MAY
     private lateinit var viewModel: GameViewModel
     private lateinit var prefs: PrefsHelper
+    private lateinit var remoteConfig: FirebaseRemoteConfig
 
     private var mCustomTabsClient: CustomTabsClient? = null
     internal var mCustomTabsSession: CustomTabsSession? = null
@@ -90,6 +92,7 @@ class ListActivity : AppCompatActivity() {
                 .get(GameViewModel::class.java)
         viewModel.debugMode = false
         prefs = PrefsHelper(this)
+        remoteConfig = FirebaseRemoteConfig.getInstance()
 
         mHomeIcon = DrawerArrowDrawable(this).apply { color = Color.WHITE }
         findViewById<Toolbar>(R.id.toolbar)?.apply {
@@ -136,10 +139,13 @@ class ListActivity : AppCompatActivity() {
 
         mPickerField.setFriction(ViewConfiguration.getScrollFriction() * 2)
         mPickerYear.apply {
-            mYear = now.get(Calendar.YEAR)
+            mYear = if (remoteConfig.getBoolean("override_start_enabled"))
+                remoteConfig.getString("override_start_year").toInt()
+            else
+                now.get(Calendar.YEAR)
             Log.d(TAG, "year = $mYear")
             displayedValues = Array(mYear - 1989) { y ->
-                getString(R.string.title_cpbl_year, y + 1) + " (${1990 + y})"
+                getString(R.string.title_cpbl_year, y + 1) //+ " (${1990 + y})"
             }
             minValue = 1
             maxValue = mYear - 1989
@@ -215,7 +221,10 @@ class ListActivity : AppCompatActivity() {
             minValue = Calendar.FEBRUARY
             maxValue = Calendar.DECEMBER //Calendar.NOVEMBER
 
-            mMonth = now.get(Calendar.MONTH)
+            mMonth = if (remoteConfig.getBoolean("override_start_enabled"))
+                remoteConfig.getString("override_start_month").toInt() - 1
+            else
+                now.get(Calendar.MONTH)
             mPager.currentItem = mMonth - 1 //select page
 
             value = mMonth
@@ -638,8 +647,15 @@ class ListActivity : AppCompatActivity() {
 
     private fun prepareHighlightCards(refresh: Boolean = false) {
         val now = CpblCalendarHelper.getNowTime()
-        val year = now.get(Calendar.YEAR)
-        val monthOfJava = now.get(Calendar.MONTH)
+        val year = if (remoteConfig.getBoolean("override_start_enabled"))
+            remoteConfig.getString("override_start_year").toInt()
+        else
+            now.get(Calendar.YEAR)
+        val monthOfJava = if (remoteConfig.getBoolean("override_start_enabled"))
+            remoteConfig.getString("override_start_month").toInt() - 1
+        else
+            now.get(Calendar.MONTH)
+
         mHighlightFragment.arguments = Bundle().apply {
             putBoolean("refresh", true)
             putInt("year", year)

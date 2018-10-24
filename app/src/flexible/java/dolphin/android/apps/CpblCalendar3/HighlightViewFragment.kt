@@ -30,6 +30,7 @@ class HighlightViewFragment : Fragment() {
     }
 
     private lateinit var viewModel: GameViewModel
+    private lateinit var config: FirebaseRemoteConfig
     private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     private var mRecyclerView: FixedRecyclerView? = null
     private var year: Int = 2018
@@ -60,6 +61,7 @@ class HighlightViewFragment : Fragment() {
         viewModel = ViewModelProviders.of(activity!!,
                 ViewModelProvider.AndroidViewModelFactory(activity!!.application))
                 .get(GameViewModel::class.java)
+        config = FirebaseRemoteConfig.getInstance()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -82,6 +84,11 @@ class HighlightViewFragment : Fragment() {
         showSnackBar(getString(R.string.title_download_from_cpbl, year, monthOfJava + 1))
 
         val list = ArrayList<Game>()
+        if (config.getBoolean("enable_highlight_no_games")) {
+            prepareExtraCards(list) //directly load extra cards
+            return
+        }
+
         val now = CpblCalendarHelper.getNowTime()
         viewModel.fetch(year, monthOfJava, clearCached = clearCached)?.observe(this,
                 androidx.lifecycle.Observer { resources ->
@@ -169,7 +176,6 @@ class HighlightViewFragment : Fragment() {
             gameList.add(0, Game(-2).apply { LiveMessage = "debug announcement 1" })
             gameList.add(0, Game(-3).apply { LiveMessage = "update card" })
         } else {
-            val config = FirebaseRemoteConfig.getInstance()
             gameList.addAll(0, getAnnouncementCards(config))
             getNewVersionCard(config)?.let { gameList.add(0, it) }
         }
