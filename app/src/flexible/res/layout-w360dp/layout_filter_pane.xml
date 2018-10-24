@@ -16,13 +16,17 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <View
+            android:layout_width="@dimen/padding_medium"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="0" />
+
         <cn.carbswang.android.numberpickerview.library.NumberPickerView
             android:id="@android:id/text1"
             style="@style/Theme.Holo_green.Picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:npv_TextArray="@array/cpbl_game_field_name"
-            app:npv_TextSizeSelected="16dp"
             app:npv_WrapSelectorWheel="false" />
 
         <View
@@ -37,7 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:npv_TextArray="@array/cpbl_team_id"
-            app:npv_TextSizeSelected="16dp"
             app:npv_WrapSelectorWheel="false" />
 
         <View
@@ -51,8 +54,7 @@
             style="@style/Theme.Holo_green.Picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:npv_TextArray="@array/cpbl_game_field_name"
-            app:npv_TextSizeSelected="16dp" />
+            app:npv_TextArray="@array/cpbl_game_field_name" />
 
         <View
             android:layout_width="0dp"
@@ -70,8 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
-                app:npv_TextArray="@array/cpbl_team_name"
-                app:npv_TextSizeSelected="16dp" />
+                app:npv_TextArray="@array/cpbl_team_name" />
 
             <TextView
                 android:id="@+id/picker_team_hint"
@@ -84,6 +85,11 @@
                 android:visibility="gone" />
         </FrameLayout>
         <!-- app:npv_HintText="@string/title_team" -->
+
+        <View
+            android:layout_width="@dimen/padding_medium"
+            android:layout_height="@dimen/padding_medium"
+            android:layout_weight="0" />
 
     </LinearLayout>
 
@@ -128,7 +134,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        app:adSize="BANNER"
+        app:adSize="SMART_BANNER"
         app:adUnitId="@string/tablet_ad_unit_id" />
 
     <View

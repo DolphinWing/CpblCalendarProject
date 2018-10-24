@@ -21,8 +21,8 @@
     <style name="Theme.Holo_green.Picker">
         <item name="npv_TextColorNormal">@color/holo_green_dark_darker</item>
         <item name="npv_TextColorSelected">@android:color/white</item>
-        <item name="npv_TextSizeNormal">14sp</item>
-        <item name="npv_TextSizeSelected">16sp</item>
+        <item name="npv_TextSizeNormal">14dp</item>
+        <item name="npv_TextSizeSelected">18dp</item>
         <item name="npv_ItemPaddingVertical">@dimen/padding_medium</item>
         <item name="npv_ItemPaddingHorizontal">2dp</item>
         <item name="npv_ShowCount">5</item>
