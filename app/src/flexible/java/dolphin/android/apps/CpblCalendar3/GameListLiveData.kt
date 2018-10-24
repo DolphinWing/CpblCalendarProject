@@ -97,107 +97,112 @@ import java.util.concurrent.ExecutorService
             this.monthOfJava == monthOfJava -> {
                 val time = Game.getGameTime(year, this.monthOfJava + 1, dayOfMonth,
                         18, 35)
-                postValue(GameResource(year, this.monthOfJava, arrayListOf(
-                        Game(id + 1, time).apply {
-                            IsFinal = true
-                            StartTime.add(Calendar.DAY_OF_MONTH, -1)
-                            AwayTeam = Team(context, Team.ID_FUBON_GUARDIANS, false)
-                            HomeTeam = Team(context, Team.ID_LAMIGO_MONKEYS, true)
-                            AwayScore = random.nextInt(20)
-                            HomeScore = random.nextInt(20)
-                            FieldId = "F04"
-                        },
-                        Game(id + 2, time).apply {
-                            IsFinal = true
-                            StartTime.add(Calendar.DAY_OF_MONTH, -1)
-                            AwayTeam = Team(context, Team.ID_CT_ELEPHANTS, false)
-                            HomeTeam = Team(context, Team.ID_UNI_711_LIONS, true)
-                            HomeScore = random.nextInt(20)
-                            AwayScore = random.nextInt(20)
-                            FieldId = "F02"
-                        },
-                        Game(id + 3, time).apply {
-                            StartTime.timeInMillis = now.timeInMillis //reset start time
-                            StartTime.add(Calendar.HOUR_OF_DAY, -1) //the game should be started
-                            IsLive = true
-                            LiveMessage = "LIVE!! TOP 3"
-                            AwayTeam = Team(context, Team.ID_UNKNOWN_AWAY, false)
-                            HomeTeam = Team(context, Team.ID_UNKNOWN_HOME, true)
-                            HomeScore = random.nextInt(20)
-                            AwayScore = random.nextInt(20)
-                            FieldId = "F26"
-                            Field = "Tainan"
-                        },
-                        Game(id + 4, time).apply {
-                            StartTime.timeInMillis = now.timeInMillis //reset start time
-                            StartTime.add(Calendar.HOUR_OF_DAY, -1) //the game should be started
-                            IsLive = true
-                            LiveMessage = "LIVE!! BOT 7"
-                            AwayTeam = Team(context, Team.ID_FUBON_GUARDIANS, false)
-                            HomeTeam = Team(context, Team.ID_LAMIGO_MONKEYS, true)
-                            AwayScore = random.nextInt(20)
-                            HomeScore = random.nextInt(20)
-                            FieldId = "F04"
-                            Field = "Taipei"
-                        },
-                        Game(id + 5, time).apply {
-                            StartTime.add(Calendar.DAY_OF_MONTH, 1)
-                            AwayTeam = Team(context, Team.ID_CHINESE_TAIPEI, false)
-                            HomeTeam = Team(context, Team.ID_SOUTH_KOREA, true)
-                            FieldId = "F08"
-                        })))
+                postValue(GameResource(year, this.monthOfJava, progress = 100,
+                        dataList = arrayListOf(
+                                Game(id + 1, time).apply {
+                                    IsFinal = true
+                                    StartTime.add(Calendar.DAY_OF_MONTH, -1)
+                                    AwayTeam = Team(context, Team.ID_FUBON_GUARDIANS, false)
+                                    HomeTeam = Team(context, Team.ID_LAMIGO_MONKEYS, true)
+                                    AwayScore = random.nextInt(20)
+                                    HomeScore = random.nextInt(20)
+                                    FieldId = "F04"
+                                },
+                                Game(id + 2, time).apply {
+                                    IsFinal = true
+                                    StartTime.add(Calendar.DAY_OF_MONTH, -1)
+                                    AwayTeam = Team(context, Team.ID_CT_ELEPHANTS, false)
+                                    HomeTeam = Team(context, Team.ID_UNI_711_LIONS, true)
+                                    HomeScore = random.nextInt(20)
+                                    AwayScore = random.nextInt(20)
+                                    FieldId = "F02"
+                                },
+                                Game(id + 3, time).apply {
+                                    StartTime.timeInMillis = now.timeInMillis //reset start time
+                                    StartTime.add(Calendar.HOUR_OF_DAY,
+                                            -1) //the game should be started
+                                    IsLive = true
+                                    LiveMessage = "LIVE!! TOP 3"
+                                    AwayTeam = Team(context, Team.ID_UNKNOWN_AWAY, false)
+                                    HomeTeam = Team(context, Team.ID_UNKNOWN_HOME, true)
+                                    HomeScore = random.nextInt(20)
+                                    AwayScore = random.nextInt(20)
+                                    FieldId = "F26"
+                                    Field = "Tainan"
+                                },
+                                Game(id + 4, time).apply {
+                                    StartTime.timeInMillis = now.timeInMillis //reset start time
+                                    StartTime.add(Calendar.HOUR_OF_DAY,
+                                            -1) //the game should be started
+                                    IsLive = true
+                                    LiveMessage = "LIVE!! BOT 7"
+                                    AwayTeam = Team(context, Team.ID_FUBON_GUARDIANS, false)
+                                    HomeTeam = Team(context, Team.ID_LAMIGO_MONKEYS, true)
+                                    AwayScore = random.nextInt(20)
+                                    HomeScore = random.nextInt(20)
+                                    FieldId = "F04"
+                                    Field = "Taipei"
+                                },
+                                Game(id + 5, time).apply {
+                                    StartTime.add(Calendar.DAY_OF_MONTH, 1)
+                                    AwayTeam = Team(context, Team.ID_CHINESE_TAIPEI, false)
+                                    HomeTeam = Team(context, Team.ID_SOUTH_KOREA, true)
+                                    FieldId = "F08"
+                                })))
             }
             this.monthOfJava > monthOfJava -> {
                 val time = Game.getGameTime(year, this.monthOfJava + 1, 28, 18, 35)
-                postValue(GameResource(year, this.monthOfJava, arrayListOf(
-                        Game(id + 1, time).apply {
-                            StartTime.add(Calendar.DAY_OF_MONTH, -1)
-                            IsFinal = true
-                            DelayMessage = "delayed"
-                            AwayTeam = Team(context, Team.ID_SINON_BULLS, false)
-                            HomeTeam = Team(context, Team.ID_EDA_RHINOS, true)
-                            FieldId = "F09"
-                            HomeScore = random.nextInt(20)
-                            AwayScore = random.nextInt(20)
-                        },
-                        Game(id + 2, time).apply {
-                            IsFinal = true
-                            AwayTeam = Team(context, Team.ID_MKT_COBRAS, false)
-                            HomeTeam = Team(context, Team.ID_MKT_SUNS, true)
-                            FieldId = "F11"
-                            HomeScore = random.nextInt(20)
-                            AwayScore = random.nextInt(20)
-                        },
-                        Game(id + 3, time).apply {
-                            IsFinal = true
-                            AwayTeam = Team(context, Team.ID_FIRST_KINGO)
-                            HomeTeam = Team(context, Team.ID_CT_WHALES, true)
-                            FieldId = "F26"
-                            HomeScore = random.nextInt(20)
-                            AwayScore = random.nextInt(20)
-                        })))
+                postValue(GameResource(year, this.monthOfJava, progress = 100,
+                        dataList = arrayListOf(
+                                Game(id + 1, time).apply {
+                                    StartTime.add(Calendar.DAY_OF_MONTH, -1)
+                                    IsFinal = true
+                                    DelayMessage = "delayed"
+                                    AwayTeam = Team(context, Team.ID_SINON_BULLS, false)
+                                    HomeTeam = Team(context, Team.ID_EDA_RHINOS, true)
+                                    FieldId = "F09"
+                                    HomeScore = random.nextInt(20)
+                                    AwayScore = random.nextInt(20)
+                                },
+                                Game(id + 2, time).apply {
+                                    IsFinal = true
+                                    AwayTeam = Team(context, Team.ID_MKT_COBRAS, false)
+                                    HomeTeam = Team(context, Team.ID_MKT_SUNS, true)
+                                    FieldId = "F11"
+                                    HomeScore = random.nextInt(20)
+                                    AwayScore = random.nextInt(20)
+                                },
+                                Game(id + 3, time).apply {
+                                    IsFinal = true
+                                    AwayTeam = Team(context, Team.ID_FIRST_KINGO)
+                                    HomeTeam = Team(context, Team.ID_CT_WHALES, true)
+                                    FieldId = "F26"
+                                    HomeScore = random.nextInt(20)
+                                    AwayScore = random.nextInt(20)
+                                })))
             }
             this.monthOfJava < monthOfJava -> {
                 val time = Game.getGameTime(year, this.monthOfJava + 1, 1, 18, 35)
-                postValue(GameResource(year, this.monthOfJava, arrayListOf(
-                        Game(id + 1, time).apply {
-                            DelayMessage = "original $year/$monthOfJava/$dayOfMonth"
-                            AwayTeam = Team(context, Team.ID_SS_TIGERS, false)
-                            HomeTeam = Team(context, Team.ID_W_DRAGONS, true)
-                            FieldId = "F19"
-                        },
-                        Game(id + 2, time).apply {
-                            Channel = "CPBL TV"
-                            AwayTeam = Team(context, Team.ID_JUNGO_BEARS)
-                            HomeTeam = Team(context, Team.ID_ELEPHANTS, true)
-                            FieldId = "F05"
-                        },
-                        Game(id + 3, time).apply {
-                            StartTime.add(Calendar.DAY_OF_MONTH, 1)
-                            AwayTeam = Team(context, Team.ID_TIME_EAGLES)
-                            HomeTeam = Team(context, Team.ID_LANEW_BEARS, true)
-                            FieldId = "F03"
-                        })))
+                postValue(GameResource(year, this.monthOfJava, progress = 100,
+                        dataList = arrayListOf(
+                                Game(id + 1, time).apply {
+                                    DelayMessage = "original $year/$monthOfJava/$dayOfMonth"
+                                    AwayTeam = Team(context, Team.ID_SS_TIGERS, false)
+                                    HomeTeam = Team(context, Team.ID_W_DRAGONS, true)
+                                    FieldId = "F19"
+                                },
+                                Game(id + 2, time).apply {
+                                    Channel = "CPBL TV"
+                                    AwayTeam = Team(context, Team.ID_JUNGO_BEARS)
+                                    HomeTeam = Team(context, Team.ID_ELEPHANTS, true)
+                                    FieldId = "F05"
+                                },
+                                Game(id + 3, time).apply {
+                                    StartTime.add(Calendar.DAY_OF_MONTH, 1)
+                                    AwayTeam = Team(context, Team.ID_TIME_EAGLES)
+                                    HomeTeam = Team(context, Team.ID_LANEW_BEARS, true)
+                                    FieldId = "F03"
+                                })))
             }
         }
     }
