@@ -1,3 +1,10 @@
+[1091] @ 2018-10-25
+    fix filter pane may not fit the window
+        we can test it when system font size is large/huge
+        use dp to replace sp
+    add ListActivity to support start year/month override from FirebaseRemoteConfig
+    add HighlightFragment download games disable from FirebaseRemoteConfig
+
 [1090] @ 2018-10-22
     add HighlightViewFragment
     add enable highlight on load option
