@@ -1,3 +1,7 @@
+[1092] @ 2018-10-30
+    fix possible IllegalStateException when Fragment not attached
+    upgrade kotlin to 1.3
+
 [1091] @ 2018-10-25
     fix filter pane may not fit the window
         we can test it when system font size is large/huge
