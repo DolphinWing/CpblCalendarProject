@@ -1,3 +1,9 @@
+# CpblCalendar4
+
+A CPBL Calendar port in Flutter
+
+## Getting Started
+
 快速提供中華職棒大聯盟的賽程資料，也可以查詢歷史結果
 
 本程式為非官方提供，故資料有不準確的地方敬請見諒。
