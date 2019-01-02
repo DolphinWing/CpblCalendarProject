@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
 
+import 'drawer.dart';
+import 'content.dart';
 import 'lang.dart';
 
 void main() => runApp(MyApp());
@@ -91,29 +93,39 @@ class _SplashScreenState extends State<SplashScreen> {
 
 class MainUiWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => MainUiWidgetState();
+  State<StatefulWidget> createState() => _MainUiWidgetState();
 }
 
-class MainUiWidgetState extends State<MainUiWidget> {
+class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        endDrawer: Drawer(
-          //constraints: BoxConstraints(minWidth: 240),
-          child: Column(
-            children: <Widget>[
-              Text('drawer'),
-              //Expanded(child: SizedBox()),
-            ],
-          ),
-          //color: Colors.white,
+        appBar: AppBar(
+          title: Text(Lang.of(context).trans('app_name')),
+          actions: <Widget>[
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text('xxx'),
+                    ),
+                    PopupMenuItem(
+                      child: Text('xxx'),
+                    ),
+                  ],
+            ),
+          ],
         ),
-        body: Text(Lang.of(context).trans('app_name')),
+        endDrawer: DrawerPane(),
+        body: ContentUiWidget(
+          loading: loading,
+        ),
         floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.search,
