@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       },
       home: SplashScreen(),
       routes: {
-        '/calendar': (context) => MainUiWidget(),
+        '/calendar': (context) => MainUiWidget(debug: true),
       },
     );
   }
@@ -96,6 +96,10 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class MainUiWidget extends StatefulWidget {
+  final bool debug;
+
+  MainUiWidget({this.debug = false});
+
   @override
   State<StatefulWidget> createState() => _MainUiWidgetState();
 }
@@ -113,30 +117,42 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   void initState() {
     super.initState();
     client = new CpblClient();
-    //client.fetchList(2018, 11);
-    setState(() {
-      loading = true;
-    });
-    _timer = new Timer(const Duration(seconds: 2), () {
-      setState(() {
-        list = new List();
-        for (int i = 0; i < 10; i++) {
-          list.add(new Game(
-            id: i + 1,
-            home: Team.simple(TeamId.values[i % TeamId.values.length], true),
-            away: Team.simple(TeamId.values[(i + 10) % TeamId.values.length], false),
-            fieldId: FieldId.values[i % FieldId.values.length]
-          ));
-        }
-        loading = false;
-      });
-    });
+    //var now = DateTime.now();
+    pullToRefresh(2018, 11, widget.debug);
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void pullToRefresh(int year, int month, [bool debug = false]) {
+    setState(() {
+      loading = true;
+    });
+    if (debug) {
+      _timer = new Timer(const Duration(seconds: 2), () {
+        setState(() {
+          list = new List();
+          for (int i = 0; i < 10; i++) {
+            list.add(new Game(
+                id: i + 1,
+                home: Team.simple(TeamId.values[i % TeamId.values.length], true),
+                away: Team.simple(TeamId.values[(i + 10) % TeamId.values.length], false),
+                fieldId: FieldId.values[i % FieldId.values.length]));
+          }
+          loading = false;
+        });
+      });
+    } else {
+      client.fetchList(year, month).then((gameList) {
+        setState(() {
+          list = gameList;
+          loading = false;
+        });
+      });
+    }
   }
 
   @override
@@ -161,7 +177,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           //leading: new Container(),
           automaticallyImplyLeading: false,
         ),
-        endDrawer: DrawerPane(),
+        endDrawer: DrawerPane(
+          onPressed: (action) {
+            print('query ${action.year}/${action.month} ${action.field}');
+            //pullToRefresh(action.year, action.month);
+          },
+        ),
         body: ContentUiWidget(
           loading: loading,
           list: list,
