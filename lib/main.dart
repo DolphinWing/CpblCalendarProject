@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
 
-import 'drawer.dart';
 import 'content.dart';
+import 'cpbl.dart';
+import 'drawer.dart';
 import 'lang.dart';
 
 void main() => runApp(MyApp());
@@ -18,7 +19,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      supportedLocales: [const Locale('en', 'US'), const Locale('zh', 'TW')],
+      supportedLocales: [
+        //const Locale('en', 'US'),
+        const Locale('zh', 'TW'),
+      ],
       localizationsDelegates: [
         const LangLocalizationsDelegate(),
         const FallbackCupertinoLocalisationsDelegate(),
@@ -99,8 +103,41 @@ class MainUiWidget extends StatefulWidget {
 class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+  Timer _timer;
+  CpblClient client;
 
   bool loading = false;
+  List<Game> list;
+
+  @override
+  void initState() {
+    super.initState();
+    client = new CpblClient();
+    //client.fetchList(2018, 11);
+    setState(() {
+      loading = true;
+    });
+    _timer = new Timer(const Duration(seconds: 2), () {
+      setState(() {
+        list = new List();
+        for (int i = 0; i < 10; i++) {
+          list.add(new Game(
+            id: i + 1,
+            home: Team.simple(TeamId.values[i % TeamId.values.length], true),
+            away: Team.simple(TeamId.values[(i + 10) % TeamId.values.length], false),
+            fieldId: FieldId.values[i % FieldId.values.length]
+          ));
+        }
+        loading = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,10 +158,13 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                   ],
             ),
           ],
+          //leading: new Container(),
+          automaticallyImplyLeading: false,
         ),
         endDrawer: DrawerPane(),
         body: ContentUiWidget(
           loading: loading,
+          list: list,
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(

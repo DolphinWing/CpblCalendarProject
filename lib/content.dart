@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'cpbl.dart';
 
 class UiMode {
@@ -20,17 +21,57 @@ class ContentUiWidget extends StatefulWidget {
 
 class _ContentUiWidgetState extends State<ContentUiWidget> {
   Widget buildGameWidget(BuildContext context, Game game) {
-    return Text('');
+    return new Container(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 2, bottom: 2),
+      child: Column(
+        children: <Widget>[
+          //Divider(),
+          Row(
+            children: <Widget>[
+              Text(game.getDisplayTime()),
+              Expanded(child: SizedBox()),
+              Text('${game.getGameType(context)} ${game.id}'),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(child: Text(game.home.getDisplayName(context))),
+              Text('${game.home.score}'),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(child: Text(game.away.getDisplayName(context))),
+              Text('${game.away.score}'),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text(game.getFieldName(context)),
+            ],
+          ),
+          game.extra != null ? Text('${game.extra}') : SizedBox(height: 1),
+          //Divider(),
+        ],
+      ),
+    );
   }
 
   Widget buildContent(BuildContext context, List<Game> list, int mode) {
-    return ListView();
+    List<Widget> widgetList = new List();
+    list?.forEach((game) {
+      widgetList.add(buildGameWidget(context, game));
+    });
+    return ListView(
+      children: widgetList,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return widget.loading
         ? Stack(
+            alignment: Alignment.center,
             children: <Widget>[
               buildContent(context, widget.list, widget.mode),
               Positioned(child: CircularProgressIndicator(), top: 200),
