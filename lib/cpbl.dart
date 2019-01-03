@@ -106,12 +106,12 @@ class Game {
 
   final int id;
   final GameType type;
-
-  final Team home;
-  final Team away;
-
-  final FieldId fieldId;
   final DateTime _time;
+
+  Team home;
+  Team away;
+
+  FieldId fieldId;
 
   bool isDelayed;
   bool isFinal;
@@ -134,6 +134,7 @@ class CpblClient {
   static const _url = 'http://www.cpbl.com.tw/schedule';
 
   Future<List<Game>> fetchList(int year, int month) async {
+    print('start fetch $year/$month');
     final response = await http.get(
       '$_url/index/$year-$month-01.html?&date=$year-$month-01&gameno=01&sfieldsub=',
     );
@@ -166,40 +167,12 @@ class CpblClient {
           print('game id = $id');
           RegExp expDate = new RegExp('game_date=([\\d]+)-([\\d]+)-([\\d]+)');
           var date = expDate.firstMatch(block);
+          int day = i;
           if (date != null) {
             print('>>> date: ${date.group(1)} ${date.group(2)} ${date.group(3)}');
+            day = int.parse(date.group(3));
           }
-          if (block.contains("schedule_info")) {
-            var info = block.split("schedule_info");
-            //schedule_info[1] contains game id and if this is delayed game or not
-            if (info.length > 1) {
-              var extras = info[1].split("<th");
-              if (info[1].contains('class="sp"')) {
-                if (extras.length > 1) {//check delay game
-                  String extraTitle = extras[1];
-                  extraTitle = extraTitle.substring(extraTitle.indexOf(">") + 1,
-                      extraTitle.indexOf("</th"));
-                  extraTitle = extraTitle.replaceAll('\r', '').replaceAll('\n', '').trim();
-                }
-                print('>>> delayed game');
-              }
-              if (extras.length > 3) { //more info to find
-                String data = extras[3];
-                data = data.substring(data.indexOf(">") + 1, data.indexOf("</th"));
-              }
-            }
-            //schedule_info[2] contains results
-            if (info.length > 2 && info[2].contains("schedule_score")) {
-              RegExp expScore = new RegExp('schedule_score[^>]*>([\\d]+)');
-              Iterable<Match> scores = expScore.allMatches(info[2]);
-              if (scores.length >= 2) {
-                var s1 = scores.elementAt(0).group(1);
-                var s2 = scores.elementAt(1).group(1);
-                print('  score $s1 vs $s2');
-              }
-            }
-            //schedule_info[3] contains delay messages
-          }
+          Game g = new Game(id: int.parse(id), time: new DateTime(year, month, day));
           if (block.contains('class="schedule_team')) {
             String matchUpPlace = block.substring(block.indexOf('class="schedule_team'));
             matchUpPlace = matchUpPlace.substring(0, matchUpPlace.indexOf("</table"));
@@ -218,6 +191,40 @@ class CpblClient {
               print('no match up');
             }
           }
+          if (block.contains("schedule_info")) {
+            var info = block.split("schedule_info");
+            //schedule_info[1] contains game id and if this is delayed game or not
+            if (info.length > 1) {
+              var extras = info[1].split("<th");
+              if (info[1].contains('class="sp"')) {
+                if (extras.length > 1) {
+                  //check delay game
+                  String extraTitle = extras[1];
+                  extraTitle =
+                      extraTitle.substring(extraTitle.indexOf(">") + 1, extraTitle.indexOf("</th"));
+                  extraTitle = extraTitle.replaceAll('\r', '').replaceAll('\n', '').trim();
+                }
+                print('>>> delayed game');
+              }
+              if (extras.length > 3) {
+                //more info to find
+                String data = extras[3];
+                data = data.substring(data.indexOf(">") + 1, data.indexOf("</th"));
+              }
+            }
+            //schedule_info[2] contains results
+            if (info.length > 2 && info[2].contains("schedule_score")) {
+              RegExp expScore = new RegExp('schedule_score[^>]*>([\\d]+)');
+              Iterable<Match> scores = expScore.allMatches(info[2]);
+              if (scores.length >= 2) {
+                var s1 = scores.elementAt(0).group(1);
+                var s2 = scores.elementAt(1).group(1);
+                print('  score $s1 vs $s2');
+              }
+            }
+            //schedule_info[3] contains delay messages
+          }
+          list.add(g);
         }
       } else {
         print('no data');
@@ -225,6 +232,7 @@ class CpblClient {
     } else {
       print('status code: ${response?.statusCode}');
     }
+    print('game list size: ${list.length}');
     return list;
   }
 }
