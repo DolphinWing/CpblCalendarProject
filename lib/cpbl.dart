@@ -241,10 +241,14 @@ class CpblClient {
     fieldMap[Lang.of(context).trans('cpbl_game_field_name_f19r')] = FieldId.f19;
     fieldMap[Lang.of(context).trans('cpbl_game_field_name_f23r')] = FieldId.f23;
     fieldMap[Lang.of(context).trans('cpbl_game_field_name_f26r')] = FieldId.f26;
+  }
+
+  Future<int> init() async {
     //prepare first read
-    _client.read(_url).then((html) {
+    await _client.read('http://www.cpbl.com.tw')/*.then((html) {
       print('html = ${html.length}');
-    });
+    })*/;
+    return 0;
   }
 
   Future<List<Game>> fetchList(int year, int month, [GameType type = GameType.type_01]) async {
@@ -265,7 +269,7 @@ class CpblClient {
 //    //.timeout(const Duration(seconds: 5), onTimeout: () => '');
     List<Game> list = new List();
     String html = response?.body ?? '';
-    print('response.body ${html?.length} ${html.indexOf('one_block')}');
+    //print('response.body ${html?.length} ${html.indexOf('one_block')}');
     if (html?.contains('<div class="one_block"') == true) {
       html = html.substring(0, html.indexOf('<div class="footer">'));
 //        var tdDays = html.split('<td valign="top">');
@@ -279,7 +283,7 @@ class CpblClient {
 //          }
 //        });
       var oneBlock = html.split('<div class="one_block"');
-      print('blocks: ${oneBlock.length}');
+      //print('blocks: ${oneBlock.length}');
       for (int i = 1; i < oneBlock.length; i++) {
         //print('$i) ${oneBlock[i]}');
         var block = oneBlock[i];
@@ -341,7 +345,7 @@ class CpblClient {
         homeTeam = homeTeam.substring(homeTeam.indexOf('images/team/'));
         homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
         g.home = Team.parse(homeTeam, year, true);
-        print('${g.id} $awayTeam vs $homeTeam @$place');
+        //print('${g.id} $awayTeam vs $homeTeam @$place');
       } else {
         print('no match up');
       }

@@ -127,7 +127,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     new Future.delayed(Duration.zero, () {
       client = new CpblClient(context);
       //var now = DateTime.now();
-      pullToRefresh(2018, 10, debug: widget.debug);
+      client.init().then((value) {
+        pullToRefresh(2018, 10, debug: widget.debug);
+      });
     });
   }
 
