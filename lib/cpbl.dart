@@ -208,7 +208,8 @@ class Game {
 }
 
 class CpblClient {
-  static const _url = 'http://www.cpbl.com.tw/schedule';
+  static const homeUrl = 'http://www.cpbl.com.tw';
+  static const _scheduleUrl = '$homeUrl/schedule';
 
   String _padLeft(int num) => num.toString().padLeft(2, '0');
 
@@ -245,14 +246,16 @@ class CpblClient {
 
   Future<int> init() async {
     //prepare first read
-    await _client.read('http://www.cpbl.com.tw')/*.then((html) {
-      print('html = ${html.length}');
-    })*/;
+    await _client.read(homeUrl)
+//    .then((html) {
+//      print('html = ${html.length}');
+//    })
+        ;
     return 0;
   }
 
   Future<List<Game>> fetchList(int year, int month, [GameType type = GameType.type_01]) async {
-    String url = '$_url/index/$year-$month-01.html?'
+    String url = '$_scheduleUrl/index/$year-$month-01.html?'
         '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=${type.toString().substring(14)}';
     print(url);
 
@@ -362,12 +365,11 @@ class CpblClient {
         if (info[1].contains('class="sp"')) {
           if (extras.length > 1) {
             //check delay game
-            String extraTitle = extras[1];
-            //print('extraTitle = $extraTitle');
-            extraTitle =
-                extraTitle.substring(extraTitle.indexOf('>') + 1, extraTitle.indexOf('</th'));
-            extraTitle = extraTitle.replaceAll('\r', '').replaceAll('\n', '').trim();
-            g.extra = extraTitle;
+            String title = extras[1];
+            //print('title = $title');
+            title = title.substring(title.indexOf('>') + 1, title.indexOf('</th'));
+            title = title.replaceAll('\r', '').replaceAll('\n', '').trim();
+            g.extra = title;
           }
           //print('>>> delayed game');
           g.isDelayed = true;
@@ -454,7 +456,7 @@ class CpblClient {
       } catch (e) {
         e.printStackTrace();
       }
-      g.url = url != null ? '$_url$url' : g.url;
+      g.url = url != null ? '$_scheduleUrl$url' : g.url;
 
       //dolphin++@20180821: keep games may not update correctly in CPBL website
       g.refreshStatus();
@@ -470,7 +472,7 @@ class CpblClient {
       } catch (e) {
         e.printStackTrace();
       }
-      g.url = url != null ? '$_url$url' : g.url;
+      g.url = url != null ? '$_scheduleUrl$url' : g.url;
     } else if (block?.contains("onClick") == true) {
       g.isFinal = true; //no playing
     }

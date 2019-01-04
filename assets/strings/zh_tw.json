@@ -1,5 +1,8 @@
 {
   "app_name": "中職賽程快查",
+  "action_settings": "設定",
+  "action_refresh": "更新",
+  "action_go_to_website": "前往中華職棒網站",
   "cpbl_game_field_name_f00": "所有球場",
   "cpbl_game_field_name_f01": "羅東",
   "cpbl_game_field_name_f02": "新竹",

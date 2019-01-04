@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'content.dart';
 import 'cpbl.dart';
@@ -54,6 +56,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  RemoteConfig remoteConfig;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -89,6 +93,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() async {
+    remoteConfig = await RemoteConfig.instance;
+    final defaults = <String, dynamic>{'welcome': 'default welcome'};
+    await remoteConfig.setConfigSettings(new RemoteConfigSettings(debugMode: true));
+    await remoteConfig.setDefaults(defaults);
+    await remoteConfig.fetch(expiration: const Duration(hours: 5));
+    await remoteConfig.activateFetched();
+    print('welcome message: ${remoteConfig.getString('welcome')}');
+    print('  override: ${remoteConfig.getBool('override_start_enabled')}');
+
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
     Navigator.of(context).pushReplacementNamed('/calendar');
@@ -105,6 +118,8 @@ class MainUiWidget extends StatefulWidget {
 }
 
 class _MainUiWidgetState extends State<MainUiWidget> {
+  RemoteConfig remoteConfig;
+
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
@@ -124,11 +139,21 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
-    new Future.delayed(Duration.zero, () {
+    new Future.delayed(Duration.zero, () async {
+      //loaded in splash
+      remoteConfig = await RemoteConfig.instance;
+      int year = 2018;
+      int month = 10;
+      if (remoteConfig.getBool('override_start_enabled')) {
+        year = remoteConfig.getInt('override_start_year');
+        month = remoteConfig.getInt('override_start_month');
+        print('override: year=$year month=$month');
+      }
+
       client = new CpblClient(context);
       //var now = DateTime.now();
       client.init().then((value) {
-        pullToRefresh(2018, 10, debug: widget.debug);
+        pullToRefresh(year, month, debug: widget.debug);
       });
     });
   }
@@ -178,15 +203,38 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         appBar: AppBar(
           title: Text(Lang.of(context).trans('app_name')),
           actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                pullToRefresh(_year, _month, type: _type);
+              },
+              tooltip: Lang.of(context).trans('action_refresh'),
+            ),
             PopupMenuButton(
               itemBuilder: (context) => [
                     PopupMenuItem(
-                      child: Text('xxx'),
+                      value: 0,
+                      child: Text(Lang.of(context).trans('action_go_to_website')),
                     ),
                     PopupMenuItem(
-                      child: Text('xxx'),
+                      value: 1,
+                      child: Text(Lang.of(context).trans('action_settings')),
                     ),
                   ],
+              onSelected: (action) async {
+                //print('selected option $action');
+                switch (action) {
+                  case 0:
+                    if (await canLaunch(CpblClient.homeUrl)) {
+                      await launch(CpblClient.homeUrl);
+                    } else {
+                      throw 'Could not launch ${CpblClient.homeUrl}';
+                    }
+                    break;
+                  case 1:
+                    break;
+                }
+              },
             ),
           ],
           //leading: new Container(),
