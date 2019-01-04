@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+
 import 'cpbl.dart';
 
 class Query {
   int year;
   int month;
   FieldId field;
+  GameType type;
 
-  Query({this.year, this.month, this.field = FieldId.f00});
+  Query({this.year, this.month, this.field = FieldId.f00, this.type = GameType.type_01});
 }
 
 class DrawerPane extends StatefulWidget {
   final ValueChanged<Query> onPressed;
   final int year;
   final int month;
+  final GameType type;
 
-  DrawerPane({this.year = 2018, this.month = 10, this.onPressed});
+  DrawerPane({this.year = 2018, this.month = 10, this.type = GameType.type_01, this.onPressed});
 
   @override
   State<StatefulWidget> createState() => _DrawerPaneState();
@@ -24,6 +27,7 @@ class _DrawerPaneState extends State<DrawerPane> {
   int _year;
   int _month;
   FieldId _field;
+  GameType _type;
 
   @override
   void initState() {
@@ -33,6 +37,7 @@ class _DrawerPaneState extends State<DrawerPane> {
       _year = widget.year;
       _month = widget.month;
       _field = FieldId.f00;
+      _type = widget.type;
     });
   }
 
@@ -73,6 +78,15 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
+                  Text('type'),
+                  _TypeMenuWidget(
+                    type: widget.type,
+                    onValueChanged: (value) {
+                      setState(() {
+                        _type = value;
+                      });
+                    },
+                  ),
                   Text('teams'),
                   _TeamMenuWidget(),
                 ],
@@ -90,6 +104,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                       year: _year,
                       month: _month,
                       field: _field,
+                      type: _type,
                     ));
                   }
                 },
@@ -236,6 +251,13 @@ class _FieldMenuWidgetState extends State<_FieldMenuWidget> {
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<FieldId>> list = new List();
+    FieldId.values.forEach((id) {
+      list.add(DropdownMenuItem(
+        value: id,
+        child: Text(CpblClient.getFieldName(context, id)),
+      ));
+    });
     return DropdownButton<FieldId>(
       value: _id,
       onChanged: (value) {
@@ -246,12 +268,60 @@ class _FieldMenuWidgetState extends State<_FieldMenuWidget> {
           widget.onValueChanged(value);
         }
       },
-      items: [
-        DropdownMenuItem(
-          value: FieldId.f00,
-          child: Text(CpblClient.getFieldName(context, FieldId.f00)),
-        ),
-      ],
+      items: list,
+      isExpanded: true,
+    );
+  }
+}
+
+class _TypeMenuWidget extends StatefulWidget {
+  final ValueChanged<GameType> onValueChanged;
+  final GameType type;
+
+  _TypeMenuWidget({this.type = GameType.type_01, this.onValueChanged});
+
+  @override
+  State<StatefulWidget> createState() => _TypeMenuWidgetState();
+}
+
+class _TypeMenuWidgetState extends State<_TypeMenuWidget> {
+  static const List<GameType> TYPES = [
+    GameType.type_01,
+    GameType.type_03,
+    GameType.type_05,
+    GameType.type_07,
+  ];
+
+  GameType _type;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _type = widget.type;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<DropdownMenuItem<GameType>> list = new List();
+    TYPES.forEach((type) {
+      list.add(DropdownMenuItem(
+        value: type,
+        child: Text(CpblClient.getGameType(context, type)),
+      ));
+    });
+    return DropdownButton<GameType>(
+      value: _type,
+      items: list,
+      onChanged: (value) {
+        setState(() {
+          _type = value;
+        });
+        if (widget.onValueChanged != null) {
+          widget.onValueChanged(value);
+        }
+      },
       isExpanded: true,
     );
   }

@@ -131,7 +131,6 @@ enum FieldId {
   f13,
   f14,
   f15,
-  f16,
   f17,
   f19,
   f23,
@@ -248,9 +247,9 @@ class CpblClient {
     });
   }
 
-  Future<List<Game>> fetchList(int year, int month) async {
+  Future<List<Game>> fetchList(int year, int month, [GameType type = GameType.type_01]) async {
     String url = '$_url/index/$year-$month-01.html?'
-        '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=01';
+        '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=${type.toString().substring(14)}';
     print(url);
 
 //    var request = await _client.getUrl(Uri.parse(url));

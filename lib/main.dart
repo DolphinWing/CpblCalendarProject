@@ -114,6 +114,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   bool loading = false;
   List<Game> list;
   bool scrollEnd = false;
+  int _year;
+  int _month;
+  GameType _type;
 
   @override
   void initState() {
@@ -124,7 +127,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     new Future.delayed(Duration.zero, () {
       client = new CpblClient(context);
       //var now = DateTime.now();
-      pullToRefresh(2018, 10, widget.debug);
+      pullToRefresh(2018, 10, debug: widget.debug);
     });
   }
 
@@ -134,9 +137,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     super.dispose();
   }
 
-  void pullToRefresh(int year, int month, [bool debug = false]) {
+  void pullToRefresh(int year, int month, {GameType type = GameType.type_01, bool debug = false}) {
     setState(() {
       loading = true;
+      _year = year;
+      _month = month;
+      _type = type;
     });
     if (debug) {
       _timer = new Timer(const Duration(seconds: 2), () {
@@ -153,7 +159,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         });
       });
     } else {
-      client.fetchList(year, month).then((gameList) {
+      client.fetchList(year, month, type).then((gameList) {
         setState(() {
           list = gameList;
           loading = false;
@@ -185,9 +191,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           automaticallyImplyLeading: false,
         ),
         endDrawer: DrawerPane(
+          year: _year,
+          month: _month,
+          type: _type,
           onPressed: (action) {
-            print('query ${action.year}/${action.month} ${action.field}');
-            pullToRefresh(action.year, action.month);
+            print('query ${action.year}/${action.month} ${action.field} ${action.type}');
+            pullToRefresh(action.year, action.month, type: action.type);
           },
         ),
         body: ContentUiWidget(
@@ -199,17 +208,19 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             });
           },
         ),
-        floatingActionButton: scrollEnd ? Container() : FloatingActionButton(
-          child: Icon(
-            Icons.search,
-            //color: Theme.of(context).primaryColor,
-          ),
-          onPressed: () {
-            //print('search');
-            //Scaffold.of(context).openEndDrawer();
-            _scaffoldKey.currentState.openEndDrawer();
-          },
-        ),
+        floatingActionButton: scrollEnd
+            ? Container()
+            : FloatingActionButton(
+                child: Icon(
+                  Icons.search,
+                  //color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {
+                  //print('search');
+                  //Scaffold.of(context).openEndDrawer();
+                  _scaffoldKey.currentState.openEndDrawer();
+                },
+              ),
       ),
     );
   }
