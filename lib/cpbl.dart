@@ -228,6 +228,17 @@ class Game {
       isDelayed = true;
     }
   }
+
+  bool before([DateTime time]) => _time.isBefore(time ?? DateTime.now());
+
+  bool after([DateTime time]) => _time.isAfter(time ?? DateTime.now());
+
+  bool isToday([DateTime time]) {
+    DateTime t = time ?? DateTime.now();
+    return t.year == _time.year && t.month == _time.month && t.day == _time.day;
+  }
+
+  int timeInMillis() => _time.millisecondsSinceEpoch;
 }
 
 class CpblClient {
@@ -251,6 +262,97 @@ class CpblClient {
     return fieldMap.containsKey(field) ? fieldMap[field] : FieldId.f00;
   }
 
+  static const String allstar_month_override = '4/6;6/11;8/6;10/8;11/8;13/6;';
+  static const String season_month_start_override = '8/2;9/2;15/2;19/3;';
+  static const String warmup_month_start_override = '19/2;';
+  static const String challenge_month_override =
+      '1998/10/11;1999/10;2005/10;2006/10;2007/10;2008/10;2017/10;2018/10';
+  static const String champ_month_override =
+      '1991/11;1992/0;1994/0;1995/0;1996/10/11;1998/11;1999/11;2004/11;2005/10/11;2008/10/11;2017/10/11;2018/10/11';
+
+  final Map<int, int> warmUpMonthOverrides = new Map();
+  final Map<int, int> allStarMonthOverrides = new Map();
+  final Map<int, int> seasonStartMonthOverrides = new Map();
+  final Map<int, String> challengeGames = new Map();
+  final Map<int, String> championMonthOverrides = new Map();
+
+  bool isWarmUpMonth(int year, int month) {
+    if (year < 2006) return false;
+    if (warmUpMonthOverrides.containsKey(year)) return warmUpMonthOverrides[year] == month;
+    return month == DateTime.march;
+  }
+
+  int getAllStarMonth(int year) => allStarMonthOverrides[year] ?? DateTime.july;
+
+  bool isAllStarMonth(int year, int month) => getAllStarMonth(year) == month;
+
+  bool isChallengeMonth(int year, int month) {
+    if (challengeGames.containsKey(year)) {
+      String monthStr = challengeGames[year];
+      if (monthStr.isEmpty) {
+        return false;
+      } else if (monthStr.contains('/')) {
+        monthStr.split('/').forEach((m) {
+          if (int.parse(m) == month) {
+            return true;
+          }
+        });
+      } else {
+        return int.parse(monthStr) == month;
+      }
+    }
+    return false;
+  }
+
+  bool isChampionMonth(int year, int month) {
+    if (championMonthOverrides.containsKey(year)) {
+      String monthStr = championMonthOverrides[year];
+      if (monthStr.isEmpty) {
+        return false;
+      } else if (monthStr.contains('/')) {
+        monthStr.split('/').forEach((m) {
+          if (int.parse(m) == month) {
+            return true;
+          }
+        });
+      } else {
+        return int.parse(monthStr) == month;
+      }
+    } else {
+      return month == DateTime.october;
+    }
+    return false;
+  }
+
+  bool hasGames(int year, int month) {
+    switch (month) {
+      case DateTime.january:
+      case DateTime.december:
+        return false;
+
+      //check season start
+      case DateTime.february:
+      case DateTime.march:
+        if (year < 2006) {
+          if (seasonStartMonthOverrides.containsKey(year)) {
+            return seasonStartMonthOverrides[year] <= month;
+          } else {
+            return DateTime.march <= month;
+          }
+        } else {
+          //we have warm up games
+          return isWarmUpMonth(year, month);
+        }
+        break;
+
+      case DateTime.november:
+        return isChampionMonth(year, month);
+
+      default:
+        return true;
+    }
+  }
+
 //  HttpClient _client;
   var _client = new http.Client();
   final RemoteConfig _configs;
@@ -272,19 +374,65 @@ class CpblClient {
   }
 
   Future<int> init() async {
+    cachedGameList.clear(); //clear cache
+
     //prepare first read
     await _client.read(homeUrl)
 //    .then((html) {
 //      print('html = ${html.length}');
 //    })
         ;
+    //load warm up overrides
+    var warm = warmup_month_start_override.split(';');
+    warm.forEach((value) {
+      if (value.isNotEmpty && value.contains('/')) {
+        var ym = value.split('/');
+        warmUpMonthOverrides.putIfAbsent(int.parse(ym[0]) + 1989, () => int.parse(ym[1]));
+      }
+    });
+    //load all star override
+    var allStar = allstar_month_override.split(';');
+    allStar.forEach((value) {
+      if (value.isNotEmpty && value.contains('/')) {
+        var ym = value.split('/');
+        allStarMonthOverrides.putIfAbsent(int.parse(ym[0]) + 1989, () => int.parse(ym[1]));
+      }
+    });
+    //load season start override
+    var season = season_month_start_override.split(';');
+    season.forEach((value) {
+      if (value.isNotEmpty && value.contains('/')) {
+        var ym = value.split('/');
+        seasonStartMonthOverrides.putIfAbsent(int.parse(ym[0]) + 1989, () => int.parse(ym[1]));
+      }
+    });
+    //load challenge games
+    var challenge = challenge_month_override.split(';');
+    challenge.forEach((value) {
+      if (value.isNotEmpty && value.contains('/')) {
+        var ym = value.split('/');
+        challengeGames.putIfAbsent(int.parse(ym[0]), () => ym[1]);
+      }
+    });
+    //load champion games override
+    var champion = challenge_month_override.split(';');
+    champion.forEach((value) {
+      if (value.isNotEmpty && value.contains('/')) {
+        var ym = value.split('/');
+        championMonthOverrides.putIfAbsent(int.parse(ym[0]), () => ym[1]);
+      }
+    });
     return 0;
   }
+
+  final Map<String, List<Game>> cachedGameList = new Map();
 
   Future<List<Game>> fetchList(int year, int month, [GameType type = GameType.type_01]) async {
     String url = '$_scheduleUrl/index/$year-$month-01.html?'
         '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=${type.toString().substring(14)}';
     print(url);
+
+    if (cachedGameList.containsKey('$year/$month')) return cachedGameList['$year/$month'];
 
 //    var request = await _client.getUrl(Uri.parse(url));
 //    var resp = await request.close();
@@ -334,6 +482,7 @@ class CpblClient {
       print('no data');
     }
     print('game list size:${list.length}');
+    cachedGameList['$year/$month'] = list;
     return list;
   }
 
@@ -532,5 +681,71 @@ class CpblClient {
       }
     });
     return announceList;
+  }
+
+  List<Game> getHighlightGameList(List<Game> srcList) {
+    srcList.sort((g1, g2) => g1.timeInMillis() == g2.timeInMillis()
+        ? g1.id - g2.id
+        : g1.timeInMillis() - g2.timeInMillis());
+    List<Game> dstList = new List();
+    int beforeIndex = -1, afterIndex = -1;
+    int beforeDiff = -1, afterDiff = -1;
+    int now = DateTime.now().millisecondsSinceEpoch;
+    for (int i = 0; i < srcList.length; i++) {
+      Game g = srcList[i];
+      int diff = g.timeInMillis() - now;
+      if (g.before()) {
+        if (g.isToday() && beforeDiff != 0) {
+          beforeIndex = i;
+          beforeDiff = 0;
+        } else if (-diff < beforeDiff) {
+          beforeDiff = -diff;
+        }
+      } else if (g.after()) {
+        if (g.isToday()) {
+          afterIndex = i;
+          afterDiff = diff;
+        } else if (diff < afterDiff) {
+          //no games today, try to find the closest games
+          afterDiff = diff;
+          afterIndex = i;
+        }
+      }
+    }
+    print('beforeIndex = $beforeIndex, afterIndex = $afterIndex');
+    bool lived = false;
+    for (int i = beforeIndex >= 0 ? beforeIndex : 0; i < srcList.length; i++) {
+      Game g = srcList[i];
+      if (g.before()) {
+        //final or live
+        dstList.add(g); //add all of them
+        lived |= g.isLive; //only no live games that we will show upcoming games
+      } else if (!lived) {
+        //don't show upcoming when games are live
+        int diff = g.timeInMillis() - now;
+        //Log.d(TAG, String.format("after: diff=%d", diff));
+        if (diff > afterDiff) {
+          //ignore all except the closest upcoming games
+          //Log.d(TAG, "ignore all except the closest upcoming games");
+          break;
+        }
+        dstList.add(g);
+      }
+    }
+    if (lived && beforeIndex > 0) {
+      //try to add closest result only
+      int diff = now - srcList[beforeIndex].timeInMillis();
+      for (int i = beforeIndex; i >= 0; i--) {
+        Game g = srcList[i];
+        if (g.isLive) continue; //don't add live games that we have already added
+        int d = now - srcList[i].timeInMillis();
+        if (diff < d) break; //ignore all other final result, just closest ones
+        if (!dstList.contains(g)) {
+          dstList.add(g);
+        }
+        diff = d;//store the diff
+      }
+    }
+    return dstList;
   }
 }

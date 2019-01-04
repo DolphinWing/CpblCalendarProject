@@ -228,11 +228,29 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         ));
       }
     } else {
-      //var list7 = await client.fetchList(year, month, GameType.type_07); //warm
+      List<Game> list = new List();
+      if (client.isWarmUpMonth(year, month)) {
+        list.addAll(await client.fetchList(year, month, GameType.type_07)); //warm
+      }
       var list1 = await client.fetchList(year, month);
-      //var list2 = await client.fetchList(year, month, GameType.type_02); //champ
-      //var list3 = await client.fetchList(year, month, GameType.type_03); //champ
-      //var list5 = await client.fetchList(year, month, GameType.type_05); //star
+      var time = DateTime(2018, 10, 10);
+      if (list1.last.before()) {
+        list.addAll(list1);
+        list.addAll(await client.fetchList(year, month + 1));
+      } else if (list1.first.after()) {
+        list.addAll(await client.fetchList(year, month - 1));
+        list.addAll(list1);
+      }
+      if (client.isChallengeMonth(year, month)) {
+        list.addAll(await client.fetchList(year, month, GameType.type_02));//challenge
+      }
+      if (client.isChampionMonth(year, month)) {
+        list.addAll(await client.fetchList(year, month, GameType.type_03));//champion
+      }
+      if (client.isAllStarMonth(year, month)) {
+        list.addAll(await client.fetchList(year, month, GameType.type_05));// all star
+      }
+      gameList.addAll(client.getHighlightGameList(list));
     }
     //show more button
     if (gameList.isNotEmpty) {
