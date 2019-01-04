@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'content.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       routes: {
         '/calendar': (context) => MainUiWidget(debug: false),
+        '/settings': (context) => SettingsPane(),
       },
     );
   }
@@ -56,7 +58,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  RemoteConfig remoteConfig;
+  RemoteConfig configs;
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +95,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() async {
-    remoteConfig = await RemoteConfig.instance;
+    configs = await RemoteConfig.instance;
     final defaults = <String, dynamic>{'welcome': 'default welcome'};
-    await remoteConfig.setConfigSettings(new RemoteConfigSettings(debugMode: true));
-    await remoteConfig.setDefaults(defaults);
-    await remoteConfig.fetch(expiration: const Duration(hours: 5));
-    await remoteConfig.activateFetched();
-    print('welcome message: ${remoteConfig.getString('welcome')}');
-    print('  override: ${remoteConfig.getBool('override_start_enabled')}');
+    await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
+    await configs.setDefaults(defaults);
+    await configs.fetch(expiration: const Duration(hours: 5));
+    await configs.activateFetched();
+    print('welcome message: ${configs.getString('welcome')}');
+    print('  override: ${configs.getBool('override_start_enabled')}');
 
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
@@ -118,7 +120,8 @@ class MainUiWidget extends StatefulWidget {
 }
 
 class _MainUiWidgetState extends State<MainUiWidget> {
-  RemoteConfig remoteConfig;
+  RemoteConfig configs;
+  SharedPreferences prefs;
 
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
@@ -141,14 +144,16 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     /// https://stackoverflow.com/a/49458289/2673859
     new Future.delayed(Duration.zero, () async {
       //loaded in splash
-      remoteConfig = await RemoteConfig.instance;
+      configs = await RemoteConfig.instance;
       int year = 2018;
       int month = 10;
-      if (remoteConfig.getBool('override_start_enabled')) {
-        year = remoteConfig.getInt('override_start_year');
-        month = remoteConfig.getInt('override_start_month');
+      if (configs.getBool('override_start_enabled')) {
+        year = configs.getInt('override_start_year');
+        month = configs.getInt('override_start_month');
         print('override: year=$year month=$month');
       }
+
+      prefs = await SharedPreferences.getInstance();
 
       client = new CpblClient(context);
       //var now = DateTime.now();
@@ -232,6 +237,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                     }
                     break;
                   case 1:
+                    Navigator.of(context).pushNamed('/settings');
                     break;
                 }
               },
@@ -271,6 +277,77 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                   _scaffoldKey.currentState.openEndDrawer();
                 },
               ),
+      ),
+    );
+  }
+}
+
+class SettingsPane extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _SettingsPaneState();
+}
+
+class _SettingsPaneState extends State<SettingsPane> {
+  SharedPreferences prefs;
+  bool _enableViewPager = false;
+  bool _enableHighlight = false;
+
+  @override
+  void initState() {
+    super.initState();
+    prepare();
+  }
+
+  void prepare() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _enableViewPager = prefs.getBool('view_pager') ?? false;
+      _enableHighlight = prefs.getBool('highlight') ?? false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(Lang.of(context).trans('action_settings')),
+          centerTitle: false,
+        ),
+        body: ListView(
+          children: <Widget>[
+            CheckboxListTile(
+              title: Text(Lang.of(context).trans('use_view_pager_title')),
+              subtitle: Text(
+                Lang.of(context).trans(
+                    _enableViewPager ? 'use_view_pager_summary_on' : 'use_view_pager_summary_off'),
+              ),
+              value: _enableViewPager,
+              onChanged: (checked) {
+                setState(() {
+                  _enableViewPager = checked;
+                });
+                prefs.setBool('view_pager', checked);
+              },
+            ),
+            Divider(),
+            CheckboxListTile(
+              title: Text(Lang.of(context).trans('show_highlight_title')),
+              subtitle: Text(
+                Lang.of(context).trans(
+                    _enableHighlight ? 'show_highlight_summary_on' : 'show_highlight_summary_off'),
+              ),
+              value: _enableHighlight,
+              onChanged: (checked) {
+                setState(() {
+                  _enableHighlight = checked;
+                });
+                prefs.setBool('highlight', checked);
+              },
+            ),
+            Divider(),
+          ],
+        ),
       ),
     );
   }

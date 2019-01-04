@@ -162,7 +162,7 @@ class GameCardWidget extends StatelessWidget {
         //color: Colors.grey.withAlpha(32),
         border: Border.all(
           style: BorderStyle.solid,
-          color: Colors.grey.withAlpha(64),
+          color: Colors.grey.withAlpha(32),
         ),
       ),
     );
