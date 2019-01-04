@@ -9,14 +9,15 @@ enum TeamId {
   lions,
   lions_711,
   eda_rhinos,
+  fubon_guardians,
   lamigo_monkeys,
   sinon_bulls,
   lanew_bears,
   first_kinkon,
   jungo_bears,
-  eagles,
-  tigers,
-  dragons,
+  times_eagles,
+  ss_tigers,
+  w_dragons,
   makoto_cobras,
   makoto_sun,
   media_t_rex,
@@ -42,6 +43,65 @@ class Team {
         this._home = homeTeam;
 
   Team.simple(TeamId id, bool homeTeam) : this(id: id, homeTeam: homeTeam);
+
+  static Map<String, TeamId> map = new Map()
+    ..putIfAbsent('E02', () => TeamId.ct_elephants)
+    ..putIfAbsent('L01', () => TeamId.lions_711)
+    ..putIfAbsent('A02', () => TeamId.lamigo_monkeys)
+    ..putIfAbsent('B04', () => TeamId.fubon_guardians)
+    ..putIfAbsent('B03', () => TeamId.eda_rhinos)
+    ..putIfAbsent('E01', () => TeamId.elephants)
+    ..putIfAbsent('B02', () => TeamId.sinon_bulls)
+    ..putIfAbsent('W01', () => TeamId.ct_whales)
+    ..putIfAbsent('G02', () => TeamId.media_t_rex)
+    ..putIfAbsent('G01', () => TeamId.makoto_cobras)
+    ..putIfAbsent('A01', () => TeamId.first_kinkon)
+    ..putIfAbsent('T01', () => TeamId.ss_tigers)
+    ..putIfAbsent('D01', () => TeamId.w_dragons)
+    ..putIfAbsent('C01', () => TeamId.times_eagles)
+    ..putIfAbsent('B01', () => TeamId.jungo_bears)
+    ..putIfAbsent('S01', () => TeamId.all_star_red)
+    ..putIfAbsent('S02', () => TeamId.all_star_white)
+    ..putIfAbsent('S03', () => TeamId.all_star_red)
+    ..putIfAbsent('S04', () => TeamId.all_star_white)
+    ..putIfAbsent('S05', () => TeamId.all_star_red)
+    ..putIfAbsent('S06', () => TeamId.all_star_white);
+
+  static Team parse(String png, [int year, bool homeTeam = false]) {
+    TeamId teamId = homeTeam ? TeamId.unknown_home : TeamId.unknown_away;
+    String key = png.substring(0, 3);
+    if (map.containsKey(key)) {
+      switch (map[key]) {
+        case TeamId.first_kinkon: //2003
+        case TeamId.lanew_bears: //2010
+        case TeamId.lamigo_monkeys:
+          if (year <= 2003) {
+            teamId = TeamId.first_kinkon;
+          } else if (year <= 2010) {
+            teamId = TeamId.lanew_bears;
+          } else {
+            teamId = TeamId.lamigo_monkeys;
+          }
+          break;
+        case TeamId.lions: //2006
+        case TeamId.lions_711:
+          teamId = year < 2007 ? TeamId.lions : TeamId.lions_711;
+          break;
+        case TeamId.kg_whales: //2001
+        case TeamId.ct_whales:
+          teamId = year <= 2001 ? TeamId.kg_whales : TeamId.ct_whales;
+          break;
+        case TeamId.makoto_sun: //2003
+        case TeamId.makoto_cobras:
+          teamId = year <= 2003 ? TeamId.makoto_sun : TeamId.makoto_cobras;
+          break;
+        default:
+          teamId = map[key];
+          break;
+      }
+    }
+    return new Team(id: teamId, homeTeam: homeTeam);
+  }
 
   final TeamId id;
   String name;
@@ -105,7 +165,7 @@ class Game {
 
   final int id;
   final GameType type;
-  final DateTime _time;
+  DateTime _time;
 
   Team home;
   Team away;
@@ -114,17 +174,38 @@ class Game {
 
   bool isDelayed;
   bool isFinal;
+  bool isLive;
 
+  String channel;
   String extra;
+  String url;
 
   String _padLeft(int num) => num.toString().padLeft(2, '0');
 
-  String getDisplayTime() => '${_time.year}/${_padLeft(_time.month)}/${_padLeft(_time.day)} '
-      '${_padLeft(_time.hour)}:${_padLeft(_time.minute)}';
+  String _displayDate() => '${_time.year}/${_padLeft(_time.month)}/${_padLeft(_time.day)}';
+
+  String _displayTime() => '${_padLeft(_time.hour)}:${_padLeft(_time.minute)}';
+
+  String getDisplayTime() => isFinal ? _displayDate() : '${_displayDate()} ${_displayTime()}';
 
   String getFieldName(BuildContext context) => CpblClient.getFieldName(context, fieldId);
 
   String getGameType(BuildContext context) => CpblClient.getGameType(context, type);
+
+  void changeTime(int hour, int minute) {
+    _time = new DateTime(_time.year, _time.month, _time.day, hour, minute);
+  }
+
+  //http://www.cpbl.com.tw/games/box.html?&game_type=01&game_id=198&game_date=2015-10-01&pbyear=2015
+  String getUrl() => url ?? '';
+
+  void refreshStatus() {
+    var now = DateTime.now();
+    if (isLive && (now.millisecondsSinceEpoch - _time.millisecondsSinceEpoch) > 86400000) {
+      isLive = false;
+      isDelayed = true;
+    }
+  }
 }
 
 class CpblClient {
@@ -141,17 +222,36 @@ class CpblClient {
   static String getTeamName(BuildContext context, TeamId id) =>
       Lang.of(context).trans('cpbl_team_name_${id.toString().substring(7)}');
 
-//  HttpClient _client;
+  Map<String, FieldId> fieldMap = new Map();
 
-  CpblClient() {
+  FieldId parseField(String field) {
+    return fieldMap.containsKey(field) ? fieldMap[field] : FieldId.f00;
+  }
+
+//  HttpClient _client;
+  var _client = new http.Client();
+
+  CpblClient(BuildContext context) {
 //    _client = new HttpClient();
 //    _client.connectionTimeout = new Duration(seconds: 10);
+    print('constructor');
+    //prepare field map
+    FieldId.values.forEach((id) {
+      fieldMap.putIfAbsent(getFieldName(context, id), () => id);
+    });
+    fieldMap[Lang.of(context).trans('cpbl_game_field_name_f19r')] = FieldId.f19;
+    fieldMap[Lang.of(context).trans('cpbl_game_field_name_f23r')] = FieldId.f23;
+    fieldMap[Lang.of(context).trans('cpbl_game_field_name_f26r')] = FieldId.f26;
+    //prepare first read
+    _client.read(_url).then((html) {
+      print('html = ${html.length}');
+    });
   }
 
   Future<List<Game>> fetchList(int year, int month) async {
     String url = '$_url/index/$year-$month-01.html?'
         '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=01';
-    print('start fetch $year/$month url=$url');
+    print(url);
 
 //    var request = await _client.getUrl(Uri.parse(url));
 //    var resp = await request.close();
@@ -159,8 +259,11 @@ class CpblClient {
 //      print('${content.length} ${content.contains('one_block')}');
 //    }
 
-    final response = await http.get(url);
-    //.timeout(const Duration(seconds: 5), onTimeout: () => '');
+    final response = await _client.get(url);
+    //print('response.body ${response?.body?.length} ${response?.body?.indexOf('one_block')}');
+
+//    final response = await http.get(url);
+//    //.timeout(const Duration(seconds: 5), onTimeout: () => '');
     List<Game> list = new List();
     String html = response?.body ?? '';
     print('response.body ${html?.length} ${html.indexOf('one_block')}');
@@ -181,71 +284,17 @@ class CpblClient {
       for (int i = 1; i < oneBlock.length; i++) {
         //print('$i) ${oneBlock[i]}');
         var block = oneBlock[i];
-        if (block.contains("<!-- one_block -->")) {
-          block = block.substring(0, block.lastIndexOf("<!-- one_block -->"));
+        if (block.contains('<!-- one_block -->')) {
+          block = block.substring(0, block.lastIndexOf('<!-- one_block -->'));
         }
-        RegExp expId = new RegExp('game_id=([0-9]+)');
-        var id = expId.firstMatch(block).group(1);
-        print('game id = $id');
-        RegExp expDate = new RegExp('game_date=([\\d]+)-([\\d]+)-([\\d]+)');
-        var date = expDate.firstMatch(block);
-        int day = i;
-        if (date != null) {
-          print('>>> date: ${date.group(1)} ${date.group(2)} ${date.group(3)}');
-          day = int.parse(date.group(3));
+        Game g = _parseGameFromBlock(block, year, month);
+        if (g == null) {
+          print('no game in this block ($i)');
+          continue;
         }
-        Game g = new Game(id: int.parse(id), time: new DateTime(year, month, day));
-        if (block.contains('class="schedule_team')) {
-          String matchUpPlace = block.substring(block.indexOf('class="schedule_team'));
-          matchUpPlace = matchUpPlace.substring(0, matchUpPlace.indexOf("</table"));
-          var tds = matchUpPlace.split('<td');
-          if (tds.length > 3) {
-            String awayTeam = tds[1];
-            awayTeam = awayTeam.substring(awayTeam.indexOf("images/team/"));
-            awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
-            String place = tds[2];
-            place = place.substring(place.indexOf(">") + 1, place.indexOf("</td>"));
-            String homeTeam = tds[3];
-            homeTeam = homeTeam.substring(homeTeam.indexOf("images/team/"));
-            homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
-            print('  $awayTeam vs $homeTeam @$place');
-          } else {
-            print('no match up');
-          }
-        }
-        if (block.contains("schedule_info")) {
-          var info = block.split("schedule_info");
-          //schedule_info[1] contains game id and if this is delayed game or not
-          if (info.length > 1) {
-            var extras = info[1].split("<th");
-            if (info[1].contains('class="sp"')) {
-              if (extras.length > 1) {
-                //check delay game
-                String extraTitle = extras[1];
-                extraTitle =
-                    extraTitle.substring(extraTitle.indexOf(">") + 1, extraTitle.indexOf("</th"));
-                extraTitle = extraTitle.replaceAll('\r', '').replaceAll('\n', '').trim();
-              }
-              print('>>> delayed game');
-            }
-            if (extras.length > 3) {
-              //more info to find
-              String data = extras[3];
-              data = data.substring(data.indexOf(">") + 1, data.indexOf("</th"));
-            }
-          }
-          //schedule_info[2] contains results
-          if (info.length > 2 && info[2].contains("schedule_score")) {
-            RegExp expScore = new RegExp('schedule_score[^>]*>([\\d]+)');
-            Iterable<Match> scores = expScore.allMatches(info[2]);
-            if (scores.length >= 2) {
-              var s1 = scores.elementAt(0).group(1);
-              var s2 = scores.elementAt(1).group(1);
-              print('  score $s1 vs $s2');
-            }
-          }
-          //schedule_info[3] contains delay messages
-        }
+        _extractTeamFromBlock(g, block, year);
+        _extractScheduleFromBlock(g, block);
+        _extractPlayInfoFromBlock(g, block);
         list.add(g);
       }
     } else {
@@ -253,5 +302,175 @@ class CpblClient {
     }
     print('game list size:${list.length}');
     return list;
+  }
+
+  Game _parseGameFromBlock(String block, int year, int month) {
+    RegExp expId = new RegExp('game_id=([0-9]+)');
+    var id = expId.firstMatch(block)?.group(1);
+    if (id == null) {
+      print('bypass this block');
+      return null;
+    }
+    //print('game id = $id');
+    RegExp expDate = new RegExp('game_date=([\\d]+)-([\\d]+)-([\\d]+)');
+    var date = expDate.firstMatch(block);
+    int day = -1;
+    if (date != null) {
+      //print('>>> date: ${date.group(1)} ${date.group(2)} ${date.group(3)}');
+      day = int.parse(date.group(3));
+    } else {
+      print('no day');
+      return null;
+    }
+    return new Game(id: int.parse(id), time: new DateTime(year, month, day));
+  }
+
+  Game _extractTeamFromBlock(Game g, String block, int year) {
+    if (block.contains('class="schedule_team')) {
+      String matchUpPlace = block.substring(block.indexOf('class="schedule_team'));
+      matchUpPlace = matchUpPlace.substring(0, matchUpPlace.indexOf("</table"));
+      var tds = matchUpPlace.split('<td');
+      if (tds.length > 3) {
+        String awayTeam = tds[1];
+        awayTeam = awayTeam.substring(awayTeam.indexOf('images/team/'));
+        awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
+        g.away = Team.parse(awayTeam, year);
+        String place = tds[2];
+        place = place.substring(place.indexOf('>') + 1, place.indexOf('</td>'));
+        g.fieldId = parseField(place);
+        String homeTeam = tds[3];
+        homeTeam = homeTeam.substring(homeTeam.indexOf('images/team/'));
+        homeTeam = homeTeam.substring(12, homeTeam.indexOf(".png"));
+        g.home = Team.parse(homeTeam, year, true);
+        print('${g.id} $awayTeam vs $homeTeam @$place');
+      } else {
+        print('no match up');
+      }
+    }
+    return g;
+  }
+
+  Game _extractScheduleFromBlock(Game g, String block) {
+    if (block.contains('schedule_info')) {
+      var info = block.split('schedule_info');
+      //schedule_info[1] contains game id and if this is delayed game or not
+      if (info.length > 1) {
+        var extras = info[1].split('<th');
+        if (info[1].contains('class="sp"')) {
+          if (extras.length > 1) {
+            //check delay game
+            String extraTitle = extras[1];
+            //print('extraTitle = $extraTitle');
+            extraTitle =
+                extraTitle.substring(extraTitle.indexOf('>') + 1, extraTitle.indexOf('</th'));
+            extraTitle = extraTitle.replaceAll('\r', '').replaceAll('\n', '').trim();
+            g.extra = extraTitle;
+          }
+          //print('>>> delayed game');
+          g.isDelayed = true;
+        }
+        if (extras.length > 3) {
+          //more info to find
+          String data = extras[3];
+          data = data.substring(data.indexOf('>') + 1, data.indexOf('</th')).trim();
+          if (data?.isNotEmpty == true) {
+            g.extra = (g.extra != null) ? '${g.extra} $data' : data;
+          }
+        }
+      }
+      //schedule_info[2] contains results
+      if (info.length > 2 && info[2].contains('schedule_score')) {
+        RegExp expScore = new RegExp('schedule_score[^>]*>([\\d]+)');
+        Iterable<Match> scores = expScore.allMatches(info[2]);
+        if (scores.length >= 2) {
+          var s1 = scores.elementAt(0).group(1);
+          g.away.score = int.parse(s1);
+          var s2 = scores.elementAt(1).group(1);
+          g.home.score = int.parse(s2);
+          //print('  score $s1 vs $s2');
+        }
+      }
+      //schedule_info[3] contains delay messages
+      if (info.length > 3 && info[3].contains('</td>')) {
+        String message = info[3].trim();
+        var msg = message.split('</td>');
+        //check game time
+        if (msg.length > 1) {
+          String time = msg[1];
+          try {
+            time = time.substring(time.indexOf('>') + 1);
+            if (time.contains(':') && (time.indexOf(':') == 2 || time.indexOf(':') == 1)) {
+              var t = time.split(':');
+              g.changeTime(int.parse(t[0]), int.parse(t[1]));
+            }
+          } catch (e) {
+            e.printStackTrace();
+          }
+        }
+
+        //check channel
+        if (msg.length > 2) {
+          String channel = msg[2];
+          if (channel.contains('title=')) {
+            channel = channel.substring(channel.indexOf('title=') + 7);
+            channel = channel.substring(0, channel.indexOf('"'));
+            g.channel = channel;
+          }
+        }
+
+        //check delayed messages
+        if (g.isDelayed && message.contains('schedule_sp_txt')) {
+          message = message.substring(message.indexOf('schedule_sp_txt'));
+          message = message.substring(message.indexOf('>') + 1, message.indexOf('<'));
+        } else {
+          message = null;
+        }
+        if (message?.isNotEmpty == true) {
+          String delayMsg = message.replaceAll('<[^>]*>', '').replaceAll('[ ]+', ' ').trim();
+          g.extra = g.extra != null ? '${g.extra} $delayMsg' : delayMsg;
+        }
+      }
+    }
+    return g;
+  }
+
+  Game _extractPlayInfoFromBlock(Game g, String block) {
+    if (block?.contains('game_playing') == true) {
+      int splitIndex = block.indexOf("game_playing");
+      g?.isFinal = false;
+      g?.isLive = true;
+      String msg = block.substring(splitIndex);
+      msg = msg.substring(msg.indexOf('>') + 1);
+      msg = msg.substring(0, msg.indexOf('<'));
+      g.extra = 'LIVE! $msg'; //replace all other messages
+
+      String url;
+      try {
+        url = block.substring(0, splitIndex - 9);
+        url = url.substring(url.lastIndexOf('href=') + 6);
+      } catch (e) {
+        e.printStackTrace();
+      }
+      g.url = url != null ? '$_url$url' : g.url;
+
+      //dolphin++@20180821: keep games may not update correctly in CPBL website
+      g.refreshStatus();
+    } else if (block?.contains('schedule_icon_starter.png') == true) {
+      //<a href="/games/starters.html?&game_type=01&game_id=9&game_date=2016-03-27&pbyear=2016">
+      //<img src="http://cpbl-elta.cdn.hinet.net/web/images/schedule_icon_starter.png" width="20" height="18" /></a>
+      String url;
+      try {
+        url = block.substring(0, block.indexOf('schedule_icon_starter.png'));
+        url = url.substring(url.lastIndexOf('href=') + 6);
+        url = url.substring(0, url.indexOf(">") - 1);
+        //Log.d(TAG, "url = " + url);
+      } catch (e) {
+        e.printStackTrace();
+      }
+      g.url = url != null ? '$_url$url' : g.url;
+    } else if (block?.contains("onClick") == true) {
+      g.isFinal = true; //no playing
+    }
+    return g;
   }
 }

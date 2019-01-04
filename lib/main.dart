@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       },
       home: SplashScreen(),
       routes: {
-        '/calendar': (context) => MainUiWidget(debug: true),
+        '/calendar': (context) => MainUiWidget(debug: false),
       },
     );
   }
@@ -107,18 +107,25 @@ class MainUiWidget extends StatefulWidget {
 class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
   Timer _timer;
   CpblClient client;
 
   bool loading = false;
   List<Game> list;
+  bool scrollEnd = false;
 
   @override
   void initState() {
     super.initState();
-    client = new CpblClient();
-    //var now = DateTime.now();
-    pullToRefresh(2018, 11, widget.debug);
+
+    /// Flutter get context in initState method
+    /// https://stackoverflow.com/a/49458289/2673859
+    new Future.delayed(Duration.zero, () {
+      client = new CpblClient(context);
+      //var now = DateTime.now();
+      pullToRefresh(2018, 10, widget.debug);
+    });
   }
 
   @override
@@ -180,14 +187,19 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         endDrawer: DrawerPane(
           onPressed: (action) {
             print('query ${action.year}/${action.month} ${action.field}');
-            //pullToRefresh(action.year, action.month);
+            pullToRefresh(action.year, action.month);
           },
         ),
         body: ContentUiWidget(
           loading: loading,
           list: list,
+          onScrollEnd: (value) {
+            setState(() {
+              scrollEnd = value;
+            });
+          },
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: scrollEnd ? Container() : FloatingActionButton(
           child: Icon(
             Icons.search,
             //color: Theme.of(context).primaryColor,

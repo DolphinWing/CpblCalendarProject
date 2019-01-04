@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'cpbl.dart';
 
@@ -11,21 +12,51 @@ class ContentUiWidget extends StatefulWidget {
   final bool loading;
   final List<Game> list;
   final int mode;
+  final ValueChanged<bool> onScrollEnd;
 
-  ContentUiWidget({this.loading = false, List<Game> list, this.mode = UiMode.list})
-      : this.list = list ?? new List();
+  ContentUiWidget({
+    this.loading = false,
+    List<Game> list,
+    this.mode = UiMode.list,
+    this.onScrollEnd,
+  }) : this.list = list ?? new List();
 
   @override
   State<StatefulWidget> createState() => _ContentUiWidgetState();
 }
 
 class _ContentUiWidgetState extends State<ContentUiWidget> {
+  ScrollController _controller;
+  bool _end = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = new ScrollController();
+    _controller.addListener(() {
+      //print('atEdge = ${_controller.position.atEdge} ${_controller.position.pixels}');
+      if (_controller.position.atEdge && _controller.position.pixels > 0) {
+        setState(() {
+          _end = true;
+        });
+        if (widget.onScrollEnd != null) widget.onScrollEnd(true);
+      }
+      if (_end && !_controller.position.atEdge) {
+        setState(() {
+          _end = false;
+        });
+        if (widget.onScrollEnd != null) widget.onScrollEnd(false);
+      }
+    });
+  }
+
   Widget buildContent(BuildContext context, List<Game> list, int mode) {
     List<Widget> widgetList = new List();
     list?.forEach((game) {
       widgetList.add(GameCardWidget(game));
     });
     return ListView(
+      controller: _controller,
       children: widgetList,
     );
   }
@@ -113,9 +144,16 @@ class GameCardWidget extends StatelessWidget {
           Row(
             children: <Widget>[
               Text(game.getFieldName(context)),
+              Expanded(
+                child: game.extra != null
+                    ? Text(
+                        '${game.extra}',
+                        textAlign: TextAlign.end,
+                      )
+                    : SizedBox(height: 1),
+              ),
             ],
           ),
-          game.extra != null ? Text('${game.extra}') : SizedBox(height: 1),
           //Divider(),
         ],
       ),
