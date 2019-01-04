@@ -287,6 +287,7 @@ class _TypeMenuWidget extends StatefulWidget {
 class _TypeMenuWidgetState extends State<_TypeMenuWidget> {
   static const List<GameType> TYPES = [
     GameType.type_01,
+    GameType.type_02,
     GameType.type_03,
     GameType.type_05,
     GameType.type_07,

@@ -13,12 +13,14 @@ class ContentUiWidget extends StatefulWidget {
   final List<Game> list;
   final int mode;
   final ValueChanged<bool> onScrollEnd;
+  final GestureTapCallback onHighlightPaneClosed;
 
   ContentUiWidget({
     this.loading = false,
     List<Game> list,
     this.mode = UiMode.list,
     this.onScrollEnd,
+    this.onHighlightPaneClosed,
   }) : this.list = list ?? new List();
 
   @override
@@ -53,7 +55,22 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
   Widget buildContent(BuildContext context, List<Game> list, int mode) {
     List<Widget> widgetList = new List();
     list?.forEach((game) {
-      widgetList.add(GameCardWidget(game));
+      switch (game.type) {
+        case GameType.announcement:
+          widgetList.add(_GameCardAnnouncementWidget(message: game.extra));
+          break;
+        case GameType.update:
+          widgetList.add(Text(game.extra));
+          break;
+        case GameType.more:
+          widgetList.add(_GameCardMoreWidget(
+            onPressed: widget.onHighlightPaneClosed,
+          ));
+          break;
+        default:
+          widgetList.add(GameCardWidget(game));
+          break;
+      }
     });
     return ListView(
       controller: _controller,
@@ -165,6 +182,41 @@ class GameCardWidget extends StatelessWidget {
           color: Colors.grey.withAlpha(32),
         ),
       ),
+    );
+  }
+}
+
+class _GameCardAnnouncementWidget extends StatelessWidget {
+  final String message;
+
+  _GameCardAnnouncementWidget({String message}) : this.message = message ?? '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Container(
+        child: Center(
+          child: Text(message),
+        ),
+        constraints: BoxConstraints(minHeight: 64),
+      ),
+    );
+  }
+}
+
+class _GameCardMoreWidget extends StatelessWidget {
+  final GestureTapCallback onPressed;
+
+  _GameCardMoreWidget({this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      child: RaisedButton(
+        child: Text('more'),
+        onPressed: onPressed,
+      ),
+      padding: EdgeInsets.only(left: 16, right: 16),
     );
   }
 }

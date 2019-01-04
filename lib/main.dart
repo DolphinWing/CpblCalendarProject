@@ -120,9 +120,6 @@ class MainUiWidget extends StatefulWidget {
 }
 
 class _MainUiWidgetState extends State<MainUiWidget> {
-  RemoteConfig configs;
-  SharedPreferences prefs;
-
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
@@ -131,10 +128,11 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
   bool loading = false;
   List<Game> list;
-  bool scrollEnd = false;
+  bool showFab = false;
   int _year;
   int _month;
   GameType _type;
+  int _mode = UiMode.list;
 
   @override
   void initState() {
@@ -144,7 +142,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     /// https://stackoverflow.com/a/49458289/2673859
     new Future.delayed(Duration.zero, () async {
       //loaded in splash
-      configs = await RemoteConfig.instance;
+      final configs = await RemoteConfig.instance;
       int year = 2018;
       int month = 10;
       if (configs.getBool('override_start_enabled')) {
@@ -153,12 +151,20 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         print('override: year=$year month=$month');
       }
 
-      prefs = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
+      client = new CpblClient(context, configs, prefs);
+      bool showHighlight = client.isHighlightEnabled();
+      setState(() {
+        showFab = showHighlight;
+      });
 
-      client = new CpblClient(context);
       //var now = DateTime.now();
       client.init().then((value) {
-        pullToRefresh(year, month, debug: widget.debug);
+        if (showHighlight) {
+          fetchHighlight(year, month, debug: widget.debug);
+        } else {
+          pullToRefresh(year, month, debug: widget.debug);
+        }
       });
     });
   }
@@ -175,6 +181,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       _year = year;
       _month = month;
       _type = type;
+      _mode = UiMode.list;
     });
     if (debug) {
       _timer = new Timer(const Duration(seconds: 2), () {
@@ -196,6 +203,48 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           list = gameList;
           loading = false;
         });
+      });
+    }
+  }
+
+  void fetchHighlight(int year, int month, {bool debug = false}) async {
+    setState(() {
+      loading = true;
+      _mode = UiMode.quick;
+    });
+
+    List<Game> gameList = new List();
+    //load version update
+    //load remote announcement
+    var cards = client.loadRemoteAnnouncement();
+    print('remote info size: ${cards.length}');
+    gameList.addAll(cards);
+    if (debug) {
+      for (int i = 0; i < 3; i++) {
+        gameList.add(Game.simple(
+          i,
+          homeId: TeamId.values[i % TeamId.values.length],
+          awayId: TeamId.values[(i + 10) % TeamId.values.length],
+        ));
+      }
+    } else {
+      //var list7 = await client.fetchList(year, month, GameType.type_07); //warm
+      var list1 = await client.fetchList(year, month);
+      //var list2 = await client.fetchList(year, month, GameType.type_02); //champ
+      //var list3 = await client.fetchList(year, month, GameType.type_03); //champ
+      //var list5 = await client.fetchList(year, month, GameType.type_05); //star
+    }
+    //show more button
+    if (gameList.isNotEmpty) {
+      gameList.add(Game.more());
+      setState(() {
+        list = gameList;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        list = gameList;
+        loading = false;
       });
     }
   }
@@ -225,6 +274,10 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                       value: 1,
                       child: Text(Lang.of(context).trans('action_settings')),
                     ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: Text('show highlight'),
+                    ),
                   ],
               onSelected: (action) async {
                 //print('selected option $action');
@@ -237,7 +290,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                     }
                     break;
                   case 1:
-                    Navigator.of(context).pushNamed('/settings');
+                    //Navigator.of(context).pushNamed('/settings');
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => SettingsPane(client: client)));
+                    break;
+                  case 2:
+                    fetchHighlight(_year, _month, debug: true);
                     break;
                 }
               },
@@ -245,6 +303,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           ],
           //leading: new Container(),
           automaticallyImplyLeading: false,
+          //elevation: _mode == UiMode.quick ? -1.0 : 4.0,
         ),
         endDrawer: DrawerPane(
           year: _year,
@@ -257,14 +316,18 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         ),
         body: ContentUiWidget(
           loading: loading,
+          mode: _mode,
           list: list,
           onScrollEnd: (value) {
             setState(() {
-              scrollEnd = value;
+              showFab = value;
             });
           },
+          onHighlightPaneClosed: () {
+            pullToRefresh(2018, 10);
+          },
         ),
-        floatingActionButton: scrollEnd
+        floatingActionButton: showFab
             ? Container()
             : FloatingActionButton(
                 child: Icon(
@@ -283,12 +346,15 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 }
 
 class SettingsPane extends StatefulWidget {
+  final CpblClient client;
+
+  SettingsPane({this.client});
+
   @override
   State<StatefulWidget> createState() => _SettingsPaneState();
 }
 
 class _SettingsPaneState extends State<SettingsPane> {
-  SharedPreferences prefs;
   bool _enableViewPager = false;
   bool _enableHighlight = false;
 
@@ -299,10 +365,9 @@ class _SettingsPaneState extends State<SettingsPane> {
   }
 
   void prepare() async {
-    prefs = await SharedPreferences.getInstance();
     setState(() {
-      _enableViewPager = prefs.getBool('view_pager') ?? false;
-      _enableHighlight = prefs.getBool('highlight') ?? false;
+      _enableViewPager = widget.client?.isViewPagerEnabled() ?? false;
+      _enableHighlight = widget.client?.isHighlightEnabled() ?? false;
     });
   }
 
@@ -327,7 +392,7 @@ class _SettingsPaneState extends State<SettingsPane> {
                 setState(() {
                   _enableViewPager = checked;
                 });
-                prefs.setBool('view_pager', checked);
+                widget.client?.setViewPagerEnabled(checked);
               },
             ),
             Divider(),
@@ -342,7 +407,7 @@ class _SettingsPaneState extends State<SettingsPane> {
                 setState(() {
                   _enableHighlight = checked;
                 });
-                prefs.setBool('highlight', checked);
+                widget.client?.setHighlightEnabled(checked);
               },
             ),
             Divider(),

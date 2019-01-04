@@ -1,5 +1,7 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'lang.dart';
 
@@ -139,11 +141,15 @@ enum FieldId {
 
 enum GameType {
   type_01,
+  type_02,
   type_03,
   type_05,
   type_07,
   type_09,
   type_16,
+  update,
+  announcement,
+  more,
 }
 
 class Game {
@@ -161,6 +167,23 @@ class Game {
         this.home = home ?? Team(homeTeam: true),
         this.away = away ?? Team(homeTeam: false),
         this.isFinal = isFinal ?? (time?.isBefore(DateTime.now()) ?? false);
+
+  Game.update(String message)
+      : this.id = -2,
+        this.type = GameType.update,
+        this.extra = message;
+
+  Game.more()
+      : this.id = -1,
+        this.type = GameType.more;
+
+  Game.announce(int key, String message)
+      : this.id = key,
+        this.type = GameType.announcement,
+        this.extra = message;
+
+  Game.simple(int id, {GameType type = GameType.type_01, TeamId homeId, TeamId awayId})
+      : this(id: id, type: type);
 
   final int id;
   final GameType type;
@@ -230,8 +253,12 @@ class CpblClient {
 
 //  HttpClient _client;
   var _client = new http.Client();
+  final RemoteConfig _configs;
+  final SharedPreferences _prefs;
 
-  CpblClient(BuildContext context) {
+  CpblClient(BuildContext context, RemoteConfig configs, SharedPreferences prefs)
+      : this._configs = configs,
+        this._prefs = prefs {
 //    _client = new HttpClient();
 //    _client.connectionTimeout = new Duration(seconds: 10);
     print('constructor');
@@ -477,5 +504,33 @@ class CpblClient {
       g.isFinal = true; //no playing
     }
     return g;
+  }
+
+  bool isHighlightEnabled() => _prefs.getBool('show_highlight') ?? true;
+
+  void setHighlightEnabled(bool enabled) async {
+    await _prefs.setBool('show_highlight', enabled);
+  }
+
+  bool isViewPagerEnabled() => _prefs.getBool('use_view_pager') ?? true;
+
+  void setViewPagerEnabled(bool enabled) async {
+    await _prefs.setBool('use_view_pager', enabled);
+  }
+
+  List<Game> loadRemoteAnnouncement() {
+    List<Game> announceList = new List();
+    List<String> cards = _configs.getString('add_highlight_card').split(';');
+    var now = DateTime.now();
+    cards.forEach((key) {
+      var t = DateTime(int.parse(key.substring(0, 4)), int.parse(key.substring(4, 6)),
+          int.parse(key.substring(6)));
+      print('$key ${t.year}/${t.month}/${t.day}');
+      if (t.isAfter(now)) {
+        announceList
+            .add(Game.announce(int.parse(key), _configs.getString('add_highlight_card_$key')));
+      }
+    });
+    return announceList;
   }
 }
