@@ -49,11 +49,9 @@ class HighlightViewFragment : Fragment() {
             monthOfJava = args.getInt("month", Calendar.JUNE)
             val cached = args.getBoolean("cache", false)
             Log.d(TAG, "prepare $year/${monthOfJava + 1} cache=$cached")
-            if (activity == null) {//not yet attach to activity
-                Handler().postDelayed({ prepareData(year, monthOfJava, cached) }, 200)
-            } else {
-                prepareData(year, monthOfJava, cached)
-            }
+            //may not yet attach to activity
+            Handler().postDelayed(Runnable { prepareData(year, monthOfJava, cached) },
+                    if (activity == null) 800 else 500)
         }
     }
 

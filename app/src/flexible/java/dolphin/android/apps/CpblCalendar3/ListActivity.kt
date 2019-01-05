@@ -153,13 +153,15 @@ class ListActivity : AppCompatActivity() {
             setFriction(ViewConfiguration.getScrollFriction() * 2)
 
             setOnScrollListener { view, scrollState ->
-                if (scrollState == NumberPickerView.OnScrollListener.SCROLL_STATE_IDLE) {
-                    mPickerTeam.smoothScrollToValue(-1)
-                    mPickerTeam.isEnabled = view.value == maxValue
-                    hint?.visibility = if (mPickerTeam.isEnabled) View.GONE else View.VISIBLE
-                } else {
-                    mPickerTeam.isEnabled = false
-                    hint?.visibility = View.GONE
+                runOnUiThread {
+                    if (scrollState == NumberPickerView.OnScrollListener.SCROLL_STATE_IDLE) {
+                        mPickerTeam.smoothScrollToValue(-1)
+                        mPickerTeam.isEnabled = view.value == maxValue
+                        hint?.visibility = if (mPickerTeam.isEnabled) View.GONE else View.VISIBLE
+                    } else {
+                        mPickerTeam.isEnabled = false
+                        hint?.visibility = View.GONE
+                    }
                 }
             }
 
@@ -225,6 +227,7 @@ class ListActivity : AppCompatActivity() {
                 remoteConfig.getString("override_start_month").toInt() - 1
             else
                 now.get(Calendar.MONTH)
+            mMonth = if (mMonth < Calendar.FEBRUARY) Calendar.FEBRUARY else mMonth
             mPager.currentItem = mMonth - 1 //select page
 
             value = mMonth
@@ -282,7 +285,7 @@ class ListActivity : AppCompatActivity() {
                 .commitNow()
 
         if (prefs.showHighlightOnLoadEnabled) {
-            prepareHighlightCards()
+            prepareHighlightCards() //onCreate
         } else { //auto load current year/month
             Handler().postDelayed({
                 Log.d(TAG, "this year = $mYear")
@@ -291,7 +294,7 @@ class ListActivity : AppCompatActivity() {
                 filterPaneVisible = false
                 doQueryAction()
                 invalidateOptionsMenu()
-            }, 200)
+            }, 500)
         }
         loadAds()
     }
@@ -363,8 +366,8 @@ class ListActivity : AppCompatActivity() {
             isEnabled = mHighlightFragment.hasHighlights
         }
         menu?.findItem(R.id.action_refresh)?.isVisible = when {
-            mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED &&
-                    mHighlightFragment.isRefreshing == true -> false
+            mBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+                    && mHighlightFragment.isRefreshing -> false
             filterPaneVisible -> false
             else -> true
         }
@@ -651,10 +654,11 @@ class ListActivity : AppCompatActivity() {
             remoteConfig.getString("override_start_year").toInt()
         else
             now.get(Calendar.YEAR)
-        val monthOfJava = if (remoteConfig.getBoolean("override_start_enabled"))
+        var monthOfJava = if (remoteConfig.getBoolean("override_start_enabled"))
             remoteConfig.getString("override_start_month").toInt() - 1
         else
             now.get(Calendar.MONTH)
+        monthOfJava = if (monthOfJava <= Calendar.FEBRUARY) Calendar.FEBRUARY else monthOfJava
 
         mHighlightFragment.arguments = Bundle().apply {
             putBoolean("refresh", true)
@@ -662,6 +666,8 @@ class ListActivity : AppCompatActivity() {
             putInt("month", monthOfJava)
             putBoolean("cache", refresh)
         }
+        //mPickerYear.value = mYear - 1989
+        //restoreFilter()
         invalidateOptionsMenu()
     }
 
