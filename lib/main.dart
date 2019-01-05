@@ -138,13 +138,19 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   void initState() {
     super.initState();
 
+    int year = 2018;
+    int month = 10;
+    setState(() {
+      _year = year;
+      _month = month;
+    });
+
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
-    new Future.delayed(Duration.zero, () async {
+    new Future.delayed(const Duration(milliseconds: 200), () async {
       //loaded in splash
       final configs = await RemoteConfig.instance;
-      int year = 2018;
-      int month = 10;
+
       if (configs.getBool('override_start_enabled')) {
         year = configs.getInt('override_start_year');
         month = configs.getInt('override_start_month');
@@ -155,7 +161,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       client = new CpblClient(context, configs, prefs);
       bool showHighlight = client.isHighlightEnabled();
       setState(() {
-        showFab = showHighlight;
+        showFab = !showHighlight;
       });
 
       //var now = DateTime.now();
@@ -182,6 +188,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       _month = month;
       _type = type;
       _mode = UiMode.list;
+      showFab = true;
     });
     if (debug) {
       _timer = new Timer(const Duration(seconds: 2), () {
@@ -207,10 +214,32 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     }
   }
 
+  Future<List<Game>> _fetchList(int year, int month, GameType type, [DateTime time]) async {
+    List<Game> list = new List();
+    var list1 = await client.fetchList(year, month, type);
+    if (list1.isNotEmpty) {
+      if (list1.last.before(time)) {
+        print('last game is before now');
+        list.addAll(list1);
+        var list2 = await client.fetchList(year, month + 1, type);
+        list.addAll(list2);
+      } else if (list1.first.after(time)) {
+        print('first game is not yet coming');
+        list.addAll(await client.fetchList(year, month - 1, type));
+        list.addAll(list1);
+      } else {
+        print('add ${list1.length} to normal list');
+        list.addAll(list1);
+      }
+    }
+    return list;
+  }
+
   void fetchHighlight(int year, int month, {bool debug = false}) async {
     setState(() {
       loading = true;
       _mode = UiMode.quick;
+      showFab = false;
     });
 
     List<Game> gameList = new List();
@@ -228,29 +257,22 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         ));
       }
     } else {
+      var time = DateTime(2018, 10, 10);
       List<Game> list = new List();
       if (client.isWarmUpMonth(year, month)) {
         list.addAll(await client.fetchList(year, month, GameType.type_07)); //warm
       }
-      var list1 = await client.fetchList(year, month);
-      var time = DateTime(2018, 10, 10);
-      if (list1.last.before()) {
-        list.addAll(list1);
-        list.addAll(await client.fetchList(year, month + 1));
-      } else if (list1.first.after()) {
-        list.addAll(await client.fetchList(year, month - 1));
-        list.addAll(list1);
-      }
+      list.addAll(await _fetchList(year, month, GameType.type_01, time));
       if (client.isChallengeMonth(year, month)) {
-        list.addAll(await client.fetchList(year, month, GameType.type_02));//challenge
+        list.addAll(await _fetchList(year, month, GameType.type_02, time)); //challenge
       }
       if (client.isChampionMonth(year, month)) {
-        list.addAll(await client.fetchList(year, month, GameType.type_03));//champion
+        list.addAll(await _fetchList(year, month, GameType.type_03, time)); //champion
       }
       if (client.isAllStarMonth(year, month)) {
-        list.addAll(await client.fetchList(year, month, GameType.type_05));// all star
+        list.addAll(await client.fetchList(year, month, GameType.type_05)); // all star
       }
-      gameList.addAll(client.getHighlightGameList(list));
+      gameList.addAll(client.getHighlightGameList(list, time));
     }
     //show more button
     if (gameList.isNotEmpty) {
@@ -278,7 +300,11 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-                pullToRefresh(_year, _month, type: _type);
+                if (_mode == UiMode.list) {
+                  pullToRefresh(_year, _month, type: _type);
+                } else {
+                  fetchHighlight(_year, _month);
+                }
               },
               tooltip: Lang.of(context).trans('action_refresh'),
             ),
@@ -338,7 +364,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           list: list,
           onScrollEnd: (value) {
             setState(() {
-              showFab = value;
+              showFab = !value && _mode == UiMode.list;
             });
           },
           onHighlightPaneClosed: () {

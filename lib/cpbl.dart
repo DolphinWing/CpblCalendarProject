@@ -162,28 +162,22 @@ class Game {
     DateTime time,
     this.isDelayed = false,
     bool isFinal,
+    this.isLive = false,
     this.extra,
   })  : this._time = time ?? DateTime.now(),
         this.home = home ?? Team(homeTeam: true),
         this.away = away ?? Team(homeTeam: false),
         this.isFinal = isFinal ?? (time?.isBefore(DateTime.now()) ?? false);
 
-  Game.update(String message)
-      : this.id = -2,
-        this.type = GameType.update,
-        this.extra = message;
+  Game.update(String message) : this(id: -2, type: GameType.update, extra: message);
 
-  Game.more()
-      : this.id = -1,
-        this.type = GameType.more;
+  Game.more() : this(id: -1, type: GameType.more);
 
   Game.announce(int key, String message)
-      : this.id = key,
-        this.type = GameType.announcement,
-        this.extra = message;
+      : this(id: key, type: GameType.announcement, extra: message);
 
   Game.simple(int id, {GameType type = GameType.type_01, TeamId homeId, TeamId awayId})
-      : this(id: id, type: type);
+      : this(id: id, type: type, home: Team.simple(homeId, true), away: Team.simple(awayId, false));
 
   final int id;
   final GameType type;
@@ -377,11 +371,12 @@ class CpblClient {
     cachedGameList.clear(); //clear cache
 
     //prepare first read
-    await _client.read(homeUrl)
+    //await _client.read(homeUrl)
+    await _client.get(homeUrl);
 //    .then((html) {
 //      print('html = ${html.length}');
 //    })
-        ;
+    ;
     //load warm up overrides
     var warm = warmup_month_start_override.split(';');
     warm.forEach((value) {
@@ -428,11 +423,13 @@ class CpblClient {
   final Map<String, List<Game>> cachedGameList = new Map();
 
   Future<List<Game>> fetchList(int year, int month, [GameType type = GameType.type_01]) async {
+    print('fetch $year/$month type = $type');
     String url = '$_scheduleUrl/index/$year-$month-01.html?'
         '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=${type.toString().substring(14)}';
-    print(url);
+    //print(url);
 
-    if (cachedGameList.containsKey('$year/$month')) return cachedGameList['$year/$month'];
+    String key = '$year/$month-$type';
+    if (cachedGameList.containsKey(key)) return cachedGameList[key];
 
 //    var request = await _client.getUrl(Uri.parse(url));
 //    var resp = await request.close();
@@ -482,7 +479,7 @@ class CpblClient {
       print('no data');
     }
     print('game list size:${list.length}');
-    cachedGameList['$year/$month'] = list;
+    cachedGameList[key] = list;
     return list;
   }
 
@@ -683,29 +680,34 @@ class CpblClient {
     return announceList;
   }
 
-  List<Game> getHighlightGameList(List<Game> srcList) {
+  List<Game> getHighlightGameList(List<Game> srcList, [DateTime time]) {
+    print('check ${srcList.length} for $time');
     srcList.sort((g1, g2) => g1.timeInMillis() == g2.timeInMillis()
         ? g1.id - g2.id
         : g1.timeInMillis() - g2.timeInMillis());
     List<Game> dstList = new List();
     int beforeIndex = -1, afterIndex = -1;
     int beforeDiff = -1, afterDiff = -1;
-    int now = DateTime.now().millisecondsSinceEpoch;
+    int now = (time ?? DateTime.now()).millisecondsSinceEpoch;
     for (int i = 0; i < srcList.length; i++) {
       Game g = srcList[i];
+      //print('[${g.id}]@${g.getDisplayTime()}');
       int diff = g.timeInMillis() - now;
-      if (g.before()) {
-        if (g.isToday() && beforeDiff != 0) {
+      if (g.before(time)) {
+        //print('before $diff $beforeDiff $beforeIndex');
+        if (g.isToday(time) && beforeDiff != 0) {
           beforeIndex = i;
           beforeDiff = 0;
-        } else if (-diff < beforeDiff) {
+        } else if (-diff < beforeDiff || beforeDiff < 0) {
           beforeDiff = -diff;
+          beforeIndex = i;
         }
-      } else if (g.after()) {
-        if (g.isToday()) {
+      } else if (g.after(time)) {
+        //print('after $diff $afterDiff $afterIndex');
+        if (g.isToday(time)) {
           afterIndex = i;
           afterDiff = diff;
-        } else if (diff < afterDiff) {
+        } else if (diff < afterDiff || afterDiff < 0) {
           //no games today, try to find the closest games
           afterDiff = diff;
           afterIndex = i;
@@ -716,7 +718,7 @@ class CpblClient {
     bool lived = false;
     for (int i = beforeIndex >= 0 ? beforeIndex : 0; i < srcList.length; i++) {
       Game g = srcList[i];
-      if (g.before()) {
+      if (g.before(time)) {
         //final or live
         dstList.add(g); //add all of them
         lived |= g.isLive; //only no live games that we will show upcoming games
@@ -743,7 +745,7 @@ class CpblClient {
         if (!dstList.contains(g)) {
           dstList.add(g);
         }
-        diff = d;//store the diff
+        diff = d; //store the diff
       }
     }
     return dstList;
