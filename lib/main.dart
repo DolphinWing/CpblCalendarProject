@@ -147,7 +147,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
-    new Future.delayed(const Duration(milliseconds: 200), () async {
+    new Future.delayed(Duration.zero, () async {
       //loaded in splash
       final configs = await RemoteConfig.instance;
 

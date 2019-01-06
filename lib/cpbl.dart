@@ -7,7 +7,7 @@ import 'lang.dart';
 
 enum TeamId {
   elephants,
-  ct_elephants,
+  ct_brothers,
   lions,
   lions_711,
   eda_rhinos,
@@ -46,63 +46,105 @@ class Team {
 
   Team.simple(TeamId id, bool homeTeam) : this(id: id, homeTeam: homeTeam);
 
-  static Map<String, TeamId> map = new Map()
-    ..putIfAbsent('E02', () => TeamId.ct_elephants)
-    ..putIfAbsent('L01', () => TeamId.lions_711)
-    ..putIfAbsent('A02', () => TeamId.lamigo_monkeys)
-    ..putIfAbsent('B04', () => TeamId.fubon_guardians)
-    ..putIfAbsent('B03', () => TeamId.eda_rhinos)
-    ..putIfAbsent('E01', () => TeamId.elephants)
-    ..putIfAbsent('B02', () => TeamId.sinon_bulls)
-    ..putIfAbsent('W01', () => TeamId.ct_whales)
-    ..putIfAbsent('G02', () => TeamId.media_t_rex)
-    ..putIfAbsent('G01', () => TeamId.makoto_cobras)
-    ..putIfAbsent('A01', () => TeamId.first_kinkon)
-    ..putIfAbsent('T01', () => TeamId.ss_tigers)
-    ..putIfAbsent('D01', () => TeamId.w_dragons)
-    ..putIfAbsent('C01', () => TeamId.times_eagles)
-    ..putIfAbsent('B01', () => TeamId.jungo_bears)
-    ..putIfAbsent('S01', () => TeamId.all_star_red)
-    ..putIfAbsent('S02', () => TeamId.all_star_white)
-    ..putIfAbsent('S03', () => TeamId.all_star_red)
-    ..putIfAbsent('S04', () => TeamId.all_star_white)
-    ..putIfAbsent('S05', () => TeamId.all_star_red)
-    ..putIfAbsent('S06', () => TeamId.all_star_white);
+  static Map<String, Team> idMap = new Map()
+    ..putIfAbsent('E02', () => ctBrothers)
+    ..putIfAbsent('L01', () => lions711)
+    ..putIfAbsent('A02', () => lamigoMonkeys)
+    ..putIfAbsent('B04', () => fubonGuardians)
+    ..putIfAbsent('B03', () => edaRhinos)
+    ..putIfAbsent('E01', () => elephants)
+    ..putIfAbsent('B02', () => sinonBulls)
+    ..putIfAbsent('W01', () => ctWhales)
+    ..putIfAbsent('G02', () => mediaTRex)
+    ..putIfAbsent('G01', () => makotoCobras)
+    ..putIfAbsent('A01', () => firstKinkon)
+    ..putIfAbsent('T01', () => ssTigers)
+    ..putIfAbsent('D01', () => wDragons)
+    ..putIfAbsent('C01', () => timesEagles)
+    ..putIfAbsent('B01', () => jungoBears)
+    ..putIfAbsent('S01', () => allStarRed)
+    ..putIfAbsent('S02', () => allStarWhite)
+    ..putIfAbsent('S03', () => allStarRed)
+    ..putIfAbsent('S04', () => allStarWhite)
+    ..putIfAbsent('S05', () => allStarRed)
+    ..putIfAbsent('S06', () => allStarWhite);
+
+  static Team get elephants => Team(id: TeamId.elephants, color: Colors.yellow);
+
+  static Team get lions => Team(id: TeamId.lions, color: Colors.yellow);
+
+  static Team get lions711 => Team(id: TeamId.lions_711, color: Colors.yellow);
+
+  static Team get lamigoMonkeys => Team(id: TeamId.lamigo_monkeys, color: Colors.yellow);
+
+  static Team get fubonGuardians => Team(id: TeamId.fubon_guardians, color: Colors.yellow);
+
+  static Team get edaRhinos => Team(id: TeamId.eda_rhinos, color: Colors.yellow);
+
+  static Team get ctBrothers => Team(id: TeamId.ct_brothers, color: Colors.yellow);
+
+  static Team get sinonBulls => Team(id: TeamId.sinon_bulls, color: Colors.yellow);
+
+  static Team get ctWhales => Team(id: TeamId.ct_whales, color: Colors.yellow);
+
+  static Team get kgWhales => Team(id: TeamId.kg_whales, color: Colors.yellow);
+
+  static Team get mediaTRex => Team(id: TeamId.media_t_rex, color: Colors.yellow);
+
+  static Team get makotoCobras => Team(id: TeamId.makoto_cobras, color: Colors.yellow);
+
+  static Team get makotoSuns => Team(id: TeamId.makoto_sun, color: Colors.yellow);
+
+  static Team get firstKinkon => Team(id: TeamId.first_kinkon, color: Colors.yellow);
+
+  static Team get laNewBears => Team(id: TeamId.lanew_bears, color: Colors.yellow);
+
+  static Team get ssTigers => Team(id: TeamId.ss_tigers, color: Colors.yellow);
+
+  static Team get wDragons => Team(id: TeamId.w_dragons, color: Colors.yellow);
+
+  static Team get timesEagles => Team(id: TeamId.times_eagles, color: Colors.yellow);
+
+  static Team get jungoBears => Team(id: TeamId.jungo_bears, color: Colors.yellow);
+
+  static Team get allStarRed => Team(id: TeamId.all_star_red, color: Colors.yellow);
+
+  static Team get allStarWhite => Team(id: TeamId.all_star_white, color: Colors.yellow);
 
   static Team parse(String png, [int year, bool homeTeam = false]) {
-    TeamId teamId = homeTeam ? TeamId.unknown_home : TeamId.unknown_away;
+    Team team = Team.simple(homeTeam ? TeamId.unknown_home : TeamId.unknown_away, homeTeam);
     String key = png.substring(0, 3);
-    if (map.containsKey(key)) {
-      switch (map[key]) {
+    if (idMap.containsKey(key)) {
+      switch (idMap[key].id) {
         case TeamId.first_kinkon: //2003
         case TeamId.lanew_bears: //2010
         case TeamId.lamigo_monkeys:
           if (year <= 2003) {
-            teamId = TeamId.first_kinkon;
+            team = firstKinkon;
           } else if (year <= 2010) {
-            teamId = TeamId.lanew_bears;
+            team = laNewBears;
           } else {
-            teamId = TeamId.lamigo_monkeys;
+            team = lamigoMonkeys;
           }
           break;
         case TeamId.lions: //2006
         case TeamId.lions_711:
-          teamId = year < 2007 ? TeamId.lions : TeamId.lions_711;
+          team = year < 2007 ? lions : lions711;
           break;
         case TeamId.kg_whales: //2001
         case TeamId.ct_whales:
-          teamId = year <= 2001 ? TeamId.kg_whales : TeamId.ct_whales;
+          team = year <= 2001 ? kgWhales : ctWhales;
           break;
         case TeamId.makoto_sun: //2003
         case TeamId.makoto_cobras:
-          teamId = year <= 2003 ? TeamId.makoto_sun : TeamId.makoto_cobras;
+          team = year <= 2003 ? makotoSuns : makotoCobras;
           break;
         default:
-          teamId = map[key];
+          team = idMap[key];
           break;
       }
     }
-    return new Team(id: teamId, homeTeam: homeTeam);
+    return new Team.fromTeam(team, homeTeam);
   }
 
   final TeamId id;
