@@ -103,17 +103,23 @@ class _SplashScreenState extends State<SplashScreen> {
     await configs.activateFetched();
     print('welcome message: ${configs.getString('welcome')}');
     print('  override: ${configs.getBool('override_start_enabled')}');
+    final prefs = await SharedPreferences.getInstance();
+    final CpblClient client = new CpblClient(context, configs, prefs);
+    await client.init();
 
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
-    Navigator.of(context).pushReplacementNamed('/calendar');
+    //Navigator.of(context).pushReplacementNamed('/calendar');
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
   }
 }
 
 class MainUiWidget extends StatefulWidget {
   final bool debug;
+  final CpblClient client;
 
-  MainUiWidget({this.debug = false});
+  MainUiWidget({this.debug = false, this.client});
 
   @override
   State<StatefulWidget> createState() => _MainUiWidgetState();
@@ -124,7 +130,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   Timer _timer;
-  CpblClient client;
+  CpblClient _client;
 
   bool loading = false;
   List<Game> list;
@@ -148,30 +154,44 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
     new Future.delayed(Duration.zero, () async {
-      //loaded in splash
-      final configs = await RemoteConfig.instance;
-
-      if (configs.getBool('override_start_enabled')) {
-        year = configs.getInt('override_start_year');
-        month = configs.getInt('override_start_month');
-        print('override: year=$year month=$month');
-      }
-
-      final prefs = await SharedPreferences.getInstance();
-      client = new CpblClient(context, configs, prefs);
-      bool showHighlight = client.isHighlightEnabled();
-      setState(() {
-        showFab = !showHighlight;
-      });
-
-      //var now = DateTime.now();
-      client.init().then((value) {
-        if (showHighlight) {
+      if (widget.client != null) {
+        _client = widget.client;
+        //already init before
+        if (_client.isHighlightEnabled()) {
           fetchHighlight(year, month, debug: widget.debug);
         } else {
           pullToRefresh(year, month, debug: widget.debug);
         }
-      });
+        setState(() {
+          showFab = !_client.isHighlightEnabled();
+        });
+      } else {
+        //loaded in splash
+        final configs = await RemoteConfig.instance;
+
+        if (configs.getBool('override_start_enabled')) {
+          year = configs.getInt('override_start_year');
+          month = configs.getInt('override_start_month');
+          print('override: year=$year month=$month');
+        }
+
+        final prefs = await SharedPreferences.getInstance();
+        _client = new CpblClient(context, configs, prefs);
+
+        bool showHighlight = _client.isHighlightEnabled();
+        setState(() {
+          showFab = !showHighlight;
+        });
+
+        //var now = DateTime.now();
+        _client.init().then((value) {
+          if (showHighlight) {
+            fetchHighlight(year, month, debug: widget.debug);
+          } else {
+            pullToRefresh(year, month, debug: widget.debug);
+          }
+        });
+      }
     });
   }
 
@@ -205,7 +225,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         });
       });
     } else {
-      client.fetchList(year, month, type).then((gameList) {
+      _client.fetchList(year, month, type).then((gameList) {
         setState(() {
           list = gameList;
           loading = false;
@@ -216,16 +236,16 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
   Future<List<Game>> _fetchList(int year, int month, GameType type, [DateTime time]) async {
     List<Game> list = new List();
-    var list1 = await client.fetchList(year, month, type);
+    var list1 = await _client.fetchList(year, month, type);
     if (list1.isNotEmpty) {
       if (list1.last.before(time)) {
         print('last game is before now');
         list.addAll(list1);
-        var list2 = await client.fetchList(year, month + 1, type);
+        var list2 = await _client.fetchList(year, month + 1, type);
         list.addAll(list2);
       } else if (list1.first.after(time)) {
         print('first game is not yet coming');
-        list.addAll(await client.fetchList(year, month - 1, type));
+        list.addAll(await _client.fetchList(year, month - 1, type));
         list.addAll(list1);
       } else {
         print('add ${list1.length} to normal list');
@@ -245,7 +265,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     List<Game> gameList = new List();
     //load version update
     //load remote announcement
-    var cards = client.loadRemoteAnnouncement();
+    var cards = _client.loadRemoteAnnouncement();
     print('remote info size: ${cards.length}');
     gameList.addAll(cards);
     if (debug) {
@@ -259,20 +279,20 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     } else {
       var time = DateTime(2018, 10, 10);
       List<Game> list = new List();
-      if (client.isWarmUpMonth(year, month)) {
-        list.addAll(await client.fetchList(year, month, GameType.type_07)); //warm
+      if (_client.isWarmUpMonth(year, month)) {
+        list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
       }
       list.addAll(await _fetchList(year, month, GameType.type_01, time));
-      if (client.isChallengeMonth(year, month)) {
+      if (_client.isChallengeMonth(year, month)) {
         list.addAll(await _fetchList(year, month, GameType.type_02, time)); //challenge
       }
-      if (client.isChampionMonth(year, month)) {
+      if (_client.isChampionMonth(year, month)) {
         list.addAll(await _fetchList(year, month, GameType.type_03, time)); //champion
       }
-      if (client.isAllStarMonth(year, month)) {
-        list.addAll(await client.fetchList(year, month, GameType.type_05)); // all star
+      if (_client.isAllStarMonth(year, month)) {
+        list.addAll(await _client.fetchList(year, month, GameType.type_05)); // all star
       }
-      gameList.addAll(client.getHighlightGameList(list, time));
+      gameList.addAll(_client.getHighlightGameList(list, time));
     }
     //show more button
     if (gameList.isNotEmpty) {
@@ -336,7 +356,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                   case 1:
                     //Navigator.of(context).pushNamed('/settings');
                     Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => SettingsPane(client: client)));
+                        MaterialPageRoute(builder: (context) => SettingsPane(client: _client)));
                     break;
                   case 2:
                     fetchHighlight(_year, _month, debug: true);
@@ -372,8 +392,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           },
         ),
         floatingActionButton: showFab
-            ? Container()
-            : FloatingActionButton(
+            ? FloatingActionButton(
                 child: Icon(
                   Icons.search,
                   //color: Theme.of(context).primaryColor,
@@ -383,7 +402,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                   //Scaffold.of(context).openEndDrawer();
                   _scaffoldKey.currentState.openEndDrawer();
                 },
-              ),
+              )
+            : Container(),
       ),
     );
   }
