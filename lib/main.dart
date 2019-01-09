@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
     final CpblClient client = new CpblClient(context, configs, prefs);
-    await client.init();//we need to init some lang strings
+    await client.init(); //we need to init some lang strings
     //Navigator.of(context).pushReplacementNamed('/calendar');
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
@@ -499,8 +499,20 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
                 Padding(
                   child: ActionChip(
                     label: Text(' year $_year '),
-                    onPressed: () {
+                    onPressed: () async {
                       print('show selector');
+                      final r = await showDialog(context: context, builder: (context) {
+                        return SimpleDialog(
+                          title: Text('year'),
+                          children: <Widget>[
+                            SimpleDialogOption(
+                              onPressed: () { Navigator.pop(context, 2018); },
+                              child: Text('2018'),
+                            ),
+                          ],
+                        );
+                      });
+                      print('result = $r');
                     },
                     pressElevation: 2.0,
                   ),
@@ -517,12 +529,12 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadiusDirectional.only(
-                topEnd: Radius.circular(16),
-                topStart: Radius.circular(16),
+                topEnd: Radius.circular(20),
+                topStart: Radius.circular(20),
               ),
               color: Colors.white,
             ),
-            padding: EdgeInsets.only(top: 8),
+            //padding: EdgeInsets.only(top: 8, bottom: 8),
           );
   }
 
@@ -537,20 +549,23 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     }
     return Column(
       children: <Widget>[
-        TabBar(
-          controller: _tabController,
-          tabs: titleList,
-          labelColor: Theme.of(context).primaryColor,
-          //indicatorColor: Theme.of(context).primaryColor,
-          //indicatorWeight: 4,
-          unselectedLabelColor: Colors.black,
-          isScrollable: true,
-        ),
         Container(
-          //child: SizedBox(height: 1),
-          constraints: BoxConstraints.expand(height: 1),
-          color: Theme.of(context).primaryColor.withAlpha(64),
+          child: TabBar(
+            controller: _tabController,
+            tabs: titleList,
+            labelColor: Theme.of(context).primaryColor,
+            //indicatorColor: Theme.of(context).primaryColor,
+            //indicatorWeight: 4,
+            unselectedLabelColor: Colors.black,
+            isScrollable: true,
+          ),
+          color: Color.fromARGB(240, 240, 240, 240),
         ),
+//        Container(
+//          //child: SizedBox(height: 1),
+//          constraints: BoxConstraints.expand(height: 1),
+//          color: Theme.of(context).primaryColor.withAlpha(64),
+//        ),
         Expanded(
           child: TabBarView(
             controller: _tabController,

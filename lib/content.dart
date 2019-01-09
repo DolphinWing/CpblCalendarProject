@@ -103,13 +103,11 @@ class TeamRowWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Padding(
-          child: Icon(
-            Icons.donut_small,
-            color: team.color,
-          ),
-          padding: EdgeInsets.all(8),
+        Icon(
+          Icons.donut_small,
+          color: team.color,
         ),
+        SizedBox(width: 16),
         Expanded(
           child: Text(
             team.getDisplayName(context),
