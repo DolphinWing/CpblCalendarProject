@@ -128,6 +128,29 @@ class TeamRowWidget extends StatelessWidget {
   }
 }
 
+class GameCardBaseWidget extends StatelessWidget {
+  final Widget child;
+
+  GameCardBaseWidget({@required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      margin: EdgeInsets.only(top: 4, bottom: 4, left: 8, right: 8),
+      child: child,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        //color: Colors.grey.withAlpha(32),
+        border: Border.all(
+          style: BorderStyle.solid,
+          color: Colors.grey.withAlpha(48),
+        ),
+      ),
+    );
+  }
+}
+
 class GameCardWidget extends StatelessWidget {
   final Game game;
 
@@ -135,10 +158,8 @@ class GameCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
-      margin: EdgeInsets.only(top: 4, bottom: 4, left: 8, right: 8),
-      child: Column(
+    return new GameCardBaseWidget(
+      child: new Column(
         children: <Widget>[
           //Divider(),
           Row(
@@ -163,24 +184,13 @@ class GameCardWidget extends StatelessWidget {
               Text(game.getFieldName(context)),
               Expanded(
                 child: game.extra != null
-                    ? Text(
-                        '${game.extra}',
-                        textAlign: TextAlign.end,
-                      )
+                    ? Text('${game.extra}', textAlign: TextAlign.end)
                     : SizedBox(height: 1),
               ),
             ],
           ),
           //Divider(),
         ],
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        //color: Colors.grey.withAlpha(32),
-        border: Border.all(
-          style: BorderStyle.solid,
-          color: Colors.grey.withAlpha(32),
-        ),
       ),
     );
   }
@@ -193,7 +203,7 @@ class _GameCardAnnouncementWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GameCardBaseWidget(
       child: Container(
         child: Center(
           child: Text(message),

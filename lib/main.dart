@@ -88,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   prepare() async {
-    var _duration = new Duration(microseconds: 200);
+    var _duration = new Duration(microseconds: 500);
     return new Timer(_duration, navigationPage);
     //await Lang.of(context).load();
     //_navigationPage();
@@ -104,11 +104,10 @@ class _SplashScreenState extends State<SplashScreen> {
     print('welcome message: ${configs.getString('welcome')}');
     print('  override: ${configs.getBool('override_start_enabled')}');
     final prefs = await SharedPreferences.getInstance();
-    final CpblClient client = new CpblClient(context, configs, prefs);
-    await client.init();
-
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
+    final CpblClient client = new CpblClient(context, configs, prefs);
+    await client.init();//we need to init some lang strings
     //Navigator.of(context).pushReplacementNamed('/calendar');
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
@@ -122,7 +121,8 @@ class MainUiWidget extends StatefulWidget {
   MainUiWidget({this.debug = false, this.client});
 
   @override
-  State<StatefulWidget> createState() => _MainUiWidgetState();
+  State<StatefulWidget> createState() =>
+      client.isViewPagerEnabled() ? _MainUi2WidgetState() : _MainUiWidgetState();
 }
 
 class _MainUiWidgetState extends State<MainUiWidget> {
@@ -157,16 +157,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       if (widget.client != null) {
         _client = widget.client;
         //already init before
-        if (_client.isHighlightEnabled()) {
-          fetchHighlight(year, month, debug: widget.debug);
-        } else {
-          pullToRefresh(year, month, debug: widget.debug);
-        }
-        setState(() {
-          showFab = !_client.isHighlightEnabled();
-        });
+        startFetchGames();
       } else {
-        //loaded in splash
+        //not loaded in splash
         final configs = await RemoteConfig.instance;
 
         if (configs.getBool('override_start_enabled')) {
@@ -177,21 +170,22 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
         final prefs = await SharedPreferences.getInstance();
         _client = new CpblClient(context, configs, prefs);
-
-        bool showHighlight = _client.isHighlightEnabled();
-        setState(() {
-          showFab = !showHighlight;
-        });
-
         //var now = DateTime.now();
         _client.init().then((value) {
-          if (showHighlight) {
-            fetchHighlight(year, month, debug: widget.debug);
-          } else {
-            pullToRefresh(year, month, debug: widget.debug);
-          }
+          startFetchGames();
         });
       }
+    });
+  }
+
+  void startFetchGames() {
+    if (_client.isHighlightEnabled()) {
+      fetchHighlight(_year, _month, debug: widget.debug);
+    } else {
+      pullToRefresh(_year, _month, debug: widget.debug);
+    }
+    setState(() {
+      showFab = !_client.isHighlightEnabled();
     });
   }
 
@@ -284,13 +278,13 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       }
       list.addAll(await _fetchList(year, month, GameType.type_01, time));
       if (_client.isChallengeMonth(year, month)) {
-        list.addAll(await _fetchList(year, month, GameType.type_02, time)); //challenge
+        list.addAll(await _fetchList(year, month, GameType.type_05, time)); //challenge
       }
       if (_client.isChampionMonth(year, month)) {
         list.addAll(await _fetchList(year, month, GameType.type_03, time)); //champion
       }
       if (_client.isAllStarMonth(year, month)) {
-        list.addAll(await _client.fetchList(year, month, GameType.type_05)); // all star
+        list.addAll(await _client.fetchList(year, month, GameType.type_02)); // all star
       }
       gameList.addAll(_client.getHighlightGameList(list, time));
     }
@@ -307,6 +301,22 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         loading = false;
       });
     }
+  }
+
+  void showCpblHome() async {
+    if (await canLaunch(CpblClient.homeUrl)) {
+      await launch(CpblClient.homeUrl);
+    } else {
+      throw 'Could not launch ${CpblClient.homeUrl}';
+    }
+  }
+
+  void showSettings() async {
+    //Navigator.of(context).pushNamed('/settings');
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => SettingsPane(client: _client)));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: _client)));
   }
 
   @override
@@ -343,20 +353,14 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                       child: Text('show highlight'),
                     ),
                   ],
-              onSelected: (action) async {
+              onSelected: (action) {
                 //print('selected option $action');
                 switch (action) {
                   case 0:
-                    if (await canLaunch(CpblClient.homeUrl)) {
-                      await launch(CpblClient.homeUrl);
-                    } else {
-                      throw 'Could not launch ${CpblClient.homeUrl}';
-                    }
+                    showCpblHome();
                     break;
                   case 1:
-                    //Navigator.of(context).pushNamed('/settings');
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => SettingsPane(client: _client)));
+                    showSettings();
                     break;
                   case 2:
                     fetchHighlight(_year, _month, debug: true);
@@ -367,7 +371,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           ],
           //leading: new Container(),
           automaticallyImplyLeading: false,
-          //elevation: _mode == UiMode.quick ? -1.0 : 4.0,
+          elevation: _mode == UiMode.quick ? 0.0 : 4.0,
         ),
         endDrawer: DrawerPane(
           year: _year,
@@ -378,18 +382,21 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             pullToRefresh(action.year, action.month, type: action.type);
           },
         ),
-        body: ContentUiWidget(
-          loading: loading,
-          mode: _mode,
-          list: list,
-          onScrollEnd: (value) {
-            setState(() {
-              showFab = !value && _mode == UiMode.list;
-            });
-          },
-          onHighlightPaneClosed: () {
-            pullToRefresh(2018, 10);
-          },
+        body: Material(
+          child: ContentUiWidget(
+            loading: loading,
+            mode: _mode,
+            list: list,
+            onScrollEnd: (value) {
+              setState(() {
+                showFab = !value && _mode == UiMode.list;
+              });
+            },
+            onHighlightPaneClosed: () {
+              pullToRefresh(2018, 10);
+            },
+          ),
+          elevation: 2.0,
         ),
         floatingActionButton: showFab
             ? FloatingActionButton(
@@ -475,6 +482,247 @@ class _SettingsPaneState extends State<SettingsPane> {
               },
             ),
             Divider(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderStateMixin {
+  Widget _buildControlPane(BuildContext context, int mode) {
+    return mode == UiMode.quick
+        ? SizedBox(height: 1)
+        : Container(
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  child: ActionChip(
+                    label: Text(' year $_year '),
+                    onPressed: () {
+                      print('show selector');
+                    },
+                    pressElevation: 2.0,
+                  ),
+                  padding: EdgeInsets.only(left: 16, right: 8),
+                ),
+                ActionChip(
+                  label: Text(' team team team '),
+                  pressElevation: 2.0,
+                  onPressed: () {
+                    print('show selector');
+                  },
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadiusDirectional.only(
+                topEnd: Radius.circular(16),
+                topStart: Radius.circular(16),
+              ),
+              color: Colors.white,
+            ),
+            padding: EdgeInsets.only(top: 8),
+          );
+  }
+
+  Widget _buildPagerWidget(BuildContext context) {
+    List<Tab> titleList = new List();
+    List<Widget> childList = new List();
+    for (int i = 0; i < monthList.length; i++) {
+      titleList.add(new Tab(text: monthList[i]));
+      childList.add(new ContentUiWidget(
+        list: gameList[i + 1],
+      ));
+    }
+    return Column(
+      children: <Widget>[
+        TabBar(
+          controller: _tabController,
+          tabs: titleList,
+          labelColor: Theme.of(context).primaryColor,
+          //indicatorColor: Theme.of(context).primaryColor,
+          //indicatorWeight: 4,
+          unselectedLabelColor: Colors.black,
+          isScrollable: true,
+        ),
+        Container(
+          //child: SizedBox(height: 1),
+          constraints: BoxConstraints.expand(height: 1),
+          color: Theme.of(context).primaryColor.withAlpha(64),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            //physics: NeverScrollableScrollPhysics(),
+            children: childList,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContentWidget(BuildContext context, int mode, List<Game> data, bool isLoading) {
+    if (mode == UiMode.quick) {
+      return ContentUiWidget(
+        loading: isLoading,
+        mode: mode,
+        list: data,
+        onHighlightPaneClosed: () {
+          //pullToRefresh(2018, 10);
+          setState(() {
+            _mode = UiMode.list;
+            loading = true;
+          });
+          fetchMonthList(_year, _month);
+        },
+      );
+    }
+    if (loading) {
+      //pager loading
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          _buildPagerWidget(context),
+          Positioned(child: CircularProgressIndicator(), top: 200),
+        ],
+      );
+    }
+    return _buildPagerWidget(context);
+  }
+
+  TabController _tabController;
+
+  void onTabClickListener() {
+    if (_tabController.indexIsChanging) {
+      print('change tab selected: ${_tabController.index}');
+      setState(() {
+        loading = true;
+        _month = _tabController.index + 1;
+      });
+      fetchMonthList(_year, _tabController.index + 1);
+    }
+  }
+
+  static const List<String> monthList = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec'
+  ];
+
+  Map<int, List<Game>> gameList = new Map();
+
+  void fetchMonthList(int year, int month) async {
+    print('pager: fetch $year/$month');
+    List<Game> list = new List();
+    if (_client.isWarmUpMonth(year, month)) {
+      list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
+    }
+    list.addAll(await _client.fetchList(year, month, GameType.type_01));
+    if (_client.isChallengeMonth(year, month)) {
+      list.addAll(await _client.fetchList(year, month, GameType.type_05)); //challenge
+    }
+    if (_client.isChampionMonth(year, month)) {
+      list.addAll(await _client.fetchList(year, month, GameType.type_03)); //championship
+    }
+    if (_client.isAllStarMonth(year, month)) {
+      list.addAll(await _client.fetchList(year, month, GameType.type_02)); // all star
+    }
+    print('fetch complete $month ${list.length}');
+    list.sort((g1, g2) => g1.timeInMillis() == g2.timeInMillis()
+        ? g1.id - g2.id
+        : g1.timeInMillis() - g2.timeInMillis());
+    setState(() {
+      gameList[month] = list;
+      this.list = list;
+      this.loading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: monthList.length);
+    _tabController.addListener(onTabClickListener);
+  }
+
+  @override
+  void startFetchGames() {
+    if (_client.isHighlightEnabled()) {
+      fetchHighlight(_year, _month, debug: widget.debug);
+    } else {
+      _tabController.animateTo(_month - 1);
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(onTabClickListener);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          title: Text(Lang.of(context).trans('app_name')),
+          actions: <Widget>[
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 0,
+                      child: Text(Lang.of(context).trans('action_go_to_website')),
+                    ),
+                    PopupMenuItem(
+                      value: 1,
+                      child: Text(Lang.of(context).trans('action_settings')),
+                    ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: Text('show highlight'),
+                    ),
+                  ],
+              onSelected: (action) {
+                //print('selected option $action');
+                switch (action) {
+                  case 0:
+                    showCpblHome();
+                    break;
+                  case 1:
+                    showSettings();
+                    break;
+                  case 2:
+                    fetchHighlight(_year, _month, debug: true);
+                    break;
+                }
+              },
+            ),
+          ],
+          //leading: new Container(),
+          automaticallyImplyLeading: false,
+          elevation: 0.0,
+        ),
+        body: Column(
+          children: <Widget>[
+            _buildControlPane(context, _mode),
+            Expanded(
+              child: Container(
+                child: _buildContentWidget(context, _mode, list, loading),
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

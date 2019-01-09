@@ -182,11 +182,11 @@ enum FieldId {
 }
 
 enum GameType {
-  type_01,
-  type_02,
-  type_03,
-  type_05,
-  type_07,
+  type_01,//regular season
+  type_02,//all-star game
+  type_03,//championship
+  type_05,//challenge games
+  type_07,//warm up games
   type_09,
   type_16,
   update,
@@ -295,6 +295,7 @@ class CpblClient {
   Map<String, FieldId> fieldMap = new Map();
 
   FieldId parseField(String field) {
+    //print('field = $field');
     return fieldMap.containsKey(field) ? fieldMap[field] : FieldId.f00;
   }
 
@@ -402,6 +403,7 @@ class CpblClient {
     print('constructor');
     //prepare field map
     FieldId.values.forEach((id) {
+      //print('id: $id, ${getFieldName(context, id)}');
       fieldMap.putIfAbsent(getFieldName(context, id), () => id);
     });
     fieldMap[Lang.of(context).trans('cpbl_game_field_name_f19r')] = FieldId.f19;
@@ -507,7 +509,7 @@ class CpblClient {
         if (block.contains('<!-- one_block -->')) {
           block = block.substring(0, block.lastIndexOf('<!-- one_block -->'));
         }
-        Game g = _parseGameFromBlock(block, year, month);
+        Game g = _parseGameFromBlock(block, year, month, type);
         if (g == null) {
           print('no game in this block ($i)');
           continue;
@@ -525,7 +527,7 @@ class CpblClient {
     return list;
   }
 
-  Game _parseGameFromBlock(String block, int year, int month) {
+  Game _parseGameFromBlock(String block, int year, int month, GameType type) {
     RegExp expId = new RegExp('game_id=([0-9]+)');
     var id = expId.firstMatch(block)?.group(1);
     if (id == null) {
@@ -543,7 +545,7 @@ class CpblClient {
       print('no day');
       return null;
     }
-    return new Game(id: int.parse(id), time: new DateTime(year, month, day));
+    return new Game(id: int.parse(id), time: new DateTime(year, month, day), type: type);
   }
 
   Game _extractTeamFromBlock(Game g, String block, int year) {
@@ -557,7 +559,7 @@ class CpblClient {
         awayTeam = awayTeam.substring(12, awayTeam.indexOf(".png"));
         g.away = Team.parse(awayTeam, year);
         String place = tds[2];
-        place = place.substring(place.indexOf('>') + 1, place.indexOf('</td>'));
+        place = place.substring(place.indexOf('>') + 1, place.indexOf('</td>')).trim();
         g.fieldId = parseField(place);
         String homeTeam = tds[3];
         homeTeam = homeTeam.substring(homeTeam.indexOf('images/team/'));
