@@ -581,7 +581,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
         Expanded(
           child: TabBarView(
             controller: _tabController,
-            //physics: NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             children: childList,
           ),
         ),
@@ -649,24 +649,27 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
 
   Map<int, List<Game>> gameList = new Map();
 
-  fetchMonthList(int year, int month) async {
+  fetchMonthList(int year, int month, {bool forceUpdate = false}) async {
     print('pager: fetch $year/$month');
+    setState(() {
+      loading = true;
+    });
     List<Game> list = new List();
     if (_client.isWarmUpMonth(year, month)) {
-      list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
-      sleep(_fetchDelay);
+      list.addAll(await _client.fetchList(year, month, GameType.type_07, !forceUpdate));
+      sleep(_fetchDelay); //warm up
     }
-    list.addAll(await _client.fetchList(year, month, GameType.type_01));
+    list.addAll(await _client.fetchList(year, month, GameType.type_01, !forceUpdate));
     if (_client.isChallengeMonth(year, month)) {
-      list.addAll(await _client.fetchList(year, month, GameType.type_05)); //challenge
-      sleep(_fetchDelay);
+      list.addAll(await _client.fetchList(year, month, GameType.type_05, !forceUpdate));
+      sleep(_fetchDelay); //challenge
     }
     if (_client.isChampionMonth(year, month)) {
-      list.addAll(await _client.fetchList(year, month, GameType.type_03)); //championship
-      sleep(_fetchDelay);
+      list.addAll(await _client.fetchList(year, month, GameType.type_03, !forceUpdate));
+      sleep(_fetchDelay); //championship
     }
     if (_client.isAllStarMonth(year, month)) {
-      list.addAll(await _client.fetchList(year, month, GameType.type_02)); // all star
+      list.addAll(await _client.fetchList(year, month, GameType.type_02, !forceUpdate));
     }
     print('fetch complete $month ${list.length}');
     list.sort((g1, g2) => g1.timeInMillis() == g2.timeInMillis()
@@ -714,6 +717,17 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
             //style: TextStyle(color: Colors.white),
           ),
           actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                if (_mode == UiMode.list) {
+                  fetchMonthList(_year, _month, forceUpdate: true); //pager refresh button
+                } else {
+                  fetchHighlight(_year, _month, forceUpdate: true); //pager refresh button
+                }
+              },
+              tooltip: Lang.of(context).trans('action_refresh'),
+            ),
             PopupMenuButton(
               itemBuilder: (context) => [
                     PopupMenuItem(

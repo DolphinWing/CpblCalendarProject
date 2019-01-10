@@ -96,10 +96,14 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
       }
     });
     print('show list ${widgetList.length}');
-    return ListView(
-      controller: _controller,
-      children: widgetList,
-    );
+    return list.isNotEmpty
+        ? ListView(
+            controller: _controller,
+            children: widgetList,
+          )
+        : Center(
+            child: Text(Lang.of(context).trans('empty_data')),
+          );
   }
 
   @override

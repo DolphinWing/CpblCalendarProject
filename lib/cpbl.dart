@@ -172,7 +172,7 @@ class Team {
 
   static Team get allStarWhite => Team(
         id: TeamId.all_star_white,
-        color: Colors.white,
+        color: Color.fromARGB(255, 244, 244, 244),
       );
 
   static Team parse(String png, [int year, bool homeTeam = false]) {
@@ -588,7 +588,7 @@ class CpblClient {
         _extractTeamFromBlock(g, block, year);
         _extractScheduleFromBlock(g, block);
         _extractPlayInfoFromBlock(g, block);
-        print('url: ${g.url}');
+        //print('url: ${g.url}');
         list.add(g);
       }
     } else {
