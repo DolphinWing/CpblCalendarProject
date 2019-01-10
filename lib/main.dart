@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
@@ -96,13 +97,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigationPage() async {
     configs = await RemoteConfig.instance;
-    final defaults = <String, dynamic>{'welcome': 'default welcome'};
+    final defaults = <String, dynamic>{'override_start_enabled': false};
     await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
     await configs.setDefaults(defaults);
     await configs.fetch(expiration: const Duration(hours: 5));
     await configs.activateFetched();
-    print('welcome message: ${configs.getString('welcome')}');
-    print('  override: ${configs.getBool('override_start_enabled')}');
+    //print('welcome message: ${configs.getString('welcome')}');
+    print('override: ${configs.getBool('override_start_enabled')}');
     final prefs = await SharedPreferences.getInstance();
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
@@ -128,6 +129,7 @@ class MainUiWidget extends StatefulWidget {
 class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+  Duration _fetchDelay = const Duration(milliseconds: 200);
 
   Timer _timer;
   CpblClient _client;
@@ -139,17 +141,21 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   int _month;
   GameType _type;
   int _mode = UiMode.list;
+  FieldId _field;
+  TeamId _favTeam;
 
   @override
   void initState() {
     super.initState();
 
+    //FIXME: auto select year and month
     int year = 2018;
     int month = 10;
     setState(() {
       _year = year;
       _month = month;
     });
+    print('init from $_year/$_month');
 
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
@@ -235,10 +241,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       if (list1.last.before(time)) {
         print('last game is before now');
         list.addAll(list1);
+        sleep(_fetchDelay);
         var list2 = await _client.fetchList(year, month + 1, type);
         list.addAll(list2);
       } else if (list1.first.after(time)) {
         print('first game is not yet coming');
+        sleep(_fetchDelay);
         list.addAll(await _client.fetchList(year, month - 1, type));
         list.addAll(list1);
       } else {
@@ -275,8 +283,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       List<Game> list = new List();
       if (_client.isWarmUpMonth(year, month)) {
         list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
+        sleep(_fetchDelay);
       }
-      list.addAll(await _fetchList(year, month, GameType.type_01, time));
+      list.addAll(await _fetchList(year, month, GameType.type_01, time)); //regular
       if (_client.isChallengeMonth(year, month)) {
         list.addAll(await _fetchList(year, month, GameType.type_05, time)); //challenge
       }
@@ -490,51 +499,31 @@ class _SettingsPaneState extends State<SettingsPane> {
 }
 
 class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderStateMixin {
-  Widget _buildControlPane(BuildContext context, int mode) {
+  Widget _buildControlPane(BuildContext context, int mode, int year) {
     return mode == UiMode.quick
         ? SizedBox(height: 1)
-        : Container(
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  child: ActionChip(
-                    label: Text(' year $_year '),
-                    onPressed: () async {
-                      print('show selector');
-                      final r = await showDialog(context: context, builder: (context) {
-                        return SimpleDialog(
-                          title: Text('year'),
-                          children: <Widget>[
-                            SimpleDialogOption(
-                              onPressed: () { Navigator.pop(context, 2018); },
-                              child: Text('2018'),
-                            ),
-                          ],
-                        );
-                      });
-                      print('result = $r');
-                    },
-                    pressElevation: 2.0,
-                  ),
-                  padding: EdgeInsets.only(left: 16, right: 8),
-                ),
-                ActionChip(
-                  label: Text(' team team team '),
-                  pressElevation: 2.0,
-                  onPressed: () {
-                    print('show selector');
-                  },
-                ),
-              ],
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadiusDirectional.only(
-                topEnd: Radius.circular(20),
-                topStart: Radius.circular(20),
-              ),
-              color: Colors.white,
-            ),
-            //padding: EdgeInsets.only(top: 8, bottom: 8),
+        : PagerSelectorWidget(
+            enabled: !loading,
+            onYearChanged: (value) {
+              setState(() {
+                gameList.clear();
+                _year = value;
+                loading = true;
+              });
+              //Future.delayed(_fetchDelay, () {
+              fetchMonthList(_year, _month);
+              //});
+            },
+            onFieldChanged: (value) {
+              setState(() {
+                _field = value;
+              });
+            },
+            onFavTeamChanged: (value) {
+              setState(() {
+                _favTeam = value;
+              });
+            },
           );
   }
 
@@ -545,6 +534,8 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
       titleList.add(new Tab(text: monthList[i]));
       childList.add(new ContentUiWidget(
         list: gameList[i + 1],
+        field: _field,
+        favTeam: _favTeam,
       ));
     }
     return Column(
@@ -577,7 +568,8 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     );
   }
 
-  Widget _buildContentWidget(BuildContext context, int mode, List<Game> data, bool isLoading) {
+  Widget _buildContentWidget(BuildContext context, int mode, List<Game> data, bool isLoading,
+      TeamId teamId, FieldId field) {
     if (mode == UiMode.quick) {
       return ContentUiWidget(
         loading: isLoading,
@@ -636,18 +628,21 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
 
   Map<int, List<Game>> gameList = new Map();
 
-  void fetchMonthList(int year, int month) async {
+  fetchMonthList(int year, int month) async {
     print('pager: fetch $year/$month');
     List<Game> list = new List();
     if (_client.isWarmUpMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
+      sleep(_fetchDelay);
     }
     list.addAll(await _client.fetchList(year, month, GameType.type_01));
     if (_client.isChallengeMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_05)); //challenge
+      sleep(_fetchDelay);
     }
     if (_client.isChampionMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_03)); //championship
+      sleep(_fetchDelay);
     }
     if (_client.isAllStarMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_02)); // all star
@@ -731,10 +726,10 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
         ),
         body: Column(
           children: <Widget>[
-            _buildControlPane(context, _mode),
+            _buildControlPane(context, _mode, _year),
             Expanded(
               child: Container(
-                child: _buildContentWidget(context, _mode, list, loading),
+                child: _buildContentWidget(context, _mode, list, loading, _favTeam, _field),
                 color: Colors.white,
               ),
             ),

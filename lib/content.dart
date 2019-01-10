@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'cpbl.dart';
+import 'lang.dart';
 
 class UiMode {
   static const int list = 0;
@@ -14,6 +15,8 @@ class ContentUiWidget extends StatefulWidget {
   final int mode;
   final ValueChanged<bool> onScrollEnd;
   final GestureTapCallback onHighlightPaneClosed;
+  final TeamId favTeamId;
+  final FieldId fieldId;
 
   ContentUiWidget({
     this.loading = false,
@@ -21,7 +24,11 @@ class ContentUiWidget extends StatefulWidget {
     this.mode = UiMode.list,
     this.onScrollEnd,
     this.onHighlightPaneClosed,
-  }) : this.list = list ?? new List();
+    TeamId favTeam,
+    FieldId field,
+  })  : this.list = list ?? new List(),
+        this.favTeamId = favTeam ?? TeamId.fav_all,
+        this.fieldId = field ?? FieldId.f00;
 
   @override
   State<StatefulWidget> createState() => _ContentUiWidgetState();
@@ -53,6 +60,7 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
   }
 
   Widget buildContent(BuildContext context, List<Game> list, int mode) {
+    //print('target ${widget.fieldId} ${widget.favTeamId}');
     List<Widget> widgetList = new List();
     list?.forEach((game) {
       switch (game.type) {
@@ -68,10 +76,25 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
           ));
           break;
         default:
-          widgetList.add(GameCardWidget(game));
+          if (widget.favTeamId == TeamId.fav_all && widget.fieldId == FieldId.f00) {
+            widgetList.add(GameCardWidget(game));
+          } else if (widget.favTeamId == TeamId.fav_all) {
+            if (widget.fieldId == game.fieldId) {
+              widgetList.add(GameCardWidget(game));
+            }
+          } else if (widget.fieldId == FieldId.f00) {
+            if (game.isFav(widget.favTeamId)) {
+              widgetList.add(GameCardWidget(game));
+            }
+          } else {
+            if (widget.fieldId == game.fieldId && game.isFav(widget.favTeamId)) {
+              widgetList.add(GameCardWidget(game));
+            }
+          }
           break;
       }
     });
+    print('show list ${widgetList.length}');
     return ListView(
       controller: _controller,
       children: widgetList,
@@ -225,6 +248,177 @@ class _GameCardMoreWidget extends StatelessWidget {
         onPressed: onPressed,
       ),
       padding: EdgeInsets.only(left: 16, right: 16),
+    );
+  }
+}
+
+class PagerSelectorWidget extends StatefulWidget {
+  final bool enabled;
+  final int year;
+  final ValueChanged<int> onYearChanged;
+  final ValueChanged<FieldId> onFieldChanged;
+  final ValueChanged<TeamId> onFavTeamChanged;
+
+  PagerSelectorWidget({
+    this.enabled = true,
+    int year = 2018,
+    this.onYearChanged,
+    this.onFieldChanged,
+    this.onFavTeamChanged,
+  }) : this.year = year ?? DateTime.now().year;
+
+  @override
+  State<StatefulWidget> createState() => _PagerSelectorWidgetState();
+}
+
+class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
+  int _year;
+  FieldId _fieldId;
+  TeamId _favTeam;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _year = widget.year;
+      _fieldId = FieldId.f00;
+      _favTeam = TeamId.fav_all;
+    });
+  }
+
+  _onYearChipPressed() async {
+    if (!widget.enabled) return;
+    //print('show year selector');
+    final r = await showDialog(
+        context: context,
+        builder: (context) {
+          int yearNow = DateTime.now().year;
+          List<Widget> options = new List();
+          for (int year = yearNow; year >= 1990; year--) {
+            options.add(SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, year);
+              },
+              child: Text('Year $year (${year - 1989})'),
+            ));
+          }
+          return SimpleDialog(
+            title: Text(Lang.of(context).trans('use_view_pager_title')),
+            children: options,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+          );
+        });
+    print('result = $r');
+    if (r != null) {
+      setState(() {
+        _year = r;
+        //FIXME: reset fav teams
+      });
+      if (widget.onYearChanged != null) widget.onYearChanged(r);
+    }
+  }
+
+  _onFieldChipPressed() async {
+    if (!widget.enabled) return;
+    //print('show field selector');
+    final r = await showDialog(
+        context: context,
+        builder: (context) {
+          List<Widget> options = new List();
+          FieldId.values.forEach((id) {
+            options.add(SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, id);
+              },
+              child: Text(CpblClient.getFieldName(context, id)),
+            ));
+          });
+          return SimpleDialog(
+            title: Text(Lang.of(context).trans('use_view_pager_title')),
+            children: options,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+          );
+        });
+    print('result = $r');
+    if (r != null) {
+      setState(() {
+        _fieldId = r;
+      });
+      if (widget.onFieldChanged != null) widget.onFieldChanged(r);
+    }
+  }
+
+  static const List<TeamId> favTeams = [
+    TeamId.fav_all,
+    TeamId.ct_brothers,
+    TeamId.lions_711,
+    TeamId.fubon_guardians,
+    TeamId.lamigo_monkeys
+  ];
+
+  _onTeamChipPressed() async {
+    if (!widget.enabled) return;
+    //print('show team selector');
+    final r = await showDialog(
+        context: context,
+        builder: (context) {
+          List<Widget> options = new List();
+          favTeams.forEach((id) {
+            options.add(SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, id);
+              },
+              child: Text(CpblClient.getTeamName(context, id)),
+            ));
+          });
+          return SimpleDialog(
+            title: Text(Lang.of(context).trans('use_view_pager_title')),
+            children: options,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+          );
+        });
+    print('result = $r');
+    if (r != null) {
+      setState(() {
+        _favTeam = r;
+      });
+      if (widget.onFavTeamChanged != null) widget.onFavTeamChanged(r);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          SizedBox(width: 8),
+          ActionChip(
+            label: Text('year $_year'),
+            onPressed: _onYearChipPressed,
+            pressElevation: 2.0,
+          ),
+          SizedBox(width: 8),
+          ActionChip(
+            label: Text(CpblClient.getFieldName(context, _fieldId)),
+            pressElevation: 2.0,
+            onPressed: _onFieldChipPressed,
+          ),
+          SizedBox(width: 8),
+          ActionChip(
+            label: Text(CpblClient.getTeamName(context, _favTeam)),
+            pressElevation: 2.0,
+            onPressed: _onTeamChipPressed,
+          ),
+        ],
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadiusDirectional.only(
+          topEnd: Radius.circular(20),
+          topStart: Radius.circular(20),
+        ),
+        color: Colors.white,
+      ),
+      //padding: EdgeInsets.only(top: 8, bottom: 8),
     );
   }
 }

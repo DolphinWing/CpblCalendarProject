@@ -27,6 +27,7 @@ enum TeamId {
   kg_whales,
   all_star_red,
   all_star_white,
+  fav_all,
   unknown_away,
   unknown_home,
   unknown
@@ -182,11 +183,11 @@ enum FieldId {
 }
 
 enum GameType {
-  type_01,//regular season
-  type_02,//all-star game
-  type_03,//championship
-  type_05,//challenge games
-  type_07,//warm up games
+  type_01, //regular season
+  type_02, //all-star game
+  type_03, //championship
+  type_05, //challenge games
+  type_07, //warm up games
   type_09,
   type_16,
   update,
@@ -275,6 +276,8 @@ class Game {
   }
 
   int timeInMillis() => _time.millisecondsSinceEpoch;
+
+  bool isFav(TeamId id) => home.id == id || away.id == id;
 }
 
 class CpblClient {
@@ -412,15 +415,9 @@ class CpblClient {
   }
 
   Future<int> init() async {
+    print('init cpbl client');
     cachedGameList.clear(); //clear cache
 
-    //prepare first read
-    //await _client.read(homeUrl)
-    await _client.get(homeUrl);
-//    .then((html) {
-//      print('html = ${html.length}');
-//    })
-    ;
     //load warm up overrides
     var warm = warmup_month_start_override.split(';');
     warm.forEach((value) {
@@ -461,19 +458,30 @@ class CpblClient {
         championMonthOverrides.putIfAbsent(int.parse(ym[0]), () => ym[1]);
       }
     });
+
+    //prepare first read
+    //await _client.read(homeUrl)
+    /*await*/
+    _client.get(homeUrl);
+//    .then((html) {
+//      print('html = ${html.length}');
+//    });
     return 0;
   }
 
   final Map<String, List<Game>> cachedGameList = new Map();
 
-  Future<List<Game>> fetchList(int year, int month, [GameType type = GameType.type_01]) async {
+  Future<List<Game>> fetchList(int year, int month,
+      [GameType type = GameType.type_01, bool cached = true]) async {
     print('fetch $year/$month type = $type');
     String url = '$_scheduleUrl/index/$year-$month-01.html?'
         '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=${type.toString().substring(14)}';
     //print(url);
 
     String key = '$year/$month-$type';
-    if (cachedGameList.containsKey(key)) return cachedGameList[key];
+    if (cached && cachedGameList.containsKey(key)) {
+      return Future.value(cachedGameList[key]);
+    }
 
 //    var request = await _client.getUrl(Uri.parse(url));
 //    var resp = await request.close();
@@ -511,7 +519,7 @@ class CpblClient {
         }
         Game g = _parseGameFromBlock(block, year, month, type);
         if (g == null) {
-          print('no game in this block ($i)');
+          //print('no game in this block ($i)');
           continue;
         }
         _extractTeamFromBlock(g, block, year);
@@ -531,7 +539,7 @@ class CpblClient {
     RegExp expId = new RegExp('game_id=([0-9]+)');
     var id = expId.firstMatch(block)?.group(1);
     if (id == null) {
-      print('bypass this block');
+      //print('bypass this block');
       return null;
     }
     //print('game id = $id');
