@@ -38,6 +38,15 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <!--suppress AndroidElementNotAllowed -->
+            <layout
+                android:defaultWidth="480dp"
+                android:defaultHeight="720dp"
+                android:gravity="top|end"
+                android:minWidth="480dp"
+                android:minHeight="640dp"
+                tools:targetApi="n" />
         </activity>
     </application>
 </manifest>
