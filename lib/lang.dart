@@ -45,7 +45,7 @@ class Lang {
   }
 
   String trans(String key) {
-    return _sentences != null ? this._sentences[key] : key ?? key;
+    return (_sentences != null && _sentences.containsKey(key) ? this._sentences[key] : key) ?? key;
   }
 
   String getLanguageKey() => _getLangFileName(locale);
@@ -74,16 +74,14 @@ class LangLocalizationsDelegate extends LocalizationsDelegate<Lang> {
 }
 
 /// https://github.com/flutter/flutter/issues/23047#issuecomment-436882321
-class FallbackCupertinoLocalisationsDelegate
-    extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalisationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<CupertinoLocalizations> load(Locale locale) =>
-      DefaultCupertinoLocalizations.load(locale);
+  Future<CupertinoLocalizations> load(Locale locale) => DefaultCupertinoLocalizations.load(locale);
 
   @override
   bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;

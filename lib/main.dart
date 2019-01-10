@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       //title: Lang.of(context).trans('app_name'),
       theme: ThemeData(
         primarySwatch: Colors.green,
+        accentColor: Colors.orange,
       ),
       supportedLocales: [
         //const Locale('en', 'US'),
@@ -334,7 +335,10 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text(Lang.of(context).trans('app_name')),
+          title: Text(
+            Lang.of(context).trans('app_name'),
+            //style: TextStyle(color: Colors.white),
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.refresh),
@@ -531,7 +535,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     List<Tab> titleList = new List();
     List<Widget> childList = new List();
     for (int i = 0; i < monthList.length; i++) {
-      titleList.add(new Tab(text: monthList[i]));
+      titleList.add(new Tab(text: Lang.of(context).trans('drawer_entry_month_${monthList[i]}')));
       childList.add(new ContentUiWidget(
         list: gameList[i + 1],
         field: _field,
@@ -545,9 +549,10 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
             controller: _tabController,
             tabs: titleList,
             labelColor: Theme.of(context).primaryColor,
-            //indicatorColor: Theme.of(context).primaryColor,
+            indicatorColor: Theme.of(context).primaryColor.withAlpha(224),
+            //indicatorSize: TabBarIndicatorSize.tab,
             //indicatorWeight: 4,
-            unselectedLabelColor: Colors.black,
+            unselectedLabelColor: Colors.grey,
             isScrollable: true,
           ),
           color: Color.fromARGB(240, 240, 240, 240),
@@ -687,7 +692,10 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
       child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
-          title: Text(Lang.of(context).trans('app_name')),
+          title: Text(
+            Lang.of(context).trans('app_name'),
+            //style: TextStyle(color: Colors.white),
+          ),
           actions: <Widget>[
             PopupMenuButton(
               itemBuilder: (context) => [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'cpbl.dart';
+import 'lang.dart';
 
 class Query {
   int year;
@@ -51,7 +52,7 @@ class _DrawerPaneState extends State<DrawerPane> {
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  Text('year'),
+                  Text(Lang.of(context).trans('drawer_title_year')),
                   _YearMenuWidget(
                     year: widget.year,
                     onValueChanged: (value) {
@@ -60,7 +61,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text('month'),
+                  Text(Lang.of(context).trans('drawer_title_month')),
                   _MonthMenuWidget(
                     month: widget.month,
                     onValueChanged: (value) {
@@ -69,7 +70,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text('field'),
+                  Text(Lang.of(context).trans('drawer_title_field')),
                   _FieldMenuWidget(
                     id: FieldId.f00,
                     onValueChanged: (value) {
@@ -78,7 +79,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text('type'),
+                  Text(Lang.of(context).trans('drawer_title_type')),
                   _TypeMenuWidget(
                     type: widget.type,
                     onValueChanged: (value) {
@@ -87,7 +88,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text('teams'),
+                  Text(Lang.of(context).trans('drawer_title_team')),
                   _TeamMenuWidget(),
                 ],
               ),
@@ -356,8 +357,8 @@ class _TeamMenuWidgetState extends State<_TeamMenuWidget> {
             value: _id,
             items: [
               DropdownMenuItem(
-                value: TeamId.unknown,
-                child: Text('all teams'),
+                value: TeamId.fav_all,
+                child: Text(CpblClient.getTeamName(context, TeamId.fav_all)),
               ),
             ],
             onChanged: (value) {
