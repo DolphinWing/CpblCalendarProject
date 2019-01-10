@@ -70,47 +70,110 @@ class Team {
     ..putIfAbsent('S05', () => allStarRed)
     ..putIfAbsent('S06', () => allStarWhite);
 
-  static Team get elephants => Team(id: TeamId.elephants, color: Colors.yellow);
+  static Team get elephants => Team(
+        id: TeamId.elephants,
+        color: Colors.yellow,
+      );
 
-  static Team get lions => Team(id: TeamId.lions, color: Colors.yellow);
+  static Team get lions => Team(
+        id: TeamId.lions,
+        color: Colors.green,
+      );
 
-  static Team get lions711 => Team(id: TeamId.lions_711, color: Colors.yellow);
+  static Team get lions711 => Team(
+        id: TeamId.lions_711,
+        color: Colors.orange,
+      );
 
-  static Team get lamigoMonkeys => Team(id: TeamId.lamigo_monkeys, color: Colors.yellow);
+  static Team get lamigoMonkeys => Team(
+        id: TeamId.lamigo_monkeys,
+        color: Colors.blueGrey,
+      );
 
-  static Team get fubonGuardians => Team(id: TeamId.fubon_guardians, color: Colors.yellow);
+  static Team get fubonGuardians => Team(
+        id: TeamId.fubon_guardians,
+        color: Colors.blueAccent,
+      );
 
-  static Team get edaRhinos => Team(id: TeamId.eda_rhinos, color: Colors.yellow);
+  static Team get edaRhinos => Team(
+        id: TeamId.eda_rhinos,
+        color: Colors.purple,
+      );
 
-  static Team get ctBrothers => Team(id: TeamId.ct_brothers, color: Colors.yellow);
+  static Team get ctBrothers => Team(
+        id: TeamId.ct_brothers,
+        color: Colors.yellow,
+      );
 
-  static Team get sinonBulls => Team(id: TeamId.sinon_bulls, color: Colors.yellow);
+  static Team get sinonBulls => Team(
+        id: TeamId.sinon_bulls,
+        color: Colors.lightGreen,
+      );
 
-  static Team get ctWhales => Team(id: TeamId.ct_whales, color: Colors.yellow);
+  static Team get ctWhales => Team(
+        id: TeamId.ct_whales,
+        color: Colors.blueAccent,
+      );
 
-  static Team get kgWhales => Team(id: TeamId.kg_whales, color: Colors.yellow);
+  static Team get kgWhales => Team(
+        id: TeamId.kg_whales,
+        color: Colors.greenAccent,
+      );
 
-  static Team get mediaTRex => Team(id: TeamId.media_t_rex, color: Colors.yellow);
+  static Team get mediaTRex => Team(
+        id: TeamId.media_t_rex,
+        color: Colors.deepOrange,
+      );
 
-  static Team get makotoCobras => Team(id: TeamId.makoto_cobras, color: Colors.yellow);
+  static Team get makotoCobras => Team(
+        id: TeamId.makoto_cobras,
+        color: Colors.deepOrange,
+      );
 
-  static Team get makotoSuns => Team(id: TeamId.makoto_sun, color: Colors.yellow);
+  static Team get makotoSuns => Team(
+        id: TeamId.makoto_sun,
+        color: Colors.deepOrange,
+      );
 
-  static Team get firstKinkon => Team(id: TeamId.first_kinkon, color: Colors.yellow);
+  static Team get firstKinkon => Team(
+        id: TeamId.first_kinkon,
+        color: Colors.blue,
+      );
 
-  static Team get laNewBears => Team(id: TeamId.lanew_bears, color: Colors.yellow);
+  static Team get laNewBears => Team(
+        id: TeamId.lanew_bears,
+        color: Colors.yellow,
+      );
 
-  static Team get ssTigers => Team(id: TeamId.ss_tigers, color: Colors.yellow);
+  static Team get ssTigers => Team(
+        id: TeamId.ss_tigers,
+        color: Colors.blue,
+      );
 
-  static Team get wDragons => Team(id: TeamId.w_dragons, color: Colors.yellow);
+  static Team get wDragons => Team(
+        id: TeamId.w_dragons,
+        color: Colors.red,
+      );
 
-  static Team get timesEagles => Team(id: TeamId.times_eagles, color: Colors.yellow);
+  static Team get timesEagles => Team(
+        id: TeamId.times_eagles,
+        color: Colors.redAccent,
+      );
 
-  static Team get jungoBears => Team(id: TeamId.jungo_bears, color: Colors.yellow);
+  static Team get jungoBears => Team(
+        id: TeamId.jungo_bears,
+        color: Colors.greenAccent,
+      );
 
-  static Team get allStarRed => Team(id: TeamId.all_star_red, color: Colors.yellow);
+  static Team get allStarRed => Team(
+        id: TeamId.all_star_red,
+        color: Colors.red,
+      );
 
-  static Team get allStarWhite => Team(id: TeamId.all_star_white, color: Colors.yellow);
+  static Team get allStarWhite => Team(
+        id: TeamId.all_star_white,
+        color: Colors.white,
+      );
 
   static Team parse(String png, [int year, bool homeTeam = false]) {
     Team team = Team.simple(homeTeam ? TeamId.unknown_home : TeamId.unknown_away, homeTeam);
@@ -525,6 +588,7 @@ class CpblClient {
         _extractTeamFromBlock(g, block, year);
         _extractScheduleFromBlock(g, block);
         _extractPlayInfoFromBlock(g, block);
+        print('url: ${g.url}');
         list.add(g);
       }
     } else {
@@ -700,6 +764,9 @@ class CpblClient {
       g.url = url != null ? '$_scheduleUrl$url' : g.url;
     } else if (block?.contains("onClick") == true) {
       g.isFinal = true; //no playing
+      g.url = '$homeUrl/games/box.html?'
+          'game_date=${g._time.year}-${_padLeft(g._time.month)}-${_padLeft(g._time.day)}'
+          '&game_id=${g.id}&pbyear=${g._time.year}&game_type=${g.type.toString().substring(14)}';
     }
     return g;
   }

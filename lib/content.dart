@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'cpbl.dart';
 import 'lang.dart';
@@ -77,18 +78,18 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
           break;
         default:
           if (widget.favTeamId == TeamId.fav_all && widget.fieldId == FieldId.f00) {
-            widgetList.add(GameCardWidget(game));
+            widgetList.add(GameCardWidget(game, mode: mode));
           } else if (widget.favTeamId == TeamId.fav_all) {
             if (widget.fieldId == game.fieldId) {
-              widgetList.add(GameCardWidget(game));
+              widgetList.add(GameCardWidget(game, mode: mode));
             }
           } else if (widget.fieldId == FieldId.f00) {
             if (game.isFav(widget.favTeamId)) {
-              widgetList.add(GameCardWidget(game));
+              widgetList.add(GameCardWidget(game, mode: mode));
             }
           } else {
             if (widget.fieldId == game.fieldId && game.isFav(widget.favTeamId)) {
-              widgetList.add(GameCardWidget(game));
+              widgetList.add(GameCardWidget(game, mode: mode));
             }
           }
           break;
@@ -151,15 +152,26 @@ class TeamRowWidget extends StatelessWidget {
 
 class GameCardBaseWidget extends StatelessWidget {
   final Widget child;
+  final bool padding;
+  final GestureTapCallback onPressed;
 
-  GameCardBaseWidget({@required this.child});
+  GameCardBaseWidget({@required this.child, this.padding = true, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return new Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      padding: EdgeInsets.all(this.padding ? 16 : 0),
       margin: EdgeInsets.only(top: 4, bottom: 4, left: 8, right: 8),
-      child: child,
+      child: this.onPressed != null
+          ? FlatButton(
+              child: child,
+              onPressed: this.onPressed,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+            )
+          : Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: child,
+            ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         //color: Colors.grey.withAlpha(32),
@@ -167,6 +179,7 @@ class GameCardBaseWidget extends StatelessWidget {
           style: BorderStyle.solid,
           color: Colors.grey.withAlpha(48),
         ),
+        //color: Colors.grey.withAlpha(48),
       ),
     );
   }
@@ -174,45 +187,64 @@ class GameCardBaseWidget extends StatelessWidget {
 
 class GameCardWidget extends StatelessWidget {
   final Game game;
+  final int mode;
 
-  GameCardWidget(this.game);
+  GameCardWidget(this.game, {int mode = UiMode.list}) : this.mode = mode ?? UiMode.list;
+
+  void showCpblUrl(String url) async {
+    print('launch $url');
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return new GameCardBaseWidget(
-      child: new Column(
-        children: <Widget>[
-          //Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                game.getDisplayTime(),
-                style: Theme.of(context).textTheme.subhead,
-              ),
-              Expanded(child: SizedBox()),
-              Text(
-                '${game.getGameType(context)} ${game.id}',
-                style: Theme.of(context).textTheme.subtitle,
-              ),
-            ],
-          ),
-          TeamRowWidget(game.away),
-          TeamRowWidget(game.home),
-          Row(
-            children: <Widget>[
-              Text(game.getFieldName(context)),
-              Expanded(
-                child: game.extra != null
-                    ? Text('${game.extra}', textAlign: TextAlign.end)
-                    : SizedBox(height: 1),
-              ),
-            ],
-          ),
-          //Divider(),
-        ],
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
+        child: new Column(
+          children: <Widget>[
+            //Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  game.getDisplayTime(),
+                  style: Theme.of(context).textTheme.subhead,
+                ),
+                Expanded(child: SizedBox()),
+                Text(
+                  '${game.getGameType(context)} ${game.id}',
+                  style: Theme.of(context).textTheme.subtitle,
+                ),
+              ],
+            ),
+            TeamRowWidget(game.away),
+            TeamRowWidget(game.home),
+            Row(
+              children: <Widget>[
+                Text(game.getFieldName(context)),
+                Expanded(
+                  child: game.extra != null
+                      ? Text('${game.extra}', textAlign: TextAlign.end)
+                      : SizedBox(height: 1),
+                ),
+              ],
+            ),
+            //Divider(),
+          ],
+        ),
       ),
+      padding: false,
+      onPressed: this.mode == UiMode.list && game.url != null
+          ? () {
+              showCpblUrl(game.url);
+            }
+          : null,
     );
   }
 }
@@ -242,12 +274,13 @@ class _GameCardMoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      child: RaisedButton(
-        child: Text('more'),
-        onPressed: onPressed,
+    return GameCardBaseWidget(
+      child: Padding(
+        child: Text(Lang.of(context).trans('drawer_more')),
+        padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
       ),
-      padding: EdgeInsets.only(left: 16, right: 16),
+      padding: false,
+      onPressed: this.onPressed,
     );
   }
 }
