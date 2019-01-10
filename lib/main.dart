@@ -149,14 +149,14 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   void initState() {
     super.initState();
 
-    //FIXME: auto select year and month
-    int year = 2018;
-    int month = 10;
-    setState(() {
-      _year = year;
-      _month = month;
-    });
-    print('init from $_year/$_month');
+//    //FIXME: auto select year and month
+//    int year = 2018;
+//    int month = 10;
+//    setState(() {
+//      _year = year;
+//      _month = month;
+//    });
+//    print('init from $_year/$_month');
 
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
@@ -164,32 +164,44 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       if (widget.client != null) {
         _client = widget.client;
         //already init before
-        startFetchGames();
+        //if (_client.isOverrideStartEnabled()) {
+        setState(() {
+          _year = _client.getStartYear();
+          _month = _client.getStartMonth();
+        });
+        //}
+        startFetchGames(); //init
       } else {
         //not loaded in splash
         final configs = await RemoteConfig.instance;
-
-        if (configs.getBool('override_start_enabled')) {
-          year = configs.getInt('override_start_year');
-          month = configs.getInt('override_start_month');
-          print('override: year=$year month=$month');
-        }
+//        if (configs.getBool('override_start_enabled')) {
+//          year = configs.getInt('override_start_year');
+//          month = configs.getInt('override_start_month');
+//          print('override: year=$year month=$month');
+//        }
 
         final prefs = await SharedPreferences.getInstance();
         _client = new CpblClient(context, configs, prefs);
         //var now = DateTime.now();
         _client.init().then((value) {
-          startFetchGames();
+          //if (_client.isOverrideStartEnabled()) {
+          setState(() {
+            _year = _client.getStartYear();
+            _month = _client.getStartMonth();
+          });
+          //}
+          startFetchGames(); //no splash init
         });
       }
     });
   }
 
   void startFetchGames() {
+    print('init from $_year/$_month');
     if (_client.isHighlightEnabled()) {
-      fetchHighlight(_year, _month, debug: widget.debug);
+      fetchHighlight(_year, _month, debug: widget.debug); //init
     } else {
-      pullToRefresh(_year, _month, debug: widget.debug);
+      pullToRefresh(_year, _month, debug: widget.debug); //init
     }
     setState(() {
       showFab = !_client.isHighlightEnabled();
@@ -202,7 +214,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     super.dispose();
   }
 
-  void pullToRefresh(int year, int month, {GameType type = GameType.type_01, bool debug = false}) {
+  void pullToRefresh(int year, int month,
+      {GameType type = GameType.type_01, bool debug = false, bool forceUpdate = false}) {
     setState(() {
       loading = true;
       _year = year;
@@ -226,7 +239,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         });
       });
     } else {
-      _client.fetchList(year, month, type).then((gameList) {
+      _client.fetchList(year, month, type, !forceUpdate).then((gameList) {
         setState(() {
           list = gameList;
           loading = false;
@@ -235,7 +248,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     }
   }
 
-  Future<List<Game>> _fetchList(int year, int month, GameType type, [DateTime time]) async {
+  Future<List<Game>> _fetchList(int year, int month, GameType type,
+      {DateTime time, bool forceUpdate = false}) async {
     List<Game> list = new List();
     var list1 = await _client.fetchList(year, month, type);
     if (list1.isNotEmpty) {
@@ -258,7 +272,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     return list;
   }
 
-  void fetchHighlight(int year, int month, {bool debug = false}) async {
+  void fetchHighlight(int year, int month, {bool debug = false, bool forceUpdate = false}) async {
     setState(() {
       loading = true;
       _mode = UiMode.quick;
@@ -286,12 +300,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
         sleep(_fetchDelay);
       }
-      list.addAll(await _fetchList(year, month, GameType.type_01, time)); //regular
+      list.addAll(await _fetchList(year, month, GameType.type_01, time: time)); //regular
       if (_client.isChallengeMonth(year, month)) {
-        list.addAll(await _fetchList(year, month, GameType.type_05, time)); //challenge
+        list.addAll(await _fetchList(year, month, GameType.type_05, time: time)); //challenge
       }
       if (_client.isChampionMonth(year, month)) {
-        list.addAll(await _fetchList(year, month, GameType.type_03, time)); //champion
+        list.addAll(await _fetchList(year, month, GameType.type_03, time: time)); //champion
       }
       if (_client.isAllStarMonth(year, month)) {
         list.addAll(await _client.fetchList(year, month, GameType.type_02)); // all star
@@ -344,9 +358,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
               icon: Icon(Icons.refresh),
               onPressed: () {
                 if (_mode == UiMode.list) {
-                  pullToRefresh(_year, _month, type: _type);
+                  pullToRefresh(_year, _month, type: _type, forceUpdate: true);
                 } else {
-                  fetchHighlight(_year, _month);
+                  fetchHighlight(_year, _month, forceUpdate: true); //refresh button
                 }
               },
               tooltip: Lang.of(context).trans('action_refresh'),
@@ -362,6 +376,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                       child: Text(Lang.of(context).trans('action_settings')),
                     ),
                     PopupMenuItem(
+                      enabled: !loading,
                       value: 2,
                       child: Text('show highlight'),
                     ),
@@ -376,7 +391,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                     showSettings();
                     break;
                   case 2:
-                    fetchHighlight(_year, _month, debug: true);
+                    fetchHighlight(_year, _month, debug: true); //option menu
                     break;
                 }
               },
@@ -507,6 +522,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     return mode == UiMode.quick
         ? SizedBox(height: 1)
         : PagerSelectorWidget(
+            year: year,
             enabled: !loading,
             onYearChanged: (value) {
               setState(() {
@@ -672,10 +688,11 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
 
   @override
   void startFetchGames() {
+    print('init from $_year/$_month');
     if (_client.isHighlightEnabled()) {
-      fetchHighlight(_year, _month, debug: widget.debug);
+      fetchHighlight(_year, _month, debug: widget.debug); //pager init
     } else {
-      _tabController.animateTo(_month - 1);
+      _tabController.animateTo(_month - 1); //pager init
     }
   }
 
@@ -708,6 +725,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
                       child: Text(Lang.of(context).trans('action_settings')),
                     ),
                     PopupMenuItem(
+                      enabled: !loading,
                       value: 2,
                       child: Text('show highlight'),
                     ),
@@ -722,7 +740,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
                     showSettings();
                     break;
                   case 2:
-                    fetchHighlight(_year, _month, debug: true);
+                    fetchHighlight(_year, _month); //pager option
                     break;
                 }
               },

@@ -802,4 +802,12 @@ class CpblClient {
     }
     return dstList;
   }
+
+  bool isOverrideStartEnabled() => _configs.getBool('override_start_enabled');
+
+  int getStartYear() =>
+      isOverrideStartEnabled() ? _configs.getInt('override_start_year') : DateTime.now().year;
+
+  int getStartMonth() =>
+      isOverrideStartEnabled() ? _configs.getInt('override_start_month') : DateTime.now().month;
 }

@@ -295,18 +295,15 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
           int yearNow = DateTime.now().year;
           List<Widget> options = new List();
           for (int year = yearNow; year >= 1990; year--) {
-            options.add(SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, year);
-              },
-              child: Text('Year $year (${year - 1989})'),
+            options.add(ChipMenuOption(
+              year,
+              Lang.of(context)
+                      .trans('drawer_entry_year')
+                      .replaceAll('@year', (year - 1989).toString()) +
+                  ' ($year)',
             ));
           }
-          return SimpleDialog(
-            title: Text(Lang.of(context).trans('use_view_pager_title')),
-            children: options,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-          );
+          return ChipMenuDialog('use_view_pager_title', options);
         });
     print('result = $r');
     if (r != null) {
@@ -326,18 +323,9 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         builder: (context) {
           List<Widget> options = new List();
           FieldId.values.forEach((id) {
-            options.add(SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, id);
-              },
-              child: Text(CpblClient.getFieldName(context, id)),
-            ));
+            options.add(ChipMenuOption(id, CpblClient.getFieldName(context, id)));
           });
-          return SimpleDialog(
-            title: Text(Lang.of(context).trans('use_view_pager_title')),
-            children: options,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-          );
+          return ChipMenuDialog('use_view_pager_title', options);
         });
     print('result = $r');
     if (r != null) {
@@ -364,18 +352,9 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         builder: (context) {
           List<Widget> options = new List();
           favTeams.forEach((id) {
-            options.add(SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, id);
-              },
-              child: Text(CpblClient.getTeamName(context, id)),
-            ));
+            options.add(ChipMenuOption(id, CpblClient.getTeamName(context, id)));
           });
-          return SimpleDialog(
-            title: Text(Lang.of(context).trans('use_view_pager_title')),
-            children: options,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-          );
+          return ChipMenuDialog('use_view_pager_title', options);
         });
     print('result = $r');
     if (r != null) {
@@ -393,7 +372,11 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         children: <Widget>[
           SizedBox(width: 8),
           ActionChip(
-            label: Text('year $_year'),
+            label: Text(
+              Lang.of(context)
+                  .trans('drawer_entry_year')
+                  .replaceAll('@year', (_year - 1989).toString()),
+            ),
             onPressed: _onYearChipPressed,
             pressElevation: 2.0,
           ),
@@ -419,6 +402,40 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         color: Colors.white,
       ),
       //padding: EdgeInsets.only(top: 8, bottom: 8),
+    );
+  }
+}
+
+class ChipMenuDialog extends StatelessWidget {
+  final String titleResKey;
+  final List<Widget> options;
+
+  ChipMenuDialog(String title, this.options) : this.titleResKey = title ?? "";
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text(Lang.of(context).trans(titleResKey)),
+      titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+      children: options,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+    );
+  }
+}
+
+class ChipMenuOption extends StatelessWidget {
+  final dynamic value;
+  final String text;
+
+  ChipMenuOption(this.value, this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialogOption(
+      onPressed: () {
+        Navigator.pop(context, this.value);
+      },
+      child: Text(this.text),
     );
   }
 }
