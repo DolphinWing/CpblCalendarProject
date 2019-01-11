@@ -106,21 +106,21 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
       children: widgetList.isNotEmpty
           ? widgetList
           : [
-              SizedBox(height: 96),
+              SizedBox(height: 64),
               (widget.year != null && widget.month != null)
                   ? Container(
                       constraints: BoxConstraints.expand(height: 64),
                       child: Text(
                         '${widget.year}/${widget.month}',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.title,
+                        style: Theme.of(context).textTheme.subhead,
                       ),
                     )
                   : SizedBox(
-                      height: 32,
+                      height: 64,
                     ),
               Container(
-                constraints: BoxConstraints.expand(height: 80),
+                constraints: BoxConstraints.expand(height: 64),
                 child: Text(
                   Lang.of(context).trans('no_data'),
                   textAlign: TextAlign.center,
@@ -492,6 +492,26 @@ class ChipMenuOption extends StatelessWidget {
         Navigator.pop(context, this.value);
       },
       child: Text(this.text, style: Theme.of(context).textTheme.subhead),
+    );
+  }
+}
+
+class SettingsGroupTitle extends StatelessWidget {
+  final String titleResKey;
+
+  SettingsGroupTitle(String titleResKey) : this.titleResKey = titleResKey ?? '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text(
+        Lang.of(context).trans(titleResKey),
+        style: Theme.of(context).textTheme.caption,
+      ),
+      constraints: BoxConstraints.expand(height: 36),
+      padding: EdgeInsets.fromLTRB(16, 0, 8, 8),
+      //color: Colors.grey.withAlpha(32),
+      alignment: Alignment.bottomLeft,
     );
   }
 }

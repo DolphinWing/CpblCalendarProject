@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter\_localizations/flutter\_localizations.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'content.dart';
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
       //title: Lang.of(context).trans('app_name'),
       theme: ThemeData(
         primarySwatch: Colors.green,
-        accentColor: Colors.orange,
+        //accentColor: Colors.orange,
       ),
       supportedLocales: [
         //const Locale('en', 'US'),
@@ -61,6 +63,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   RemoteConfig configs;
+  Timer _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +89,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    new Timer(const Duration(milliseconds: 500), navigationPage);
+    _timer = new Timer(const Duration(milliseconds: 500), navigationPage);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   void navigationPage() async {
@@ -369,11 +378,11 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                       value: 1,
                       child: Text(Lang.of(context).trans('action_settings')),
                     ),
-                    PopupMenuItem(
-                      enabled: !loading,
-                      value: 2,
-                      child: Text('show highlight'),
-                    ),
+//                    PopupMenuItem(
+//                      enabled: !loading,
+//                      value: 2,
+//                      child: Text('show highlight'),
+//                    ),
                   ],
               onSelected: (action) {
                 //print('selected option $action');
@@ -456,6 +465,12 @@ class SettingsPane extends StatefulWidget {
 }
 
 class _SettingsPaneState extends State<SettingsPane> {
+  PackageInfo _packageInfo = new PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
   bool _enableViewPager = false;
   bool _enableHighlight = false;
 
@@ -465,12 +480,23 @@ class _SettingsPaneState extends State<SettingsPane> {
     prepare();
   }
 
-  void prepare() async {
+  Future<void> prepare() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
     setState(() {
       _enableViewPager = widget.client?.isViewPagerEnabled() ?? false;
       _enableHighlight = widget.client?.isHighlightEnabled() ?? false;
+      _packageInfo = info;
     });
   }
+
+  showDataInDialog(String data) => showDialog(
+      context: context,
+      builder: (context) => ChipMenuDialog('', [
+            Padding(
+              child: Text(data),
+              padding: EdgeInsets.only(left: 16, right: 16),
+            )
+          ]));
 
   @override
   Widget build(BuildContext context) {
@@ -482,6 +508,14 @@ class _SettingsPaneState extends State<SettingsPane> {
         ),
         body: ListView(
           children: <Widget>[
+            ListTile(
+              title: Text(Lang.of(context).trans('app_version')),
+              subtitle: Text('${_packageInfo.version} (${_packageInfo.buildNumber})'),
+              onTap: () async {
+                showDataInDialog(await rootBundle.loadString('assets/strings/version.txt'));
+              },
+            ),
+            SettingsGroupTitle('display_settings'),
             CheckboxListTile(
               title: Text(Lang.of(context).trans('use_view_pager_title')),
               subtitle: Text(
@@ -496,7 +530,7 @@ class _SettingsPaneState extends State<SettingsPane> {
                 widget.client?.setViewPagerEnabled(checked);
               },
             ),
-            Divider(),
+            //Divider(),
             CheckboxListTile(
               title: Text(Lang.of(context).trans('show_highlight_title')),
               subtitle: Text(
@@ -511,7 +545,35 @@ class _SettingsPaneState extends State<SettingsPane> {
                 widget.client?.setHighlightEnabled(checked);
               },
             ),
-            Divider(),
+            SettingsGroupTitle('reference_data_source_title'),
+            ListTile(
+              title: Text(Lang.of(context).trans('reference_cpbl_official_title')),
+              subtitle: Text('${CpblClient.homeUrl}'),
+              onTap: () {
+                CpblClient.launchUrl(context, CpblClient.homeUrl);
+              },
+            ),
+            SettingsGroupTitle('reference_open_source_title'),
+            ListTile(
+              title: Text('Flutter - Beautiful native apps in record time'),
+              onTap: () async {
+                showDataInDialog(await rootBundle.loadString('assets/licenses/flutter.txt'));
+              },
+            ),
+            ListTile(
+              title: Text('Flutter plugins'),
+              onTap: () async {
+                showDataInDialog(
+                    await rootBundle.loadString('assets/licenses/flutter_plugins.txt'));
+              },
+            ),
+            ListTile(
+              title: Text('flutter_custom_tabs'),
+              onTap: () async {
+                showDataInDialog(
+                    await rootBundle.loadString('assets/licenses/flutter_custom_tabs.txt'));
+              },
+            ),
           ],
         ),
       ),
@@ -617,7 +679,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
         alignment: Alignment.center,
         children: <Widget>[
           _buildPagerWidget(context, false),
-          Positioned(child: CircularProgressIndicator(), top: 256),
+          Positioned(child: CircularProgressIndicator(), top: 240),
         ],
       );
     }
@@ -728,11 +790,11 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
                       value: 1,
                       child: Text(Lang.of(context).trans('action_settings')),
                     ),
-                    PopupMenuItem(
-                      enabled: !loading,
-                      value: 2,
-                      child: Text('show highlight'),
-                    ),
+//                    PopupMenuItem(
+//                      enabled: !loading,
+//                      value: 2,
+//                      child: Text('show highlight'),
+//                    ),
                   ],
               onSelected: (action) {
                 //print('selected option $action');

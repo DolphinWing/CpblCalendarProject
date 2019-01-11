@@ -31,6 +31,8 @@ dependencies:
   flutter_custom_tabs: ^0.4.0
   # https://pub.dartlang.org/packages/shared_preferences
   shared_preferences: ^0.4.3
+  # https://pub.dartlang.org/packages/package_info
+  package_info: ^0.3.2
 
   # add dependency for Firebase Core
   firebase_core: ^0.2.5+1
@@ -51,11 +53,12 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-   - assets/strings/en.json
+   - assets/strings/version.txt
    - assets/strings/zh_tw.json
    - assets/drawable/
    - assets/drawable/2.0x/
    - assets/drawable/3.0x/
+   - assets/licenses/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
