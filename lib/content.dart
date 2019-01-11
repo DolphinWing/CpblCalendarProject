@@ -452,8 +452,8 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadiusDirectional.only(
-          topEnd: Radius.circular(20),
-          topStart: Radius.circular(20),
+          topEnd: Radius.circular(16),
+          topStart: Radius.circular(16),
         ),
         color: Colors.white,
       ),

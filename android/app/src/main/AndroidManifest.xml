@@ -26,7 +26,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="CpblCalendar4"
+        android:label="@string/app_name"
         android:icon="@mipmap/ic_adaptive_launcher"
         android:roundIcon="@mipmap/ic_adaptive_launcher_round"
         tools:ignore="GoogleAppIndexingWarning">
