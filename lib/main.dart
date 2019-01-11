@@ -70,11 +70,11 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-//          Image(
-//            image: AssetImage('resources/drawable/splash.png'),
-//          ),
+            Image(
+              image: AssetImage('assets/drawable/splash_icon.png'),
+            ),
             SizedBox(
-              height: 36,
+              height: 64,
             ),
             CircularProgressIndicator(),
           ],
@@ -86,14 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    prepare();
-  }
-
-  prepare() async {
-    var _duration = new Duration(microseconds: 500);
-    return new Timer(_duration, navigationPage);
-    //await Lang.of(context).load();
-    //_navigationPage();
+    new Timer(const Duration(milliseconds: 500), navigationPage);
   }
 
   void navigationPage() async {
@@ -101,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final defaults = <String, dynamic>{'override_start_enabled': false};
     await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
     await configs.setDefaults(defaults);
-    await configs.fetch(expiration: const Duration(hours: 5));
+    await configs.fetch(expiration: const Duration(hours: 8));
     await configs.activateFetched();
     //print('welcome message: ${configs.getString('welcome')}');
     print('override: ${configs.getBool('override_start_enabled')}');
