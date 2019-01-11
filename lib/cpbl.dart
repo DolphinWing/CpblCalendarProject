@@ -1,5 +1,6 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -456,6 +457,36 @@ class CpblClient {
     }
   }
 
+  static const List<TeamId> favTeams = [
+    TeamId.fav_all,
+    TeamId.ct_brothers,
+    TeamId.lions_711,
+    TeamId.fubon_guardians,
+    TeamId.lamigo_monkeys
+  ];
+
+  static const List<String> monthList = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec'
+  ];
+
+  static String getMonthString(BuildContext context, int month) {
+    if (month < DateTime.january || month > DateTime.december) {
+      return 'unkonwn';
+    }
+    return Lang.of(context).trans('drawer_entry_month_${CpblClient.monthList[month - 1]}');
+  }
+
 //  HttpClient _client;
   var _client = new http.Client();
   final RemoteConfig _configs;
@@ -877,4 +908,18 @@ class CpblClient {
 
   int getStartMonth() =>
       isOverrideStartEnabled() ? _configs.getInt('override_start_month') : DateTime.now().month;
+
+  static Future<void> launchUrl(BuildContext context, String url) => launch(url,
+      option: new CustomTabsOption(
+        toolbarColor: Theme.of(context).primaryColor,
+        enableUrlBarHiding: true,
+        showPageTitle: true,
+        animation: new CustomTabsAnimation.slideIn(),
+        extraCustomTabs: <String>[
+          // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
+          'org.mozilla.firefox',
+          // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
+          'com.microsoft.emmx',
+        ],
+      ));
 }

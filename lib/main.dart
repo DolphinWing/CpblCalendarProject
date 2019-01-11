@@ -5,12 +5,12 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'content.dart';
 import 'cpbl.dart';
 import 'drawer.dart';
 import 'lang.dart';
+//import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -130,7 +130,7 @@ class MainUiWidget extends StatefulWidget {
 class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-  Duration _fetchDelay = const Duration(milliseconds: 200);
+  Duration _fetchDelay = const Duration(milliseconds: 400);
 
   Timer _timer;
   CpblClient _client;
@@ -328,17 +328,18 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   }
 
   void showCpblHome() async {
-    if (await canLaunch(CpblClient.homeUrl)) {
-      await launch(CpblClient.homeUrl);
-    } else {
-      throw 'Could not launch ${CpblClient.homeUrl}';
-    }
+    //if (await canLaunch(CpblClient.homeUrl)) {
+    await CpblClient.launchUrl(context, CpblClient.homeUrl);
+    //} else {
+    //  throw 'Could not launch ${CpblClient.homeUrl}';
+    //}
   }
 
   void showSettings() async {
     //Navigator.of(context).pushNamed('/settings');
     await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => SettingsPane(client: _client)));
+    //refresh for current settings
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: _client)));
   }
@@ -405,14 +406,24 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           year: _year,
           month: _month,
           type: _type,
+          field: _field,
+          favTeam: _favTeam,
           onPressed: (action) {
             print('query ${action.year}/${action.month} ${action.field} ${action.type}');
+            setState(() {
+              _field = action.field;
+              _favTeam = action.favTeam;
+            });
             pullToRefresh(action.year, action.month, type: action.type);
           },
         ),
         body: Material(
           child: ContentUiWidget(
             loading: loading,
+            year: _year,
+            month: _month,
+            field: _field,
+            favTeam: _favTeam,
             mode: _mode,
             list: list,
             onScrollEnd: (value) {
@@ -421,22 +432,20 @@ class _MainUiWidgetState extends State<MainUiWidget> {
               });
             },
             onHighlightPaneClosed: () {
-              pullToRefresh(2018, 10);
+              pullToRefresh(_year, _month);
             },
           ),
           elevation: 2.0,
         ),
         floatingActionButton: showFab
             ? FloatingActionButton(
-                child: Icon(
-                  Icons.search,
-                  //color: Theme.of(context).primaryColor,
-                ),
+                child: Icon(Icons.search),
                 onPressed: () {
-                  //print('search');
                   //Scaffold.of(context).openEndDrawer();
                   _scaffoldKey.currentState.openEndDrawer();
                 },
+                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).primaryColor,
               )
             : Container(),
       ),
@@ -547,13 +556,16 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
           );
   }
 
-  Widget _buildPagerWidget(BuildContext context) {
+  Widget _buildPagerWidget(BuildContext context, bool enabled) {
     List<Tab> titleList = new List();
     List<Widget> childList = new List();
-    for (int i = 0; i < monthList.length; i++) {
-      titleList.add(new Tab(text: Lang.of(context).trans('drawer_entry_month_${monthList[i]}')));
+    for (int i = 1; i <= CpblClient.monthList.length; i++) {
+      titleList.add(new Tab(text: CpblClient.getMonthString(context, i)));
       childList.add(new ContentUiWidget(
-        list: gameList[i + 1],
+        enabled: enabled,
+        list: gameList[i],
+        year: _year,
+        month: _month,
         field: _field,
         favTeam: _favTeam,
       ));
@@ -606,17 +618,17 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
         },
       );
     }
-    if (loading) {
+    if (isLoading) {
       //pager loading
       return Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          _buildPagerWidget(context),
-          Positioned(child: CircularProgressIndicator(), top: 200),
+          _buildPagerWidget(context, false),
+          Positioned(child: CircularProgressIndicator(), top: 256),
         ],
       );
     }
-    return _buildPagerWidget(context);
+    return _buildPagerWidget(context, true);
   }
 
   TabController _tabController;
@@ -631,21 +643,6 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
       fetchMonthList(_year, _tabController.index + 1);
     }
   }
-
-  static const List<String> monthList = [
-    'jan',
-    'feb',
-    'mar',
-    'apr',
-    'may',
-    'jun',
-    'jul',
-    'aug',
-    'sep',
-    'oct',
-    'nov',
-    'dec'
-  ];
 
   Map<int, List<Game>> gameList = new Map();
 
@@ -685,7 +682,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: monthList.length);
+    _tabController = TabController(vsync: this, length: CpblClient.monthList.length);
     _tabController.addListener(onTabClickListener);
   }
 

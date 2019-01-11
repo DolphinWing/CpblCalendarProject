@@ -8,17 +8,33 @@ class Query {
   int month;
   FieldId field;
   GameType type;
+  TeamId favTeam;
 
-  Query({this.year, this.month, this.field = FieldId.f00, this.type = GameType.type_01});
+  Query({
+    this.year,
+    this.month,
+    this.field = FieldId.f00,
+    this.type = GameType.type_01,
+    this.favTeam = TeamId.fav_all,
+  });
 }
 
 class DrawerPane extends StatefulWidget {
   final ValueChanged<Query> onPressed;
   final int year;
   final int month;
+  final FieldId field;
+  final TeamId favTeam;
   final GameType type;
 
-  DrawerPane({this.year = 2018, this.month = 10, this.type = GameType.type_01, this.onPressed});
+  DrawerPane({
+    this.year = 2018,
+    this.month = 10,
+    this.field = FieldId.f00,
+    this.favTeam = TeamId.fav_all,
+    this.type = GameType.type_01,
+    this.onPressed,
+  });
 
   @override
   State<StatefulWidget> createState() => _DrawerPaneState();
@@ -29,6 +45,7 @@ class _DrawerPaneState extends State<DrawerPane> {
   int _month;
   FieldId _field;
   GameType _type;
+  TeamId _favTeam;
 
   @override
   void initState() {
@@ -37,8 +54,9 @@ class _DrawerPaneState extends State<DrawerPane> {
     setState(() {
       _year = widget.year;
       _month = widget.month;
-      _field = FieldId.f00;
+      _field = widget.field;
       _type = widget.type;
+      _favTeam = widget.favTeam;
     });
   }
 
@@ -52,7 +70,10 @@ class _DrawerPaneState extends State<DrawerPane> {
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  Text(Lang.of(context).trans('drawer_title_year')),
+                  Text(
+                    Lang.of(context).trans('drawer_title_year'),
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                   _YearMenuWidget(
                     year: widget.year,
                     onValueChanged: (value) {
@@ -61,7 +82,11 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text(Lang.of(context).trans('drawer_title_month')),
+                  SizedBox(height: 8),
+                  Text(
+                    Lang.of(context).trans('drawer_title_month'),
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                   _MonthMenuWidget(
                     month: widget.month,
                     onValueChanged: (value) {
@@ -70,16 +95,24 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text(Lang.of(context).trans('drawer_title_field')),
+                  SizedBox(height: 8),
+                  Text(
+                    Lang.of(context).trans('drawer_title_field'),
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                   _FieldMenuWidget(
-                    id: FieldId.f00,
+                    id: _field,
                     onValueChanged: (value) {
                       setState(() {
                         _field = value;
                       });
                     },
                   ),
-                  Text(Lang.of(context).trans('drawer_title_type')),
+                  SizedBox(height: 8),
+                  Text(
+                    Lang.of(context).trans('drawer_title_type'),
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                   _TypeMenuWidget(
                     type: widget.type,
                     onValueChanged: (value) {
@@ -88,8 +121,19 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
-                  Text(Lang.of(context).trans('drawer_title_team')),
-                  _TeamMenuWidget(),
+                  SizedBox(height: 8),
+                  Text(
+                    Lang.of(context).trans('drawer_title_team'),
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                  _TeamMenuWidget(
+                    id: _favTeam,
+                    onValueChanged: (value) {
+                      setState(() {
+                        _favTeam = value;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -97,7 +141,12 @@ class _DrawerPaneState extends State<DrawerPane> {
             Container(
               constraints: BoxConstraints.expand(height: 48),
               child: RaisedButton(
-                child: Text('query'),
+                child: Text(
+                  Lang.of(context).trans('drawer_query'),
+                  style: TextStyle(color: Colors.white),
+                ),
+                elevation: 4.0,
+                //highlightElevation: 4.0,
                 onPressed: () {
                   Navigator.of(context).pop();
                   if (widget.onPressed != null) {
@@ -106,6 +155,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                       month: _month,
                       field: _field,
                       type: _type,
+                      favTeam: _favTeam,
                     ));
                   }
                 },
@@ -149,7 +199,10 @@ class _YearMenuWidgetState extends State<_YearMenuWidget> {
     List<DropdownMenuItem<int>> list = new List();
     for (int i = now.year; i >= 1990; i--) {
       list.add(new DropdownMenuItem(
-        child: Text('Year ${i - 1989} ($i)'),
+        child: Text(
+          Lang.of(context).trans('drawer_entry_year').replaceAll('@year', (i - 1989).toString()) +
+              ' ($i)',
+        ),
         value: i,
       ));
     }
@@ -180,20 +233,6 @@ class _MonthMenuWidget extends StatefulWidget {
 }
 
 class _MonthMenuWidgetState extends State<_MonthMenuWidget> {
-  static const List<int> MONTHS = [
-    DateTime.january,
-    DateTime.february,
-    DateTime.march,
-    DateTime.april,
-    DateTime.may,
-    DateTime.june,
-    DateTime.july,
-    DateTime.august,
-    DateTime.september,
-    DateTime.october,
-    DateTime.november,
-    DateTime.december,
-  ];
   int _month;
 
   @override
@@ -207,12 +246,12 @@ class _MonthMenuWidgetState extends State<_MonthMenuWidget> {
   @override
   Widget build(BuildContext context) {
     List<DropdownMenuItem<int>> list = new List();
-    MONTHS.forEach((m) {
+    for (int i = 1; i <= CpblClient.monthList.length; i++) {
       list.add(DropdownMenuItem(
-        value: m,
-        child: Text('month $m'),
+        value: i,
+        child: Text(CpblClient.getMonthString(context, i)),
       ));
-    });
+    }
     return DropdownButton<int>(
       value: _month,
       items: list,
@@ -331,9 +370,10 @@ class _TypeMenuWidgetState extends State<_TypeMenuWidget> {
 
 class _TeamMenuWidget extends StatefulWidget {
   final bool enabled;
+  final TeamId id;
   final ValueChanged<TeamId> onValueChanged;
 
-  _TeamMenuWidget({this.enabled = true, this.onValueChanged});
+  _TeamMenuWidget({this.enabled = true, this.id = TeamId.fav_all, this.onValueChanged});
 
   @override
   State<StatefulWidget> createState() => _TeamMenuWidgetState();
@@ -346,21 +386,23 @@ class _TeamMenuWidgetState extends State<_TeamMenuWidget> {
   void initState() {
     super.initState();
     setState(() {
-      _id = TeamId.unknown;
+      _id = widget.id;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<TeamId>> options = new List();
+    CpblClient.favTeams.forEach((id) {
+      options.add(DropdownMenuItem(
+        value: id,
+        child: Text(CpblClient.getTeamName(context, id)),
+      ));
+    });
     return widget.enabled
         ? DropdownButton<TeamId>(
             value: _id,
-            items: [
-              DropdownMenuItem(
-                value: TeamId.fav_all,
-                child: Text(CpblClient.getTeamName(context, TeamId.fav_all)),
-              ),
-            ],
+            items: options,
             onChanged: (value) {
               setState(() {
                 _id = value;

@@ -3,8 +3,8 @@
   "action_settings": "設定",
   "action_refresh": "更新",
   "action_go_to_website": "前往中華職棒網站",
-  "use_view_pager_title": "查詢介面",
-  "use_view_pager_summary_on": "使用新的下滑式選單",
+  "use_view_pager_title": "啟用新式樣介面",
+  "use_view_pager_summary_on": "使用新的快速選單",
   "use_view_pager_summary_off": "使用舊的右側滑出式選單",
   "show_highlight_title": "精華檢視",
   "show_highlight_summary_on": "自動顯示賽事精華(假如有的話)",
@@ -84,5 +84,7 @@
   "drawer_entry_month_dec": "12月",
   "drawer_more": "更多",
   "drawer_detail": "詳細資訊",
+  "drawer_query": "查詢",
+  "no_data": "無賽程可顯示",
   "empty_data": "(null)"
 }

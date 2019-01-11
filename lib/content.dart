@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'cpbl.dart';
 import 'lang.dart';
@@ -11,8 +10,11 @@ class UiMode {
 }
 
 class ContentUiWidget extends StatefulWidget {
+  final bool enabled;
   final bool loading;
   final List<Game> list;
+  final int year;
+  final int month;
   final int mode;
   final ValueChanged<bool> onScrollEnd;
   final GestureTapCallback onHighlightPaneClosed;
@@ -20,8 +22,11 @@ class ContentUiWidget extends StatefulWidget {
   final FieldId fieldId;
 
   ContentUiWidget({
+    this.enabled = true,
     this.loading = false,
     List<Game> list,
+    this.year,
+    this.month,
     this.mode = UiMode.list,
     this.onScrollEnd,
     this.onHighlightPaneClosed,
@@ -60,7 +65,7 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
     });
   }
 
-  Widget buildContent(BuildContext context, List<Game> list, int mode) {
+  Widget buildContent(BuildContext context, List<Game> list, int mode, bool enabled) {
     //print('target ${widget.fieldId} ${widget.favTeamId}');
     List<Widget> widgetList = new List();
     list?.forEach((game) {
@@ -78,32 +83,52 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
           break;
         default:
           if (widget.favTeamId == TeamId.fav_all && widget.fieldId == FieldId.f00) {
-            widgetList.add(GameCardWidget(game, mode: mode));
+            widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
           } else if (widget.favTeamId == TeamId.fav_all) {
             if (widget.fieldId == game.fieldId) {
-              widgetList.add(GameCardWidget(game, mode: mode));
+              widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
             }
           } else if (widget.fieldId == FieldId.f00) {
             if (game.isFav(widget.favTeamId)) {
-              widgetList.add(GameCardWidget(game, mode: mode));
+              widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
             }
           } else {
             if (widget.fieldId == game.fieldId && game.isFav(widget.favTeamId)) {
-              widgetList.add(GameCardWidget(game, mode: mode));
+              widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
             }
           }
           break;
       }
     });
     print('show list ${widgetList.length}');
-    return list.isNotEmpty
-        ? ListView(
-            controller: _controller,
-            children: widgetList,
-          )
-        : Center(
-            child: Text(Lang.of(context).trans('empty_data')),
-          );
+    return ListView(
+      controller: _controller,
+      children: widgetList.isNotEmpty
+          ? widgetList
+          : [
+              SizedBox(height: 96),
+              (widget.year != null && widget.month != null)
+                  ? Container(
+                      constraints: BoxConstraints.expand(height: 64),
+                      child: Text(
+                        '${widget.year}/${widget.month}',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    )
+                  : SizedBox(
+                      height: 32,
+                    ),
+              Container(
+                constraints: BoxConstraints.expand(height: 80),
+                child: Text(
+                  Lang.of(context).trans('no_data'),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.title,
+                ),
+              ),
+            ],
+    );
   }
 
   @override
@@ -112,11 +137,11 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
         ? Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              buildContent(context, widget.list, widget.mode),
-              Positioned(child: CircularProgressIndicator(), top: 200),
+              buildContent(context, widget.list, widget.mode, widget.enabled && !widget.loading),
+              Positioned(child: CircularProgressIndicator(), top: 256),
             ],
           )
-        : buildContent(context, widget.list, widget.mode);
+        : buildContent(context, widget.list, widget.mode, widget.enabled && !widget.loading);
   }
 }
 
@@ -192,16 +217,18 @@ class GameCardBaseWidget extends StatelessWidget {
 class GameCardWidget extends StatelessWidget {
   final Game game;
   final int mode;
+  final bool enabled;
 
-  GameCardWidget(this.game, {int mode = UiMode.list}) : this.mode = mode ?? UiMode.list;
+  GameCardWidget(this.game, {int mode = UiMode.list, this.enabled = true})
+      : this.mode = mode ?? UiMode.list;
 
-  void showCpblUrl(String url) async {
-    print('launch $url');
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+  void showCpblUrl(BuildContext context, String url) async {
+    //print('launch $url');
+    //if (await canLaunch(url)) {
+    await CpblClient.launchUrl(context, url);
+    //} else {
+    //  throw 'Could not launch $url';
+    //}
   }
 
   @override
@@ -246,7 +273,7 @@ class GameCardWidget extends StatelessWidget {
       padding: false,
       onPressed: this.mode == UiMode.list && game.url != null
           ? () {
-              showCpblUrl(game.url);
+              if (enabled) showCpblUrl(context, game.url);
             }
           : null,
     );
@@ -340,7 +367,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
                   ' ($year)',
             ));
           }
-          return ChipMenuDialog('use_view_pager_title', options);
+          return ChipMenuDialog('drawer_title_year', options);
         });
     print('result = $r');
     if (r != null) {
@@ -362,7 +389,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
           FieldId.values.forEach((id) {
             options.add(ChipMenuOption(id, CpblClient.getFieldName(context, id)));
           });
-          return ChipMenuDialog('use_view_pager_title', options);
+          return ChipMenuDialog('drawer_title_field', options);
         });
     print('result = $r');
     if (r != null) {
@@ -373,14 +400,6 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
     }
   }
 
-  static const List<TeamId> favTeams = [
-    TeamId.fav_all,
-    TeamId.ct_brothers,
-    TeamId.lions_711,
-    TeamId.fubon_guardians,
-    TeamId.lamigo_monkeys
-  ];
-
   _onTeamChipPressed() async {
     if (!widget.enabled) return;
     //print('show team selector');
@@ -388,10 +407,10 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         context: context,
         builder: (context) {
           List<Widget> options = new List();
-          favTeams.forEach((id) {
+          CpblClient.favTeams.forEach((id) {
             options.add(ChipMenuOption(id, CpblClient.getTeamName(context, id)));
           });
-          return ChipMenuDialog('use_view_pager_title', options);
+          return ChipMenuDialog('drawer_title_team', options);
         });
     print('result = $r');
     if (r != null) {
@@ -452,8 +471,8 @@ class ChipMenuDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text(Lang.of(context).trans(titleResKey)),
-      titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+      //title: Text(Lang.of(context).trans(titleResKey)),
+      //titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
       children: options,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
     );
@@ -472,7 +491,7 @@ class ChipMenuOption extends StatelessWidget {
       onPressed: () {
         Navigator.pop(context, this.value);
       },
-      child: Text(this.text),
+      child: Text(this.text, style: Theme.of(context).textTheme.subhead),
     );
   }
 }
