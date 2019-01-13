@@ -329,6 +329,61 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     }
   }
 
+  List<Widget> buildOptionMenu(BuildContext context, bool loading) {
+    return [
+      FlatButton(
+        child: Text('game'),
+        onPressed: () {
+          print('show game');
+        },
+      ),
+      IconButton(
+        icon: Icon(Icons.refresh),
+        onPressed: refreshGameList,
+        tooltip: Lang.of(context).trans('action_refresh'),
+      ),
+      PopupMenuButton(
+        itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 0,
+                child: Text(Lang.of(context).trans('action_go_to_website')),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text(Lang.of(context).trans('action_settings')),
+              ),
+//                    PopupMenuItem(
+//                      enabled: !loading,
+//                      value: 2,
+//                      child: Text('show highlight'),
+//                    ),
+            ],
+        onSelected: (action) {
+          //print('selected option $action');
+          switch (action) {
+            case 0:
+              showCpblHome();
+              break;
+            case 1:
+              showSettings();
+              break;
+            case 2:
+              fetchHighlight(_year, _month, debug: true); //option menu
+              break;
+          }
+        },
+      ),
+    ];
+  }
+
+  void refreshGameList() {
+    if (_mode == UiMode.list) {
+      pullToRefresh(_year, _month, type: _type, forceUpdate: true);
+    } else {
+      fetchHighlight(_year, _month, forceUpdate: true); //refresh button
+    }
+  }
+
   void showCpblHome() async {
     //if (await canLaunch(CpblClient.homeUrl)) {
     await CpblClient.launchUrl(context, CpblClient.homeUrl);
@@ -356,50 +411,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             Lang.of(context).trans('app_name'),
             //style: TextStyle(color: Colors.white),
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: () {
-                if (_mode == UiMode.list) {
-                  pullToRefresh(_year, _month, type: _type, forceUpdate: true);
-                } else {
-                  fetchHighlight(_year, _month, forceUpdate: true); //refresh button
-                }
-              },
-              tooltip: Lang.of(context).trans('action_refresh'),
-            ),
-            PopupMenuButton(
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 0,
-                      child: Text(Lang.of(context).trans('action_go_to_website')),
-                    ),
-                    PopupMenuItem(
-                      value: 1,
-                      child: Text(Lang.of(context).trans('action_settings')),
-                    ),
-//                    PopupMenuItem(
-//                      enabled: !loading,
-//                      value: 2,
-//                      child: Text('show highlight'),
-//                    ),
-                  ],
-              onSelected: (action) {
-                //print('selected option $action');
-                switch (action) {
-                  case 0:
-                    showCpblHome();
-                    break;
-                  case 1:
-                    showSettings();
-                    break;
-                  case 2:
-                    fetchHighlight(_year, _month, debug: true); //option menu
-                    break;
-                }
-              },
-            ),
-          ],
+          actions: buildOptionMenu(context, loading),
           //leading: new Container(),
           automaticallyImplyLeading: false,
           elevation: _mode == UiMode.quick ? 0.0 : 4.0,
@@ -752,6 +764,15 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
   }
 
   @override
+  void refreshGameList() {
+    if (_mode == UiMode.list) {
+      fetchMonthList(_year, _month, forceUpdate: true); //pager refresh button
+    } else {
+      fetchHighlight(_year, _month, forceUpdate: true); //pager refresh button
+    }
+  }
+
+  @override
   void dispose() {
     _tabController.removeListener(onTabClickListener);
     _tabController.dispose();
@@ -768,50 +789,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
             Lang.of(context).trans('app_name'),
             //style: TextStyle(color: Colors.white),
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: () {
-                if (_mode == UiMode.list) {
-                  fetchMonthList(_year, _month, forceUpdate: true); //pager refresh button
-                } else {
-                  fetchHighlight(_year, _month, forceUpdate: true); //pager refresh button
-                }
-              },
-              tooltip: Lang.of(context).trans('action_refresh'),
-            ),
-            PopupMenuButton(
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 0,
-                      child: Text(Lang.of(context).trans('action_go_to_website')),
-                    ),
-                    PopupMenuItem(
-                      value: 1,
-                      child: Text(Lang.of(context).trans('action_settings')),
-                    ),
-//                    PopupMenuItem(
-//                      enabled: !loading,
-//                      value: 2,
-//                      child: Text('show highlight'),
-//                    ),
-                  ],
-              onSelected: (action) {
-                //print('selected option $action');
-                switch (action) {
-                  case 0:
-                    showCpblHome();
-                    break;
-                  case 1:
-                    showSettings();
-                    break;
-                  case 2:
-                    fetchHighlight(_year, _month); //pager option
-                    break;
-                }
-              },
-            ),
-          ],
+          actions: buildOptionMenu(context, loading),
           //leading: new Container(),
           automaticallyImplyLeading: false,
           elevation: 0.0,
