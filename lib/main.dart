@@ -243,7 +243,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         });
       });
     } else {
+      _startTimeout(_timeoutRefresh); //start fetch game list
       _client.fetchList(year, month, type, !forceUpdate).then((gameList) {
+        _clearTimeout(); //fetch game list complete
         List<FieldId> fields = [FieldId.f00];
         List<TeamId> teams = [TeamId.fav_all];
         list?.forEach((g) {
@@ -261,6 +263,22 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         });
       });
     }
+  }
+
+  void _startTimeout(void callback(), [int seconds = 10]) {
+    _clearTimeout();
+    _timer = new Timer(new Duration(seconds: seconds), callback);
+  }
+
+  void _clearTimeout() {
+    _timer?.cancel();
+  }
+
+  void _timeoutRefresh() {
+    setState(() {
+      loading = false;
+    });
+    refreshGameList();
   }
 
   Future<List<Game>> _fetchList(int year, int month, GameType type,
@@ -309,7 +327,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
         ));
       }
     } else {
-      var time = DateTime(2018, 10, 10);
+      _startTimeout(_timeoutRefresh); //start fetch highlight
+      var time = DateTime.now(); //DateTime(2018, 10, 10);
       List<Game> list = new List();
       if (_client.isWarmUpMonth(year, month)) {
         list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
@@ -325,21 +344,17 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       if (_client.isAllStarMonth(year, month)) {
         list.addAll(await _client.fetchList(year, month, GameType.type_02)); // all star
       }
+      _clearTimeout(); //fetch highlight complete
       gameList.addAll(_client.getHighlightGameList(list, time));
     }
     //show more button
     if (gameList.isNotEmpty) {
       gameList.add(Game.more());
-      setState(() {
-        list = gameList;
-        loading = false;
-      });
-    } else {
-      setState(() {
-        list = gameList;
-        loading = false;
-      });
     }
+    setState(() {
+      list = gameList;
+      loading = false;
+    });
   }
 
   List<Widget> buildOptionMenu(BuildContext context, bool loading, int year) {
@@ -397,7 +412,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   }
 
   void refreshGameList() {
-    if (_mode == UiMode.list) {
+    if (loading) {
+      print('still refresh... bypass it');
+    } else if (_mode == UiMode.list) {
       pullToRefresh(_year, _month, type: _type, forceUpdate: true);
     } else {
       fetchHighlight(_year, _month, forceUpdate: true); //refresh button
@@ -704,7 +721,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
           //pullToRefresh(2018, 10);
           setState(() {
             _mode = UiMode.list;
-            loading = true;
+            //loading = true;
           });
           fetchMonthList(_year, _month);
         },
@@ -743,6 +760,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     setState(() {
       loading = true;
     });
+    _startTimeout(_timeoutRefresh); //start fetch month list
     List<Game> list = new List();
     if (_client.isWarmUpMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_07, !forceUpdate));
@@ -760,6 +778,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     if (_client.isAllStarMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_02, !forceUpdate));
     }
+    _clearTimeout(); //fetch month list complete
     print('fetch complete $month ${list.length}');
     list.sort((g1, g2) => g1.timeInMillis() == g2.timeInMillis()
         ? g1.id - g2.id
@@ -801,7 +820,9 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
 
   @override
   void refreshGameList() {
-    if (_mode == UiMode.list) {
+    if (loading) {
+      print('still loading game list');
+    } else if (_mode == UiMode.list) {
       fetchMonthList(_year, _month, forceUpdate: true); //pager refresh button
     } else {
       fetchHighlight(_year, _month, forceUpdate: true); //pager refresh button
