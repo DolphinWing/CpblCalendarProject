@@ -322,6 +322,8 @@ class PagerSelectorWidget extends StatefulWidget {
   final ValueChanged<int> onYearChanged;
   final ValueChanged<FieldId> onFieldChanged;
   final ValueChanged<TeamId> onFavTeamChanged;
+  final List<FieldId> fieldList;
+  final List<TeamId> teamList;
 
   PagerSelectorWidget({
     this.enabled = true,
@@ -329,7 +331,11 @@ class PagerSelectorWidget extends StatefulWidget {
     this.onYearChanged,
     this.onFieldChanged,
     this.onFavTeamChanged,
-  }) : this.year = year ?? DateTime.now().year;
+    List<FieldId> fieldList,
+    List<TeamId> teamList,
+  })  : this.year = year ?? DateTime.now().year,
+        this.fieldList = fieldList ?? FieldId.values,
+        this.teamList = teamList ?? CpblClient.favTeams;
 
   @override
   State<StatefulWidget> createState() => _PagerSelectorWidgetState();
@@ -386,7 +392,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         context: context,
         builder: (context) {
           List<Widget> options = new List();
-          FieldId.values.forEach((id) {
+          widget.fieldList?.forEach((id) {
             options.add(ChipMenuOption(id, CpblClient.getFieldName(context, id)));
           });
           return ChipMenuDialog('drawer_title_field', options);
@@ -407,7 +413,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         context: context,
         builder: (context) {
           List<Widget> options = new List();
-          CpblClient.favTeams.forEach((id) {
+          widget.teamList?.forEach((id) {
             options.add(ChipMenuOption(id, CpblClient.getTeamName(context, id)));
           });
           return ChipMenuDialog('drawer_title_team', options);

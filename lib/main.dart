@@ -146,6 +146,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   int _mode = UiMode.list;
   FieldId _field;
   TeamId _favTeam;
+  List<FieldId> _fieldList;
+  List<TeamId> _teamList;
 
   @override
   void initState() {
@@ -242,7 +244,18 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       });
     } else {
       _client.fetchList(year, month, type, !forceUpdate).then((gameList) {
+        List<FieldId> fields = [FieldId.f00];
+        List<TeamId> teams = [TeamId.fav_all];
+        list?.forEach((g) {
+          if (!fields.contains(g.fieldId)) fields.add(g.fieldId);
+          if (!teams.contains(g.home.id)) teams.add(g.home.id);
+          if (!teams.contains(g.away.id)) teams.add(g.away.id);
+        });
+        fields.sort((a, b) => a.index - b.index);
+        teams.sort((a, b) => a.index - b.index);
         setState(() {
+          _fieldList = fields;
+          _teamList = teams;
           list = gameList;
           loading = false;
         });
@@ -429,6 +442,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           type: _type,
           field: _field,
           favTeam: _favTeam,
+          fieldList: _fieldList,
+          teamList: _teamList,
           onPressed: (action) {
             print('query ${action.year}/${action.month} ${action.field} ${action.type}');
             setState(() {
@@ -601,7 +616,8 @@ class _SettingsPaneState extends State<SettingsPane> {
 }
 
 class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderStateMixin {
-  Widget _buildControlPane(BuildContext context, int mode, int year) {
+  Widget _buildControlPane(BuildContext context, int mode, int year,
+      [List<FieldId> fields, List<TeamId> teams]) {
     return mode == UiMode.quick
         ? SizedBox(height: 1)
         : PagerSelectorWidget(
@@ -627,6 +643,8 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
                 _favTeam = value;
               });
             },
+            teamList: teams,
+            fieldList: fields,
           );
   }
 
@@ -746,7 +764,18 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     list.sort((g1, g2) => g1.timeInMillis() == g2.timeInMillis()
         ? g1.id - g2.id
         : g1.timeInMillis() - g2.timeInMillis());
+    List<FieldId> fields = [FieldId.f00];
+    List<TeamId> teams = [TeamId.fav_all];
+    list?.forEach((g) {
+      if (!fields.contains(g.fieldId)) fields.add(g.fieldId);
+      if (!teams.contains(g.home.id)) teams.add(g.home.id);
+      if (!teams.contains(g.away.id)) teams.add(g.away.id);
+    });
+    fields.sort((a, b) => a.index - b.index);
+    teams.sort((a, b) => a.index - b.index);
     setState(() {
+      _fieldList = fields;
+      _teamList = teams;
       gameList[month] = list;
       this.list = list;
       this.loading = false;
@@ -803,7 +832,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
         ),
         body: Column(
           children: <Widget>[
-            _buildControlPane(context, _mode, _year),
+            _buildControlPane(context, _mode, _year, _fieldList, _teamList),
             Expanded(
               child: Container(
                 child: _buildContentWidget(context, _mode, list, loading, _favTeam, _field),

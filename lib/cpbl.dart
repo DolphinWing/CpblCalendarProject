@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'lang.dart';
 
 enum TeamId {
+  fav_all,
   elephants,
   ct_brothers,
   lions,
@@ -28,7 +29,6 @@ enum TeamId {
   kg_whales,
   all_star_red,
   all_star_white,
-  fav_all,
   unknown_away,
   unknown_home,
   unknown
@@ -138,12 +138,12 @@ class Team {
 
   static Team get firstKinkon => Team(
         id: TeamId.first_kinkon,
-        color: Colors.blue,
+        color: Colors.blueGrey,
       );
 
   static Team get laNewBears => Team(
         id: TeamId.lanew_bears,
-        color: Colors.yellow,
+        color: Colors.blueGrey,
       );
 
   static Team get ssTigers => Team(

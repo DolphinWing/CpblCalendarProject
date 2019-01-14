@@ -26,6 +26,8 @@ class DrawerPane extends StatefulWidget {
   final FieldId field;
   final TeamId favTeam;
   final GameType type;
+  final List<FieldId> fieldList;
+  final List<TeamId> teamList;
 
   DrawerPane({
     this.year = 2018,
@@ -34,7 +36,10 @@ class DrawerPane extends StatefulWidget {
     this.favTeam = TeamId.fav_all,
     this.type = GameType.type_01,
     this.onPressed,
-  });
+    List<FieldId> fieldList,
+    List<TeamId> teamList,
+  })  : this.fieldList = fieldList ?? FieldId.values,
+        this.teamList = teamList ?? CpblClient.favTeams;
 
   @override
   State<StatefulWidget> createState() => _DrawerPaneState();
@@ -102,6 +107,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                   ),
                   _FieldMenuWidget(
                     id: _field,
+                    fieldList: widget.fieldList,
                     onValueChanged: (value) {
                       setState(() {
                         _field = value;
@@ -128,6 +134,7 @@ class _DrawerPaneState extends State<DrawerPane> {
                   ),
                   _TeamMenuWidget(
                     id: _favTeam,
+                    teamList: widget.teamList,
                     onValueChanged: (value) {
                       setState(() {
                         _favTeam = value;
@@ -271,8 +278,10 @@ class _MonthMenuWidgetState extends State<_MonthMenuWidget> {
 class _FieldMenuWidget extends StatefulWidget {
   final FieldId id;
   final ValueChanged<FieldId> onValueChanged;
+  final List<FieldId> fieldList;
 
-  _FieldMenuWidget({this.id = FieldId.f00, this.onValueChanged});
+  _FieldMenuWidget({this.id = FieldId.f00, this.onValueChanged, List<FieldId> fieldList})
+      : this.fieldList = fieldList ?? FieldId.values;
 
   @override
   State<StatefulWidget> createState() => _FieldMenuWidgetState();
@@ -292,7 +301,7 @@ class _FieldMenuWidgetState extends State<_FieldMenuWidget> {
   @override
   Widget build(BuildContext context) {
     List<DropdownMenuItem<FieldId>> list = new List();
-    FieldId.values.forEach((id) {
+    widget.fieldList?.forEach((id) {
       list.add(DropdownMenuItem(
         value: id,
         child: Text(CpblClient.getFieldName(context, id)),
@@ -372,8 +381,14 @@ class _TeamMenuWidget extends StatefulWidget {
   final bool enabled;
   final TeamId id;
   final ValueChanged<TeamId> onValueChanged;
+  final List<TeamId> teamList;
 
-  _TeamMenuWidget({this.enabled = true, this.id = TeamId.fav_all, this.onValueChanged});
+  _TeamMenuWidget({
+    this.enabled = true,
+    this.id = TeamId.fav_all,
+    this.onValueChanged,
+    List<TeamId> teamList,
+  }) : this.teamList = teamList ?? CpblClient.favTeams;
 
   @override
   State<StatefulWidget> createState() => _TeamMenuWidgetState();
@@ -393,7 +408,7 @@ class _TeamMenuWidgetState extends State<_TeamMenuWidget> {
   @override
   Widget build(BuildContext context) {
     List<DropdownMenuItem<TeamId>> options = new List();
-    CpblClient.favTeams.forEach((id) {
+    widget.teamList?.forEach((id) {
       options.add(DropdownMenuItem(
         value: id,
         child: Text(CpblClient.getTeamName(context, id)),
