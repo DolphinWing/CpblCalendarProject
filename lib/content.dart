@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_html_view/flutter_html_view.dart';
+import 'package:launch_review/launch_review.dart';
 
 import 'cpbl.dart';
 import 'lang.dart';
@@ -74,7 +76,7 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
           widgetList.add(_GameCardAnnouncementWidget(message: game.extra));
           break;
         case GameType.update:
-          widgetList.add(Text(game.extra));
+          widgetList.add(_AppUpdateCardWidget(game.extra));
           break;
         case GameType.more:
           widgetList.add(_GameCardMoreWidget(
@@ -316,6 +318,38 @@ class _GameCardMoreWidget extends StatelessWidget {
   }
 }
 
+class _AppUpdateCardWidget extends StatelessWidget {
+  final String message;
+
+  _AppUpdateCardWidget(String message) : this.message = message ?? '';
+
+  @override
+  Widget build(BuildContext context) {
+    return GameCardBaseWidget(
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Center(child: HtmlView(data: message)),
+            constraints: BoxConstraints(minHeight: 64),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              FlatButton(
+                textColor: Theme.of(context).primaryColor,
+                child: Text(Lang.of(context).trans('drawer_update_now')),
+                onPressed: () {
+                  LaunchReview.launch();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class PagerSelectorWidget extends StatefulWidget {
   final bool enabled;
   final int year;
@@ -379,7 +413,6 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
     if (r != null) {
       setState(() {
         _year = r;
-        //FIXME: reset fav teams
       });
       if (widget.onYearChanged != null) widget.onYearChanged(r);
     }

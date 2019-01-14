@@ -38,6 +38,10 @@ dependencies:
   firebase_core: ^0.2.5+1
   firebase_remote_config: ^0.0.6+1
 
+  # https://github.com/PonnamKarthik/FlutterHtmlView
+  flutter_html_view: ^0.5.10
+  launch_review: ^1.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

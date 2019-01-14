@@ -114,16 +114,22 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         versionCode = packageInfo?.buildNumber ?? '';
       });
-      navigationPage();
+      navigationPage(int.parse(packageInfo?.buildNumber ?? '0'));
     });
   }
 
-  void navigationPage() async {
+  void navigationPage([int versionCode = 0]) async {
     configs = await RemoteConfig.instance;
     final defaults = <String, dynamic>{'override_start_enabled': false};
-    await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
+    if (CpblClient.debug) {
+      await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
+    }
     await configs.setDefaults(defaults);
-    await configs.fetch(expiration: const Duration(hours: 8));
+    if (CpblClient.debug) {
+      await configs.fetch(expiration: const Duration(minutes: 5));
+    } else {
+      await configs.fetch(expiration: const Duration(hours: 8));
+    }
     await configs.activateFetched();
     //print('welcome message: ${configs.getString('welcome')}');
     //print('override: ${configs.getBool('override_start_enabled')}');
@@ -134,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen> {
 //    setState(() {
 //      appName = Lang.of(context).trans('app_name');
 //    });
-    final CpblClient client = new CpblClient(context, configs, prefs);
+    final CpblClient client = new CpblClient(context, configs, prefs, versionCode: versionCode);
     client.init().then((r) {
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
@@ -339,6 +345,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
     List<Game> gameList = new List();
     //load version update
+    gameList.add(Game.update(_client.getUpdateSummary()));
     //load remote announcement
     var cards = _client.loadRemoteAnnouncement();
     print('remote info size: ${cards.length}');

@@ -348,6 +348,13 @@ class CpblClient {
   static const homeUrl = 'http://www.cpbl.com.tw';
   static const _scheduleUrl = '$homeUrl/schedule';
 
+  /// https://stackoverflow.com/a/49709147/2673859
+  static bool get debug {
+    bool debugMode = false;
+    assert(debugMode = true);
+    return debugMode;
+  }
+
   String _padLeft(int num) => num.toString().padLeft(2, '0');
 
   static String getFieldName(BuildContext context, FieldId id) =>
@@ -491,10 +498,13 @@ class CpblClient {
   var _client = new http.Client();
   final RemoteConfig _configs;
   final SharedPreferences _prefs;
+  final int currentVersionCode;
 
-  CpblClient(BuildContext context, RemoteConfig configs, SharedPreferences prefs)
+  CpblClient(BuildContext context, RemoteConfig configs, SharedPreferences prefs,
+      {int versionCode = 0})
       : this._configs = configs,
-        this._prefs = prefs {
+        this._prefs = prefs,
+        this.currentVersionCode = versionCode ?? 0 {
 //    _client = new HttpClient();
 //    _client.connectionTimeout = new Duration(seconds: 10);
     print('constructor');
@@ -813,6 +823,17 @@ class CpblClient {
   void setViewPagerEnabled(bool enabled) async {
     await _prefs.setBool('use_view_pager', enabled);
   }
+
+  bool canUpdate() {
+    int code = _configs.getInt('latest_version_code') ?? 0;
+    if (code > currentVersionCode) {
+      print('have new version $code ${_configs.getString('latest_version_summary')}');
+      return true;
+    }
+    return false;
+  }
+
+  String getUpdateSummary() => canUpdate() ? _configs.getString('latest_version_summary') : '';
 
   List<Game> loadRemoteAnnouncement() {
     List<Game> announceList = new List();
