@@ -329,14 +329,20 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     }
   }
 
-  List<Widget> buildOptionMenu(BuildContext context, bool loading) {
-    return [
-      FlatButton(
-        child: Text('game'),
+  List<Widget> buildOptionMenu(BuildContext context, bool loading, int year) {
+    List<Widget> options = new List();
+    if (year == DateTime.now().year) {
+      options.add(FlatButton(
+        child: Text(
+          Lang.of(context).trans('action_lead_board'),
+          style: TextStyle(color: Colors.white),
+        ),
         onPressed: () {
-          print('show game');
+          CpblClient.launchUrl(context, 'http://www.cpbl.com.tw/standing/season.html');
         },
-      ),
+      ));
+    }
+    options.addAll([
       IconButton(
         icon: Icon(Icons.refresh),
         onPressed: refreshGameList,
@@ -367,13 +373,14 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             case 1:
               showSettings();
               break;
-            case 2:
-              fetchHighlight(_year, _month, debug: true); //option menu
-              break;
+//            case 2:
+//              fetchHighlight(_year, _month, debug: true); //option menu
+//              break;
           }
         },
       ),
-    ];
+    ]);
+    return options;
   }
 
   void refreshGameList() {
@@ -411,7 +418,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             Lang.of(context).trans('app_name'),
             //style: TextStyle(color: Colors.white),
           ),
-          actions: buildOptionMenu(context, loading),
+          actions: buildOptionMenu(context, loading, _year),
           //leading: new Container(),
           automaticallyImplyLeading: false,
           elevation: _mode == UiMode.quick ? 0.0 : 4.0,
@@ -789,7 +796,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
             Lang.of(context).trans('app_name'),
             //style: TextStyle(color: Colors.white),
           ),
-          actions: buildOptionMenu(context, loading),
+          actions: buildOptionMenu(context, loading, _year),
           //leading: new Container(),
           automaticallyImplyLeading: false,
           elevation: 0.0,
