@@ -65,6 +65,9 @@ class _SplashScreenState extends State<SplashScreen> {
   RemoteConfig configs;
   Timer _timer;
 
+//  String appName = '';
+  String versionCode = '';
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -76,10 +79,18 @@ class _SplashScreenState extends State<SplashScreen> {
             Image(
               image: AssetImage('assets/drawable/splash_icon.png'),
             ),
-            SizedBox(
-              height: 64,
+            SizedBox(height: 64),
+            Container(
+              constraints: BoxConstraints(minHeight: 32),
+              //child: Text(appName, style: Theme.of(context).textTheme.title),
             ),
+            SizedBox(height: 32),
             CircularProgressIndicator(),
+            SizedBox(height: 32),
+            Container(
+              constraints: BoxConstraints(minHeight: 32),
+              child: Text(versionCode, style: Theme.of(context).textTheme.caption),
+            ),
           ],
         ),
       ),
@@ -89,13 +100,22 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = new Timer(const Duration(milliseconds: 500), navigationPage);
+    _timer = new Timer(const Duration(milliseconds: 500), _initUi);
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void _initUi() {
+    PackageInfo.fromPlatform().then((packageInfo) {
+      setState(() {
+        versionCode = packageInfo?.buildNumber ?? '';
+      });
+      navigationPage();
+    });
   }
 
   void navigationPage() async {
@@ -106,15 +126,20 @@ class _SplashScreenState extends State<SplashScreen> {
     await configs.fetch(expiration: const Duration(hours: 8));
     await configs.activateFetched();
     //print('welcome message: ${configs.getString('welcome')}');
-    print('override: ${configs.getBool('override_start_enabled')}');
+    //print('override: ${configs.getBool('override_start_enabled')}');
     final prefs = await SharedPreferences.getInstance();
+
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
+//    setState(() {
+//      appName = Lang.of(context).trans('app_name');
+//    });
     final CpblClient client = new CpblClient(context, configs, prefs);
-    await client.init(); //we need to init some lang strings
+    client.init().then((r) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
+    }); //we need to init some lang strings
     //Navigator.of(context).pushReplacementNamed('/calendar');
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
   }
 }
 
