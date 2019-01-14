@@ -112,11 +112,11 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
               (widget.year != null && widget.month != null)
                   ? Container(
                       constraints: BoxConstraints.expand(height: 64),
-                      child: Text(
-                        '${widget.year}/${widget.month}',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.subhead,
-                      ),
+//                      child: Text(
+//                        '${widget.year}/${widget.month}',
+//                        textAlign: TextAlign.center,
+//                        style: Theme.of(context).textTheme.subhead,
+//                      ),
                     )
                   : SizedBox(
                       height: 64,

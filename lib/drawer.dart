@@ -1,3 +1,4 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 
 import 'cpbl.dart';
@@ -32,13 +33,15 @@ class DrawerPane extends StatefulWidget {
   DrawerPane({
     this.year = 2018,
     this.month = 10,
-    this.field = FieldId.f00,
-    this.favTeam = TeamId.fav_all,
+    FieldId field = FieldId.f00,
+    TeamId favTeam = TeamId.fav_all,
     this.type = GameType.type_01,
     this.onPressed,
     List<FieldId> fieldList,
     List<TeamId> teamList,
-  })  : this.fieldList = fieldList ?? FieldId.values,
+  })  : this.field = field ?? FieldId.f00,
+        this.favTeam = favTeam ?? TeamId.fav_all,
+        this.fieldList = fieldList ?? FieldId.values,
         this.teamList = teamList ?? CpblClient.favTeams;
 
   @override
@@ -51,6 +54,7 @@ class _DrawerPaneState extends State<DrawerPane> {
   FieldId _field;
   GameType _type;
   TeamId _favTeam;
+  BannerAd myBanner;
 
   @override
   void initState() {
@@ -63,6 +67,34 @@ class _DrawerPaneState extends State<DrawerPane> {
       _type = widget.type;
       _favTeam = widget.favTeam;
     });
+
+    myBanner = BannerAd(
+      // Replace the testAdUnitId with an ad unit id from the AdMob dash.
+      // https://developers.google.com/admob/android/test-ads
+      // https://developers.google.com/admob/ios/test-ads
+      adUnitId: CpblClient.debug ? BannerAd.testAdUnitId : 'ca-app-pub-7557398389502445/6354758232',
+      size: AdSize.smartBanner,
+      //targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {
+        print("BannerAd event is $event");
+      },
+    );
+
+    // typically this happens well before the ad is shown
+    myBanner
+      ..load()
+      ..show(
+        //// Positions the banner ad 60 pixels from the bottom of the screen
+        //anchorOffset: 60.0,
+        // Banner Position
+        anchorType: AnchorType.bottom,
+      );
+  }
+
+  @override
+  void dispose() {
+    myBanner.dispose();
+    super.dispose();
   }
 
   @override
@@ -141,35 +173,60 @@ class _DrawerPaneState extends State<DrawerPane> {
                       });
                     },
                   ),
+                  Container(
+                    constraints: BoxConstraints.expand(height: 48),
+                    child: RaisedButton(
+                      child: Text(
+                        Lang.of(context).trans('drawer_query'),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      elevation: 4.0,
+                      //highlightElevation: 4.0,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        if (widget.onPressed != null) {
+                          widget.onPressed(new Query(
+                            year: _year,
+                            month: _month,
+                            field: _field,
+                            type: _type,
+                            favTeam: _favTeam,
+                          ));
+                        }
+                      },
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    margin: EdgeInsets.only(top: 8, right: 16),
+                  ),
                 ],
               ),
             ),
-            //Expanded(child: SizedBox()),
-            Container(
-              constraints: BoxConstraints.expand(height: 48),
-              child: RaisedButton(
-                child: Text(
-                  Lang.of(context).trans('drawer_query'),
-                  style: TextStyle(color: Colors.white),
-                ),
-                elevation: 4.0,
-                //highlightElevation: 4.0,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (widget.onPressed != null) {
-                    widget.onPressed(new Query(
-                      year: _year,
-                      month: _month,
-                      field: _field,
-                      type: _type,
-                      favTeam: _favTeam,
-                    ));
-                  }
-                },
-                color: Theme.of(context).primaryColor,
-              ),
-              margin: EdgeInsets.only(bottom: 8, right: 16),
-            ),
+//            //Expanded(child: SizedBox()),
+//            Container(
+//              constraints: BoxConstraints.expand(height: 48),
+//              child: RaisedButton(
+//                child: Text(
+//                  Lang.of(context).trans('drawer_query'),
+//                  style: TextStyle(color: Colors.white),
+//                ),
+//                elevation: 4.0,
+//                //highlightElevation: 4.0,
+//                onPressed: () {
+//                  Navigator.of(context).pop();
+//                  if (widget.onPressed != null) {
+//                    widget.onPressed(new Query(
+//                      year: _year,
+//                      month: _month,
+//                      field: _field,
+//                      type: _type,
+//                      favTeam: _favTeam,
+//                    ));
+//                  }
+//                },
+//                color: Theme.of(context).primaryColor,
+//              ),
+//              margin: EdgeInsets.only(bottom: 8, right: 16),
+//            ),
           ],
         ),
         padding: EdgeInsets.only(top: 16, bottom: 16, left: 32, right: 16),

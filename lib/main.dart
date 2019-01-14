@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -110,6 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _initUi() {
+    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7557398389502445~8502463329');
     PackageInfo.fromPlatform().then((packageInfo) {
       setState(() {
         versionCode = packageInfo?.buildNumber ?? '';
@@ -345,7 +347,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
     List<Game> gameList = new List();
     //load version update
-    gameList.add(Game.update(_client.getUpdateSummary()));
+    if (_client.canUpdate()) {
+      gameList.add(Game.update(_client.getUpdateSummary()));
+    }
     //load remote announcement
     var cards = _client.loadRemoteAnnouncement();
     print('remote info size: ${cards.length}');
@@ -476,10 +480,14 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text(
-            Lang.of(context).trans('app_name'),
-            //style: TextStyle(color: Colors.white),
-          ),
+          title: Text(_mode != UiMode.list || list?.isNotEmpty == true
+                  ? Lang.of(context).trans('app_name')
+                  : '${CpblClient.getGameType(context, (_type ?? GameType.type_01))}'
+                  ' ${(_year ?? DateTime.now().year).toString()}'
+                  ' ${CpblClient.getMonthString(context, (_month ?? DateTime.now().month))}'
+              //Lang.of(context).trans('app_name'),
+              //style: TextStyle(color: Colors.white),
+              ),
           actions: buildOptionMenu(context, loading, _year),
           //leading: new Container(),
           automaticallyImplyLeading: false,

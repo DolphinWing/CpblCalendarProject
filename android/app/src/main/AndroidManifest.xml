@@ -28,8 +28,13 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_adaptive_launcher"
-        android:roundIcon="@mipmap/ic_adaptive_launcher_round"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <!-- https://developer.android.com/topic/arc/optimizing#navigation-patterns -->
+        <meta-data
+            android:name="WindowManagerPreference:SuppressWindowControlNavigationButton"
+            android:value="true" />
+
         <activity
             android:name="dolphin.android.apps.cpblcalendar3.MainActivity"
             android:launchMode="singleTop"
@@ -58,5 +63,10 @@
                 android:minHeight="640dp"
                 tools:targetApi="n" />
         </activity>
+
+        <!-- This step is required as of Google Mobile Ads SDK version 17.0.0. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
     </application>
 </manifest>

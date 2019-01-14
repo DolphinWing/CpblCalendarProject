@@ -488,7 +488,7 @@ class CpblClient {
   ];
 
   static String getMonthString(BuildContext context, int month) {
-    if (month < DateTime.january || month > DateTime.december) {
+    if (month == null || month < DateTime.january || month > DateTime.december) {
       return 'unkonwn';
     }
     return Lang.of(context).trans('drawer_entry_month_${CpblClient.monthList[month - 1]}');
@@ -826,6 +826,7 @@ class CpblClient {
 
   bool canUpdate() {
     int code = _configs.getInt('latest_version_code') ?? 0;
+    print('app version = $currentVersionCode vs. store = $code');
     if (code > currentVersionCode) {
       print('have new version $code ${_configs.getString('latest_version_summary')}');
       return true;

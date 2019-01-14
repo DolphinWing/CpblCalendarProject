@@ -37,6 +37,7 @@ dependencies:
   # add dependency for Firebase Core
   firebase_core: ^0.2.5+1
   firebase_remote_config: ^0.0.6+1
+  firebase_admob: ^0.7.0
 
   # https://github.com/PonnamKarthik/FlutterHtmlView
   flutter_html_view: ^0.5.10
