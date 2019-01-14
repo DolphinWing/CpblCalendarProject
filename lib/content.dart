@@ -183,15 +183,17 @@ class TeamRowWidget extends StatelessWidget {
 
 class GameCardBaseWidget extends StatelessWidget {
   final Widget child;
-  final bool padding;
+  final EdgeInsets padding;
   final GestureTapCallback onPressed;
 
-  GameCardBaseWidget({@required this.child, this.padding = true, this.onPressed});
+  GameCardBaseWidget(
+      {@required this.child, bool usePadding = true, EdgeInsets padding, this.onPressed})
+      : this.padding = padding ?? EdgeInsets.all(usePadding ? 16 : 0);
 
   @override
   Widget build(BuildContext context) {
     return new Container(
-      padding: EdgeInsets.all(this.padding ? 16 : 0),
+      padding: padding,
       margin: EdgeInsets.only(top: 4, bottom: 4, left: 8, right: 8),
       child: this.onPressed != null
           ? FlatButton(
@@ -272,7 +274,7 @@ class GameCardWidget extends StatelessWidget {
           ],
         ),
       ),
-      padding: false,
+      usePadding: false,
       onPressed: this.mode == UiMode.list && game.url != null
           ? () {
               if (enabled) showCpblUrl(context, game.url);
@@ -312,7 +314,7 @@ class _GameCardMoreWidget extends StatelessWidget {
         child: Text(Lang.of(context).trans('drawer_more')),
         padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
       ),
-      padding: false,
+      usePadding: false,
       onPressed: this.onPressed,
     );
   }
@@ -326,10 +328,11 @@ class _AppUpdateCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GameCardBaseWidget(
+      padding: EdgeInsets.fromLTRB(8, 16, 8, 0),
       child: Column(
         children: <Widget>[
           Container(
-            child: Center(child: HtmlView(data: message)),
+            child: Center(child: HtmlView(data: message, padding: EdgeInsets.all(0))),
             constraints: BoxConstraints(minHeight: 64),
           ),
           Row(
@@ -339,6 +342,7 @@ class _AppUpdateCardWidget extends StatelessWidget {
                 textColor: Theme.of(context).primaryColor,
                 child: Text(Lang.of(context).trans('drawer_update_now')),
                 onPressed: () {
+                  /// https://stackoverflow.com/a/50782200/2673859
                   LaunchReview.launch();
                 },
               ),
