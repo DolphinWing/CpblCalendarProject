@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">中職賽程快查</string>
+    <string name="admob_app_id" translatable="false">ca-app-pub-7557398389502445~8502463329</string>
+    <string name="admob_banner_id" translatable="false">ca-app-pub-7557398389502445/6354758232</string>
+</resources>
