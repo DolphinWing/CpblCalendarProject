@@ -4,5 +4,5 @@ gradlew         text eol=lf
 .idea/*.xml     text eol=lf
 
 #https://jmln.tw/blog/2017-08-13-set-github-repo-lang.html
-app/src/obselete/* linguist-vendored
-app/src/design/* linguist-vendored
+#app/src/obselete/* linguist-vendored
+#app/src/design/* linguist-vendored
