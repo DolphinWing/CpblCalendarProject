@@ -1,6 +1,10 @@
 # CpblCalendar4
 
-A CPBL Calendar port in Flutter
+全新使用 Flutter 編寫的版本，拋棄舊有的所有東西！（歐不，有留下app icon！）
+
+可快速查詢中華職棒賽程。不須等待完整網頁下載。（非官方APP）
+
+要知道更完整的資訊，請連結到 [Google Play](https://play.google.com/store/apps/details?id=dolphin.android.apps.CpblCalendar3) 觀看，謝謝
 
 ## Getting Started
 
