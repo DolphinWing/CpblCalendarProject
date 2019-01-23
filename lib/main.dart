@@ -766,7 +766,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
         onHighlightPaneClosed: () {
           //pullToRefresh(2018, 10);
           setState(() {
-            _mode = UiMode.list;
+            _mode = UiMode.pager;
             //loading = true;
           });
           _tabController.animateTo(_month - 1);
@@ -779,7 +779,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        _buildPagerWidget(context, false),
+        _buildPagerWidget(context, !isLoading),
         isLoading ? Positioned(child: CircularProgressIndicator(), top: 240) : SizedBox(),
       ],
     );
@@ -868,7 +868,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
   void refreshGameList() {
     if (loading) {
       print('still loading game list');
-    } else if (_mode == UiMode.list) {
+    } else if (_mode != UiMode.quick) {
       fetchMonthList(_year, _month, forceUpdate: true); //pager refresh button
     } else {
       fetchHighlight(_year, _month, forceUpdate: true); //pager refresh button

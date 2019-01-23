@@ -9,6 +9,7 @@ import 'lang.dart';
 class UiMode {
   static const int list = 0;
   static const int quick = 1;
+  static const int pager = 2;
 }
 
 class ContentUiWidget extends StatefulWidget {
@@ -67,7 +68,7 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
     });
   }
 
-  Widget buildContent(BuildContext context, List<Game> list, int mode, bool enabled) {
+  Widget _buildContent(BuildContext context, List<Game> list, int mode, bool enabled) {
     //print('target ${widget.fieldId} ${widget.favTeamId}');
     List<Widget> widgetList = new List();
     list?.forEach((game) {
@@ -124,7 +125,7 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
               Container(
                 constraints: BoxConstraints.expand(height: 64),
                 child: Text(
-                  Lang.of(context).trans('no_data'),
+                  Lang.of(context).trans(enabled ? 'no_data' : 'loading_data'),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.title,
                 ),
@@ -135,15 +136,13 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.loading
-        ? Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              buildContent(context, widget.list, widget.mode, widget.enabled && !widget.loading),
-              Positioned(child: CircularProgressIndicator(), top: 256),
-            ],
-          )
-        : buildContent(context, widget.list, widget.mode, widget.enabled && !widget.loading);
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        _buildContent(context, widget.list, widget.mode, widget.enabled && !widget.loading),
+        widget.loading ? Positioned(child: CircularProgressIndicator(), top: 256) : SizedBox(),
+      ],
+    );
   }
 }
 
@@ -185,10 +184,16 @@ class GameCardBaseWidget extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
   final GestureTapCallback onPressed;
+  final Color backgroundColor;
 
-  GameCardBaseWidget(
-      {@required this.child, bool usePadding = true, EdgeInsets padding, this.onPressed})
-      : this.padding = padding ?? EdgeInsets.all(usePadding ? 16 : 0);
+  GameCardBaseWidget({
+    @required this.child,
+    bool usePadding = true,
+    EdgeInsets padding,
+    this.onPressed,
+    Color backgroundColor,
+  })  : this.backgroundColor = backgroundColor ?? Colors.transparent,
+        this.padding = padding ?? EdgeInsets.all(usePadding ? 16 : 0);
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +217,7 @@ class GameCardBaseWidget extends StatelessWidget {
           style: BorderStyle.solid,
           color: Colors.grey.withAlpha(48),
         ),
+        color: backgroundColor,
         //color: Colors.grey.withAlpha(48),
       ),
     );
@@ -275,7 +281,7 @@ class GameCardWidget extends StatelessWidget {
         ),
       ),
       usePadding: false,
-      onPressed: this.mode == UiMode.list && game.url != null
+      onPressed: this.mode != UiMode.quick && game.url != null
           ? () {
               if (enabled) showCpblUrl(context, game.url);
             }
@@ -310,12 +316,13 @@ class _GameCardMoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GameCardBaseWidget(
-      child: Padding(
+      child: Container(
         child: Text(Lang.of(context).trans('drawer_more')),
         padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
       ),
       usePadding: false,
       onPressed: this.onPressed,
+      backgroundColor: Theme.of(context).primaryColor.withAlpha(40),
     );
   }
 }
