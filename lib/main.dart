@@ -167,7 +167,7 @@ class MainUiWidget extends StatefulWidget {
 class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-  Duration _fetchDelay = const Duration(milliseconds: 400);
+  //Duration _fetchDelay = const Duration(milliseconds: 400);
 
   Timer _timer;
   CpblClient _client;
@@ -324,12 +324,12 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       if (list1.last.before(time)) {
         print('last game is before now');
         list.addAll(list1);
-        sleep(_fetchDelay);
+        //sleep(_fetchDelay);
         var list2 = await _client.fetchList(year, month + 1, type);
         list.addAll(list2);
       } else if (list1.first.after(time)) {
         print('first game is not yet coming');
-        sleep(_fetchDelay);
+        //sleep(_fetchDelay);
         list.addAll(await _client.fetchList(year, month - 1, type));
         list.addAll(list1);
       } else {
@@ -370,7 +370,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       List<Game> list = new List();
       if (_client.isWarmUpMonth(year, month)) {
         list.addAll(await _client.fetchList(year, month, GameType.type_07)); //warm
-        sleep(_fetchDelay);
+        //sleep(_fetchDelay);
       }
       list.addAll(await _fetchList(year, month, GameType.type_01, time: time)); //regular
       if (_client.isChallengeMonth(year, month)) {
@@ -769,21 +769,21 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
             _mode = UiMode.list;
             //loading = true;
           });
-          fetchMonthList(_year, _month);
+          _tabController.animateTo(_month - 1);
+          //fetchMonthList(_year, _month);
         },
       );
     }
-    if (isLoading) {
-      //pager loading
-      return Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          _buildPagerWidget(context, false),
-          Positioned(child: CircularProgressIndicator(), top: 240),
-        ],
-      );
-    }
-    return _buildPagerWidget(context, true);
+
+    //pager loading
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        _buildPagerWidget(context, false),
+        isLoading ? Positioned(child: CircularProgressIndicator(), top: 240) : SizedBox(),
+      ],
+    );
+    //return _buildPagerWidget(context, true);
   }
 
   TabController _tabController;
@@ -810,16 +810,16 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     List<Game> list = new List();
     if (_client.isWarmUpMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_07, !forceUpdate));
-      sleep(_fetchDelay); //warm up
+      //sleep(_fetchDelay); //warm up
     }
     list.addAll(await _client.fetchList(year, month, GameType.type_01, !forceUpdate));
     if (_client.isChallengeMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_05, !forceUpdate));
-      sleep(_fetchDelay); //challenge
+      //sleep(_fetchDelay); //challenge
     }
     if (_client.isChampionMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_03, !forceUpdate));
-      sleep(_fetchDelay); //championship
+      //sleep(_fetchDelay); //championship
     }
     if (_client.isAllStarMonth(year, month)) {
       list.addAll(await _client.fetchList(year, month, GameType.type_02, !forceUpdate));

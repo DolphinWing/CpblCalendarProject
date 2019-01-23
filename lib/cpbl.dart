@@ -520,7 +520,7 @@ class CpblClient {
 
   Future<int> init() async {
     print('init cpbl client');
-    cachedGameList.clear(); //clear cache
+    _cachedGameList.clear(); //clear cache
 
     //load warm up overrides
     var warm = warmup_month_start_override.split(';');
@@ -573,7 +573,9 @@ class CpblClient {
     return 0;
   }
 
-  final Map<String, List<Game>> cachedGameList = new Map();
+  final Map<String, List<Game>> _cachedGameList = new Map();
+  final _cacheDelay = const Duration(milliseconds: 200);
+  final _finalDelay = const Duration(milliseconds: 400);
 
   Future<List<Game>> fetchList(int year, int month,
       [GameType type = GameType.type_01, bool cached = true]) async {
@@ -583,8 +585,8 @@ class CpblClient {
     //print(url);
 
     String key = '$year/$month-$type';
-    if (cached && cachedGameList.containsKey(key)) {
-      return Future.value(cachedGameList[key]);
+    if (cached && _cachedGameList.containsKey(key)) {
+      return Future.delayed(_cacheDelay, () => _cachedGameList[key]);
     }
 
 //    var request = await _client.getUrl(Uri.parse(url));
@@ -636,8 +638,9 @@ class CpblClient {
       print('no data');
     }
     print('game list size:${list.length}');
-    cachedGameList[key] = list;
-    return list;
+    _cachedGameList[key] = list;
+    //return list;
+    return Future.delayed(_finalDelay, () => _cachedGameList[key]);
   }
 
   Game _parseGameFromBlock(String block, int year, int month, GameType type) {
