@@ -839,7 +839,7 @@ class CpblClient {
 
   String getUpdateSummary() => canUpdate() ? _configs.getString('latest_version_summary') : '';
 
-  List<Game> loadRemoteAnnouncement() {
+  Future<List<Game>> loadRemoteAnnouncement() async {
     List<Game> announceList = new List();
     List<String> cards = _configs.getString('add_highlight_card').split(';');
     var now = DateTime.now();
@@ -852,7 +852,7 @@ class CpblClient {
             .add(Game.announce(int.parse(key), _configs.getString('add_highlight_card_$key')));
       }
     });
-    return announceList;
+    return Future.delayed(_finalDelay, () => announceList);
   }
 
   List<Game> getHighlightGameList(List<Game> srcList, [DateTime time]) {
@@ -933,6 +933,8 @@ class CpblClient {
 
   int getStartMonth() =>
       isOverrideStartEnabled() ? _configs.getInt('override_start_month') : DateTime.now().month;
+
+  bool isLoadGamesInHighlight() => !_configs.getBool('enable_highlight_no_games') ?? true;
 
   static Future<void> launchUrl(BuildContext context, String url) => launch(url,
       option: new CustomTabsOption(

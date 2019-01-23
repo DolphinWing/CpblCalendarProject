@@ -215,7 +215,7 @@ class GameCardBaseWidget extends StatelessWidget {
         //color: Colors.grey.withAlpha(32),
         border: Border.all(
           style: BorderStyle.solid,
-          color: Colors.grey.withAlpha(48),
+          color: Colors.grey.withAlpha(80),
         ),
         color: backgroundColor,
         //color: Colors.grey.withAlpha(48),
@@ -317,12 +317,15 @@ class _GameCardMoreWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GameCardBaseWidget(
       child: Container(
-        child: Text(Lang.of(context).trans('drawer_more')),
+        child: Text(
+          Lang.of(context).trans('drawer_more'),
+          style: TextStyle(color: Theme.of(context).primaryColor),
+        ),
         padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
       ),
       usePadding: false,
       onPressed: this.onPressed,
-      backgroundColor: Theme.of(context).primaryColor.withAlpha(40),
+      //backgroundColor: Theme.of(context).primaryColor.withAlpha(16),
     );
   }
 }

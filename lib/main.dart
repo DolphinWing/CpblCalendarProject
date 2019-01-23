@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -79,6 +78,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Expanded(
+              child: SizedBox(),
+            ),
             Image(
               image: AssetImage('assets/drawable/splash_icon.png'),
             ),
@@ -90,9 +92,17 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 32),
             CircularProgressIndicator(),
             SizedBox(height: 32),
-            Container(
-              constraints: BoxConstraints(minHeight: 32),
-              child: Text(versionCode, style: Theme.of(context).textTheme.caption),
+            Expanded(
+              child: Container(
+                alignment: Alignment.bottomRight,
+                constraints: BoxConstraints.expand(height: 64),
+                child: Text(
+                  versionCode,
+                  style: Theme.of(context).textTheme.caption,
+                  textAlign: TextAlign.end,
+                ),
+                padding: EdgeInsets.all(8),
+              ),
             ),
           ],
         ),
@@ -156,8 +166,9 @@ class _SplashScreenState extends State<SplashScreen> {
 class MainUiWidget extends StatefulWidget {
   final bool debug;
   final CpblClient client;
+  final int mode;
 
-  MainUiWidget({this.debug = false, this.client});
+  MainUiWidget({this.debug = false, this.client, this.mode = UiMode.quick});
 
   @override
   State<StatefulWidget> createState() =>
@@ -167,6 +178,7 @@ class MainUiWidget extends StatefulWidget {
 class _MainUiWidgetState extends State<MainUiWidget> {
   //https://www.reddit.com/r/FlutterDev/comments/7yma7y/how_do_you_open_a_drawer_in_a_scaffold_using_code/duhllqz
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
   //Duration _fetchDelay = const Duration(milliseconds: 400);
 
   Timer _timer;
@@ -184,18 +196,15 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   List<FieldId> _fieldList;
   List<TeamId> _teamList;
 
+  int getDefaultUiMode() => UiMode.list;
+
   @override
   void initState() {
     super.initState();
 
-//    //FIXME: auto select year and month
-//    int year = 2018;
-//    int month = 10;
-//    setState(() {
-//      _year = year;
-//      _month = month;
-//    });
-//    print('init from $_year/$_month');
+    setState(() {
+      _mode = widget.mode ?? _client.isHighlightEnabled() ? UiMode.quick : getDefaultUiMode();
+    });
 
     /// Flutter get context in initState method
     /// https://stackoverflow.com/a/49458289/2673859
@@ -353,7 +362,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       gameList.add(Game.update(_client.getUpdateSummary()));
     }
     //load remote announcement
-    var cards = _client.loadRemoteAnnouncement();
+    var cards = await _client.loadRemoteAnnouncement();
     print('remote info size: ${cards.length}');
     gameList.addAll(cards);
     if (debug) {
@@ -364,7 +373,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           awayId: TeamId.values[(i + 10) % TeamId.values.length],
         ));
       }
-    } else {
+    } else if (_client.isLoadGamesInHighlight()) {
       _startTimeout(_timeoutRefresh); //start fetch highlight
       var time = DateTime.now(); //DateTime(2018, 10, 10);
       List<Game> list = new List();
@@ -545,7 +554,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                 )
               : Container(),
         ),
-        minimum: EdgeInsets.only(bottom: 50.0),
+        //minimum: EdgeInsets.only(bottom: 50.0),
       ),
       color: Color.fromARGB(250, 255, 255, 255),
     );
@@ -679,6 +688,9 @@ class _SettingsPaneState extends State<SettingsPane> {
 }
 
 class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderStateMixin {
+  @override
+  int getDefaultUiMode() => UiMode.pager;
+
   Widget _buildControlPane(BuildContext context, int mode, int year,
       [List<FieldId> fields, List<TeamId> teams]) {
     return mode == UiMode.quick
