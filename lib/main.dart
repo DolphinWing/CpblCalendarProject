@@ -24,7 +24,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //title: Lang.of(context).trans('app_name'),
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.lightGreen,
+        primaryColor: Colors.lightGreen[800],
         //accentColor: Colors.orange,
       ),
       supportedLocales: [
