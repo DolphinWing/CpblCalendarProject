@@ -203,7 +203,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     super.initState();
 
     setState(() {
-      _mode = widget.mode ?? _client.isHighlightEnabled() ? UiMode.quick : getDefaultUiMode();
+      _mode = widget.mode ?? (_client.isHighlightEnabled() ? UiMode.quick : getDefaultUiMode());
+      print('ui mode = $_mode ${widget.mode}');
     });
 
     /// Flutter get context in initState method
@@ -481,8 +482,11 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => SettingsPane(client: _client)));
     //refresh for current settings
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: _client)));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => MainUiWidget(
+              client: _client,
+              mode: _mode,
+            )));
   }
 
   @override
@@ -817,6 +821,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     print('pager: fetch $year/$month');
     setState(() {
       loading = true;
+      _mode = UiMode.pager;
     });
     _startTimeout(_timeoutRefresh); //start fetch month list
     List<Game> list = new List();
