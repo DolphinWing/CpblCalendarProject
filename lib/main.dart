@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightGreen,
         primaryColor: Colors.lightGreen[800],
         //accentColor: Colors.orange,
+        //backgroundColor: Colors.white,
       ),
       supportedLocales: [
         //const Locale('en', 'US'),
@@ -477,72 +478,76 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text(_mode != UiMode.list || list?.isNotEmpty == true
-                  ? Lang.of(context).trans('app_name')
-                  : '${CpblClient.getGameType(context, (_type ?? GameType.type_01))}'
-                  ' ${(_year ?? DateTime.now().year).toString()}'
-                  ' ${CpblClient.getMonthString(context, (_month ?? DateTime.now().month))}'
-              //Lang.of(context).trans('app_name'),
-              //style: TextStyle(color: Colors.white),
-              ),
-          actions: buildOptionMenu(context, loading, _year),
-          //leading: new Container(),
-          automaticallyImplyLeading: false,
-          elevation: _mode == UiMode.quick ? 0.0 : 4.0,
-        ),
-        endDrawer: DrawerPane(
-          year: _year,
-          month: _month,
-          type: _type,
-          field: _field,
-          favTeam: _favTeam,
-          fieldList: _fieldList,
-          teamList: _teamList,
-          onPressed: (action) {
-            print('query ${action.year}/${action.month} ${action.field} ${action.type}');
-            setState(() {
-              _field = action.field;
-              _favTeam = action.favTeam;
-            });
-            pullToRefresh(action.year, action.month, type: action.type);
-          },
-        ),
-        body: Material(
-          child: ContentUiWidget(
-            loading: loading,
+    return Container(
+      child: SafeArea(
+        child: Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            title: Text(_mode != UiMode.list || list?.isNotEmpty == true
+                    ? Lang.of(context).trans('app_name')
+                    : '${CpblClient.getGameType(context, (_type ?? GameType.type_01))}'
+                    ' ${(_year ?? DateTime.now().year).toString()}'
+                    ' ${CpblClient.getMonthString(context, (_month ?? DateTime.now().month))}'
+                //Lang.of(context).trans('app_name'),
+                //style: TextStyle(color: Colors.white),
+                ),
+            actions: buildOptionMenu(context, loading, _year),
+            //leading: new Container(),
+            automaticallyImplyLeading: false,
+            elevation: _mode == UiMode.quick ? 0.0 : 4.0,
+          ),
+          endDrawer: DrawerPane(
             year: _year,
             month: _month,
+            type: _type,
             field: _field,
             favTeam: _favTeam,
-            mode: _mode,
-            list: list,
-            onScrollEnd: (value) {
+            fieldList: _fieldList,
+            teamList: _teamList,
+            onPressed: (action) {
+              print('query ${action.year}/${action.month} ${action.field} ${action.type}');
               setState(() {
-                showFab = !value && _mode == UiMode.list;
+                _field = action.field;
+                _favTeam = action.favTeam;
               });
-            },
-            onHighlightPaneClosed: () {
-              pullToRefresh(_year, _month);
+              pullToRefresh(action.year, action.month, type: action.type);
             },
           ),
-          elevation: 2.0,
+          body: Material(
+            child: ContentUiWidget(
+              loading: loading,
+              year: _year,
+              month: _month,
+              field: _field,
+              favTeam: _favTeam,
+              mode: _mode,
+              list: list,
+              onScrollEnd: (value) {
+                setState(() {
+                  showFab = !value && _mode == UiMode.list;
+                });
+              },
+              onHighlightPaneClosed: () {
+                pullToRefresh(_year, _month);
+              },
+            ),
+            elevation: 0.0,
+          ),
+          floatingActionButton: showFab
+              ? FloatingActionButton(
+                  child: Icon(Icons.search),
+                  onPressed: () {
+                    //Scaffold.of(context).openEndDrawer();
+                    _scaffoldKey.currentState.openEndDrawer();
+                  },
+                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
+                )
+              : Container(),
         ),
-        floatingActionButton: showFab
-            ? FloatingActionButton(
-                child: Icon(Icons.search),
-                onPressed: () {
-                  //Scaffold.of(context).openEndDrawer();
-                  _scaffoldKey.currentState.openEndDrawer();
-                },
-                foregroundColor: Colors.white,
-                backgroundColor: Theme.of(context).primaryColor,
-              )
-            : Container(),
+        minimum: EdgeInsets.only(bottom: 50.0),
       ),
+      color: Color.fromARGB(250, 255, 255, 255),
     );
   }
 }

@@ -29,6 +29,7 @@ class DrawerPane extends StatefulWidget {
   final GameType type;
   final List<FieldId> fieldList;
   final List<TeamId> teamList;
+  final ValueChanged<int> onAdLoaded;
 
   DrawerPane({
     this.year = 2018,
@@ -39,6 +40,7 @@ class DrawerPane extends StatefulWidget {
     this.onPressed,
     List<FieldId> fieldList,
     List<TeamId> teamList,
+    this.onAdLoaded,
   })  : this.field = field ?? FieldId.f00,
         this.favTeam = favTeam ?? TeamId.fav_all,
         this.fieldList = fieldList ?? FieldId.values,
@@ -77,6 +79,14 @@ class _DrawerPaneState extends State<DrawerPane> {
       //targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {
         print("BannerAd event is $event");
+        if (event == MobileAdEvent.loaded) {
+          print('ad height: ${myBanner.size.height}');
+          if (widget.onAdLoaded != null) {
+            widget.onAdLoaded(50);
+          }
+        } else if (event == MobileAdEvent.closed) {
+          print('ad closed');
+        }
       },
     );
 
@@ -94,6 +104,10 @@ class _DrawerPaneState extends State<DrawerPane> {
   @override
   void dispose() {
     myBanner.dispose();
+    myBanner = null;
+    if (widget.onAdLoaded != null) {
+      widget.onAdLoaded(0);
+    }
     super.dispose();
   }
 
