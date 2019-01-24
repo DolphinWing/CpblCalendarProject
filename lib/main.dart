@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //title: Lang.of(context).trans('app_name'),
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
-        primaryColor: Colors.lightGreen[800],
+        primarySwatch: Colors.green,
+        primaryColor: Colors.green[800],
         //accentColor: Colors.orange,
         //backgroundColor: Colors.white,
       ),
@@ -408,14 +408,17 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   List<Widget> buildOptionMenu(BuildContext context, bool loading, int year) {
     List<Widget> options = new List();
     if (year == DateTime.now().year) {
-      options.add(FlatButton(
-        child: Text(
-          Lang.of(context).trans('action_lead_board'),
-          style: TextStyle(color: Colors.white),
+      options.add(Container(
+        child: FlatButton(
+          child: Text(
+            Lang.of(context).trans('action_lead_board'),
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            CpblClient.launchUrl(context, 'http://www.cpbl.com.tw/standing/season.html');
+          },
         ),
-        onPressed: () {
-          CpblClient.launchUrl(context, 'http://www.cpbl.com.tw/standing/season.html');
-        },
+        constraints: BoxConstraints(maxWidth: 64),
       ));
     }
     options.addAll([

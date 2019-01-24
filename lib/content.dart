@@ -205,6 +205,7 @@ class GameCardBaseWidget extends StatelessWidget {
               child: child,
               onPressed: this.onPressed,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+              highlightColor: Theme.of(context).backgroundColor,
             )
           : Padding(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
@@ -215,7 +216,7 @@ class GameCardBaseWidget extends StatelessWidget {
         //color: Colors.grey.withAlpha(32),
         border: Border.all(
           style: BorderStyle.solid,
-          color: Colors.grey.withAlpha(80),
+          color: Colors.grey.withAlpha(64),
         ),
         color: backgroundColor,
         //color: Colors.grey.withAlpha(48),
