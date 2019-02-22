@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android P - CLEARTEXT communication not permitted by network security policy -->
+<!-- http://www.douevencode.com/articles/2018-07/cleartext-communication-not-permitted/ -->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">cpbl-elta.cdn.hinet.net
+        <domain includeSubdomains="true">www.cpbl.com.tw</domain>
+        <domain includeSubdomains="true">cpbl-elta.cdn.hinet.net</domain>
+    </domain-config>
+</network-security-config>

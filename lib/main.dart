@@ -394,6 +394,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       }
       _clearTimeout(); //fetch highlight complete
       gameList.addAll(_client.getHighlightGameList(list, time));
+    } else {
+      print('don\'t fetch games');
     }
     //show more button
     if (gameList.isNotEmpty) {

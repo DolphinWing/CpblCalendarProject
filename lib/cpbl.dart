@@ -579,10 +579,10 @@ class CpblClient {
 
   Future<List<Game>> fetchList(int year, int month,
       [GameType type = GameType.type_01, bool cached = true]) async {
-    print('fetch $year/$month type = $type');
+    //print('fetch $year/$month type = $type');
     String url = '$_scheduleUrl/index/$year-$month-01.html?'
         '&date=$year-$month-01&gameno=01&sfieldsub=&sgameno=${type.toString().substring(14)}';
-    //print(url);
+    print(url);
 
     String key = '$year/$month-$type';
     if (cached && _cachedGameList.containsKey(key)) {
@@ -605,16 +605,23 @@ class CpblClient {
     //print('response.body ${html?.length} ${html.indexOf('one_block')}');
     if (html?.contains('<div class="one_block"') == true) {
       html = html.substring(0, html.indexOf('<div class="footer">'));
-//        var tdDays = html.split('<td valign="top">');
-//        RegExp exp = new RegExp('<th class="[^"]*">([0-9]+)</th>');
-//        Iterable<Match> matches = exp.allMatches(html);
-//        int days = 0;
-//        matches.forEach((m) {
-//          days++;
-//          if (tdDays[days].contains("one_block")) {
-//            print('$days ${m.group(1)}');
-//          }
-//        });
+
+      //for future games. if the game is complete, it will have date info
+      var dayMap = new Map<String, String>();
+      var tdDays = html.split('<td valign="top">');
+      RegExp exp = new RegExp('<th class="[^"]*">([0-9]+)</th>');
+      Iterable<Match> matches = exp.allMatches(html);
+      int days = 0;
+      matches.forEach((m) {
+        days++;
+        if (tdDays[days].contains("one_block")) {
+          //print('$days ${m.group(1)}');
+          dayMap.putIfAbsent(m.group(1), () => tdDays[days]);
+        }
+      });
+      //print('day map ${dayMap.length}');
+
+      //parse the block
       var oneBlock = html.split('<div class="one_block"');
       //print('blocks: ${oneBlock.length}');
       for (int i = 1; i < oneBlock.length; i++) {
@@ -623,7 +630,13 @@ class CpblClient {
         if (block.contains('<!-- one_block -->')) {
           block = block.substring(0, block.lastIndexOf('<!-- one_block -->'));
         }
-        Game g = _parseGameFromBlock(block, year, month, type);
+        //Game g = _parseGameFromBlock(block, year, month, type);
+        Game g;
+        if (!block.contains('game_date=')) {
+          g = _createGameFromBlock(dayMap, block, year, month, type); //check future games
+        } else {
+          g = _parseGameFromBlock(block, year, month, type); //check past games
+        }
         if (g == null) {
           //print('no game in this block ($i)');
           continue;
@@ -664,6 +677,37 @@ class CpblClient {
     return new Game(id: int.parse(id), time: new DateTime(year, month, day), type: type);
   }
 
+  Game _createGameFromBlock(
+      Map<String, String> dayMap, String block, int year, int month, GameType type) {
+    Game game;
+    int day = -1;
+    if (block.contains('<!-- one_block -->')) {
+      block = block.substring(0, block.lastIndexOf('<!-- one_block -->'));
+    }
+    //print('$i: $block');
+    dayMap.forEach((key, value) {
+      if (value.toString().contains(block)) {
+        //print('day $key');
+        day = int.parse(key);
+      }
+    });
+    if (block.contains('schedule_info')) {
+      var info = block.split('schedule_info');
+      if (info.length > 1) {
+        var extras = info[1].split('<th');
+        if (/*g.id <= 0 &&*/ extras.length > 2) {
+          String id = extras[2];
+          id = id.substring(id.indexOf(">") + 1, id.indexOf("</th"));
+          //print('day=$day, id=$id');
+          if (day > 0) {
+            game = new Game(id: int.parse(id), time: new DateTime(year, month, day), type: type);
+          }
+        }
+      }
+    }
+    return game;
+  }
+
   Game _extractTeamFromBlock(Game g, String block, int year) {
     if (block.contains('class="schedule_team')) {
       String matchUpPlace = block.substring(block.indexOf('class="schedule_team'));
@@ -695,6 +739,12 @@ class CpblClient {
       //schedule_info[1] contains game id and if this is delayed game or not
       if (info.length > 1) {
         var extras = info[1].split('<th');
+//        if (g.id <= 0 && extras.length > 2) {
+//          String id = extras[2];
+//          id = id.substring(id.indexOf(">") + 1, id.indexOf("</th"));
+//          g.id = int.parse(id);
+//          //Log.w(TAG, "not coming, no result " + game.Id);
+//        }
         if (info[1].contains('class="sp"')) {
           if (extras.length > 1) {
             //check delay game

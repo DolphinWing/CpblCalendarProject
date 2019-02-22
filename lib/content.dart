@@ -343,7 +343,10 @@ class _AppUpdateCardWidget extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            child: Center(child: HtmlView(data: message, padding: EdgeInsets.all(0))),
+            child: Padding(
+              child: Center(child: HtmlView(data: message)),
+              padding: EdgeInsets.all(0),
+            ),
             constraints: BoxConstraints(minHeight: 64),
           ),
           Row(
