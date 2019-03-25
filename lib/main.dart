@@ -689,6 +689,13 @@ class _SettingsPaneState extends State<SettingsPane> {
                     await rootBundle.loadString('assets/licenses/flutter_custom_tabs.txt'));
               },
             ),
+            ListTile(
+              title: Text('fluttertoast'),
+              onTap: () async {
+                showDataInDialog(
+                    await rootBundle.loadString('assets/licenses/flutter_toast.txt'));
+              },
+            ),
           ],
         ),
       ),

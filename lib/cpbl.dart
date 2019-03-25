@@ -851,7 +851,7 @@ class CpblClient {
         url = block.substring(0, block.indexOf('schedule_icon_starter.png'));
         url = url.substring(url.lastIndexOf('href=') + 6);
         url = url.substring(0, url.indexOf(">") - 1);
-        //Log.d(TAG, "url = " + url);
+        print('starter url: $url');
       } catch (e) {
         e.printStackTrace();
       }

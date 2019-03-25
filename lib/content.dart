@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html_view/flutter_html_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:launch_review/launch_review.dart';
 
 import 'cpbl.dart';
@@ -104,6 +105,21 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
       }
     });
     print('show list ${widgetList.length}');
+//    var now = DateTime.now();
+//    if (now.year == widget.year && now.month == widget.month && widget.mode != UiMode.quick) {
+//      var i = 0;
+//      widgetList.forEach((f) {
+//        if (f is GameCardWidget) {
+//          if (f.game.before()) {
+//            i++;
+//          }
+//        }
+//      });
+//      print('try auto scroll... $i');
+//      new Timer(const Duration(seconds: 1), () {
+//        _controller.jumpTo(160 * i.toDouble());
+//      });
+//    }
     return ListView(
       controller: _controller,
       children: widgetList.isNotEmpty
@@ -184,6 +200,8 @@ class GameCardBaseWidget extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
   final GestureTapCallback onPressed;
+
+  //final GestureLongPressCallback onLongPressed;
   final Color backgroundColor;
 
   GameCardBaseWidget({
@@ -191,6 +209,7 @@ class GameCardBaseWidget extends StatelessWidget {
     bool usePadding = true,
     EdgeInsets padding,
     this.onPressed,
+    //this.onLongPressed,
     Color backgroundColor,
   })  : this.backgroundColor = backgroundColor ?? Colors.transparent,
         this.padding = padding ?? EdgeInsets.all(usePadding ? 16 : 0);
@@ -267,15 +286,13 @@ class GameCardWidget extends StatelessWidget {
             ),
             TeamRowWidget(game.away),
             TeamRowWidget(game.home),
-            Row(
-              children: <Widget>[
-                Text(game.getFieldName(context)),
-                Expanded(
-                  child: game.extra != null
-                      ? Text('${game.extra}', textAlign: TextAlign.end)
-                      : SizedBox(height: 1),
-                ),
-              ],
+            SizedBox(
+              height: 4,
+            ),
+            _GameCardExtraWidget(
+              fieldName: game.getFieldName(context),
+              extraMessage: game.extra,
+              channel: game.channel,
             ),
             //Divider(),
           ],
@@ -287,6 +304,51 @@ class GameCardWidget extends StatelessWidget {
               if (enabled) showCpblUrl(context, game.url);
             }
           : null,
+    );
+  }
+}
+
+class _GameCardExtraWidget extends StatefulWidget {
+  final String fieldName;
+  final String extraMessage;
+  final String channel;
+
+  _GameCardExtraWidget({this.fieldName, this.extraMessage, this.channel});
+
+  @override
+  State<StatefulWidget> createState() => _GameCardExtraWidgetState();
+}
+
+class _GameCardExtraWidgetState extends State<_GameCardExtraWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Text(widget.fieldName),
+        (widget.channel != null)
+            ? Padding(
+                child: GestureDetector(
+                  child: Icon(
+                    Icons.live_tv,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                  onTap: () {
+                    Fluttertoast.showToast(
+                      msg: widget.channel ?? "no channel",
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  },
+                ),
+                padding: EdgeInsets.only(left: 8, right: 8),
+              )
+            : SizedBox(),
+        Expanded(
+          child: widget.extraMessage != null
+              ? Text('${widget.extraMessage}', textAlign: TextAlign.end)
+              : SizedBox(height: 1),
+        ),
+      ],
     );
   }
 }
