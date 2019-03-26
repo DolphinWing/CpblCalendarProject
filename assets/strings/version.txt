@@ -1,3 +1,6 @@
+[2011] @ 2019-03-26
+    fix starter.html and play_by_play url not open correctly
+
 [2010] @ 2019-03-25
     add game live channel display
     upgrade build libraries

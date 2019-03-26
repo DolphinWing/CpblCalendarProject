@@ -855,7 +855,7 @@ class CpblClient {
       } catch (e) {
         e.printStackTrace();
       }
-      g.url = url != null ? '$_scheduleUrl$url' : g.url;
+      g.url = url != null ? '$homeUrl$url' : g.url;
     } else if (block?.contains("onClick") == true) {
       g.isFinal = true; //no playing
       g.url = '$homeUrl/games/box.html?'
