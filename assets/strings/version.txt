@@ -1,5 +1,9 @@
+[2012] @ 2019-03-27
+    fix play_by_play.html not open correctly
+    add quick panel can open url
+
 [2011] @ 2019-03-26
-    fix starter.html and play_by_play url not open correctly
+    fix starter.html url not open correctly
 
 [2010] @ 2019-03-25
     add game live channel display

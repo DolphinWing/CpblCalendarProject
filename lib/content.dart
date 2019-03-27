@@ -299,7 +299,7 @@ class GameCardWidget extends StatelessWidget {
         ),
       ),
       usePadding: false,
-      onPressed: this.mode != UiMode.quick && game.url != null
+      onPressed: /*this.mode != UiMode.quick &&*/ game.url != null
           ? () {
               if (enabled) showCpblUrl(context, game.url);
             }

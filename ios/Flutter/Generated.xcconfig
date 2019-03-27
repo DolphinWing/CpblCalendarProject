@@ -1,9 +1,9 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/home/jimmyhu/work/android/flutter
-FLUTTER_APPLICATION_PATH=/home/jimmyhu/work/github/CpblCalendarProject
+FLUTTER_ROOT=/home/dolphin/Android/flutter
+FLUTTER_APPLICATION_PATH=/home/dolphin/Android/CpblCalendarProject
 FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
 SYMROOT=${SOURCE_ROOT}/../build/ios
-FLUTTER_FRAMEWORK_DIR=/home/jimmyhu/work/android/flutter/bin/cache/artifacts/engine/ios
-FLUTTER_BUILD_NAME=4.0.9
-FLUTTER_BUILD_NUMBER=2009
+FLUTTER_FRAMEWORK_DIR=/home/dolphin/Android/flutter/bin/cache/artifacts/engine/ios
+FLUTTER_BUILD_NAME=4.0.12
+FLUTTER_BUILD_NUMBER=2012

@@ -839,7 +839,7 @@ class CpblClient {
       } catch (e) {
         e.printStackTrace();
       }
-      g.url = url != null ? '$_scheduleUrl$url' : g.url;
+      g.url = url != null ? '$homeUrl$url' : g.url;
 
       //dolphin++@20180821: keep games may not update correctly in CPBL website
       g.refreshStatus();
