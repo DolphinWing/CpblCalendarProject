@@ -1,3 +1,7 @@
+[2013] @ 2019-03-31
+    change channel toast bg/fg color
+    release as apk (appbundle didn't decrease the size yet)
+
 [2012] @ 2019-03-27
     fix play_by_play.html not open correctly
     add quick panel can open url

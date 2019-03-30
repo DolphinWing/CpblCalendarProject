@@ -331,12 +331,14 @@ class _GameCardExtraWidgetState extends State<_GameCardExtraWidget> {
                   child: Icon(
                     Icons.live_tv,
                     color: Colors.red,
-                    size: 20,
+                    size: 24,
                   ),
                   onTap: () {
                     Fluttertoast.showToast(
                       msg: widget.channel ?? "no channel",
                       toastLength: Toast.LENGTH_SHORT,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
                     );
                   },
                 ),
