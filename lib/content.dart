@@ -616,23 +616,3 @@ class ChipMenuOption extends StatelessWidget {
     );
   }
 }
-
-class SettingsGroupTitle extends StatelessWidget {
-  final String titleResKey;
-
-  SettingsGroupTitle(String titleResKey) : this.titleResKey = titleResKey ?? '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text(
-        Lang.of(context).trans(titleResKey),
-        style: Theme.of(context).textTheme.caption,
-      ),
-      constraints: BoxConstraints.expand(height: 36),
-      padding: EdgeInsets.fromLTRB(16, 0, 8, 8),
-      //color: Colors.grey.withAlpha(32),
-      alignment: Alignment.bottomLeft,
-    );
-  }
-}
