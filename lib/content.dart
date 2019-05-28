@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_html_view/flutter_html_view.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:launch_review/launch_review.dart';
 
@@ -408,7 +408,7 @@ class _AppUpdateCardWidget extends StatelessWidget {
         children: <Widget>[
           Container(
             child: Padding(
-              child: Center(child: HtmlView(data: message)),
+              child: Center(child: HtmlWidget(message)),
               padding: EdgeInsets.all(0),
             ),
             constraints: BoxConstraints(minHeight: 64),

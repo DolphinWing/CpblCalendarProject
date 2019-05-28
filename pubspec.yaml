@@ -7,7 +7,7 @@ description: A CPBL Calendar port in Flutter
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 4.0.13+2013
+version: 4.0.14+2014q
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -20,26 +20,27 @@ dependencies:
 
   # Your other regular dependencies here
   json_annotation: ^2.0.0
-  http: ^0.12.0
+  http: ^0.12.0+2
 
   # https://github.com/flutter/plugins
-  shared_preferences: ^0.4.3
-  package_info: ^0.4.0+2
+  shared_preferences: ^0.5.2+1
+  package_info: ^0.4.0+3
   #url_launcher: ^4.1.0+1
   # add dependency for Firebase Core
-  firebase_core: ^0.3.1+1
-  firebase_remote_config: ^0.1.0
-  firebase_admob: ^0.8.0+3
+  firebase_core: ^0.4.0+1
+  firebase_remote_config: ^0.2.0+1
+  firebase_admob: ^0.9.0
 
   # https://pub.dartlang.org/packages/flutter_custom_tabs
-  flutter_custom_tabs: ^0.4.0
+  flutter_custom_tabs: ^0.6.0
 
-  # https://github.com/PonnamKarthik/FlutterHtmlView
-  flutter_html_view: ^0.5.11
+  ## https://github.com/PonnamKarthik/FlutterHtmlView
+  #flutter_html_view: ^0.5.11
+  flutter_widget_from_html_core: ^0.2.0
   launch_review: ^2.0.0
 
   # https://pub.dartlang.org/packages/fluttertoast
-  fluttertoast: ^3.0.4
+  fluttertoast: ^3.1.0
 
 dev_dependencies:
   flutter_test:

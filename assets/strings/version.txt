@@ -1,3 +1,6 @@
+[2014] @ 2019-05-29
+    upgrade AndroidX
+
 [2013] @ 2019-03-31
     change channel toast bg/fg color
     release as apk (appbundle didn't decrease the size yet)
