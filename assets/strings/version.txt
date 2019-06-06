@@ -1,3 +1,6 @@
+[2016] @ 2019-06-06
+    fix adaptive icon
+
 [2015] @ 2019-06-06
     update icon
 
