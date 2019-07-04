@@ -309,7 +309,8 @@ class Game {
 
   String _displayTime() => '${_padLeft(_time.hour)}:${_padLeft(_time.minute)}';
 
-  String getDisplayTime() => isFinal ? _displayDate() : '${_displayDate()} ${_displayTime()}';
+  String getDisplayTime() =>
+      isFinal || isLive ? _displayDate() : '${_displayDate()} ${_displayTime()}';
 
   String getFieldName(BuildContext context) => CpblClient.getFieldName(context, fieldId);
 
