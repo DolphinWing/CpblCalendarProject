@@ -1,3 +1,6 @@
+[2020] @ 2019-07-12
+    upgrade flutter 1.7
+
 [2019] @ 2019-07-04
     fix live game start time shows hour:minute
 
