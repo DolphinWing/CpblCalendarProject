@@ -2,6 +2,7 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 
 import 'cpbl.dart';
+import 'cpbl_defines.dart';
 import 'lang.dart';
 
 class Query {
@@ -375,7 +376,7 @@ class _FieldMenuWidgetState extends State<_FieldMenuWidget> {
     widget.fieldList?.forEach((id) {
       list.add(DropdownMenuItem(
         value: id,
-        child: Text(CpblClient.getFieldName(context, id)),
+        child: Text(CpblUtils.getFieldName(context, id)),
       ));
     });
     return DropdownButton<FieldId>(
@@ -429,7 +430,7 @@ class _TypeMenuWidgetState extends State<_TypeMenuWidget> {
     TYPES.forEach((type) {
       list.add(DropdownMenuItem(
         value: type,
-        child: Text(CpblClient.getGameType(context, type)),
+        child: Text(CpblUtils.getGameType(context, type)),
       ));
     });
     return DropdownButton<GameType>(
@@ -482,7 +483,7 @@ class _TeamMenuWidgetState extends State<_TeamMenuWidget> {
     widget.teamList?.forEach((id) {
       options.add(DropdownMenuItem(
         value: id,
-        child: Text(CpblClient.getTeamName(context, id)),
+        child: Text(CpblUtils.getTeamName(context, id)),
       ));
     });
     return widget.enabled

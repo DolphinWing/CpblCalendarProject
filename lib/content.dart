@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:launch_review/launch_review.dart';
 
 import 'cpbl.dart';
+import 'cpbl_defines.dart';
 import 'lang.dart';
 
 class UiMode {
@@ -508,7 +509,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         builder: (context) {
           List<Widget> options = new List();
           widget.fieldList?.forEach((id) {
-            options.add(ChipMenuOption(id, CpblClient.getFieldName(context, id)));
+            options.add(ChipMenuOption(id, CpblUtils.getFieldName(context, id)));
           });
           return ChipMenuDialog('drawer_title_field', options);
         });
@@ -529,7 +530,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
         builder: (context) {
           List<Widget> options = new List();
           widget.teamList?.forEach((id) {
-            options.add(ChipMenuOption(id, CpblClient.getTeamName(context, id)));
+            options.add(ChipMenuOption(id, CpblUtils.getTeamName(context, id)));
           });
           return ChipMenuDialog('drawer_title_team', options);
         });
@@ -559,13 +560,13 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
           ),
           SizedBox(width: 8),
           ActionChip(
-            label: Text(CpblClient.getFieldName(context, _fieldId)),
+            label: Text(CpblUtils.getFieldName(context, _fieldId)),
             pressElevation: 2.0,
             onPressed: _onFieldChipPressed,
           ),
           SizedBox(width: 8),
           ActionChip(
-            label: Text(CpblClient.getTeamName(context, _favTeam)),
+            label: Text(CpblUtils.getTeamName(context, _favTeam)),
             pressElevation: 2.0,
             onPressed: _onTeamChipPressed,
           ),

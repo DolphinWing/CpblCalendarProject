@@ -12,6 +12,7 @@ import 'cpbl.dart';
 import 'drawer.dart';
 import 'lang.dart';
 import 'settings.dart';
+import 'cpbl_defines.dart';
 
 void main() => runApp(MyApp());
 
@@ -430,20 +431,20 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       ),
       PopupMenuButton(
         itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 0,
-                child: Text(Lang.of(context).trans('action_go_to_website')),
-              ),
-              PopupMenuItem(
-                value: 1,
-                child: Text(Lang.of(context).trans('action_settings')),
-              ),
+          PopupMenuItem(
+            value: 0,
+            child: Text(Lang.of(context).trans('action_go_to_website')),
+          ),
+          PopupMenuItem(
+            value: 1,
+            child: Text(Lang.of(context).trans('action_settings')),
+          ),
 //                    PopupMenuItem(
 //                      enabled: !loading,
 //                      value: 2,
 //                      child: Text('show highlight'),
 //                    ),
-            ],
+        ],
         onSelected: (action) {
           //print('selected option $action');
           switch (action) {
@@ -502,7 +503,7 @@ class _MainUiWidgetState extends State<MainUiWidget> {
           appBar: AppBar(
             title: Text(_mode != UiMode.list || list?.isNotEmpty == true
                     ? Lang.of(context).trans('app_name')
-                    : '${CpblClient.getGameType(context, (_type ?? GameType.type_01))}'
+                    : '${CpblUtils.getGameType(context, (_type ?? GameType.type_01))}'
                         ' ${(_year ?? DateTime.now().year).toString()}'
                         ' ${CpblClient.getMonthString(context, (_month ?? DateTime.now().month))}'
                 //Lang.of(context).trans('app_name'),
