@@ -139,12 +139,18 @@ class _SplashScreenState extends State<SplashScreen> {
       await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
     }
     await configs.setDefaults(defaults);
-    if (CpblClient.debug) {
-      await configs.fetch(expiration: const Duration(minutes: 5));
-    } else {
-      await configs.fetch(expiration: const Duration(hours: 8));
+    try {
+      if (CpblClient.debug) {
+        await configs.fetch(expiration: const Duration(minutes: 5));
+      } else {
+        await configs.fetch(expiration: const Duration(hours: 8));
+      }
+      await configs.activateFetched();
+    } on FetchThrottledException catch (exception) {
+      print(exception);
+    } catch (exception) {
+      print('Unable to fetch remote config. Use cached/default values.');
     }
-    await configs.activateFetched();
     //print('welcome message: ${configs.getString('welcome')}');
     //print('override: ${configs.getBool('override_start_enabled')}');
     final prefs = await SharedPreferences.getInstance();

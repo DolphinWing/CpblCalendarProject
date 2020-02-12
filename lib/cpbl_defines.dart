@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'lang.dart';
@@ -47,120 +46,120 @@ class Team {
   Team.simple(TeamId id, bool homeTeam) : this(id: id, homeTeam: homeTeam);
 
   static Team get elephants => Team(
-    id: TeamId.elephants,
-    color: Colors.yellow,
-  );
+        id: TeamId.elephants,
+        color: Colors.yellow,
+      );
 
   static Team get lions => Team(
-    id: TeamId.lions,
-    color: Colors.green,
-  );
+        id: TeamId.lions,
+        color: Colors.green,
+      );
 
   static Team get lions711 => Team(
-    id: TeamId.lions_711,
-    color: Colors.orange,
-  );
+        id: TeamId.lions_711,
+        color: Colors.orange,
+      );
 
   static Team get lamigoMonkeys => Team(
-    id: TeamId.lamigo_monkeys,
-    color: Colors.blueGrey,
-  );
+        id: TeamId.lamigo_monkeys,
+        color: Colors.blueGrey,
+      );
 
   static Team get rakutenMonkeys => Team(
-    id: TeamId.rakuten_monkeys,
-    color: Color.fromARGB(255, 127, 0, 32),
-  );
+        id: TeamId.rakuten_monkeys,
+        color: Color.fromARGB(255, 127, 0, 32),
+      );
 
   static Team get fubonGuardians => Team(
-    id: TeamId.fubon_guardians,
-    color: Colors.blueAccent,
-  );
+        id: TeamId.fubon_guardians,
+        color: Colors.blueAccent,
+      );
 
   static Team get edaRhinos => Team(
-    id: TeamId.eda_rhinos,
-    color: Colors.purple,
-  );
+        id: TeamId.eda_rhinos,
+        color: Colors.purple,
+      );
 
   static Team get ctBrothers => Team(
-    id: TeamId.ct_brothers,
-    color: Colors.yellow,
-  );
+        id: TeamId.ct_brothers,
+        color: Colors.yellow,
+      );
 
   static Team get sinonBulls => Team(
-    id: TeamId.sinon_bulls,
-    color: Colors.lightGreen,
-  );
+        id: TeamId.sinon_bulls,
+        color: Colors.lightGreen,
+      );
 
   static Team get ctWhales => Team(
-    id: TeamId.ct_whales,
-    color: Colors.blueAccent,
-  );
+        id: TeamId.ct_whales,
+        color: Colors.blueAccent,
+      );
 
   static Team get kgWhales => Team(
-    id: TeamId.kg_whales,
-    color: Colors.greenAccent,
-  );
+        id: TeamId.kg_whales,
+        color: Colors.greenAccent,
+      );
 
   static Team get mediaTRex => Team(
-    id: TeamId.media_t_rex,
-    color: Colors.deepOrange,
-  );
+        id: TeamId.media_t_rex,
+        color: Colors.deepOrange,
+      );
 
   static Team get makotoCobras => Team(
-    id: TeamId.makoto_cobras,
-    color: Colors.deepOrange,
-  );
+        id: TeamId.makoto_cobras,
+        color: Colors.deepOrange,
+      );
 
   static Team get makotoSuns => Team(
-    id: TeamId.makoto_sun,
-    color: Colors.deepOrange,
-  );
+        id: TeamId.makoto_sun,
+        color: Colors.deepOrange,
+      );
 
   static Team get firstKinkon => Team(
-    id: TeamId.first_kinkon,
-    color: Colors.blueGrey,
-  );
+        id: TeamId.first_kinkon,
+        color: Colors.blueGrey,
+      );
 
   static Team get laNewBears => Team(
-    id: TeamId.lanew_bears,
-    color: Colors.blueGrey,
-  );
+        id: TeamId.lanew_bears,
+        color: Colors.blueGrey,
+      );
 
   static Team get ssTigers => Team(
-    id: TeamId.ss_tigers,
-    color: Colors.blue,
-  );
+        id: TeamId.ss_tigers,
+        color: Colors.blue,
+      );
 
   static Team get wDragons => Team(
-    id: TeamId.w_dragons,
-    color: Colors.red,
-  );
+        id: TeamId.w_dragons,
+        color: Colors.red,
+      );
 
   static Team get timesEagles => Team(
-    id: TeamId.times_eagles,
-    color: Colors.black87,
-  );
+        id: TeamId.times_eagles,
+        color: Colors.black87,
+      );
 
   static Team get jungoBears => Team(
-    id: TeamId.jungo_bears,
-    color: Colors.greenAccent,
-  );
+        id: TeamId.jungo_bears,
+        color: Colors.greenAccent,
+      );
 
   static Team get allStarRed => Team(
-    id: TeamId.all_star_red,
-    color: Colors.red,
-  );
+        id: TeamId.all_star_red,
+        color: Colors.red,
+      );
 
   static Team get allStarWhite => Team(
-    id: TeamId.all_star_white,
-    color: Color.fromARGB(255, 244, 244, 244),
-  );
+        id: TeamId.all_star_white,
+        color: Color.fromARGB(255, 244, 244, 244),
+      );
 
   static Map<String, Team> idMap = new Map()
     ..putIfAbsent('E02', () => ctBrothers)
     ..putIfAbsent('L01', () => lions711)
     ..putIfAbsent('A02', () => lamigoMonkeys)
-    ..putIfAbsent('A03', () => rakutenMonkeys)
+    ..putIfAbsent('AJL011', () => rakutenMonkeys)
     ..putIfAbsent('B04', () => fubonGuardians)
     ..putIfAbsent('B03', () => edaRhinos)
     ..putIfAbsent('E01', () => elephants)
@@ -182,12 +181,12 @@ class Team {
 
   static Team parse(String png, [int year, bool homeTeam = false]) {
     Team team = Team.simple(homeTeam ? TeamId.unknown_home : TeamId.unknown_away, homeTeam);
-    String key = png.substring(0, 3);
+    String key = png.startsWith('AJL') ? png.substring(0, 6) : png.substring(0, 3);
     if (idMap.containsKey(key)) {
       switch (idMap[key].id) {
         case TeamId.first_kinkon: //2003
         case TeamId.lanew_bears: //2010
-        case TeamId.lamigo_monkeys://2019
+        case TeamId.lamigo_monkeys: //2019
         case TeamId.rakuten_monkeys:
           if (year <= 2003) {
             team = firstKinkon;
