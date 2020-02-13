@@ -1,3 +1,9 @@
+[2023] @ 2020-02-13
+[2022] @ 2020-02-12
+    fix Rakuten Monkeys ID parsing
+    enable code shrink (required by flutter 1.12 release build)
+    catch Firebase Remote Config may not fetch exception
+
 [2021] @ 2019-12-18
     upgrade flutter 1.12 and libraries
     change Lamigo Monkeys to Rakuten Monkeys (2020)

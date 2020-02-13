@@ -294,6 +294,7 @@ class GameCardWidget extends StatelessWidget {
               fieldName: game.getFieldName(context),
               extraMessage: game.extra,
               channel: game.channel,
+              //textColor: game.isDelayed /*&& !game.isFinal*/ ? Colors.red : Colors.black,
             ),
             //Divider(),
           ],
@@ -313,8 +314,14 @@ class _GameCardExtraWidget extends StatefulWidget {
   final String fieldName;
   final String extraMessage;
   final String channel;
+  final Color textColor;
 
-  _GameCardExtraWidget({this.fieldName, this.extraMessage, this.channel});
+  _GameCardExtraWidget({
+    this.fieldName,
+    this.extraMessage,
+    this.channel,
+    this.textColor = Colors.black,
+  });
 
   @override
   State<StatefulWidget> createState() => _GameCardExtraWidgetState();
@@ -348,7 +355,11 @@ class _GameCardExtraWidgetState extends State<_GameCardExtraWidget> {
             : SizedBox(),
         Expanded(
           child: widget.extraMessage != null
-              ? Text('${widget.extraMessage}', textAlign: TextAlign.end)
+              ? Text(
+                  '${widget.extraMessage}',
+                  textAlign: TextAlign.end,
+                  //style: TextStyle(color: widget.textColor),
+                )
               : SizedBox(height: 1),
         ),
       ],
