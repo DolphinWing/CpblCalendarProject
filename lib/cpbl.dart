@@ -114,7 +114,7 @@ class CpblClient {
   }
 
   static const String allstar_month_override = '4/6;6/11;8/6;10/8;11/8;13/6;';
-  static const String season_month_start_override = '8/2;9/2;15/2;19/3;';
+  static const String season_month_start_override = '8/2;9/2;15/2;19/3;31/3';
   static const String warmup_month_start_override = '19/2;31/2';
   static const String challenge_month_override =
       '1998/10/11;1999/10;2005/10;2006/10;2007/10;2008/10;2017/10;2018/10';
@@ -129,7 +129,14 @@ class CpblClient {
 
   bool isWarmUpMonth(int year, int month) {
     if (year < 2006) return false;
-    if (warmUpMonthOverrides.containsKey(year)) return warmUpMonthOverrides[year] == month;
+    if (warmUpMonthOverrides.containsKey(year)) {
+      //[19] check if warm up games last to next month
+      if (seasonStartMonthOverrides.containsKey(year)) {
+        //print('regular season start from ${seasonStartMonthOverrides[year]}');
+        return month >= warmUpMonthOverrides[year] && month <= seasonStartMonthOverrides[year];
+      }
+      return warmUpMonthOverrides[year] == month;
+    }
     return month == DateTime.march;
   }
 
@@ -186,6 +193,7 @@ class CpblClient {
       //check season start
       case DateTime.february:
       case DateTime.march:
+        //print('check season start: $year/$month');
         if (year < 2006) {
           if (seasonStartMonthOverrides.containsKey(year)) {
             return seasonStartMonthOverrides[year] <= month;
