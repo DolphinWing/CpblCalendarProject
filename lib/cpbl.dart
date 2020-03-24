@@ -1,6 +1,6 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -736,7 +736,9 @@ class CpblClient {
 
   bool isLoadGamesInHighlight() => !_configs.getBool('enable_highlight_no_games') ?? true;
 
-  static Future<void> launchUrl(BuildContext context, String url) => launch(url,
+  static Future<void> launchUrl(BuildContext context, String url) => launch(url);
+  /*
+  => launch(url,
       option: new CustomTabsOption(
         toolbarColor: Theme.of(context).primaryColor,
         enableUrlBarHiding: true,
@@ -748,5 +750,5 @@ class CpblClient {
           // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
           'com.microsoft.emmx',
         ],
-      ));
+      ));*/
 }
