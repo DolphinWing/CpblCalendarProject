@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -247,13 +249,18 @@ class CpblClient {
 //  HttpClient _client;
   var _client = new http.Client();
   final RemoteConfig _configs;
-  final SharedPreferences _prefs;
+  SharedPreferences _prefs;
   final int currentVersionCode;
+  final FirebaseAnalytics _analytics;
 
-  CpblClient(BuildContext context, RemoteConfig configs, SharedPreferences prefs,
+  CpblClient(
+      BuildContext context,
+      RemoteConfig configs, //SharedPreferences prefs,
+      FirebaseAnalytics analytics,
       {int versionCode = 0})
       : this._configs = configs,
-        this._prefs = prefs,
+        //this._prefs = prefs,
+        this._analytics = analytics,
         this.currentVersionCode = versionCode ?? 0 {
 //    _client = new HttpClient();
 //    _client.connectionTimeout = new Duration(seconds: 10);
@@ -271,6 +278,14 @@ class CpblClient {
   Future<int> init() async {
     print('init cpbl client');
     _cachedGameList.clear(); //clear cache
+
+    _prefs = await SharedPreferences.getInstance();
+    await _analytics?.setAnalyticsCollectionEnabled(isAnalyticsEnabled());
+    await _analytics?.setUserProperty(
+        name: 'highlightEnabled', value: isHighlightEnabled() ? 'Enabled' : 'Disabled');
+    await _analytics?.setUserProperty(
+        name: 'viewPagerEnabled', value: isViewPagerEnabled() ? 'Enabled' : 'Disabled');
+    await FirebasePerformance.instance.setPerformanceCollectionEnabled(isAnalyticsEnabled());
 
     //load warm up overrides
     var warm = warmup_month_start_override.split(';');
@@ -344,9 +359,15 @@ class CpblClient {
 //    await for(var content in resp.transform(utf8.decoder)) {
 //      print('${content.length} ${content.contains('one_block')}');
 //    }
+    final trace = FirebasePerformance.instance.newTrace("fetch");
+    trace.putAttribute("type", type.toString().substring(14));
+    trace.putAttribute("year", year.toString());
+    trace.putAttribute("month", month.toString());
+    trace.start();
 
     final response = await _client.get(url);
     //print('response.body ${response?.body?.length} ${response?.body?.indexOf('one_block')}');
+    trace.stop();
 
 //    final response = await http.get(url);
 //    //.timeout(const Duration(seconds: 5), onTimeout: () => '');
@@ -617,14 +638,25 @@ class CpblClient {
 
   bool isHighlightEnabled() => _prefs.getBool('show_highlight') ?? true;
 
-  void setHighlightEnabled(bool enabled) async {
+  Future<void> setHighlightEnabled(bool enabled) async {
+    await _analytics?.setUserProperty(
+        name: 'highlightEnabled', value: enabled ? 'Enabled' : 'Disabled');
     await _prefs.setBool('show_highlight', enabled);
   }
 
   bool isViewPagerEnabled() => _prefs.getBool('use_view_pager') ?? true;
 
-  void setViewPagerEnabled(bool enabled) async {
+  Future<void> setViewPagerEnabled(bool enabled) async {
+    await _analytics?.setUserProperty(
+        name: 'viewPagerEnabled', value: enabled ? 'Enabled' : 'Disabled');
     await _prefs.setBool('use_view_pager', enabled);
+  }
+
+  bool isAnalyticsEnabled() => _prefs.getBool('enable_analytics') ?? true;
+
+  Future<void> setAnalyticsEnabled(bool enabled) async {
+    await _analytics?.setAnalyticsCollectionEnabled(enabled);
+    await _prefs.setBool('enable_analytics', enabled);
   }
 
   bool canUpdate() {
@@ -737,7 +769,7 @@ class CpblClient {
   bool isLoadGamesInHighlight() => !_configs.getBool('enable_highlight_no_games') ?? true;
 
   static Future<void> launchUrl(BuildContext context, String url) => launch(url);
-  /*
+/*
   => launch(url,
       option: new CustomTabsOption(
         toolbarColor: Theme.of(context).primaryColor,

@@ -7,7 +7,7 @@ description: A CPBL Calendar port in Flutter
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 4.1.1+2025
+version: 4.2.0+2026
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
@@ -30,6 +30,8 @@ dependencies:
   firebase_core: ^0.4.4+3
   firebase_remote_config: ^0.3.0+3
   firebase_admob: ^0.9.3
+  firebase_analytics: ^5.0.11
+  firebase_performance: ^0.3.1+7
 
   ## https://github.com/PonnamKarthik/FlutterHtmlView
   #flutter_html_view: ^0.5.11

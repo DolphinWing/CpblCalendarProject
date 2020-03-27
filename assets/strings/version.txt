@@ -1,3 +1,6 @@
+[2026] @ 2020-03-27
+    add Google Analytics and Performance Monitoring
+
 [2025] @ 2020-03-24
     fix browser launch
 

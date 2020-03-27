@@ -22,8 +22,9 @@ class _SettingsPaneState extends State<SettingsPane> {
     version: 'Unknown',
     buildNumber: 'Unknown',
   );
-  bool _enableViewPager = false;
-  bool _enableHighlight = false;
+  bool _enableViewPager = true;
+  bool _enableHighlight = true;
+  bool _enableAnalytics = true;
 
   @override
   void initState() {
@@ -34,8 +35,9 @@ class _SettingsPaneState extends State<SettingsPane> {
   Future<void> prepare() async {
     final PackageInfo info = await PackageInfo.fromPlatform();
     setState(() {
-      _enableViewPager = widget.client?.isViewPagerEnabled() ?? false;
-      _enableHighlight = widget.client?.isHighlightEnabled() ?? false;
+      _enableViewPager = widget.client?.isViewPagerEnabled() ?? true;
+      _enableHighlight = widget.client?.isHighlightEnabled() ?? true;
+      _enableAnalytics = widget.client?.isAnalyticsEnabled() ?? true;
       _packageInfo = info;
     });
   }
@@ -89,11 +91,26 @@ class _SettingsPaneState extends State<SettingsPane> {
                     _enableHighlight ? 'show_highlight_summary_on' : 'show_highlight_summary_off'),
               ),
               value: _enableHighlight,
-              onChanged: (checked) {
+              onChanged: (checked) async {
                 setState(() {
                   _enableHighlight = checked;
                 });
                 widget.client?.setHighlightEnabled(checked);
+              },
+            ),
+            CheckboxListTile(
+              title: Text(Lang.of(context).trans('enable_analytics_title')),
+              subtitle: Text(
+                Lang.of(context).trans(_enableAnalytics
+                    ? 'enable_analytics_summary_on'
+                    : 'enable_analytics_summary_off'),
+              ),
+              value: _enableAnalytics,
+              onChanged: (checked) async {
+                setState(() {
+                  _enableAnalytics = checked;
+                });
+                widget.client?.setAnalyticsEnabled(checked);
               },
             ),
             SettingsGroupTitle('reference_data_source_title'),
@@ -118,13 +135,13 @@ class _SettingsPaneState extends State<SettingsPane> {
                     await rootBundle.loadString('assets/licenses/flutter_plugins.txt'));
               },
             ),
-            ListTile(
-              title: Text('flutter_custom_tabs'),
-              onTap: () async {
-                showDataInDialog(
-                    await rootBundle.loadString('assets/licenses/flutter_custom_tabs.txt'));
-              },
-            ),
+//            ListTile(
+//              title: Text('flutter_custom_tabs'),
+//              onTap: () async {
+//                showDataInDialog(
+//                    await rootBundle.loadString('assets/licenses/flutter_custom_tabs.txt'));
+//              },
+//            ),
             ListTile(
               title: Text('fluttertoast'),
               onTap: () async {

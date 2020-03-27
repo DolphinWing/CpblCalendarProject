@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -15,6 +17,8 @@ class UiMode {
 }
 
 class ContentUiWidget extends StatefulWidget {
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
   final bool enabled;
   final bool loading;
   final List<Game> list;
@@ -27,6 +31,8 @@ class ContentUiWidget extends StatefulWidget {
   final FieldId fieldId;
 
   ContentUiWidget({
+    this.analytics,
+    this.observer,
     this.enabled = true,
     this.loading = false,
     List<Game> list,
@@ -88,18 +94,18 @@ class _ContentUiWidgetState extends State<ContentUiWidget> {
           break;
         default:
           if (widget.favTeamId == TeamId.fav_all && widget.fieldId == FieldId.f00) {
-            widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
+            widgetList.add(GameCardWidget(game, widget.analytics, enabled: enabled, mode: mode));
           } else if (widget.favTeamId == TeamId.fav_all) {
             if (widget.fieldId == game.fieldId) {
-              widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
+              widgetList.add(GameCardWidget(game, widget.analytics, enabled: enabled, mode: mode));
             }
           } else if (widget.fieldId == FieldId.f00) {
             if (game.isFav(widget.favTeamId)) {
-              widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
+              widgetList.add(GameCardWidget(game, widget.analytics, enabled: enabled, mode: mode));
             }
           } else {
             if (widget.fieldId == game.fieldId && game.isFav(widget.favTeamId)) {
-              widgetList.add(GameCardWidget(game, enabled: enabled, mode: mode));
+              widgetList.add(GameCardWidget(game, widget.analytics, enabled: enabled, mode: mode));
             }
           }
           break;
@@ -246,14 +252,25 @@ class GameCardBaseWidget extends StatelessWidget {
 }
 
 class GameCardWidget extends StatelessWidget {
+  final FirebaseAnalytics analytics;
   final Game game;
   final int mode;
   final bool enabled;
 
-  GameCardWidget(this.game, {int mode = UiMode.list, this.enabled = true})
+  GameCardWidget(this.game, this.analytics, {int mode = UiMode.list, this.enabled = true})
       : this.mode = mode ?? UiMode.list;
 
   void showCpblUrl(BuildContext context, String url) async {
+    analytics.logEvent(name: 'show_cpbl', parameters: <String, dynamic>{
+      'target': 'result',
+      'game_home_team': game.home.getDisplayName(context),
+      'game_away_team': game.away.getDisplayName(context),
+      'game_field': game.getFieldName(context),
+      'game_type': game.getGameType(context),
+      'game_delayed': game.isDelayed ? 'Yes' : 'No',
+      'game_live': game.isLive ? 'Yes' : 'No',
+      'game_final': game.isFinal ? 'Yes' : 'No',
+    });
     //print('launch $url');
     //if (await canLaunch(url)) {
     await CpblClient.launchUrl(context, url);
@@ -445,6 +462,7 @@ class _AppUpdateCardWidget extends StatelessWidget {
 }
 
 class PagerSelectorWidget extends StatefulWidget {
+  final FirebaseAnalytics analytics;
   final bool enabled;
   final int year;
   final ValueChanged<int> onYearChanged;
@@ -454,6 +472,7 @@ class PagerSelectorWidget extends StatefulWidget {
   final List<TeamId> teamList;
 
   PagerSelectorWidget({
+    this.analytics,
     this.enabled = true,
     int year = 2018,
     this.onYearChanged,
@@ -484,8 +503,15 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
     });
   }
 
+  void logClickEvent(String value) {
+    widget.analytics.logEvent(name: 'click_chip', parameters: <String, dynamic>{
+      'chip_type': value,
+    });
+  }
+
   _onYearChipPressed() async {
     if (!widget.enabled) return;
+    logClickEvent('year');
     //print('show year selector');
     final r = await showDialog(
         context: context,
@@ -514,6 +540,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
 
   _onFieldChipPressed() async {
     if (!widget.enabled) return;
+    logClickEvent('field');
     //print('show field selector');
     final r = await showDialog(
         context: context,
@@ -535,6 +562,7 @@ class _PagerSelectorWidgetState extends State<PagerSelectorWidget> {
 
   _onTeamChipPressed() async {
     if (!widget.enabled) return;
+    logClickEvent('team');
     //print('show team selector');
     final r = await showDialog(
         context: context,

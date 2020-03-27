@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
@@ -9,14 +11,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'content.dart';
 import 'cpbl.dart';
+import 'cpbl_defines.dart';
 import 'drawer.dart';
 import 'lang.dart';
 import 'settings.dart';
-import 'cpbl_defines.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -48,17 +53,27 @@ class MyApp extends StatelessWidget {
         }
         return supportedLocales.first;
       },
-      home: SplashScreen(),
+      home: SplashScreen(analytics, observer),
       routes: {
-        '/calendar': (context) => MainUiWidget(debug: false),
+        '/calendar': (context) => MainUiWidget(
+              debug: false,
+              analytics: analytics,
+              observer: observer,
+            ),
         '/settings': (context) => SettingsPane(),
       },
+      navigatorObservers: <NavigatorObserver>[observer],
     );
   }
 }
 
 /// https://medium.com/@vignesh_prakash/flutter-splash-screen-84fb0307ac55
 class SplashScreen extends StatefulWidget {
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+  SplashScreen(this.analytics, this.observer);
+
   @override
   State<StatefulWidget> createState() => _SplashScreenState();
 }
@@ -153,28 +168,36 @@ class _SplashScreenState extends State<SplashScreen> {
     }
     //print('welcome message: ${configs.getString('welcome')}');
     //print('override: ${configs.getBool('override_start_enabled')}');
-    final prefs = await SharedPreferences.getInstance();
+    //final prefs = await SharedPreferences.getInstance();
 
     //load large json file in localizationsDelegates will cause black screen
     await Lang.of(context).load(); //late load
 //    setState(() {
 //      appName = Lang.of(context).trans('app_name');
 //    });
-    final CpblClient client = new CpblClient(context, configs, prefs, versionCode: versionCode);
-    client.init().then((r) {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => MainUiWidget(client: client)));
+    final CpblClient client =
+        new CpblClient(context, configs, /*prefs,*/ widget.analytics, versionCode: versionCode);
+    client.init().then((r) async {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => MainUiWidget(
+                client: client,
+                analytics: widget.analytics,
+                observer: widget.observer,
+              )));
     }); //we need to init some lang strings
     //Navigator.of(context).pushReplacementNamed('/calendar');
   }
 }
 
 class MainUiWidget extends StatefulWidget {
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
   final bool debug;
   final CpblClient client;
   final int mode;
 
-  MainUiWidget({this.debug = false, this.client, this.mode = UiMode.quick});
+  MainUiWidget(
+      {this.analytics, this.observer, this.debug = false, this.client, this.mode = UiMode.quick});
 
   @override
   State<StatefulWidget> createState() =>
@@ -235,16 +258,15 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 //          print('override: year=$year month=$month');
 //        }
 
-        final prefs = await SharedPreferences.getInstance();
-        _client = new CpblClient(context, configs, prefs);
+        //final prefs = await SharedPreferences.getInstance();
+        _client = new CpblClient(context, configs, /*prefs,*/ widget.analytics);
         //var now = DateTime.now();
-        _client.init().then((value) {
+        _client.init().then((value) async {
           //if (_client.isOverrideStartEnabled()) {
           setState(() {
             _year = _client.getStartYear();
             _month = _client.getStartMonth();
           });
-          //}
           startFetchGames(); //no splash init
         });
       }
@@ -329,7 +351,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     setState(() {
       loading = false;
     });
-    refreshGameList();
+    logEvent('refresh_list', <String, dynamic>{'reason': 'timeout'});
+    refreshGameList(); //timeout refresh
   }
 
   Future<List<Game>> _fetchList(int year, int month, GameType type,
@@ -423,6 +446,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
+            logEvent('show_cpbl', {
+              'target': 'standing',
+            });
             CpblClient.launchUrl(context, 'http://www.cpbl.com.tw/standing/season.html');
           },
         ),
@@ -432,7 +458,10 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     options.addAll([
       IconButton(
         icon: Icon(Icons.refresh),
-        onPressed: refreshGameList,
+        onPressed: () {
+          logEvent('refresh_list', <String, dynamic>{'reason': 'user'});
+          refreshGameList(); //user refresh
+        },
         tooltip: Lang.of(context).trans('action_refresh'),
       ),
       PopupMenuButton(
@@ -445,11 +474,11 @@ class _MainUiWidgetState extends State<MainUiWidget> {
             value: 1,
             child: Text(Lang.of(context).trans('action_settings')),
           ),
-//                    PopupMenuItem(
-//                      enabled: !loading,
-//                      value: 2,
-//                      child: Text('show highlight'),
-//                    ),
+//          PopupMenuItem(
+//            enabled: !loading,
+//            value: 2,
+//            child: Text('show highlight'),
+//          ),
         ],
         onSelected: (action) {
           //print('selected option $action');
@@ -481,6 +510,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
   }
 
   void showCpblHome() async {
+    logEvent('show_cpbl', {
+      'target': 'home',
+    });
     //if (await canLaunch(CpblClient.homeUrl)) {
     await CpblClient.launchUrl(context, CpblClient.homeUrl);
     //} else {
@@ -495,6 +527,8 @@ class _MainUiWidgetState extends State<MainUiWidget> {
     //refresh for current settings
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => MainUiWidget(
+              analytics: widget.analytics,
+              observer: widget.observer,
               client: _client,
               mode: _mode,
             )));
@@ -534,11 +568,20 @@ class _MainUiWidgetState extends State<MainUiWidget> {
                 _field = action.field;
                 _favTeam = action.favTeam;
               });
+              logEvent("user_query", <String, dynamic>{
+                'field': CpblUtils.getFieldName(context, action.field),
+                'fav_team': CpblUtils.getTeamName(context, action.favTeam),
+                'year': action.year,
+                'month': action.month,
+                'type': CpblUtils.getGameType(context, action.type),
+              });
               pullToRefresh(action.year, action.month, type: action.type);
             },
           ),
           body: Material(
             child: ContentUiWidget(
+              analytics: widget.analytics,
+              observer: widget.observer,
               loading: loading,
               year: _year,
               month: _month,
@@ -574,6 +617,13 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       color: Color.fromARGB(250, 255, 255, 255),
     );
   }
+
+  Future<void> logEvent(String name, [Map<String, dynamic> map]) async {
+    return widget.analytics?.logEvent(
+      name: name,
+      parameters: map,
+    );
+  }
 }
 
 class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderStateMixin {
@@ -585,6 +635,7 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     return mode == UiMode.quick
         ? SizedBox(height: 1)
         : PagerSelectorWidget(
+            analytics: widget.analytics,
             year: year,
             enabled: !loading,
             onYearChanged: (value) {
@@ -596,15 +647,24 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
               //Future.delayed(_fetchDelay, () {
               fetchMonthList(_year, _month);
               //});
+              logEvent('chip_change', {
+                'year': value,
+              });
             },
             onFieldChanged: (value) {
               setState(() {
                 _field = value;
               });
+              logEvent('chip_change', {
+                'field': value,
+              });
             },
             onFavTeamChanged: (value) {
               setState(() {
                 _favTeam = value;
+              });
+              logEvent('chip_change', {
+                'fav_team': value,
               });
             },
             teamList: teams,
@@ -618,6 +678,8 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
     for (int i = 1; i <= CpblClient.monthList.length; i++) {
       titleList.add(new Tab(text: CpblClient.getMonthString(context, i)));
       childList.add(new ContentUiWidget(
+        analytics: widget.analytics,
+        observer: widget.observer,
         enabled: enabled,
         list: gameList[i],
         year: _year,
@@ -661,10 +723,13 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
       TeamId teamId, FieldId field) {
     if (mode == UiMode.quick) {
       return ContentUiWidget(
+        analytics: widget.analytics,
+        observer: widget.observer,
         loading: isLoading,
         mode: mode,
         list: data,
         onHighlightPaneClosed: () {
+          logEvent('hide_highlight');
           //pullToRefresh(2018, 10);
           setState(() {
             _mode = UiMode.pager;
