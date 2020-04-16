@@ -1,5 +1,5 @@
 # CpblCalendar4
-![](https://img.shields.io/github/v/release/DolphinWing/CpblCalendarProject) ![](https://img.shields.io/github/issues/DolphinWing/CpblCalendarProject) ![flutter-action](https://github.com/DolphinWing/CpblCalendarProject/workflows/flutter-action/badge.svg)
+![https://github.com/DolphinWing/CpblCalendarProject/releases](https://img.shields.io/github/v/release/DolphinWing/CpblCalendarProject) ![flutter-action](https://github.com/DolphinWing/CpblCalendarProject/workflows/flutter-action/badge.svg)
 
 全新使用 Flutter 編寫的版本，拋棄舊有的所有東西！
 
