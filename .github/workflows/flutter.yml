@@ -29,11 +29,11 @@ jobs:
       with:
         flutter-version: '1.12.x' # you can use 1.12
         #channel: 'dev' # optional, default to: 'stable'
-    - run: dart --version
+    #- run: dart --version
     - run: flutter --version
     - name: Update flutter packages
       run: flutter pub get
     #- run: flutter test
     - name: Build flutter apk
-      run: flutter build appbundle
+      run: flutter build apk
 
