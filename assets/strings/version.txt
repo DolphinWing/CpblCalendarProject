@@ -2,6 +2,8 @@
     upgrade to android sdk 29
     update flutter 1.20
     update a bunch of libraries
+    update gradle to 6.5 with 4.0.1 plugin
+    fix ndk dependency
 
 [2026] @ 2020-03-27
     add Google Analytics and Performance Monitoring
