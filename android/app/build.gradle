@@ -34,7 +34,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -47,7 +48,7 @@ android {
     defaultConfig {
         applicationId "dolphin.android.apps.CpblCalendar3"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
