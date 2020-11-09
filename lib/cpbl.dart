@@ -121,7 +121,7 @@ class CpblClient {
   static const String challenge_month_override =
       '1998/10/11;1999/10;2005/10;2006/10;2007/10;2008/10;2017/10;2018/10';
   static const String champ_month_override =
-      '1991/11;1992/0;1994/0;1995/0;1996/10/11;1998/11;1999/11;2004/11;2005/10/11;2008/10/11;2017/10/11;2018/10/11';
+      '1991/11;1992/0;1994/0;1995/0;1996/10/11;1998/11;1999/11;2004/11;2005/10/11;2008/10/11;2017/10/11;2018/10/11;2020/10/11';
 
   final Map<int, int> warmUpMonthOverrides = new Map();
   final Map<int, int> allStarMonthOverrides = new Map();
@@ -152,12 +152,7 @@ class CpblClient {
       if (monthStr.isEmpty) {
         return false;
       } else if (monthStr.contains('/')) {
-        monthStr.split('/').forEach((m) {
-          if (int.parse(m) == month) {
-            return true;
-          }
-          return false;
-        });
+        return monthStr.split('/').contains(month.toString());
       } else {
         return int.parse(monthStr) == month;
       }
@@ -168,15 +163,11 @@ class CpblClient {
   bool isChampionMonth(int year, int month) {
     if (championMonthOverrides.containsKey(year)) {
       String monthStr = championMonthOverrides[year];
+      print('$year: $monthStr');
       if (monthStr.isEmpty) {
         return false;
       } else if (monthStr.contains('/')) {
-        monthStr.split('/').forEach((m) {
-          if (int.parse(m) == month) {
-            return true;
-          }
-          return false;
-        });
+        return monthStr.split('/').contains(month.toString());
       } else {
         return int.parse(monthStr) == month;
       }
@@ -288,43 +279,48 @@ class CpblClient {
     await FirebasePerformance.instance.setPerformanceCollectionEnabled(isAnalyticsEnabled());
 
     //load warm up overrides
-    var warm = warmup_month_start_override.split(';');
-    warm.forEach((value) {
+    (_configs?.getString('warmup_month_start_override') ?? warmup_month_start_override)
+        .split(';')
+        .forEach((value) {
       if (value.isNotEmpty && value.contains('/')) {
         var ym = value.split('/');
         warmUpMonthOverrides.putIfAbsent(int.parse(ym[0]) + 1989, () => int.parse(ym[1]));
       }
     });
     //load all star override
-    var allStar = allstar_month_override.split(';');
-    allStar.forEach((value) {
+    (_configs?.getString('allstar_month_override') ?? allstar_month_override)
+        .split(';')
+        .forEach((value) {
       if (value.isNotEmpty && value.contains('/')) {
         var ym = value.split('/');
         allStarMonthOverrides.putIfAbsent(int.parse(ym[0]) + 1989, () => int.parse(ym[1]));
       }
     });
     //load season start override
-    var season = season_month_start_override.split(';');
-    season.forEach((value) {
+    (_configs?.getString('season_month_start_override') ?? season_month_start_override)
+        .split(';')
+        .forEach((value) {
       if (value.isNotEmpty && value.contains('/')) {
         var ym = value.split('/');
         seasonStartMonthOverrides.putIfAbsent(int.parse(ym[0]) + 1989, () => int.parse(ym[1]));
       }
     });
     //load challenge games
-    var challenge = challenge_month_override.split(';');
-    challenge.forEach((value) {
+    (_configs?.getString('challenge_month_override') ?? challenge_month_override)
+        .split(';')
+        .forEach((value) {
       if (value.isNotEmpty && value.contains('/')) {
         var ym = value.split('/');
-        challengeGames.putIfAbsent(int.parse(ym[0]), () => ym[1]);
+        challengeGames.putIfAbsent(int.parse(ym[0]), () => value.substring(5));
       }
     });
     //load champion games override
-    var champion = challenge_month_override.split(';');
-    champion.forEach((value) {
+    (_configs?.getString('champ_month_override') ?? champ_month_override)
+        .split(';')
+        .forEach((value) {
       if (value.isNotEmpty && value.contains('/')) {
         var ym = value.split('/');
-        championMonthOverrides.putIfAbsent(int.parse(ym[0]), () => ym[1]);
+        championMonthOverrides.putIfAbsent(int.parse(ym[0]), () => value.substring(5));
       }
     });
 
