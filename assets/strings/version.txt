@@ -1,4 +1,4 @@
-[2028] @ 2020-11-09
+[2029] @ 2020-11-09
     add 2020/11 for championship
     fix championship month parsing
     add Firebase RemoteConfig for data update

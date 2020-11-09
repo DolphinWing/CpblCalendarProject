@@ -171,10 +171,8 @@ class CpblClient {
       } else {
         return int.parse(monthStr) == month;
       }
-    } else {
-      return month == DateTime.october;
     }
-    return false;
+    return month == DateTime.october;
   }
 
   bool hasGames(int year, int month) {
@@ -232,7 +230,7 @@ class CpblClient {
 
   static String getMonthString(BuildContext context, int month) {
     if (month == null || month < DateTime.january || month > DateTime.december) {
-      return 'unkonwn';
+      return 'unknown';
     }
     return Lang.of(context).trans('drawer_entry_month_${CpblClient.monthList[month - 1]}');
   }
