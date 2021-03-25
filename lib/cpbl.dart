@@ -325,7 +325,7 @@ class CpblClient {
     //prepare first read
     //await _client.read(homeUrl)
     /*await*/
-    _client.get(homeUrl);
+    _client.get(Uri.parse(homeUrl));
 //    .then((html) {
 //      print('html = ${html.length}');
 //    });
@@ -359,7 +359,7 @@ class CpblClient {
     trace.putAttribute("month", month.toString());
     trace.start();
 
-    final response = await _client.get(url);
+    final response = await _client.get(Uri.parse(url));
     //print('response.body ${response?.body?.length} ${response?.body?.indexOf('one_block')}');
     trace.stop();
 

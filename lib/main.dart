@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter\_localizations/flutter\_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info/package_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'content.dart';
 import 'cpbl.dart';
@@ -16,7 +15,11 @@ import 'drawer.dart';
 import 'lang.dart';
 import 'settings.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics();
@@ -138,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _initUi() {
-    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7557398389502445~8502463329');
+    //FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7557398389502445~8502463329');
     PackageInfo.fromPlatform().then((packageInfo) {
       setState(() {
         versionCode = packageInfo?.buildNumber ?? '';
@@ -151,21 +154,26 @@ class _SplashScreenState extends State<SplashScreen> {
     configs = await RemoteConfig.instance;
     final defaults = <String, dynamic>{'override_start_enabled': false};
     if (CpblClient.debug) {
-      await configs.setConfigSettings(new RemoteConfigSettings(debugMode: true));
+      await configs.setConfigSettings(new RemoteConfigSettings(
+        // debugMode: true,
+        fetchTimeout: const Duration(minutes: 5),
+        minimumFetchInterval: const Duration(hours: 8),
+      ));
     }
     await configs.setDefaults(defaults);
-    try {
-      if (CpblClient.debug) {
-        await configs.fetch(expiration: const Duration(minutes: 5));
-      } else {
-        await configs.fetch(expiration: const Duration(hours: 8));
-      }
-      await configs.activateFetched();
-    } on FetchThrottledException catch (exception) {
-      print(exception);
-    } catch (exception) {
-      print('Unable to fetch remote config. Use cached/default values.');
-    }
+//    try {
+//      if (CpblClient.debug) {
+//        await configs.fetch(expiration: const Duration(minutes: 5));
+//      } else {
+//        await configs.fetch(expiration: const Duration(hours: 8));
+//      }
+//      await configs.activateFetched();
+//    } on FetchThrottledException catch (exception) {
+//      print(exception);
+//    } catch (exception) {
+//      print('Unable to fetch remote config. Use cached/default values.');
+//    }
+    await configs.fetchAndActivate();
     //print('welcome message: ${configs.getString('welcome')}');
     //print('override: ${configs.getBool('override_start_enabled')}');
     //final prefs = await SharedPreferences.getInstance();

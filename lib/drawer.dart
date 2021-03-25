@@ -1,5 +1,5 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'cpbl.dart';
 import 'cpbl_defines.dart';
@@ -78,28 +78,28 @@ class _DrawerPaneState extends State<DrawerPane> {
       adUnitId: CpblClient.debug ? BannerAd.testAdUnitId : 'ca-app-pub-7557398389502445/6354758232',
       size: AdSize.smartBanner,
       //targetingInfo: targetingInfo,
-      listener: (MobileAdEvent event) {
-        print("BannerAd event is $event");
-        if (event == MobileAdEvent.loaded) {
-          print('ad height: ${myBanner.size.height}');
-          if (widget.onAdLoaded != null) {
-            widget.onAdLoaded(50);
-          }
-        } else if (event == MobileAdEvent.closed) {
-          print('ad closed');
-        }
-      },
+      listener: AdListener(),
+//      listener: (MobileAdEvent event) {
+//        print("BannerAd event is $event");
+//        if (event == MobileAdEvent.loaded) {
+//          print('ad height: ${myBanner.size.height}');
+//          if (widget.onAdLoaded != null) {
+//            widget.onAdLoaded(50);
+//          }
+//        } else if (event == MobileAdEvent.closed) {
+//          print('ad closed');
+//        }
+//      },
     );
 
     // typically this happens well before the ad is shown
-    myBanner
-      ..load()
-      ..show(
-        //// Positions the banner ad 60 pixels from the bottom of the screen
-        //anchorOffset: 60.0,
-        // Banner Position
-        anchorType: AnchorType.bottom,
-      );
+    myBanner.load();
+//      ..show(
+//        //// Positions the banner ad 60 pixels from the bottom of the screen
+//        //anchorOffset: 60.0,
+//        // Banner Position
+//        anchorType: AnchorType.bottom,
+//      );
   }
 
   @override
