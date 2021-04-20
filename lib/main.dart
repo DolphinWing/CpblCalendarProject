@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -18,7 +19,21 @@ import 'settings.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  runApp(MyApp());
+  runApp(MyNewApp());
+}
+
+class MyNewApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MyApp();
+        }
+        return CircularProgressIndicator();
+      },);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -90,42 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: SizedBox(),
-            ),
-            Image(
-              image: AssetImage('assets/drawable/splash_icon.png'),
-            ),
-            SizedBox(height: 64),
-            Container(
-              constraints: BoxConstraints(minHeight: 32),
-              //child: Text(appName, style: Theme.of(context).textTheme.title),
-            ),
-            SizedBox(height: 32),
-            CircularProgressIndicator(),
-            SizedBox(height: 32),
-            Expanded(
-              child: Container(
-                alignment: Alignment.bottomRight,
-                constraints: BoxConstraints.expand(height: 64),
-                child: Text(
-                  versionCode,
-                  style: Theme.of(context).textTheme.caption,
-                  textAlign: TextAlign.end,
-                ),
-                padding: EdgeInsets.all(8),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return LoadingWidget(versionCode);
   }
 
   @override
@@ -194,6 +174,52 @@ class _SplashScreenState extends State<SplashScreen> {
               )));
     }); //we need to init some lang strings
     //Navigator.of(context).pushReplacementNamed('/calendar');
+  }
+}
+
+class LoadingWidget extends StatelessWidget {
+  final String versionCode;
+
+  LoadingWidget(this.versionCode);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: SizedBox(),
+            ),
+            Image(
+              image: AssetImage('assets/drawable/splash_icon.png'),
+            ),
+            SizedBox(height: 64),
+            Container(
+              constraints: BoxConstraints(minHeight: 32),
+              //child: Text(appName, style: Theme.of(context).textTheme.title),
+            ),
+            SizedBox(height: 32),
+            CircularProgressIndicator(),
+            SizedBox(height: 32),
+            Expanded(
+              child: Container(
+                alignment: Alignment.bottomRight,
+                constraints: BoxConstraints.expand(height: 64),
+                child: Text(
+                  versionCode,
+                  style: Theme.of(context).textTheme.caption,
+                  textAlign: TextAlign.end,
+                ),
+                padding: EdgeInsets.all(8),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
