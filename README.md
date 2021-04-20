@@ -1,7 +1,7 @@
 # CpblCalendar4
 ![](https://img.shields.io/github/v/release/DolphinWing/CpblCalendarProject?logo=github) ![flutter-action](https://github.com/DolphinWing/CpblCalendarProject/workflows/flutter-action/badge.svg)
 
-全新使用 Flutter 編寫的版本，拋棄舊有的所有東西！
+全新使用 [Flutter](https://flutter.dev/) 編寫的版本，拋棄舊有的所有東西！
 
 可快速查詢中華職棒賽程。不須等待完整網頁下載。非官方APP，純粹是利用閒暇開發的興趣而已。請不要給作者太多無理的要求，謝謝。
 
