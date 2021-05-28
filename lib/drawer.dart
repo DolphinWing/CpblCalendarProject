@@ -75,7 +75,9 @@ class _DrawerPaneState extends State<DrawerPane> {
       // Replace the testAdUnitId with an ad unit id from the AdMob dash.
       // https://developers.google.com/admob/android/test-ads
       // https://developers.google.com/admob/ios/test-ads
-      adUnitId: CpblClient.debug ? BannerAd.testAdUnitId : 'ca-app-pub-7557398389502445/6354758232',
+      adUnitId: CpblClient.debug
+          ? BannerAd.testAdUnitId
+          : 'ca-app-pub-7557398389502445/6354758232',
       size: AdSize.smartBanner,
       //targetingInfo: targetingInfo,
       listener: AdListener(),
@@ -90,6 +92,9 @@ class _DrawerPaneState extends State<DrawerPane> {
 //          print('ad closed');
 //        }
 //      },
+      request: AdRequest(
+        //testDevices: [],
+      ),
     );
 
     // typically this happens well before the ad is shown
@@ -279,7 +284,9 @@ class _YearMenuWidgetState extends State<_YearMenuWidget> {
     for (int i = now.year; i >= 1990; i--) {
       list.add(new DropdownMenuItem(
         child: Text(
-          Lang.of(context).trans('drawer_entry_year').replaceAll('@year', (i - 1989).toString()) +
+          Lang.of(context)
+                  .trans('drawer_entry_year')
+                  .replaceAll('@year', (i - 1989).toString()) +
               ' ($i)',
         ),
         value: i,
@@ -352,7 +359,8 @@ class _FieldMenuWidget extends StatefulWidget {
   final ValueChanged<FieldId> onValueChanged;
   final List<FieldId> fieldList;
 
-  _FieldMenuWidget({this.id = FieldId.f00, this.onValueChanged, List<FieldId> fieldList})
+  _FieldMenuWidget(
+      {this.id = FieldId.f00, this.onValueChanged, List<FieldId> fieldList})
       : this.fieldList = fieldList ?? FieldId.values;
 
   @override

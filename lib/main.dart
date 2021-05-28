@@ -309,7 +309,9 @@ class _MainUiWidgetState extends State<MainUiWidget> {
 
   void startFetchGames() {
     print('init from $_year/$_month');
-    if (_client.isHighlightEnabled()) {
+    if (true) {
+      showAnnouncementOnly();
+    } else if (_client.isHighlightEnabled()) {
       fetchHighlight(_year, _month, debug: widget.debug); //init
     } else {
       pullToRefresh(_year, _month, debug: widget.debug); //init
@@ -411,6 +413,18 @@ class _MainUiWidgetState extends State<MainUiWidget> {
       }
     }
     return list;
+  }
+
+  void showAnnouncementOnly() async {
+    var cards = await _client.loadRemoteAnnouncement();
+    print('remote info size: ${cards.length}');
+    if (cards.isEmpty) {
+      cards.add(Game.announce(0, Lang.of(context).trans('app_down')));
+    }
+    setState(() {
+      list = cards;
+      loading = false;
+    });
   }
 
   void fetchHighlight(int year, int month, {bool debug = false, bool forceUpdate = false}) async {
@@ -858,7 +872,9 @@ class _MainUi2WidgetState extends _MainUiWidgetState with SingleTickerProviderSt
   @override
   void startFetchGames() {
     print('init from $_year/$_month');
-    if (_client.isHighlightEnabled()) {
+    if (true) {
+      showAnnouncementOnly();
+    } else if (_client.isHighlightEnabled()) {
       fetchHighlight(_year, _month, debug: widget.debug); //pager init
     } else {
       _tabController.animateTo(_month - 1); //pager init
